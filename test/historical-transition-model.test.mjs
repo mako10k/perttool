@@ -211,6 +211,35 @@ function parallelSource({ includeTask = true, taskTitle = "Optional" } = {}) {
   ].join("\n")}\n`;
 }
 
+const retainedReceipt = Object.freeze({
+  id: "RECEIPT_RETAINED",
+  model: 1,
+  receipt_hash: "sha256:receipt",
+  producer_task_id: "REMOVED_PRODUCER",
+  producer_contract_hash: "sha256:contract",
+  producer_assurance_hash: "sha256:assurance",
+  outcome: "conformant",
+  source_milestone_id: "START",
+  consumers: Object.freeze([Object.freeze({
+    consumer_task_id: "T",
+    relation_mode: "both",
+  })]),
+});
+
+function withRetainedReceipt(projected, {
+  receipt = retainedReceipt,
+  tasks = projected.semantic.tasks,
+} = {}) {
+  return {
+    ...projected,
+    semantic: {
+      ...projected.semantic,
+      tasks,
+      assurance_receipts: [receipt],
+    },
+  };
+}
+
 test("HTM-001 and HTM-002 project exact semantics apart from source fidelity", async () => {
   const fixture = JSON.parse(await readFile(
     path.join(root, "test/fixtures/historical-transition-model-v1.json"),
@@ -295,6 +324,41 @@ test("HTM-005 and HTM-006 permit future edits and protect frozen task meaning", 
   const conflict = classifyHistoricalTransition(active, frozenChanged);
   assert.equal(conflict.class, "conflict");
   assert.deepEqual(conflict.causes, ["topology_conflict"]);
+});
+
+test("Issue 20 permits a stable retained receipt with an absent producer", () => {
+  const before = withRetainedReceipt(projection(activeSource()));
+  const after = withRetainedReceipt(projection(activeSource({
+    includePause: true,
+  })));
+
+  const extension = classifyHistoricalTransition(before, after);
+  assert.equal(extension.class, "evidence_extension");
+  assert.deepEqual(extension.causes, []);
+
+  const reintroducedProducer = withRetainedReceipt(projection(activeSource({
+    includePause: true,
+  })), {
+    tasks: [
+      ...after.semantic.tasks,
+      { ...after.semantic.tasks[0], id: "REMOVED_PRODUCER" },
+    ],
+  });
+  const presenceConflict = classifyHistoricalTransition(
+    before,
+    reintroducedProducer,
+  );
+  assert.equal(presenceConflict.class, "conflict");
+  assert.deepEqual(presenceConflict.causes, ["topology_conflict"]);
+
+  const changedReceipt = withRetainedReceipt(projection(activeSource({
+    includePause: true,
+  })), {
+    receipt: { ...retainedReceipt, receipt_hash: "sha256:changed" },
+  });
+  const receiptConflict = classifyHistoricalTransition(before, changedReceipt);
+  assert.equal(receiptConflict.class, "conflict");
+  assert.deepEqual(receiptConflict.causes, ["topology_conflict"]);
 });
 
 test("HTM-007 and HTM-008 require one exact unforced canonical advance candidate", () => {

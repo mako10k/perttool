@@ -1196,6 +1196,7 @@ function frozenTaskPlanChanged(
   for (const taskId of frozen) {
     const before = previousTasks.get(taskId);
     const after = currentTasks.get(taskId);
+    if (before === undefined && after === undefined) continue;
     if (before === undefined || after === undefined) return true;
     if (canonicalJson({
       from_milestone_id: before.from_milestone_id,

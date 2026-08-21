@@ -189,6 +189,39 @@ function terminalReceiptSource() {
   ].join("\n"));
 }
 
+function acceptanceReadyGrammar7Source(text) {
+  let candidate = text;
+  const provisional = planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  for (const [index, blocked] of provisional.acceptanceGuard?.blockedMilestones.entries() ?? []) {
+    const setId = `ISSUE20_ACCEPT_${blocked.milestoneId}_${index + 1}`;
+    const criterionId = `ISSUE20_ACCEPTED_${index + 1}`;
+    const replacement = planCriterionSetReplacement(candidate, {
+      milestoneId: blocked.milestoneId,
+      setId,
+      revisionId: "R1",
+      criteria: [{
+        criterionId,
+        required: true,
+        evidenceKind: "owner",
+        description: "Accepted for Issue 20 regression",
+      }],
+    });
+    assert.equal(replacement.ok, true);
+    const waived = planAcceptanceReceiptMutation(replacement.updatedText, {
+      setId,
+      criterionId,
+      receiptId: `ISSUE20_WAIVE_${blocked.milestoneId}_${index + 1}`,
+      action: "waive",
+      reason: "Accepted Issue 20 regression fixture",
+    });
+    assert.equal(waived.ok, true);
+    candidate = waived.updatedText;
+  }
+  return candidate;
+}
+
 function git(repository, ...args) {
   const result = spawnSync("git", ["-C", repository, ...args], {
     encoding: "utf8",
@@ -476,6 +509,81 @@ test("Issue 9 EOF receipt candidate is identical across preview, out, and write"
   assert.equal(written.ok, true);
   assert.equal(written.updated_text, preview.updated_text);
   assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
+});
+
+test("Issue 20 retained producer receipt preserves later history and advance proof", (t) => {
+  const { directory, pathname } = temporaryPlan(t, {
+    source: terminalReceiptSource(),
+  });
+  const producerCommit = git(directory, "rev-parse", "HEAD");
+  const firstAdvance = runJson([
+    "dag", "advance", pathname, "--write", "--actor", "user",
+  ]);
+  assert.equal(firstAdvance.ok, true);
+  assert.match(firstAdvance.updated_text, /assurance_receipt AR_A:/u);
+  assert.doesNotMatch(firstAdvance.updated_text, /^task A /mu);
+  git(directory, "add", "--", "plan.pert");
+  git(directory, "commit", "--quiet", "-m", "advance producer");
+  const frontierCommit = git(directory, "rev-parse", "HEAD");
+
+  const finished = runJson([
+    "task", "finish", pathname, "B",
+    "--at", "2026-08-12T12:00:00+09:00",
+    "--event-id", "WE_B_FINISH",
+    "--write", "--actor", "user",
+  ]);
+  assert.equal(finished.ok, true);
+  const outcome = runJson([
+    "task-outcome", "add", pathname, "OUT_B", "B",
+    "--status", "conformant",
+    "--reason", "Accepted consumer outcome",
+    "--write", "--actor", "user",
+  ]);
+  assert.equal(outcome.ok, true);
+  writeFileSync(
+    pathname,
+    acceptanceReadyGrammar7Source(outcome.updated_text),
+    "utf8",
+  );
+  git(directory, "add", "--", "plan.pert");
+  git(directory, "commit", "--quiet", "-m", "finish consumer");
+  const consumerCommit = git(directory, "rev-parse", "HEAD");
+
+  const completionHistory = runJson([
+    "dag", "history", pathname,
+    "--rev", consumerCommit,
+    "--base", frontierCommit,
+    "--history", "first-parent",
+    "--view", "lineage",
+    "--analysis", "none",
+  ]);
+  assert.equal(completionHistory.status, "complete");
+  assert.equal(
+    completionHistory.causes.some(({ cause }) => cause === "topology_conflict"),
+    false,
+  );
+  assert.equal(
+    completionHistory.diagnostics.some(({ code }) => code === "PTHDG-103"),
+    false,
+  );
+
+  const finalAdvance = runJson([
+    "dag", "advance", pathname, "--write", "--actor", "user",
+  ]);
+  assert.equal(finalAdvance.ok, true);
+  git(directory, "add", "--", "plan.pert");
+  git(directory, "commit", "--quiet", "-m", "advance consumer");
+  const finalCommit = git(directory, "rev-parse", "HEAD");
+  const fullHistory = runJson([
+    "dag", "history", pathname,
+    "--rev", finalCommit,
+    "--base", producerCommit,
+    "--history", "first-parent",
+    "--view", "lineage",
+    "--analysis", "none",
+  ]);
+  assert.equal(fullHistory.status, "complete");
+  assert.equal(fullHistory.lineage.canonical_advance_proofs.length, 2);
 });
 
 test("Issue 11 consecutive terminal declarations retain preview, out, and write identity", (t) => {

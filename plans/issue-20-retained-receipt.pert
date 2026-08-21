@@ -1,0 +1,103 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project HIST_RECEIPT_001:
+  version 6
+  title "Retained assurance receipt historical classification correction"
+  description "Correct GitHub Issue #20 as a bounded historical transition patch. Treat a stable retained assurance receipt producer absent from both adjacent snapshots as unchanged while retaining conflicts for one-sided task presence, changed present frozen task plans, changed immutable evidence, noncanonical removal, and invalid canonical advance proof. Preserve Grammar 8, CLI Contract 9, historical result identities, assurance meanings, Git evidence bounds, public facades, commands, schemas, adapters, persistence, and unrelated history classifications. Release selection, publication, remote writes, Issue mutation, plan advance, and unrelated work remain separate."
+  as_of 2026-08-21
+  duration_unit point
+  finish HIST_RECEIPT_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone HIST_RECEIPT_STARTED:
+  title "Issue #20 correction started"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Historical semantics review capacity"
+  capacity 1
+
+resource HISTORY_SURFACE:
+  title "Historical transition ownership"
+  capacity 1
+
+milestone HIST_RECEIPT_CONTRACT_ACCEPTED:
+  title "Retained receipt comparison contract accepted"
+
+milestone HIST_RECEIPT_CORE_READY:
+  title "Historical transition correction ready"
+
+milestone HIST_RECEIPT_ACCEPTED:
+  title "Issue #20 correction accepted"
+
+task HIST_RECEIPT_CONTRACT HIST_RECEIPT_STARTED -> HIST_RECEIPT_CONTRACT_ACCEPTED:
+  title "Accept the retained receipt comparison contract"
+  description "Accept the llmthink RCA, exact three-state task-presence comparison, unchanged immutable-record ordering, closed regression matrix, compatibility boundary, and implementation handoff without changing public identities."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    HISTORY_SURFACE 1
+  source "Issue #20"
+
+task HIST_RECEIPT_CORE HIST_RECEIPT_CONTRACT_ACCEPTED -> HIST_RECEIPT_CORE_READY:
+  title "Correct frozen task comparison"
+  description "Implement absent-on-both-sides equality in the pure historical transition classifier, retain one-sided absence and changed present frozen task conflicts, and add focused transition and real-history regression coverage including final canonical advance recognition."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    HISTORY_SURFACE 1
+  source "Issue #20"
+
+task HIST_RECEIPT_ACCEPTANCE HIST_RECEIPT_CORE_READY -> HIST_RECEIPT_ACCEPTED:
+  title "Accept the Issue #20 correction"
+  description "Run focused transition, historical graph, real first-parent CLI, static, complete repository, temporary-link, and isolated-package gates; record exact compatibility and remaining release, publication, Issue, and advance boundaries."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    HISTORY_SURFACE 1
+  source "Issue #20"
+
+work_event HIST_RECEIPT_CONTRACT_FINISHED:
+  model 1
+  task HIST_RECEIPT_CONTRACT
+  kind finish
+  occurred_at 2026-08-21T11:38:00+09:00
+
+work_event HIST_RECEIPT_CORE_STARTED:
+  model 1
+  task HIST_RECEIPT_CORE
+  kind start
+  occurred_at 2026-08-21T11:38:01+09:00
+  planned_value 3p
+
+work_event HIST_RECEIPT_CORE_FINISHED:
+  model 1
+  task HIST_RECEIPT_CORE
+  kind finish
+  occurred_at 2026-08-21T11:38:02+09:00
+
+work_event HIST_RECEIPT_ACCEPTANCE_STARTED:
+  model 1
+  task HIST_RECEIPT_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-21T11:38:03+09:00
+  planned_value 3p
+
+work_event HIST_RECEIPT_ACCEPTANCE_FINISHED:
+  model 1
+  task HIST_RECEIPT_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-21T11:44:00+09:00

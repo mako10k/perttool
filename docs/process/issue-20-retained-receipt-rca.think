@@ -1,0 +1,70 @@
+framework DecisionAudit
+
+domain RetainedReceiptHistory:
+  description "Root-cause analysis for GitHub Issue #20"
+
+problem P1:
+  "Why does dag history classify an ordinary later task completion as topology_conflict after canonical advance retained a frontier assurance receipt whose producer task was removed?"
+
+step S1:
+  premise PR1:
+    "Canonical advance may deliberately retain an assurance receipt at the surviving frontier after removing its producer task, so an unchanged receipt and a producer absent from both adjacent snapshots are valid historical state"
+
+step S2:
+  evidence EV1:
+    "Issue #20 reports a first-parent A to B history in which canonical advance removes A but retains A's frontier assurance receipt for B; the later B completion changes lifecycle, actual evidence, assurance outcome, and acceptance evidence only, yet emits PTHDG-103 topology_conflict"
+    resource:
+      url "https://github.com/mako10k/perttool/issues/20"
+      label "Issue reproduction and expected behavior"
+
+step S3:
+  evidence EV2:
+    "The current historical transition projector includes every assurance receipt producer_task_id in frozenTaskIds even when the producer task declaration is absent after canonical advance"
+    resource:
+      file "src/history/historical-transition.ts"
+      label "Frozen task inventory"
+
+step S4:
+  evidence EV3:
+    "frozenTaskPlanChanged looks up every previous frozen task in both adjacent task maps and returns true whenever either lookup is absent, including the stable absent-before and absent-after producer case"
+    resource:
+      file "src/history/historical-transition.ts"
+      label "Frozen plan comparison"
+
+step S5:
+  evidence EV4:
+    "Immutable assurance records are compared before frozen task planning; a changed or removed retained receipt already fails through immutable conflict or noncanonical removal, so allowing one unchanged receipt's producer to remain absent does not permit receipt mutation"
+    resource:
+      file "src/history/historical-transition.ts"
+      label "Transition classification order"
+
+step S6:
+  evidence EV5:
+    "The historical transition tests protect changed plan fields for a present frozen task but contain no retained-receipt producer-absence case"
+    resource:
+      file "test/historical-transition-model.test.mjs"
+      label "Existing frozen-task regression boundary"
+
+step S7:
+  decision D1 based_on P1, PR1, EV1, EV2, EV3:
+    "The root cause is an equality defect in frozen task-plan comparison: legitimate absence from both adjacent snapshots is treated as a plan change because missing identity is collapsed with one-sided disappearance or appearance"
+
+step S8:
+  decision D2 based_on PR1, EV3, EV4, D1:
+    "The minimal correction treats absent-before and absent-after as equal for one frozen task ID, continues to conflict when exactly one side is absent, and compares endpoints and frozen plan fields when both declarations are present"
+
+step S9:
+  decision D3 based_on EV4, EV5, D2:
+    "Acceptance must cover an unchanged retained receipt with an absent producer followed by lifecycle and assurance additions, retain conflict for one-sided task presence and changed present frozen task fields, retain immutable receipt conflict, and prove the following canonical advance remains recognized"
+
+step S10:
+  decision D4 based_on D1, D2, D3:
+    "Historical result identities, Grammar 8, CLI Contract 9, canonical advance proof, assurance meanings, Git evidence bounds, public facades, commands, schemas, adapters, and persistence remain unchanged"
+
+step S11:
+  decision D5 based_on D1, D2, D3, D4:
+    "The exact owner-confirmed perttool plan was registered, the three-state comparison correction and focused plus real-history regressions were implemented, and the complete repository acceptance gate passed"
+
+step S12:
+  pending PD2:
+    "Release selection, publication, Issue mutation, plan advance, and unrelated work remain separate boundaries"
