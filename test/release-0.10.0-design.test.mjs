@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(root, "dist/cli.js");
 
 test("0.10.0 release plan selects the Contract 9 beta boundary and gates publication", async () => {
-  const [plan, acceptance, requirements, adr, design, procedure, gate, readiness, preparation, candidate, selfUse] = await Promise.all([
+  const [plan, acceptance, requirements, adr, design, procedure, gate, readiness, preparation, candidate, publish, durableAcceptance, latestPromotion, selfUse] = await Promise.all([
     readFile(path.join(root, "plans/release-0.10.0.pert"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-release-plan-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
@@ -21,6 +21,9 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
     readFile(path.join(root, "docs/process/0.10.0-input-readiness.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-preparation.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-candidate.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.10.0-publish.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.10.0-release-acceptance.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.10.0-latest-promotion.md"), "utf8"),
     readFile(path.join(root, "scripts/check-self-use.sh"), "utf8"),
   ]);
   const checked = checkDocument(plan);
@@ -33,12 +36,14 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
   assert.equal(metadata.project.finish, "RELEASE_0100_ACCEPTED");
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 6);
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["RELEASE_0100_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_0100_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.equal(next.acceptance.milestones.find(({ milestoneId }) => milestoneId === "RELEASE_0100_ACCEPTED")?.acceptance, "accepted");
   assert.match(plan, /Only after every predecessor gate passes and the user separately authorizes/u);
   assert.match(acceptance, /Accepted source digest: `sha256:d8bd9cb5/u);
   assert.match(acceptance, /`0\.9\.5` would understate/u);
-  assert.match(requirements, /^24\. \[ \] Release the accepted temporal scheduling boundary/mu);
+  assert.match(requirements, /^24\. \[x\] Release the accepted temporal scheduling boundary/mu);
+  assert.match(requirements, /- \[x\] Independently verify durable public identity/u);
   assert.match(adr, /Select suffix-free `0\.10\.0`/u);
   assert.match(adr, /The stable series begins with a future `1\.0\.0`/u);
   assert.match(design, /^### Post-MVP Slice 4U: Temporal scheduling `v0\.10\.0` beta minor$/mu);
@@ -55,6 +60,14 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
   assert.match(candidate, /Document status: Accepted 1\.0/u);
   assert.match(candidate, /86762a71562bf15cffe746e2aa6160996aa82942/u);
   assert.match(candidate, /b98dad654955b639275ebcccd1871a3a40ce415cf0c5504dd18c681dfa36ce9f/u);
+  assert.match(publish, /Document status: Accepted 1\.0/u);
+  assert.match(publish, /32104943472/u);
+  assert.match(durableAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(durableAcceptance, /Grammar 1 through 8/u);
+  assert.match(durableAcceptance, /publication-time `latest=0\.9\.0`/u);
+  assert.match(latestPromotion, /Document status: Accepted 1\.0/u);
+  assert.match(latestPromotion, /`beta=latest=0\.10\.0`/u);
+  assert.match(latestPromotion, /2026-08-18T09:20:13\.523Z/u);
   assert.match(selfUse, /plans\/release-0\.10\.0\.pert/u);
 
   const criterionPreview = spawnSync(process.execPath, [

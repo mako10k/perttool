@@ -119,6 +119,7 @@ task RELEASE_0100_ACCEPTANCE RELEASE_0100_PUBLISHED -> RELEASE_0100_ACCEPTED:
   title "Record durable 0.10.0 beta acceptance"
   description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Grammar 1 through 8 compatibility, Contract 9 commands and schemas, temporal behavior, package facades, private-adapter exclusion, and the exact 0.9.4 rollback pin. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -278,3 +279,35 @@ milestone_acceptance_receipt RELEASE_0100_PUBLISHED_RECEIPT:
   evidence_revision f0e3d7110171686c085d5de0b595057fc803dff8
   verifier codex
   occurred_at 2026-08-18T06:52:52Z
+
+work_event WE-80b46186856f7e4705bf8cbc012044c0e1fb41fad48248645f45c8d678080503:
+  model 1
+  task RELEASE_0100_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-18T15:59:32+09:00
+  planned_value 3p
+
+work_event RELEASE_0100_ACCEPTANCE_FINISHED:
+  model 1
+  task RELEASE_0100_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-21T20:42:52+09:00
+
+milestone_criterion_set RELEASE_0100_ACCEPTANCE_R1:
+  milestone RELEASE_0100_ACCEPTED
+  revision R1
+  commitment sha256:22071d0a8a41277f4adb5ac5bb94e04663b4d8fbfad417218fabfcc2cd30b22a
+  criterion RELEASE_ACCEPTED required artifact "Accepted durable version 0.10.0 release"
+
+milestone_acceptance_receipt RELEASE_0100_ACCEPTANCE_RECEIPT:
+  model 1
+  set RELEASE_0100_ACCEPTANCE_R1
+  set_commitment sha256:22071d0a8a41277f4adb5ac5bb94e04663b4d8fbfad417218fabfcc2cd30b22a
+  criterion RELEASE_ACCEPTED
+  criterion_commitment sha256:4c8d90c84f81a943a11be0d71adffdbbe0c09dc11f3c9a746208e511a0a813a5
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-release-acceptance.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-21T11:42:52Z

@@ -3673,7 +3673,7 @@ Before implementation, separate the specifications in the following order.
       [`historical-vsix-acceptance.md`](process/historical-vsix-acceptance.md).
     - [x] Complete cross-surface no-write acceptance. Three-way ancestry still
       requires a separately accepted `SCM-001` model and later workstream.
-24. [ ] Release the accepted temporal scheduling boundary as suffix-free beta
+24. [x] Release the accepted temporal scheduling boundary as suffix-free beta
     `0.10.0` under [`plans/release-0.10.0.pert`](../plans/release-0.10.0.pert).
     - [x] Select Grammar 8, CLI Contract 9, 56 commands, 23 active root
       schemas, 129 root and Node exports, 45 Core exports, and unchanged
@@ -3684,17 +3684,17 @@ Before implementation, separate the specifications in the following order.
     - [x] Keep private LSP, VSIX, and MCP workspaces outside the npm tarball;
       keep public VSIX publication, npm `latest`, plan advance, and Issue
       mutation outside this release.
-    - [ ] Verify the completed parent and detail temporal acceptance records
+    - [x] Verify the completed parent and detail temporal acceptance records
       as immutable release inputs.
-    - [ ] Align every version-bearing source and documentation surface and
+    - [x] Align every version-bearing source and documentation surface and
       pass the complete Node.js 22 and installed-package gates.
-    - [ ] Accept one clean committed source and one immutable tarball after
+    - [x] Accept one clean committed source and one immutable tarball after
       availability and authenticated-route preflight.
-    - [ ] Publish only after separate authorization of that exact candidate;
+    - [x] Publish only after separate authorization of that exact candidate;
       push and verify the release commit and annotated tag, require Node.js 22
       and 24 CI, publish one GitHub prerelease and the identical tarball once
       to npm `beta`, and leave `latest` unchanged.
-    - [ ] Independently verify durable public identity, installed Contract 9
+    - [x] Independently verify durable public identity, installed Contract 9
       behavior, compatibility, and the exact `0.9.4` rollback pin.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
