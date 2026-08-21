@@ -87,7 +87,7 @@ test("current guidance and historical compatibility labels preserve their bounda
     /made `beta=latest=0\.7\.1`/,
   );
   assert.match(readme, /package=perttool@0\.9\.4/);
-  assert.match(readme, /baseline `latest=beta=0\.10\.3` with no `alpha`/);
+  assert.match(readme, /current repository source identifies `0\.10\.5`/);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
   assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/);
   assert.match(readme, /Version `0\.9\.2` is the durably accepted compatible Contract 8 emergency patch/);

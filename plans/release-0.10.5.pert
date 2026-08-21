@@ -1,0 +1,56 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0105:
+  version 6
+  title "perttool 0.10.5 assurance recovery patch release"
+  description "Release the accepted Issue 23 correction as suffix-free 0.10.5 while preserving Grammar 8, CLI Contract 9, public identities, atomic initial assurance enablement, and authority boundaries. npm latest, Issue mutation, public VSIX publication, plan advance, and unrelated work remain separate."
+  as_of 2026-08-21
+  duration_unit point
+  finish RELEASE_0105_ACCEPTED
+
+milestone RELEASE_0105_STARTED:
+  title "Version 0.10.5 release started"
+  state reached
+
+milestone RELEASE_0105_PREPARED:
+  title "Version 0.10.5 source and candidate prepared"
+  state reached
+
+milestone RELEASE_0105_PUBLISHED:
+  title "Version 0.10.5 published"
+
+milestone RELEASE_0105_ACCEPTED:
+  title "Version 0.10.5 accepted"
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  capacity 1
+
+task RELEASE_0105_PREPARATION RELEASE_0105_STARTED -> RELEASE_0105_PREPARED:
+  title "Prepare and freeze version 0.10.5"
+  description "Align version-bearing surfaces, pass complete local and installed gates, prove external identities unused, and retain one immutable candidate."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #23"
+
+task RELEASE_0105_PUBLISH RELEASE_0105_PREPARED -> RELEASE_0105_PUBLISHED:
+  title "Publish version 0.10.5"
+  description "Push the exact commit and tag, require CI, create the GitHub prerelease, and publish the identical tarball once to npm beta."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #23"
+
+task RELEASE_0105_ACCEPTANCE RELEASE_0105_PUBLISHED -> RELEASE_0105_ACCEPTED:
+  title "Accept version 0.10.5"
+  description "Read back Git, CI, GitHub, npm, artifact, exact and beta installations, Issue 23 behavior, and rollback without mutating the Issue."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #23"

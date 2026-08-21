@@ -54,7 +54,7 @@ test("PDC-018 retains one evaluator across the active public boundary", async ()
   assert.equal(finalCase.expected.commands, 53);
   assert.equal(COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, finalCase.expected.root_schemas);
-  assert.equal(await read("package.json").then((text) => JSON.parse(text).version), "0.10.4");
+  assert.equal(await read("package.json").then((text) => JSON.parse(text).version), "0.10.5");
   const ids = fixture.cases.map((entry) => entry.id);
   const seen = new Set();
   for (const entry of fixture.cases) {

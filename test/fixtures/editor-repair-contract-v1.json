@@ -154,7 +154,7 @@
     "PTEDM-110": "editor_candidate"
   },
   "active_baseline": {
-    "tool_version": "0.10.4",
+    "tool_version": "0.10.5",
     "grammar_version": 7,
     "cli_contract_version": 8,
     "command_count": 53,

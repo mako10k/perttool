@@ -4,6 +4,18 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.5] - 2026-08-21
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #23.
+
+### Fixed
+
+- Make the emitted `replan_and_reseal` action executable for a newly added
+  unsealed task by allowing selected reseal to establish its first accepted
+  basis in an already enabled assurance model.
+- Keep initial model enablement atomic, preserve unselected seals and outcomes,
+  and align CLI Help and Guide lifecycle descriptions.
+
 ## [0.10.4] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #6.

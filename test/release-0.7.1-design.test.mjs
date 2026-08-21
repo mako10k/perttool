@@ -166,10 +166,10 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.10.4");
-  assert.equal(lockfile.version, "0.10.4");
-  assert.equal(lockfile.packages[""].version, "0.10.4");
-  assert.match(versionSource, /TOOL_VERSION = "0\.10\.4"/);
+  assert.equal(manifest.version, "0.10.5");
+  assert.equal(lockfile.version, "0.10.5");
+  assert.equal(lockfile.packages[""].version, "0.10.5");
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/);
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.equal(COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, 23);
