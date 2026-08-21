@@ -17,9 +17,11 @@ milestone RELEASE_0104_PREPARED:
 
 milestone RELEASE_0104_PUBLISHED:
   title "Version 0.10.4 published"
+  state reached
 
 milestone RELEASE_0104_ACCEPTED:
   title "Version 0.10.4 accepted"
+  state reached
 
 resource RELEASE_ENGINEERS:
   title "Release engineering capacity"
@@ -39,7 +41,7 @@ task RELEASE_0104_PUBLISH RELEASE_0104_PREPARED -> RELEASE_0104_PUBLISHED:
   title "Publish version 0.10.4"
   description "Push the exact commit and tag, require CI, create the GitHub prerelease, and publish the identical tarball once to npm beta."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -49,7 +51,7 @@ task RELEASE_0104_ACCEPTANCE RELEASE_0104_PUBLISHED -> RELEASE_0104_ACCEPTED:
   title "Accept and close version 0.10.4"
   description "Read back Git, CI, GitHub, npm, artifact, installation, Issue #6 behavior, rollback, and close Issue #6 with evidence."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
