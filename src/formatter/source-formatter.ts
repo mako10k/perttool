@@ -200,10 +200,10 @@ function isVelocityValue(value: unknown): value is VelocityValue {
     typeof value === "object" &&
     value !== null &&
     "points" in value &&
-    isDurationValue(value.points) &&
+    isExactDurationValue(value.points) &&
     value.points.suffix === "p" &&
     "period" in value &&
-    isDurationValue(value.period) &&
+    isExactDurationValue(value.period) &&
     (value.period.suffix === "d" || value.period.suffix === "h")
   );
 }

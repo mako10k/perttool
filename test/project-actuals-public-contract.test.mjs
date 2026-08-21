@@ -177,7 +177,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     observation.observation.candidates.find(
       ({ measure }) => measure === "elapsed_hour_throughput",
     ).adoptable_velocity_token,
-    "0.5p/1h",
+    "1p/2h",
   );
   assert.equal(
     cliJson(["project", "show", pathname]).project.velocity,

@@ -281,6 +281,30 @@ test("active-date observation uses evidenced dates and fails closed on offset or
   );
 });
 
+test("Issue 7 emits a canonical exact token for non-terminating elapsed throughput", () => {
+  const result = observeTargetProjectVelocity(
+    history({
+      tasks: [task({
+        id: "BUILD",
+        start: "2026-08-07T11:23:39+09:00",
+        finish: "2026-08-07T11:37:26+09:00",
+        points: [2, 1],
+      })],
+    }),
+    {
+      selectedTaskIds: ["BUILD"],
+      evidence: "declared",
+    },
+  );
+  const elapsed = candidate(result, "elapsed_hour_throughput");
+  assert.deepEqual(elapsed.rate, {
+    numerator: "7200",
+    denominator: "827",
+    unit: "point_per_hour",
+  });
+  assert.equal(elapsed.adoptableVelocityToken, "7200p/827h");
+});
+
 test("finish-only samples contribute only explicit effort with snapshot qualification", () => {
   const result = observeTargetProjectVelocity(
     history({

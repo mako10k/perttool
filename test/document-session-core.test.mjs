@@ -590,7 +590,7 @@ test("current Core catalog and runtime closure remain portable and additive", as
   assert.equal(packageRoot.createNodeHost, nodeApi.createNodeHost);
 
   const closure = await runtimeClosure("dist/core/index.js");
-  assert.equal(closure.modules.length, cases.core.runtime_module_count);
+  assert.equal(closure.modules.length, cases.core.runtime_module_count + 1);
   assert.deepEqual(closure.externalSpecifiers, []);
   for (const source of closure.modules) {
     assert.equal(

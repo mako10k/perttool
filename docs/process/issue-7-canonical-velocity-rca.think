@@ -1,0 +1,63 @@
+framework DecisionAudit
+
+domain CanonicalVelocityToken:
+  description "Root-cause analysis for GitHub Issue #7"
+
+problem P1:
+  "Why can project observe-velocity emit a non-null adoptable_velocity_token that project set --velocity rejects?"
+
+step S1:
+  evidence EV1:
+    "Issue #7 reports the exact observed rate 7200/827 point_per_hour with adoptable token 7200/827p/1h, followed by PTDSL-007 when that token is supplied unchanged to project set"
+    resource:
+      url "https://github.com/mako10k/perttool/issues/7"
+      label "Public reproduction and expected round trip"
+
+step S2:
+  evidence EV2:
+    "velocityToken serializes the rate numerator through the generic exact Duration serializer, which emits a fraction token when the Rational has a non-terminating decimal expansion"
+    resource:
+      file "src/history/velocity-observation.ts"
+      label "Observation token generator"
+
+step S3:
+  evidence EV3:
+    "parseVelocity accepts only integer or decimal point and period components, so the generic fraction point token is outside the active Velocity grammar"
+    resource:
+      file "src/parser/document-parser.ts"
+      label "Velocity parser"
+
+step S4:
+  evidence EV4:
+    "The exact Duration parser and serializer already duplicate numeric recognition and normalization across parser and model layers, while Velocity has no shared parse and canonical display utility"
+    resource:
+      file "src/model/exact-duration-source.ts"
+      label "Existing exact numeric utility"
+
+step S5:
+  premise PR1:
+    "A parser may accept more exact spellings than the formatter emits, but every emitted canonical token must parse to the identical reduced Rational rate"
+
+step S6:
+  decision D1 based_on P1, EV1, EV2, EV3:
+    "The root cause is a producer-consumer grammar split: observation uses generic fraction Duration display while Velocity parsing and project mutation use a narrower independent recognizer"
+
+step S7:
+  decision D2 based_on EV4, PR1, D1:
+    "Introduce shared exact scalar parsing plus a Velocity source utility that parses compatible integer, decimal, and fraction components, computes one reduced rate, and emits one unambiguous canonical integer-points over integer-period token"
+
+step S8:
+  decision D3 based_on PR1, D2:
+    "Canonical display maps a positive reduced rate n/d point_per_hour or point_per_day to np/dh or np/dd, so 7200/827p/1h, 0.5p/1h, and 1p/2h share the canonical 1p/2h form when semantically equal"
+
+step S9:
+  decision D4 based_on D2, D3:
+    "Source-preserving mutations retain unrelated valid source bytes; explicit formatting and newly generated adoptable tokens use canonical display, and declared velocity is never adopted automatically"
+
+step S10:
+  decision D5 based_on D2, D3, D4:
+    "Acceptance requires parse-canonicalize-parse Rational identity, hour and day coverage, zero and malformed rejection, the 827-second public CLI replay, project set acceptance, and unchanged Grammar 8, CLI Contract 9, schema, command, facade, authority, and persistence identities"
+
+step S11:
+  pending PD1:
+    "Release selection, publication, Issue mutation, plan advance, and unrelated work remain separate boundaries"

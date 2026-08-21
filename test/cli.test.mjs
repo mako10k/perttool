@@ -1378,7 +1378,7 @@ test("project show and set expose all metadata without direct source editing", (
 
   const preview = run([
     "project", "set", "-", "--id", "CLI_PROJECT", "--title", "CLI project",
-    "--as-of", "2026-07-23", "--velocity", "12p/5d",
+    "--as-of", "2026-07-23", "--velocity", "24/2p/10/2d",
     "--critical-epsilon", "1p", "--target-duration", "25p",
     "--clear", "description", "--format=json",
   ], { input: readFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), "utf8") });
@@ -1389,7 +1389,7 @@ test("project show and set expose all metadata without direct source editing", (
   assert.equal(previewJson.source, "<stdin>");
   assert.equal(previewJson.write.mode, "preview");
   assert.match(previewJson.updated_text, /^project CLI_PROJECT:/);
-  assert.match(previewJson.updated_text, /  velocity 12p\/5d/);
+  assert.match(previewJson.updated_text, /  velocity 24\/2p\/10\/2d/);
   assert.doesNotMatch(previewJson.updated_text, /project description/);
 
   const conflict = run([

@@ -149,7 +149,23 @@ test("declared velocity observes an uncommitted eventful finish while Git eviden
     denominator: "2",
     unit: "point_per_hour",
   });
+  assert.equal(elapsed.adoptable_velocity_token, "1p/2h");
   assert.equal(elapsed.baseline_sources[0].commit_id, null);
+
+  const adoptionPreview = runCli(
+    repository,
+    "project",
+    "set",
+    plan,
+    "--velocity",
+    elapsed.adoptable_velocity_token,
+    "--format=json",
+  );
+  assert.equal(adoptionPreview.status, 0, adoptionPreview.stderr);
+  assert.match(
+    JSON.parse(adoptionPreview.stdout).updated_text,
+    /  velocity 1p\/2h/u,
+  );
 
   const recordedCommand = runCli(
     repository,

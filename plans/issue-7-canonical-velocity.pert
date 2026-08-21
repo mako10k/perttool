@@ -1,0 +1,64 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ACT_004:
+  version 6
+  title "Canonical adoptable velocity tokens"
+  description "Correct Issue #7 by sharing exact numeric parsing, accepting compatible Velocity spellings, emitting one canonical exact token, and proving observe-to-set round-trip identity without automatic adoption. Release selection, remote writes, publication, Issue mutation, and plan advance remain separate."
+  as_of 2026-08-21
+  duration_unit point
+  finish ACT_004_ACCEPTED
+
+milestone ACT_004_STARTED:
+  title "Issue #7 correction started"
+  state reached
+
+milestone ACT_004_CONTRACT_READY:
+  title "Canonical Velocity contract ready"
+  state reached
+
+milestone ACT_004_IMPLEMENTED:
+  title "Canonical Velocity implementation ready"
+  state reached
+
+milestone ACT_004_ACCEPTED:
+  title "Issue #7 correction accepted"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Review capacity"
+  capacity 1
+
+task ACT_004_CONTRACT ACT_004_STARTED -> ACT_004_CONTRACT_READY:
+  title "Fix the exact parse and display contract"
+  description "Accept the llmthink RCA, shared exact scalar and Velocity source utility boundary, broad compatible parser, unique canonical display, source preservation, and closed round-trip cases."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "Issue #7"
+
+task ACT_004_IMPLEMENTATION ACT_004_CONTRACT_READY -> ACT_004_IMPLEMENTED:
+  title "Implement canonical Velocity source conversion"
+  description "Use shared exact parsing in the document parser and observation generator, retain exact Rational meaning, and add focused utility, parser, mutation, and real CLI regressions."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+  source "Issue #7"
+
+task ACT_004_ACCEPTANCE ACT_004_IMPLEMENTED -> ACT_004_ACCEPTED:
+  title "Accept the complete Issue #7 correction"
+  description "Run focused and complete Node.js 22 gates, installed-package replay, public identity checks, documentation checks, and record remaining release and remote boundaries."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "Issue #7"

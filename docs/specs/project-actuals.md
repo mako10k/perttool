@@ -290,8 +290,10 @@ Observation returns `observed_velocity` candidates with:
 - unavailability causes.
 
 It does not mutate `project.velocity`. A declared elapsed-hour or active-date
-candidate includes a reduced exact `adoptable_velocity_token` in existing
-`Pp/Th` or `Pp/Td` syntax. An effort-productivity or Git-recorded candidate
+candidate includes a reduced exact `adoptable_velocity_token` in canonical
+`np/dh` or `np/dd` syntax, where `n/d` is the positive reduced rate. The token
+therefore round-trips through `project set --velocity` without rounding or
+semantic drift. An effort-productivity or Git-recorded candidate
 has a null token. A later caller may use an explicit preview-first
 `project set` request to adopt a selected compatible value.
 Automatic adoption, silent rolling-window selection, confidence claims, and

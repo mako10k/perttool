@@ -230,7 +230,7 @@ test("TUE-020 malformed Grammar 3 fractions fail as PTDSL-007", () => {
   }
 });
 
-test("Grammar 3 keeps velocity Decimal-only", () => {
+test("Grammar 3 accepts exact fraction velocity components", () => {
   const text = sourceWithDuration("1/3d").replace(
     "  duration_unit day\n",
     "  duration_unit day\n  velocity 1/3p/1d\n",
@@ -239,18 +239,12 @@ test("Grammar 3 keeps velocity Decimal-only", () => {
     text,
     TARGET_GRAMMAR_3_CAPABILITY,
   );
-  assert.deepEqual(
-    parsed.diagnostics.map(({ code, entityId, helpTopic }) => ({
-      code,
-      entityId,
-      helpTopic,
-    })),
-    [{
-      code: "PTDSL-007",
-      entityId: "RATIONAL",
-      helpTopic: "syntax.velocity",
-    }],
-  );
+  assert.deepEqual(parsed.diagnostics, []);
+  const velocity = parsed.document?.declarations[0]?.fields.find(
+    ({ name }) => name === "velocity",
+  )?.value;
+  assert.equal(velocity?.points.numerator, 1n);
+  assert.equal(velocity?.points.denominator, 3n);
 });
 
 test("Grammar 3 applies existing suffix, positivity, and PERT order rules", () => {

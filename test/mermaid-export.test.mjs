@@ -37,7 +37,7 @@ test("exportMermaid reproduces the normative profile byte for byte", async () =>
 test("profile metadata preserves PERT tokens, velocity, and complete defaults", async () => {
   const result = exportMermaid(await source("docs/examples/point-velocity.pert"));
   assert.equal(result.ok, true);
-  assert.match(result.artifact, /"velocity":"20p\/10d"/);
+  assert.match(result.artifact, /"velocity":"2p\/1d"/);
   assert.match(
     result.artifact,
     /"estimate":\{"kind":"pert","optimistic":"3p","most_likely":"5p","pessimistic":"7p"\}/,

@@ -12,8 +12,10 @@ import type {
   RequirementValue,
   VelocityValue,
 } from "../model/syntax.js";
+import { rationalFromDuration } from "../model/rational.js";
+import { serializeCanonicalVelocitySourceToken } from "../model/exact-velocity-source.js";
 import { fieldNamed } from "../model/syntax.js";
-import { formatDecimal } from "../model/rational.js";
+import { divide, formatDecimal } from "../model/rational.js";
 import { durationSuffix } from "../model/units.js";
 
 export type MermaidProfile = "perttool" | "plain";
@@ -88,7 +90,16 @@ function canonicalDuration(value: DurationValue): string {
 }
 
 function canonicalVelocity(value: VelocityValue): string {
-  return `${canonicalDuration(value.points)}/${canonicalDuration(value.period)}`;
+  const rate = divide(
+    rationalFromDuration(value.points),
+    rationalFromDuration(value.period),
+  );
+  const token = serializeCanonicalVelocitySourceToken(
+    rate,
+    value.period.suffix === "d" ? "day" : "hour",
+  );
+  if (token === null) throw new Error("validated velocity must be positive");
+  return token;
 }
 
 function durationField(

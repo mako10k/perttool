@@ -5,9 +5,8 @@ import {
   compareStableStrings,
   type Diagnostic,
 } from "../model/diagnostics.js";
-import { serializeExactDurationSource } from "../model/exact-duration-source.js";
+import { serializeCanonicalVelocitySourceToken } from "../model/exact-velocity-source.js";
 import {
-  ONE,
   ZERO,
   add,
   compare,
@@ -412,10 +411,7 @@ function velocityToken(
   rate: Rational,
   unit: "hour" | "day",
 ): string | null {
-  if (rate.numerator <= 0n) return null;
-  return `${
-    serializeExactDurationSource(rate, "point").token
-  }/${serializeExactDurationSource(ONE, unit).token}`;
+  return serializeCanonicalVelocitySourceToken(rate, unit);
 }
 
 function candidate(parts: CandidateParts): VelocityCandidate {

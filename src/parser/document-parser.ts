@@ -37,6 +37,8 @@ import type {
   TriviaNode,
   VelocityValue,
 } from "../model/syntax.js";
+import { parseExactDurationSourceToken } from "../model/exact-duration-source.js";
+import { parseExactVelocitySourceToken } from "../model/exact-velocity-source.js";
 
 interface SourceLine {
   readonly text: string;
@@ -350,34 +352,13 @@ function greatestCommonDivisor(left: bigint, right: bigint): bigint {
 function parseExactDuration(raw: string): ExactDurationValue | undefined {
   const decimal = parseDuration(raw);
   if (decimal !== undefined) return decimal;
-  const match = /^([0-9]+)\/([0-9]+)([dhp])$/.exec(raw);
-  if (match === null) return undefined;
-  const numeratorText = match[1];
-  const denominatorText = match[2];
-  const suffix = match[3];
-  if (
-    numeratorText === undefined ||
-    denominatorText === undefined ||
-    (suffix !== "d" && suffix !== "h" && suffix !== "p")
-  ) {
-    return undefined;
-  }
-  const sourceNumerator = BigInt(numeratorText);
-  const sourceDenominator = BigInt(denominatorText);
-  if (sourceDenominator === 0n) return undefined;
-  if (sourceNumerator === 0n) {
-    return {
-      text: raw,
-      numerator: 0n,
-      denominator: 1n,
-      suffix,
-    };
-  }
-  const divisor = greatestCommonDivisor(sourceNumerator, sourceDenominator);
+  const parsed = parseExactDurationSourceToken(raw);
+  if (parsed === null) return undefined;
+  const suffix = parsed.unit === "day" ? "d" : parsed.unit === "hour" ? "h" : "p";
   return {
     text: raw,
-    numerator: sourceNumerator / divisor,
-    denominator: sourceDenominator / divisor,
+    numerator: parsed.value.numerator,
+    denominator: parsed.value.denominator,
     suffix,
   };
 }
@@ -422,17 +403,18 @@ function parseExactPersonHours(
 }
 
 function parseVelocity(raw: string): VelocityValue | undefined {
-  const match = /^([0-9]+(?:\.[0-9]+)?p)\/([0-9]+(?:\.[0-9]+)?[dh])$/.exec(raw);
-  if (match === null) return undefined;
-  const points = parseDuration(match[1]!);
-  const period = parseDuration(match[2]!);
+  const parsed = parseExactVelocitySourceToken(raw);
+  if (parsed === null) return undefined;
+  const separator = raw.indexOf("p/") + 1;
+  const points = parseExactDuration(raw.slice(0, separator));
+  const period = parseExactDuration(raw.slice(separator + 1));
   if (points?.suffix !== "p" || (period?.suffix !== "d" && period?.suffix !== "h")) {
     return undefined;
   }
   return {
     text: raw,
-    points: points as DurationValue & { readonly suffix: "p" },
-    period: period as DurationValue & { readonly suffix: "d" | "h" },
+    points: points as ExactDurationValue & { readonly suffix: "p" },
+    period: period as ExactDurationValue & { readonly suffix: "d" | "h" },
   };
 }
 

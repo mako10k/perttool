@@ -28,6 +28,25 @@ function semanticValue(value) {
   if (typeof value === "bigint") return value.toString();
   if (Array.isArray(value)) return value.map(semanticValue);
   if (typeof value !== "object" || value === null) return value;
+  if (value.points !== undefined && value.period !== undefined) {
+    const exact = (component) => "digits" in component
+      ? [component.digits, 10n ** BigInt(component.scale)]
+      : [component.numerator, component.denominator];
+    const [pointNumerator, pointDenominator] = exact(value.points);
+    const [periodNumerator, periodDenominator] = exact(value.period);
+    let numerator = pointNumerator * periodDenominator;
+    let denominator = pointDenominator * periodNumerator;
+    let left = numerator;
+    let right = denominator;
+    while (right !== 0n) [left, right] = [right, left % right];
+    numerator /= left;
+    denominator /= left;
+    return {
+      rateNumerator: numerator.toString(),
+      rateDenominator: denominator.toString(),
+      periodSuffix: value.period.suffix,
+    };
+  }
   if (
     typeof value.digits === "bigint" &&
     typeof value.scale === "number" &&
@@ -77,7 +96,7 @@ test("source formatter normalizes lexical forms while preserving source structur
     "",
     "      final",
     "  duration_unit day",
-    "  velocity 005.00p/002.0d",
+    "  velocity 10/2p/4/2d",
     "  finish DONE",
     "  critical_epsilon 00.5000d",
     "",

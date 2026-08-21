@@ -244,11 +244,22 @@ DurationSuffix = "d" | "h" | "p" ;
 ### 7.5 Velocity
 
 ```ebnf
-Velocity = Decimal, "p", "/", Decimal, ( "d" | "h" ) ;
+Velocity = ExactQuantity, "p", "/", ExactQuantity, ( "d" | "h" ) ;
+ExactQuantity = Decimal | ExactFraction ;
+ExactFraction = Integer, "/", Integer ;
 ```
 
-- Place exactly one `/` between the point quantity and duration quantity, with no spaces.
-- Field validation requires both Decimals to be greater than zero.
+- The `p/` boundary separates the point quantity from the period quantity, with
+  no spaces. Each quantity may independently use an integer, a finite Decimal,
+  or an unsigned exact fraction with a non-zero denominator.
+- Field validation requires both exact quantities to be greater than zero.
+- Reading accepts those equivalent exact forms in every supported grammar
+  version. Source-preserving operations retain an existing valid token.
+- Canonical generated projections reduce the exact rate to `n/d` and emit `np/dd` or
+  `np/dh`, where `n` and `d` are positive coprime integers. For example,
+  `7200/827p/1h` and `14400/1654p/1h` both display as `7200p/827h`.
+  Source formatting canonicalizes each exact component but does not otherwise
+  rewrite an existing valid point/period decomposition.
 - With `duration_unit point`, this is a required field, and the duration suffix determines the forecast unit.
 - With `duration_unit day|hour`, this is optional, and the duration suffix must match the project unit.
 - Velocity is a project-wide constant; per-task, per-resource, and per-period overrides are not included in grammar version 1.
@@ -1009,8 +1020,9 @@ rejects the added fields as `PTDSL-005`.
 Unit migration version 1 supports versions 1 and 2 because the version 2
 delta adds no base-unit-bearing field. It preserves `as_of`, `deadline`, and
 `not_before` tokens and does not change the project grammar version. Its
-finite-Decimal-only behavior remains the accepted historical version 1
-contract.
+Duration fields retain the accepted historical version 1 finite-Decimal
+boundary. The compatible exact Velocity reader in Section 7.5 is independent
+of that Duration-field boundary.
 
 ### 20.2 Grammar version 3 exact Duration delta
 
@@ -1041,8 +1053,8 @@ Rules:
   source-preserving operations.
 - The existing suffix, project-unit, positivity, and PERT estimate-order rules
   apply to the normalized Rational without change.
-- Velocity remains the Decimal-only syntax in Section 7.5. Fraction Duration
-  does not introduce an ambiguous fraction form for velocity.
+- Velocity uses the independently delimited exact syntax in Section 7.5. Its
+  `p/` boundary keeps fractional point and period components unambiguous.
 
 Canonical Duration serialization is deterministic:
 

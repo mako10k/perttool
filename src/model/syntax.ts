@@ -53,8 +53,8 @@ export type WorkEventKind = "start" | "suspend" | "resume" | "finish";
 
 export interface VelocityValue {
   readonly text: string;
-  readonly points: DurationValue & { readonly suffix: "p" };
-  readonly period: DurationValue & { readonly suffix: "d" | "h" };
+  readonly points: ExactDurationValue & { readonly suffix: "p" };
+  readonly period: ExactDurationValue & { readonly suffix: "d" | "h" };
 }
 
 export interface RequirementValue {

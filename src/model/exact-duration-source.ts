@@ -10,6 +10,13 @@ export interface ExactDurationSourceToken {
   readonly token: string;
 }
 
+export interface ParsedExactDurationSourceToken {
+  readonly classification: ExactDurationSourceClassification;
+  readonly token: string;
+  readonly value: Rational;
+  readonly unit: DurationUnit;
+}
+
 const exactDurationTokenPattern =
   /^([0-9]+)(?:\.([0-9]+)|\/([0-9]+))?([dhp])$/;
 
@@ -71,6 +78,15 @@ export function serializeExactDurationSource(
 export function canonicalizeExactDurationSourceToken(
   source: string,
 ): ExactDurationSourceToken | null {
+  const parsed = parseExactDurationSourceToken(source);
+  return parsed === null
+    ? null
+    : serializeExactDurationSource(parsed.value, parsed.unit);
+}
+
+export function parseExactDurationSourceToken(
+  source: string,
+): ParsedExactDurationSourceToken | null {
   const match = exactDurationTokenPattern.exec(source);
   if (match === null) return null;
   const whole = match[1];
@@ -88,17 +104,21 @@ export function canonicalizeExactDurationSourceToken(
   if (fractionDenominator !== undefined) {
     const denominator = BigInt(fractionDenominator);
     if (denominator === 0n) return null;
-    return serializeExactDurationSource(
-      rational(BigInt(whole), denominator),
+    return {
+      classification: "fraction",
+      token: source,
+      value: rational(BigInt(whole), denominator),
       unit,
-    );
+    };
   }
   const fraction = decimalFraction ?? "";
-  return serializeExactDurationSource(
-    rational(
+  return {
+    classification: "decimal",
+    token: source,
+    value: rational(
       BigInt(`${whole}${fraction}`),
       10n ** BigInt(fraction.length),
     ),
     unit,
-  );
+  };
 }

@@ -826,21 +826,24 @@ and moving a dist-tag remain separately authorized operations.
 
 Priority: P1
 
-Status: Open bug (2026-08-14); [Issue
-#7](https://github.com/mako10k/perttool/issues/7); correction not selected
+Status: Local correction accepted (2026-08-21); [Issue
+#7](https://github.com/mako10k/perttool/issues/7); release and Issue mutation
+remain separate
 
 The observation reducer can serialize an exact rational Point/hour rate such
 as `7200/827p/1h`, while the active Velocity parser accepts only integer or
 decimal Point and period components. The non-null token therefore claims an
 adoptable value that `project set --velocity` rejects before writing.
 
+The selected correction uses one shared exact Velocity utility. Reading accepts
+integer, finite-Decimal, and fraction components on both sides of the `p/`
+boundary. Display reduces the rate and emits canonical `np/dh` or `np/dd`.
 Acceptance requires every non-null `adoptable_velocity_token` to round-trip
-through the exact active Velocity grammar and `project set` without rounding
-or semantic drift. An exact rate that cannot be represented must retain its
-machine-readable rational rate but expose no misleading adoptable token and a
-closed, explicit unavailable cause. Grammar expansion, if selected instead,
-requires its own versioned compatibility decision. Declared velocity must not
-be changed automatically.
+through the active Velocity reader and `project set` without rounding or
+semantic drift. Declared velocity must not be changed automatically.
+
+The accepted local evidence is recorded in
+[`issue-7-canonical-velocity-acceptance.md`](process/issue-7-canonical-velocity-acceptance.md).
 
 ### ACT-005: Resolve ambiguous Git rename inference explicitly
 
