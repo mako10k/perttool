@@ -1,12 +1,26 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project RELEASE_0104:
-  version 6
+  version 7
   title "perttool 0.10.4 explicit history provenance patch release"
   description "Release the accepted Issue #6 correction as suffix-free 0.10.4 while preserving Grammar 8, CLI Contract 9, public identities, automatic fail-closed behavior, and Git authority boundaries. npm latest, public VSIX publication, plan advance, SCM-002, and unrelated work remain separate."
   as_of 2026-08-21
   duration_unit point
   finish RELEASE_0104_ACCEPTED
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:24d0aea0bf0b8e6448dbb9b9bb849acf42d96060:index:5652dfa9145584d50780c9dabdace1e8c85d9782
+  path "plans/release-0.10.4.pert"
+  object_format sha1
+  head 24d0aea0bf0b8e6448dbb9b9bb849acf42d96060
+  blob 5652dfa9145584d50780c9dabdace1e8c85d9782
+  source_digest sha256:ac9e6fee7db4b3ac9ce6d600e0b7804449494300eb664eb49df567f54b06d8bc
+  candidate_digest sha256:f2b480d93ec02d6bac56201be12eb92f44789bf051844efd5b1889c25853b1be
+  grandfathered RELEASE_0104_ACCEPTED
+  grandfathered RELEASE_0104_PREPARED
+  grandfathered RELEASE_0104_PUBLISHED
+  grandfathered RELEASE_0104_STARTED
 milestone RELEASE_0104_STARTED:
   title "Version 0.10.4 release started"
   state reached
