@@ -12,32 +12,29 @@ import * as nodeFacade from "../dist/node/index.js";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative) => readFile(path.join(root, relative), "utf8");
 
-test("0.10.2 retains the compatible Issue 20 patch record and public identities", async () => {
+test("0.10.3 selects the compatible Issue 7 patch and retains public identities", async () => {
   const [manifestText, lockText, lspText, mcpText, versionSource, protocol,
-    changelog, readme, procedure, selfReview, plan, acceptance] = await Promise.all([
+    changelog, readme, procedure, plan, acceptance] = await Promise.all([
     read("package.json"), read("package-lock.json"), read("adapters/lsp/package.json"),
     read("adapters/mcp/package.json"), read("src/version.ts"),
     read("adapters/mcp/src/protocol.ts"), read("CHANGELOG.md"), read("README.md"),
-    read("docs/process/0.10.2-release.md"), read("docs/process/0.10.2-self-review.md"),
-    read("plans/release-0.10.2.pert"), read("docs/process/issue-20-retained-receipt-acceptance.md"),
+    read("docs/process/0.10.3-release.md"), read("plans/release-0.10.3.pert"),
+    read("docs/process/issue-7-canonical-velocity-acceptance.md"),
   ]);
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  const lsp = JSON.parse(lspText);
-  const mcp = JSON.parse(mcpText);
   assert.equal(manifest.version, "0.10.3");
   assert.equal(lock.version, "0.10.3");
   assert.equal(lock.packages[""].version, "0.10.3");
-  assert.equal(lsp.peerDependencies.perttool, "0.10.3");
-  assert.equal(mcp.peerDependencies.perttool, "0.10.3");
+  assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.10.3");
+  assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.10.3");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.3"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.10\.3"/u);
-  assert.match(changelog, /^## \[0\.10\.2\] - 2026-08-21$/mu);
-  assert.match(readme, /v0\.10\.2` release procedure/u);
-  assert.match(procedure, /compatible patch after published `0\.10\.1`/u);
-  assert.match(selfReview, /Suffix-free `0\.10\.2` accurately represents/u);
-  assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);
-  assert.match(acceptance, /producer is\s+absent in both snapshots/u);
+  assert.match(changelog, /^## \[0\.10\.3\] - 2026-08-21$/mu);
+  assert.match(readme, /compatible `0\.10\.3`\s+Issue #7 canonical velocity-token patch/u);
+  assert.match(procedure, /compatible patch after published `0\.10\.2`/u);
+  assert.match(plan, /npm latest, public VSIX publication, plan advance/u);
+  assert.match(acceptance, /`7200p\/827h`/u);
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, 23);
   assert.equal(Object.keys(packageRoot).length, 129);

@@ -4,6 +4,17 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-08-21
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #7.
+
+### Fixed
+
+- Emit exact observed velocity rates in reduced canonical `np/dh` or `np/dd`
+  form and accept integer, finite-Decimal, or fraction components on input, so
+  every non-null adoptable token round-trips through `project set --velocity`
+  without rounding or automatic adoption.
+
 ## [0.10.2] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #20.
@@ -566,7 +577,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.2...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.3...HEAD
+[0.10.3]: https://github.com/mako10k/perttool/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/mako10k/perttool/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/mako10k/perttool/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/mako10k/perttool/compare/v0.9.4...v0.10.0
