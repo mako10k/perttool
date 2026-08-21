@@ -89,7 +89,7 @@ task RELEASE_0101_PUBLISH RELEASE_0101_CANDIDATE_ACCEPTED -> RELEASE_0101_PUBLIS
   title "Publish 0.10.1 from the accepted candidate"
   description "Only after exact candidate and external batch authorization, push and verify the release commit and annotated tag, require Node.js 22 and 24 CI, create one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and read back beta while leaving latest unchanged unless separately authorized."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -102,7 +102,7 @@ task RELEASE_0101_ACCEPTANCE RELEASE_0101_PUBLISHED -> RELEASE_0101_ACCEPTED:
   title "Record durable 0.10.1 acceptance"
   description "Independently verify Git, tag, CI, GitHub, npm, byte identity, exact and beta installations, Issue #22 behavior, unchanged public identities and the exact 0.10.0 rollback pin. Issue closure, latest movement, plan advance and unrelated work remain separate."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -110,3 +110,29 @@ task RELEASE_0101_ACCEPTANCE RELEASE_0101_PUBLISHED -> RELEASE_0101_ACCEPTED:
     RELEASE_SURFACE 1
     PACKAGE_SURFACE 1
   source "Issue #22"
+
+work_event RELEASE_0101_PUBLISH_STARTED:
+  model 1
+  task RELEASE_0101_PUBLISH
+  kind start
+  occurred_at 2026-08-20T22:49:00+09:00
+  planned_value 3p
+
+work_event RELEASE_0101_PUBLISH_FINISHED:
+  model 1
+  task RELEASE_0101_PUBLISH
+  kind finish
+  occurred_at 2026-08-20T23:00:05+09:00
+
+work_event RELEASE_0101_ACCEPTANCE_STARTED:
+  model 1
+  task RELEASE_0101_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-21T09:00:00+09:00
+  planned_value 3p
+
+work_event RELEASE_0101_ACCEPTANCE_FINISHED:
+  model 1
+  task RELEASE_0101_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-21T09:10:00+09:00
