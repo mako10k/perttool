@@ -8,30 +8,8 @@ project RELEASE_0104:
   finish RELEASE_0104_ACCEPTED
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:24d0aea0bf0b8e6448dbb9b9bb849acf42d96060:index:5652dfa9145584d50780c9dabdace1e8c85d9782
-  path "plans/release-0.10.4.pert"
-  object_format sha1
-  head 24d0aea0bf0b8e6448dbb9b9bb849acf42d96060
-  blob 5652dfa9145584d50780c9dabdace1e8c85d9782
-  source_digest sha256:ac9e6fee7db4b3ac9ce6d600e0b7804449494300eb664eb49df567f54b06d8bc
-  candidate_digest sha256:f2b480d93ec02d6bac56201be12eb92f44789bf051844efd5b1889c25853b1be
-  grandfathered RELEASE_0104_ACCEPTED
-  grandfathered RELEASE_0104_PREPARED
-  grandfathered RELEASE_0104_PUBLISHED
-  grandfathered RELEASE_0104_STARTED
-milestone RELEASE_0104_STARTED:
-  title "Version 0.10.4 release started"
-  state reached
 
-milestone RELEASE_0104_PREPARED:
-  title "Version 0.10.4 source and candidate prepared"
-  state reached
 
-milestone RELEASE_0104_PUBLISHED:
-  title "Version 0.10.4 published"
-  state reached
 
 milestone RELEASE_0104_ACCEPTED:
   title "Version 0.10.4 accepted"
@@ -40,33 +18,3 @@ milestone RELEASE_0104_ACCEPTED:
 resource RELEASE_ENGINEERS:
   title "Release engineering capacity"
   capacity 1
-
-task RELEASE_0104_PREPARATION RELEASE_0104_STARTED -> RELEASE_0104_PREPARED:
-  title "Prepare and freeze version 0.10.4"
-  description "Align version-bearing surfaces, pass complete local and installed gates, prove external identities unused, and retain one immutable candidate."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    RELEASE_ENGINEERS 1
-  source "Issue #6"
-
-task RELEASE_0104_PUBLISH RELEASE_0104_PREPARED -> RELEASE_0104_PUBLISHED:
-  title "Publish version 0.10.4"
-  description "Push the exact commit and tag, require CI, create the GitHub prerelease, and publish the identical tarball once to npm beta."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    RELEASE_ENGINEERS 1
-  source "Issue #6"
-
-task RELEASE_0104_ACCEPTANCE RELEASE_0104_PUBLISHED -> RELEASE_0104_ACCEPTED:
-  title "Accept and close version 0.10.4"
-  description "Read back Git, CI, GitHub, npm, artifact, installation, Issue #6 behavior, rollback, and close Issue #6 with evidence."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    RELEASE_ENGINEERS 1
-  source "Issue #6"
