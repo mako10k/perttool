@@ -1,240 +1,42 @@
 # perttool
 
-`perttool` is a local CLI for keeping PERT/CPM plans in reviewable text files.
-It validates an Activity-on-Arrow plan, calculates precedence and
-resource-constrained schedules, recommends the next task, and applies
-source-preserving changes through preview-first commands.
+`perttool` is a local command-line tool for keeping PERT/CPM plans in
+reviewable text files. It validates plans, calculates precedence and
+resource-constrained schedules, recommends the next task, and previews every
+change before writing it.
 
-Version `0.6.0` implements Grammar 5 and CLI Contract 6,
-including explicit task work events, lifecycle commands, read-only Git
-history, observed velocity, AnalysisResult v4, and NextResult v5. It adds
-complete Draft 2020-12 artifacts for every active Contract 6 result and the
-public OverrideDecision result, selectable full and outline schema views,
-Git 2.54 UTC compatibility, and scope-bound human-readable confirmation
-guidance. It warns when an owner-confirmation assertion is supplied for a
-governance-not-applicable candidate and when a governed preview already
-carries one. It also protects destructive in-place `dag advance` writes with
-exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
-keeps preview, separate output, and written candidates repository-clean and
-byte-identical. It remains available as the exact Contract 6 compatibility
-pin `perttool@0.6.0`.
-Beta releases may contain breaking CLI or schema changes.
-
-Version `0.7.0` beta atomically activates Grammar 6 and CLI Contract 7
-conditional plan assurance. It exposes 44 commands, 20 root schemas,
-`Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
-Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
-semantic profile 2. Its package and CLI identity is `0.7.0`. At its publication
-boundary, this release does not move npm `latest` from Contract 6 `0.6.0`;
-one separately authorized post-publication operation later made
-`beta=latest=0.7.0`. These Contract 6 and Contract 7 releases require Node.js
-22 or later.
-Version `0.7.1` is a backward-compatible Contract 7 patch that corrects the
-installed Guide, command Help examples, and diagnostic navigation. It retains
-all 44 command paths, 20 root schemas, result and payload identities,
-package-root exports, and authority policies. Its beta publication does not
-move npm `latest`; one separately authorized post-publication operation later
-made `beta=latest=0.7.1`. Version `0.7.0` remains the exact rollback pin.
-The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
-and the first machine-schema Contract 6 artifact remains available by pinning
-`0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
-`0.4.0`, `0.3.0`, and `0.2.0`, respectively. npm has no maintained `alpha`
-dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
-
-Version `0.8.0` adds the public `perttool/core` and `perttool/node` subpaths,
-the read-only `dag history` command, `Perttool.HistoricalGraphResult.v1`, and
-the declaration-identity correction without changing Grammar 6 or CLI
-Contract 7. It exposes 45 commands, 21 root schemas, 122 reference-identical
-root and Node runtime exports, and 45 portable Core runtime exports. Its beta
-publication moved only npm `beta` and left independently managed
-`latest=0.7.1`; one separately authorized post-acceptance operation later made
-`beta=latest=0.8.0`. Use `0.7.1` as the exact rollback pin.
-The repository-only VSIX also adds separately negotiated historical snapshot,
-proved-lineage, and timeline views for trusted local Git workspaces plus
-verified read-only immutable source navigation. Those adapter results are not
-CLI schemas or public package exports, and no public VSIX release is selected.
-The private DAG presentation additionally bundles a deterministic left-to-right
-Dagre layout, one-step historical defaults, bounded zoom/fit/scroll/pan, and a
-separately negotiated exact current-frontier and NextResult v6 start-authority
-focus result. Compact `Mnn`/`Tnn`/`Gnn` graph labels link to original-identity
-details, and exact residual, resource-remaining, and task-time summaries keep
-qualified Point forecasts distinct. Layout never becomes project semantics.
-
-Version `0.8.1` is a backward-compatible Contract 7 patch for `dag advance`.
-It preserves assurance frontier receipts when all terminal work events belong
-to removed tasks, while retaining the `0.8.0` command, schema, package-export,
-and authority boundaries. It remains available by exact pin; use `0.8.0` as
-the prior Contract 7 rollback pin.
-
-Version `0.9.0` is the published Grammar 7 and CLI Contract 8
-milestone-acceptance beta. It exposes 53
-commands, 23 root schemas, 129 root and Node runtime exports,
-`Perttool.CheckResult.v5`,
-`Perttool.AnalysisResult.v6`, `Perttool.NextResult.v7`,
-`Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
-criterion-set replacement, caller-asserted receipts, and acceptance-aware
-canonical advance. Its accepted release commit, annotated tag, GitHub
-prerelease, and npm artifact agree, and npm reports the pre-publication
-baseline `latest=beta=0.10.4` with no `alpha`. Version `0.10.0` is the
-published Grammar 8 and CLI Contract 9 beta. Source is prepared for the
-compatible `0.10.5` Issue #23 assurance-recovery patch. Version
-`0.8.1` remains the
-exact Grammar 6 and CLI Contract 7 rollback pin.
-
-Version `0.9.1` is the durably accepted compatible Contract 8 patch for
-`ACT-003` and GitHub Issue #8. It makes declared velocity observation use the
-exact current operand, including a just-written uncommitted finish, while
-keeping Git-recorded evidence bound to the selected first-parent revision. It
-retains all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core
-exports, result and schema identities, and authority. Release commit, peeled
-tag, GitHub prerelease, npm artifact, and installed regression agree; Issue #8
-is closed.
-
-Version `0.9.2` is the durably accepted compatible Contract 8 emergency patch
-for `ANALYSIS-001` and GitHub Issue #15. It keeps valid Point plans without a
-declared velocity Point-valued through `dag analyze` and `dag next`, leaves
-velocity forecasts null, and reports calendar conversion as unavailable
-without inventing a rate. It retains all public identities and authority;
-Issue #15 is closed, and `0.9.2` remains the exact rollback pin for `0.9.3`.
-
-Version `0.9.3` is the published compatible Contract 8 emergency patch for
-GitHub Issues #14, #16, and #17. It restores Grammar 7 `plan-assurance
-show|hash`, composes acceptance-aware terminal deletions without weakening the
-shared edit guard, and preserves complete criterion-set/receipt evidence for
-retained reached milestones. It retains all public identities and authority.
-The accepted release commit, annotated tag, GitHub prerelease, and npm
-artifact agree; at its publication npm reported `beta=0.9.3`,
-`latest=0.9.0`, and no `alpha`.
-Issues #14, #16, and #17 are closed with release evidence. Plan advance,
-public VSIX publication, and unrelated work remain separate.
-
-Version `0.9.4` is the compatible Contract 8 emergency patch for GitHub Issue
-#19. It is published and preserves criterion sets and receipts for every milestone retained by
-`dag advance`, validates the complete final candidate before history or
-persistence decisions, and projects deterministic candidate diagnostics. It
-also makes pinned jscpd duplicate and Lizard complexity ratchets part of the
-repository and CI static-analysis gate. Grammar 7, CLI Contract 8, all 53
-commands, 23 root schemas, 129 root and Node exports, 45 Core exports, public
-authority, and force semantics remain unchanged. Its release commit, peeled
-tag, Node.js 22 and 24 CI, GitHub prerelease, npm artifact, and common
-SHA-256 `63a12ddf...d6fe53b` agree. npm reports `beta=0.9.4`,
-`latest=0.9.0`, and no `alpha`; Issue #19 is closed with release evidence.
-The completed release plan was migrated with committed provenance, given six
-artifact-bound criteria and receipts, and canonically advanced. Its residual
-retains only accepted reached `RELEASE_094_ACCEPTED` and has no diagnostic or
-task. Version `0.9.3` is the exact rollback pin.
-
-The private adapters now project that same Contract 8 acceptance model without
-adding write authority. The LSP negotiates a separate version-bound milestone
-acceptance result, the VSIX presents criteria, blockers, and receipt provenance
-with verified source navigation, and the MCP check, analysis, and Next tools
-retain acceptance in their unchanged wire v1 envelopes. The public npm package
-still excludes all three private adapter workspaces.
-
-The complete milestone-acceptance cross-surface gate passes. All milestone criteria and
-receipts were separately owner-confirmed, and the completed plan was
-canonically advanced from its committed pre-advance snapshot. The residual
-plan has no diagnostics, remaining task, recommendation, or startable task.
-Candidate acceptance, publication, and remote writes remain separate.
-
-## Run without installing
-
-After beta publication, use `npx` for an occasional Contract 8 invocation and
-select the version explicitly:
-
-```sh
-npx --yes --package=perttool@0.9.4 -- perttool --version
-npx --yes --package=perttool@0.9.4 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.9.4 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.9.4 -- perttool plan-assurance show PLAN.pert --format json
-```
-
-The equivalent explicit `npm exec` form is:
-
-```sh
-npm exec --yes --package=perttool@0.9.4 -- perttool --version
-npm exec --yes --package=perttool@0.9.4 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.9.4 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.9.4 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
-```
-
-`npx` and `npm exec` may download the selected package version into the npm
-cache. Pinning `0.6.0` selects Contract 6 and omits Grammar 6 assurance;
-`0.4.0` selects Contract 5, `0.3.0` selects Contract 4, and `0.2.0` selects
-Contract 3.
+The current release is `0.10.5`. It requires Node.js 22 or later and uses
+Grammar 8 and CLI Contract 9.
 
 ## Install
 
-Install the Contract 8 CLI globally by exact version when it is used
-regularly:
+Install the current release for your user-managed Node.js environment:
 
 ```sh
-npm install --global perttool@0.9.4
+npm install --global perttool@latest
 perttool --version
 ```
 
-The accepted `0.9.0` release was separately promoted to both public tags. The
-`0.9.4` publication changes only npm `beta`; until an independent promotion is
-authorized, an unqualified global installation continues to select `0.9.0`.
-The exact `0.9.4` pin is the reproducible form for the Issue #19 correction.
-Version `0.9.3` remains the rollback pin for the Issues #14, #16, and #17
-corrections.
-Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
-Contract 6 artifact remains available as
-`perttool@0.5.0`. Contract 5,
-Contract 4, and Contract 3 remain available as exact pins
-`perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha
-preview remains installable only as the exact pin
-`perttool@0.1.0-alpha.2`.
+Run it without installing:
 
-## Library subpaths in `0.8.0`
-
-Version `0.8.0` provides two additive library boundaries:
-
-```js
-import {
-  analyzeDocumentSnapshot,
-  createDocumentSession,
-  createDocumentSnapshot,
-  documentOffsetToPosition,
-  documentPositionToOffset,
-  formatDocument,
-  getGuide,
-  parseDocument,
-  validateDocument,
-} from "perttool/core";
-import {
-  getJsonSchemaCatalog,
-  readDocumentFile,
-} from "perttool/node";
+```sh
+npx --yes --package=perttool@latest -- perttool --version
+npx --yes --package=perttool@latest -- perttool document check PLAN.pert
 ```
 
-`perttool/core` is the closed platform-neutral Grammar 6 source, graph,
-exact-arithmetic, diagnostic, Help, Guide, projection, and document-session
-surface. Immutable snapshots and sessions bind exact URI, generation, version,
-text digest, parse/semantic state, UTF-16 positions, analysis options, and
-cancellation-safe caches without filesystem or editor access. The caller
-supplies the SHA-256 function. Its runtime closure has no Node builtin or
-external package. `perttool/node` exposes the same 122 runtime values as the
-existing `perttool` root, including file, schema, Git, hashing, and safe-write
-APIs that still require Node.js 22 or later. Bundled JSON artifacts remain
-available through `perttool/schemas/<schema-id>.schema.json`.
+Use an exact version such as `perttool@0.10.5` when reproducibility matters.
+See [CHANGELOG.md](CHANGELOG.md) and the [release records](docs/process/) for
+older releases and rollback pins.
 
-These subpaths are absent from the `0.7.1` rollback package. See the
-[Shared Library Boundary](docs/specs/shared-library.md).
-The protocol-neutral state contract is the
-[Document Session Core](docs/specs/document-session.md).
+## Create your first plan
 
-## Plan files
+You can author the current canonical structure directly:
 
-A `.pert` file is the source of truth and is intended to remain directly
-readable. This temporal plan has one one-day forecast from a one-Point task:
-
-```text
+```pert
 project EXAMPLE:
-  version 2
+  version 8
   title "Example plan"
-  as_of 2026-07-26
+  as_of 2026-08-21
   duration_unit point
   velocity 1p/1d
   finish DONE
@@ -244,51 +46,24 @@ milestone NOW:
   state reached
 
 milestone DONE:
-  title "Done"
-  deadline 2026-07-28
+  title "Work completed"
 
 task WORK NOW -> DONE:
   title "Do the work"
   duration 1p
-  not_before 2026-07-26
-  deadline 2026-07-27
+  status planned
 ```
 
-Save it as `PLAN.pert`, then inspect it with:
+Save it as `PLAN.pert`, then validate and canonically format it:
 
 ```sh
 perttool document check PLAN.pert
-perttool project show PLAN.pert
-perttool dag analyze PLAN.pert
-perttool dag next PLAN.pert --format json
+perttool document format PLAN.pert --diff
 ```
 
-Task estimates default to relative `point` units. A Point plan may declare a
-project-wide velocity such as `20p/10d`; analysis then keeps the exact Point
-result and reports the time conversion separately as a velocity forecast.
-Without velocity, Point analysis remains available without a time forecast.
-The compatible `day` and `hour` units are deprecated and emit `PTSEM-114` with
-`project migrate-unit --to-unit point` guidance. Grammar version 3 also accepts
-an exact Fraction such as `1/3p`;
-versions 1 and 2 continue to accept Decimal duration tokens. Grammar version 5
-adds explicit task-owned work events and the `suspended` lifecycle state.
-Grammar version 6 adds conditional plan assurance records and the separate
-planning-dependency modes `both`, `execution_only`, and `planning_only`.
-
-## Maintain a plan through the CLI
-
-Read the file for its complete human-facing state. Use CLI maintenance commands
-so that each candidate is parsed and semantically checked before it can be
-written. To bootstrap a plan without hand-authoring syntax, preview the
-smallest valid document and then create a new file exclusively:
+Alternatively, `project init` can create the smallest valid starter file:
 
 ```sh
-perttool project init EXAMPLE \
-  --title "Example plan" \
-  --initial-milestone NOW \
-  --initial-milestone-title "Current frontier" \
-  --finish NOW
-
 perttool project init EXAMPLE \
   --title "Example plan" \
   --initial-milestone NOW \
@@ -297,122 +72,189 @@ perttool project init EXAMPLE \
   --out PLAN.pert
 ```
 
-For an existing plan:
+For an existing plan, preview a change, read the current source digest, and
+repeat the reviewed command with `--write` and `--expect-digest`:
 
 ```sh
-# Preview a source-preserving change.
 perttool task set PLAN.pert WORK --status active --diff
-
-# Obtain the current digest for optimistic locking.
 perttool project show PLAN.pert --format json
 
-# Apply the reviewed change atomically.
 perttool task set PLAN.pert WORK \
   --status active \
-  --not-before 2026-07-26 \
-  --deadline 2026-07-27 \
-  --write \
-  --expect-digest 'sha256:...'
-
-# Finish a task, inspect the new frontier, then remove completed history.
-perttool task finish PLAN.pert WORK --diff
-perttool dag next PLAN.pert --format json
-perttool dag advance PLAN.pert --diff
-perttool dag advance PLAN.pert \
   --write \
   --expect-digest 'sha256:...'
 ```
 
-All formatter and mutation commands preview by default. `--write` replaces the
-input through the safe-write path, while `--out` exclusively creates a new
-file. A changed in-place `dag advance` additionally verifies removed or
-replaced entity ranges against the target path in Git `HEAD` and the stage-0
-index. Dirty ranges retained by the candidate are allowed; uncommitted
-destructive overlap or unavailable proof returns `PTADV-101` without writing.
-`Perttool.AdvanceResult.v3.history_guard` reports the status, modification
-time, byte sizes, diff counts, and affected IDs before supplemental digests.
-If the source, `HEAD`, or stage-0 index changes after assessment, `PTADV-102`
-returns exit 5 without writing.
-The exceptional `--force-history-loss` option bypasses only that initial
-history block for the exact in-place request, emits `PTADV-103`, and does not
-bypass governance, warnings-as-errors, expected digests, source/`HEAD`/index
-rechecks, or atomic-write validation.
-For a terminal sequence of removed tasks and task-owned work events, the same
-candidate also removes only its newly orphaned blank separator prefixes. The
-preview, separate output, and in-place write therefore remain byte-identical
-and do not require a formatter or a second whitespace edit before
-`git diff --check`. Consecutive terminal assurance records and work events are
-processed in source order so each separator byte belongs to at most one
-deletion range.
+`--out` creates a new file exclusively. `--write` atomically replaces the
+input only when the supplied digest still matches. Existing files are never
+silently overwritten.
 
-Gate maintenance uses the same base controls:
+## Inspect and schedule a plan
 
 ```sh
-perttool gate add PLAN.pert APPROVAL NOW DONE \
-  --reason "Approval required" \
-  --diff
+perttool document check PLAN.pert
+perttool project show PLAN.pert
+perttool dag analyze PLAN.pert
+perttool dag next PLAN.pert
 ```
+
+Use JSON for scripts and agents:
+
+```sh
+perttool dag next PLAN.pert --format json
+```
+
+Only `temporal.authority.startable_recommended_task_ids` grants new-start
+authority. Do not treat a raw recommendation or a ready task as equivalent to
+permission to start it.
+
+Task estimates use Point values by default. A plan can declare a velocity such
+as `20p/10d` to add time forecasts. Point analysis still works when no velocity
+is declared; only the time forecast is unavailable.
+
+## Update work safely
+
+Mutation commands preview by default:
+
+```sh
+perttool task set PLAN.pert WORK --status active --diff
+perttool task finish PLAN.pert WORK --diff
+perttool dag advance PLAN.pert --diff
+```
+
+After review, apply the exact candidate with optimistic locking:
+
+```sh
+perttool task set PLAN.pert WORK \
+  --status active \
+  --write \
+  --expect-digest 'sha256:...'
+```
+
+`dag advance` also protects removed history with Git `HEAD` and index evidence.
+Commit the plan before advancing it. If local changes overlap history that the
+candidate would remove, the command fails without writing. The exceptional
+`--force-history-loss` option bypasses only the initial history-loss block; it
+does not bypass governance, digest, race, or atomic-write checks.
 
 Use `batch apply` when several changes must become valid atomically:
 
 ```sh
 perttool batch apply PLAN.pert --request changes.json --diff
-perttool batch apply PLAN.pert \
-  --request changes.json \
+```
+
+## Record actual work
+
+Lifecycle commands record explicit event times and can include active time and
+effort:
+
+```sh
+perttool task start PLAN.pert WORK \
+  --at 2026-08-21T09:00:00+09:00 --diff
+perttool task suspend PLAN.pert WORK \
+  --at 2026-08-21T11:00:00+09:00 --reason "review" --diff
+perttool task resume PLAN.pert WORK \
+  --at 2026-08-21T12:00:00+09:00 --diff
+perttool task finish PLAN.pert WORK \
+  --at 2026-08-21T15:00:00+09:00 \
+  --active-time 5 --effort 6 --diff
+```
+
+`perttool` never substitutes the system clock for a missing event time.
+Project history is read-only:
+
+```sh
+perttool project history PLAN.pert --task WORK --format json
+perttool project observe-velocity PLAN.pert \
+  --task WORK --evidence all --format json
+perttool dag history PLAN.pert --view timeline --format json
+```
+
+Observed velocity is evidence only. Adopting it is a separate reviewed
+`project set --velocity` change.
+
+## Migrate an existing plan
+
+Check the file first. Diagnostics include the applicable migration route:
+
+```sh
+perttool document check PLAN.pert
+```
+
+Preview a complete migration to the current Grammar 8 form:
+
+```sh
+perttool document migrate PLAN.pert --target-grammar 8 --diff
+```
+
+Then apply the reviewed candidate:
+
+```sh
+perttool document migrate PLAN.pert \
+  --target-grammar 8 \
   --write \
   --expect-digest 'sha256:...'
 ```
 
-### Owner-aware governance
+For deprecated `day` or `hour` plans, migrate duration values to Points
+separately:
 
-Moving from `0.3.0` Contract 4 to `0.4.0` Contract 5 changes every JSON
-envelope to `cli_contract_version=5`. Project metadata changes from
-`Perttool.ProjectResult.v2` to `Perttool.ProjectResult.v3`; mutation and
-advance change from `Perttool.MutationResult.v1` to
-`Perttool.MutationResult.v2` and include a
-`Perttool.GovernanceDecision.v1`. Consumers must reject unknown identities
-rather than treating the new fields as optional.
+```sh
+perttool project migrate-unit PLAN.pert --to-unit point --diff
+perttool project migrate-unit PLAN.pert \
+  --to-unit point \
+  --replacement-velocity 20p/10d \
+  --write \
+  --expect-digest 'sha256:...'
+```
 
-Grammar 4 adds declared goal/DAG owners and delegates. Persistent goal or DAG
-changes require `--actor`; an effective owner or delegate has direct
-authority, while another actor supplies repeatable `--accepted-by-owner`
-caller assertions for every affected effective owner. The digest-bound
-pre-change document determines owners and delegates, and an atomic batch must
-satisfy every affected scope. These assertions are not authentication,
-verified identity, signatures, or a durable approval audit.
+Automatic migration is not required. You may edit a copy manually, then run
+`perttool document format` and `perttool document check` to obtain and verify
+the canonical target form. Detailed compatibility guidance is in the
+[`0.9.4` to `0.10.0` migration guide](docs/process/0.9.4-to-0.10.0-migration.md)
+and the built-in migration Guide:
 
-Treat each `--accepted-by-owner` value as a single-candidate, scope-bound
-caller assertion rather than workstream or session authority. First preview
-without it. Omit it when the result reports `governance.applicable=false`.
-Before a non-direct governed write, identify the operation, affected scopes,
-required owners, available modification time, byte size before and after, diff
-counts, and semantic candidate summary. Keep source and candidate digests as
-supplemental machine identity rather than the primary human explanation;
-never copy the assertion to later maintenance, a changed candidate, or the
-next `dag advance`. See the
-[loose assertion scope experiment](docs/process/governance-assertion-scope-experiment.md).
-If a valid candidate is not governance-applicable but still receives an owner
-assertion, `PTGOV-103` makes that likely boilerplate visible. It is a warning
-and does not change default write authority; `--warnings-as-errors` prevents
-the write. If a governed preview already carries an owner assertion,
-`PTGOV-104` directs the caller back to an assertion-free first preview. Its
-default preview still succeeds; `--warnings-as-errors` exits 1 while retaining
-the candidate and governance decision. Persistent governed authority is
-unchanged.
+```sh
+perttool guide editing unit-migration --level detail
+```
 
-Contract 5 previews may still omit actor and owner confirmation. A Contract 4
-runtime fails closed on Grammar 4 and governance options; there is no
-`--cli-contract 4` switch, compatibility alias, or environment toggle. Pin
-`perttool@0.3.0` when a consumer is not ready to migrate. See the
-[Contract 4-to-5 migration guide](docs/process/cli-contract-5-migration.md)
-for the complete boundary.
+## Plan assurance
 
-For example, preview and then persist a DAG change as its effective owner:
+Plan assurance is optional. Initial sealing records reviewed task contracts
+and planning bases atomically:
+
+```sh
+perttool plan-assurance seal PLAN.pert \
+  --reason "Initial reviewed planning baseline" --diff
+perttool plan-assurance show PLAN.pert --format json
+```
+
+After changing reviewed work, inspect the affected closure and reseal only the
+selected tasks:
+
+```sh
+perttool plan-assurance reseal PLAN.pert \
+  --task WORK \
+  --reason "Accepted the updated plan" \
+  --diff
+```
+
+In `0.10.5`, selected reseal also covers a newly added unsealed task when plan
+assurance is already enabled. A plan with assurance entirely disabled still
+uses the atomic `seal` command. Completed tasks require explicit
+`task-outcome` records; status and Git history do not imply conformance.
+
+## Ownership and review
+
+A plan may declare goal and DAG owners. Preview first without owner assertions.
+If the result reports that governance applies, repeat the exact candidate with
+`--actor` and any required `--accepted-by-owner` values:
 
 ```sh
 perttool gate add PLAN.pert APPROVAL NOW DONE \
   --reason "Approval required" \
   --diff
+
 perttool gate add PLAN.pert APPROVAL NOW DONE \
   --reason "Approval required" \
   --actor user \
@@ -420,320 +262,70 @@ perttool gate add PLAN.pert APPROVAL NOW DONE \
   --expect-digest 'sha256:...'
 ```
 
-Generated Contract 6 source projects carry this maintenance warning:
+Owner confirmations are caller assertions, not authentication or durable
+approval records. Treat each value as a single-candidate, scope-bound
+assertion. It
+applies only to the exact candidate being reviewed and must not be reused
+automatically.
+
+Generated plans include this reminder:
 
 ```pert
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 ```
 
-The warning is guidance, not technical prevention. A text editor, shell
-command, or other program can bypass the tool-mediated check; Git and human
-review remain external controls.
+This warning is guidance, not technical prevention; Git and human review remain
+external controls.
 
-Use the dedicated migration route for exact whole-document conversion between
-Point and time units. Preview before writing; the result inventories every
-converted field and reports grammar upgrades and reversibility:
+## Find commands and guidance
 
-```sh
-perttool project migrate-unit PLAN.pert --to-unit day --diff
-perttool project migrate-unit PLAN.pert \
-  --to-unit day \
-  --write \
-  --expect-digest 'sha256:...'
-
-# A time-to-Point conversion requires an explicit relationship when needed.
-perttool project migrate-unit PLAN.pert \
-  --to-unit point \
-  --replacement-velocity 20p/10d \
-  --diff
-```
-
-Migration is not a `batch apply` member. Re-read and reanalyze the written
-candidate before making a separate mutation.
-
-### Task actuals and Git history
-
-Grammar 5 records each lifecycle transition as a task state change and a
-task-owned work event in one preview-first candidate. Event time is always an
-explicit caller input; perttool does not substitute the system clock or Git
-commit time.
+The CLI is the complete current command reference:
 
 ```sh
-perttool task start PLAN.pert WORK \
-  --at 2026-07-29T09:00:00+09:00 --diff
-perttool task suspend PLAN.pert WORK \
-  --at 2026-07-29T11:00:00+09:00 --reason "review" --diff
-perttool task resume PLAN.pert WORK \
-  --at 2026-07-29T12:00:00+09:00 --diff
-perttool task finish PLAN.pert WORK \
-  --at 2026-07-29T15:00:00+09:00 \
-  --active-time 5 --effort 6 --diff
+perttool --help
+perttool task set --help
+perttool help dag next
+perttool guide workflows --level detail
+perttool schema --format json
 ```
 
-Use the ordinary governance, `--write`, and `--expect-digest` controls after
-reviewing each candidate. `--active-time` is hours and `--effort` is
-person-hours; suffix-free CLI values are normalized to `h` and `ph`.
-
-History is a read-only first-parent Git reconstruction. It distinguishes
-explicit actual event time from Git-recorded transition time and never changes
-Git or declared project velocity:
-
-```sh
-perttool project history PLAN.pert --task WORK --format json
-perttool project observe-velocity PLAN.pert \
-  --task WORK --evidence declared --format json
-```
-
-Declared observations use the exact current `PLAN.pert` bytes, so a valid
-uncommitted lifecycle write is visible immediately. Git-recorded observations
-remain bound to the selected revision; `--evidence all` returns both as
-separate candidates. JSON exposes the current operand as `source_digest` and
-the selected revision as `history.source_digest`.
-
-Observed candidates are evidence, not automatic project metadata changes.
-Adoption, if desired, is a separate reviewed `project set --velocity` write.
-See the [Contract 5-to-6 migration
-guide](docs/process/cli-contract-6-migration.md) for schema and compatibility
-details.
-
-### Conditional plan assurance
-
-Assurance is opt-in. Initial sealing upgrades the candidate to Grammar 6 and
-records reviewed task contracts and recursive planning bases:
-
-```sh
-perttool plan-assurance seal PLAN.pert \
-  --reason "Initial reviewed planning baseline" --diff
-perttool plan-assurance show PLAN.pert --format json
-perttool plan-assurance hash PLAN.pert WORK --kind computed-basis
-```
-
-The hash command writes exactly one `sha256:` digest plus LF on text success;
-it does not edit or accept a seal. Use `plan-dependency` to qualify the default
-execution-and-planning relation, or to add a planning-only relation:
-
-```sh
-perttool plan-dependency set PLAN.pert REL_A_B \
-  --mode execution-only --reason "Execution order only" --diff
-perttool plan-dependency add PLAN.pert REL_C_D C D \
-  --mode planning-only --reason "D consumes C planning output" --diff
-```
-
-After reviewing a reported affected closure, use a separate governed
-`plan-assurance reseal` candidate. Completed work needs an explicit
-`task-outcome` record; completion status, Git history, and actual duration do
-not imply outcome conformance. `dag next` preserves raw ranking and withholds
-new-start authority from unsealed, review-required, or unavailable plans.
-
-## Command map
+Common commands:
 
 | Goal | Command |
 | --- | --- |
-| Discover commands | `perttool help [resource [action]]` |
-| Discover or read JSON Schemas | `perttool schema [schema-id]` |
-| Read domain guidance | `perttool guide [topic [subtopic]]` |
-| Validate a document | `perttool document check <file>` |
-| Canonically format it | `perttool document format <file>` |
-| Initialize a project | `perttool project init ...` |
-| Read project metadata | `perttool project show <file>` |
-| Reconstruct task actuals | `perttool project history <file> ...` |
-| Observe project performance | `perttool project observe-velocity <file> ...` |
-| Change project metadata | `perttool project set <file> ...` |
-| Migrate project units exactly | `perttool project migrate-unit <file> ...` |
-| Analyze schedules | `perttool dag analyze <file>` |
-| Select next work | `perttool dag next <file>` |
-| Remove completed history | `perttool dag advance <file>` |
-| Reconstruct committed DAG history | `perttool dag history <file> ...` |
-| Inspect plan assurance | `perttool plan-assurance show|hash <file> ...` |
-| Seal or reseal reviewed plans | `perttool plan-assurance seal|reseal <file> ...` |
-| Maintain planning dependencies | `perttool plan-dependency add|set|remove` |
-| Maintain task outcomes | `perttool task-outcome add|set|remove` |
-| Export or import Mermaid | `perttool dag render`, `perttool dag import` |
-| Maintain tasks | `perttool task add|set|remove|start|suspend|resume|finish` |
-| Maintain gates | `perttool gate add|set|remove` |
-| Maintain milestones | `perttool milestone add|set|remove` |
-| Maintain milestone acceptance | `perttool milestone acceptance show|replace|verify|fail|unavailable|revoke|waive` |
-| Maintain resources | `perttool resource add|set|remove` |
-| Apply an atomic batch | `perttool batch apply` |
-| Read coding-agent guidance | `perttool agent help` |
+| Validate or format | `document check`, `document format` |
+| Create or inspect a project | `project init`, `project show` |
+| Analyze or select work | `dag analyze`, `dag next` |
+| Maintain the graph | `task`, `gate`, `milestone`, `resource` |
+| Record lifecycle events | `task start`, `suspend`, `resume`, `finish` |
+| Inspect history | `project history`, `dag history` |
+| Maintain assurance | `plan-assurance`, `plan-dependency`, `task-outcome` |
+| Migrate documents | `document migrate`, `project migrate-unit` |
+| Discover machine contracts | `help --format json`, `schema` |
 
-Run `perttool --help` for the text command catalog. `help` is the complete
-command contract for humans and machine consumers, while `guide` explains
-domain concepts. Both run without a document:
+## Library use
 
-```sh
-perttool task set --help
-perttool help dag next --format json
-perttool help dag history --format json
-perttool schema --format json
-perttool schema Perttool.NextResult.v7 --format json
-perttool schema Perttool.NextResult.v7 --view outline --format json
-perttool guide editing --level detail --format json
-perttool guide historical-dag --level detail --format json
-```
+The package exposes a platform-neutral `perttool/core` subpath and a Node.js
+`perttool/node` subpath. JSON Schema artifacts are available through
+`perttool/schemas/<schema-id>.schema.json`.
 
-### JSON Schema artifacts
+See the [Shared Library Boundary](docs/specs/shared-library.md),
+[Document Session Core](docs/specs/document-session.md), and
+[JSON Schema contract](docs/specs/json-schema.md) for API details. Automation
+must check each result's `schema_version` and `cli_contract_version`; it must
+not infer compatibility from `tool_version` alone.
 
-`perttool schema --format json` returns the complete result-schema catalog.
-Supplying a schema identity returns its Draft 2020-12 artifact in the
-`schema` field of `Perttool.SchemaResult.v1`:
+## More documentation
 
-```sh
-perttool schema Perttool.CheckResult.v5 --format json
-```
-
-The default and `--view full` return the complete artifact. For a shorter
-outer shape, `--view outline` replaces complex nested records with absolute
-references to the complete bundled artifact. Pass one local, relative, or
-copied absolute reference back with `--ref` to display that internal layer:
-
-```sh
-perttool schema Perttool.NextResult.v7 --view outline --format json
-perttool schema Perttool.NextResult.v7 --view outline \
-  --ref '#/$defs/recommendation' --format json
-```
-
-Packed installations also expose each artifact at
-`perttool/schemas/<schema-id>.schema.json`; relative references resolve
-against the bundled `Perttool.Common.v1.schema.json`. The stable `$id` is an
-identifier only: validation does not require network access. Consumers must
-select compatibility from each result's `schema_version`, not from
-`tool_version`. See the
-[JSON Schema Artifact Contract](docs/specs/json-schema.md) for the current
-23-root source inventory and versioning rules.
-
-## LLM and automation use
-
-Use `--format json` for machine consumers. The current unreleased source
-requires `cli_contract_version == 8`. Published versions `0.7.0`, `0.7.1`,
-`0.8.0`, and `0.8.1` require
-`cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
-`0.5.2`, `0.5.1`, and `0.5.0` consumers must check
-`cli_contract_version == 6`;
-consumers pinned to `0.4.0`
-must continue to require Contract 5, and consumers pinned to `0.3.0` must
-require Contract 4. Bundled machine-readable result artifacts require
-`0.5.1`; complete nested records and outline/detail views require `0.5.2`.
-Scope-bound, human-readable loose owner-confirmation guidance requires
-`0.5.3`.
-Runtime `PTGOV-103` visibility for unused owner assertions requires `0.5.4`.
-Runtime `PTGOV-104` visibility for assertions on governed previews requires
-`0.5.5`.
-`Perttool.AdvanceResult.v1`, history-safety model 1, and the
-repository-clean advance candidate require `0.6.0`; see the
-[`0.5.5` to `0.6.0` migration](docs/process/0.5.5-to-0.6.0-migration.md).
-Version `0.7.0` changes to Grammar 6, CLI Contract 7, and
-assurance-aware result identities; see the
-[`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md).
-In every case, check the result-specific `schema_version` before reading the
-rest of a result.
-Version `0.8.0` adds `dag history`, `Perttool.HistoricalGraphResult.v1`, and
-the Core and Node subpaths without changing CLI Contract 7; see the
-[`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
-Version `0.8.1` retains those interfaces and corrects assurance-receipt
-placement in an advance-owned terminal deletion suffix. Versions `0.9.0`,
-`0.9.1`, `0.9.2`, `0.9.3`, and `0.9.4` use CLI Contract 8.
-A complete, known, non-truncated `Perttool.NextResult.v7` with policy
-`recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
-the current source. Start only task IDs in
-`temporal.authority.startable_recommended_task_ids`; do not infer start
-authority from the raw recommended set, the text summary, or `ready` alone.
-Suspended tasks are reported separately and require an explicit `task resume`;
-they are not new-start recommendations.
-
-Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
-source digest, updated digest, diagnostics, and write result in one envelope.
-Direct, lifecycle, batch, and assurance mutations use
-`Perttool.MutationResult.v5`; milestone acceptance mutations use that same
-identity, and `dag advance` uses `Perttool.AdvanceResult.v3`. Current-source
-advance requires Grammar 7; migrate a committed older document with
-`perttool document migrate --target-grammar 7`, then declare criteria through
-the milestone acceptance commands before relying on canonical advance.
-Unknown schema versions, incomplete recommendation traces, `PTREC-*`
-diagnostics, and future or unavailable temporal eligibility must fail closed.
-
-## Documentation
-
-- [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
-- [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
-- [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
-- [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
-- [Advance History Safety source acceptance](docs/process/advance-history-acceptance.md)
-- [Conditional Plan Assurance Contract (retained Grammar 6 / CLI Contract 7 boundary)](docs/specs/plan-assurance.md)
-- [Conditional Plan Assurance Interface Contract](docs/specs/plan-assurance-interface.md)
-- [Milestone Acceptance Contract (active Grammar 7 / CLI Contract 8 source)](docs/specs/milestone-acceptance.md)
-- [Conditional Plan Assurance public-contract acceptance](docs/process/plan-assurance-public-contract-acceptance.md)
-- [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md)
-- [`v0.7.0` release procedure](docs/process/0.7.0-release.md)
-- [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
-- [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md)
-- [`v0.8.0` release procedure](docs/process/0.8.0-release.md)
-- [`v0.8.1` release procedure](docs/process/0.8.1-release.md)
-- [`0.8.1` to `0.9.0` migration](docs/process/0.8.1-to-0.9.0-migration.md)
-- [`v0.9.0` release procedure](docs/process/0.9.0-release.md)
-- [`v0.9.1` release procedure](docs/process/0.9.1-release.md)
-- [`v0.9.1` durable release acceptance](docs/process/0.9.1-release-acceptance.md)
-- [`v0.9.2` release procedure](docs/process/0.9.2-release.md)
-- [`v0.9.2` durable release acceptance](docs/process/0.9.2-release-acceptance.md)
-- [`v0.9.3` release procedure](docs/process/0.9.3-release.md)
-- [`v0.9.3` publication record](docs/process/0.9.3-publish.md)
-- [`v0.9.3` durable release acceptance](docs/process/0.9.3-release-acceptance.md)
-- [`v0.9.4` release procedure](docs/process/0.9.4-release.md)
-- [`v0.10.2` release procedure](docs/process/0.10.2-release.md)
-- [`v0.10.3` release procedure](docs/process/0.10.3-release.md)
-- [`v0.10.4` release procedure](docs/process/0.10.4-release.md)
-- [`v0.10.5` release procedure](docs/process/0.10.5-release.md)
-- [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
-- [Shared Library Boundary](docs/specs/shared-library.md)
-- [Editor Protocol Contract](docs/specs/editor-protocol.md)
-- [Historical Editor Protocol Contract](docs/specs/historical-editor-protocol.md)
-- [DAG Presentation and Focus Contract](docs/specs/dag-presentation.md)
-- [DAG presentation and focus acceptance](docs/process/dag-presentation-acceptance.md)
-- [DAG Compact Labels and Exact Time Summary Contract](docs/specs/dag-compact-presentation.md)
-- [DAG compact presentation acceptance](docs/process/dag-compact-presentation-acceptance.md)
-- [Document Session Core](docs/specs/document-session.md)
-- [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
-- [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
-- [Conditional Plan Assurance internal mutation Core acceptance](docs/process/plan-assurance-mutation-core-acceptance.md)
-- [Conditional Plan Assurance internal authority Core acceptance](docs/process/plan-assurance-authority-core-acceptance.md)
-- [Conditional Plan Assurance internal advance contraction acceptance](docs/process/plan-assurance-advance-contraction-acceptance.md)
-- [Conditional Plan Assurance internal compatibility acceptance](docs/process/plan-assurance-compatibility-acceptance.md)
-- [Conditional Plan Assurance internal hash inspection acceptance](docs/process/plan-assurance-hash-inspection-acceptance.md)
-- [Conditional Plan Assurance design review](docs/process/plan-assurance-design-review.md)
-- [Conditional Plan Assurance implementation plan](plans/plan-assurance.pert)
-- [Help and Guide consistency correction](docs/specs/help-guide-consistency.md)
-- [Help and Guide consistency implementation plan](plans/help-guide-consistency.pert)
-- [`v0.7.1` release plan](plans/release-0.7.1.pert)
-- [`v0.8.0` release plan](plans/release-0.8.0.pert)
-- [`v0.9.0` release plan](plans/release-0.9.0.pert)
-- [`v0.9.1` release plan](plans/release-0.9.1.pert)
-- [`v0.9.2` release plan](plans/release-0.9.2.pert)
-- [`v0.9.3` release plan](plans/release-0.9.3.pert)
-- [`v0.9.4` release plan](plans/release-0.9.4.pert)
-- [JSON Schema Artifact Contract](docs/specs/json-schema.md)
-- [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
-- [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
-- [Contract 4-to-5 migration](docs/process/cli-contract-5-migration.md)
-- [Issue #4 governance implementation acceptance](docs/process/governance-acceptance.md)
-- [CLI Contract 3 compatibility baseline](docs/specs/cli-contract-3.md)
-- [DSL grammar](docs/specs/dsl-grammar.md)
-- [Graph semantics](docs/specs/graph-semantics.md)
-- [Analysis semantics](docs/specs/analysis.md)
-- [Mutation semantics](docs/specs/mutation.md)
-- [Recommendation semantics](docs/specs/recommendation.md)
 - [Examples](docs/examples/README.md)
+- [Current changelog and older versions](CHANGELOG.md)
+- [Migration guides and release records](docs/process/)
+- [Normative specifications](docs/specs/)
 - [Developer guide](docs/development.md)
 - [Product backlog](docs/backlog.md)
+- [Security policy](SECURITY.md)
 
-## Security and license
+Repository setup, testing, architecture, contribution, and release procedures
+belong in the developer and process documents rather than this user guide.
 
-Report vulnerabilities privately according to [SECURITY.md](SECURITY.md).
-perttool is released under the [MIT License](LICENSE). See
-[CHANGELOG.md](CHANGELOG.md) for release changes and known limitations.
-The current repository source identifies `0.10.5` and retains Grammar 8,
-CLI Contract 9, 56 commands, and 23 root schemas. It makes the Issue #23
-`replan_and_reseal` recovery executable for newly added unsealed tasks while
-preserving atomic initial enablement. Version `0.10.4` remains the exact
-rollback pin.
-Migration guidance is in
-[`0.9.4-to-0.10.0-migration.md`](docs/process/0.9.4-to-0.10.0-migration.md).
+perttool is released under the [MIT License](LICENSE).

@@ -137,15 +137,6 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     changelog,
     /^\[0\.4\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.3\.0\.\.\.v0\.4\.0$/m,
   );
-  assert.match(readme, /exact pins\s+`perttool@0\.4\.0`/);
-  assert.match(
-    readme,
-    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
-  );
-  assert.match(
-    readme,
-    /Moving from `0\.3\.0` Contract 4 to `0\.4\.0` Contract 5 changes every JSON\s+envelope to `cli_contract_version=5`/,
-  );
   assert.match(migration, /`Perttool\.ProjectResult\.v2` \| `Perttool\.ProjectResult\.v3`/);
   assert.match(
     migration,

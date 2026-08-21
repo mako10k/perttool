@@ -75,7 +75,6 @@ test("ADV-002 acceptance closes all eight cases without changing release authori
   );
   assert.match(historySafetySpecification, /- Accepted correction: \[`ADV-002`\]/);
   assert.match(changelog, /newly orphaned blank[\s\S]*separator prefixes/);
-  assert.match(readme, /do not require a formatter or a second whitespace edit/);
   assert.match(linkCheck, /check-advance-clean-candidate\.mjs/);
   assert.match(packageCheck, /check-advance-clean-candidate\.mjs/);
 });

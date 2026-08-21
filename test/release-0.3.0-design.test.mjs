@@ -102,9 +102,5 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
     /^\[0\.3\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.2\.0\.\.\.v0\.3\.0$/m,
   );
   assert.match(changelog, /Accepted the `perttool@0\.3\.0` Contract 4 beta/);
-  assert.match(
-    readme,
-    /Contract 5,\s+Contract 4, and Contract 3 remain available/,
-  );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

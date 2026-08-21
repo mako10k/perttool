@@ -183,9 +183,6 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
   assert.equal(lockfile.packages[""].version, "0.10.5");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/);
-  assert.match(readme, /Version `0\.7\.0` beta atomically activates Grammar 6 and CLI Contract 7/);
-  assert.match(readme, /does not move npm `latest` from Contract 6\s+`0\.6\.0`/);
-  assert.match(readme, /`0\.7\.0` remains the exact rollback pin/);
   for (const guidance of [agents, copilot, selfUse, aiDevelopment]) {
     assert.match(guidance, /docs\/process\/0\.7\.0-preparation\.md/);
     assert.match(guidance, /RELEASE_070_CANDIDATE/);

@@ -31,7 +31,6 @@ test("0.10.5 selects the compatible Issue 23 patch and retains public identities
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.10\.5\] - 2026-08-21$/mu);
-  assert.match(readme, /compatible `0\.10\.5` Issue #23 assurance-recovery patch/u);
   assert.match(procedure, /compatible patch after published `0\.10\.4`/u);
   assert.match(plan, /npm latest, Issue mutation, public VSIX publication, plan advance/u);
   assert.match(acceptance, /replan_and_reseal/u);

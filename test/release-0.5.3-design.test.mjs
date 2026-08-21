@@ -124,14 +124,6 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/);
   assert.match(changelog, /^## \[0\.5\.3\] - 2026-07-30$/m);
-  assert.match(
-    readme,
-    /Scope-bound, human-readable loose owner-confirmation guidance requires\s+`0\.5\.3`/,
-  );
-  assert.match(
-    readme,
-    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
-  );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);
   assert.equal(COMMAND_REGISTRY.length, 56);

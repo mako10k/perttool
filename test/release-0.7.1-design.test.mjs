@@ -117,9 +117,6 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
   );
   assert.match(acceptance, /All five tasks and 15p are complete/);
   assert.match(changelog, /^## \[0\.7\.1\] - 2026-08-05$/m);
-  assert.match(readme, /package=perttool@0\.9\.4/);
-  assert.match(readme, /made `beta=latest=0\.7\.1`/);
-  assert.match(readme, /Version `0\.7\.0` remains the exact rollback pin/);
   assert.match(correction, /All 44 registered commands/);
   assert.match(
     correction,

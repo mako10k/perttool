@@ -154,11 +154,6 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     changelog,
     /^\[0\.5\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.4\.0\.\.\.v0\.5\.0$/m,
   );
-  assert.match(readme, /npx --yes --package=perttool@0\.9\.4/);
-  assert.match(
-    readme,
-    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
-  );
   assert.match(
     migration,
     /Published target: `perttool@0\.5\.0`/,

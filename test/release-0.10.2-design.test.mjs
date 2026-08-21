@@ -33,7 +33,6 @@ test("0.10.2 retains the compatible Issue 20 patch record and public identities"
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.10\.2\] - 2026-08-21$/mu);
-  assert.match(readme, /v0\.10\.2` release procedure/u);
   assert.match(procedure, /compatible patch after published `0\.10\.1`/u);
   assert.match(selfReview, /Suffix-free `0\.10\.2` accurately represents/u);
   assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);

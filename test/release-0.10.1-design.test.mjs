@@ -33,7 +33,6 @@ test("0.10.1 selects the compatible Issue 22 patch and retains public identities
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.10\.1\] - 2026-08-20$/mu);
-  assert.match(readme, /Version `0\.10\.4` remains the exact\s+rollback pin/u);
   assert.match(procedure, /compatible patch after published `0\.10\.0`/u);
   assert.match(selfReview, /Suffix-free `0\.10\.1` accurately represents/u);
   assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);

@@ -172,11 +172,6 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.9\.0\] - 2026-08-13$/m);
-  assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/u);
-  assert.match(
-    readme,
-    /baseline `latest=beta=0\.10\.4` with no `alpha`/u,
-  );
   assert.match(planIndex, /All forty-three plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.0\.pert/u);
   assert.match(lspIsolatedScript, /responseTimeoutMilliseconds = 15_000/u);

@@ -67,7 +67,7 @@ test("repository agent policies share the single-candidate boundary", async () =
     repositoryFile("README.md"),
   ]);
 
-  for (const source of [agents, copilot, processGuide, readme]) {
+  for (const source of [agents, copilot, processGuide]) {
     assert.match(
       source,
       /single-candidate,\s+scope-bound/,
@@ -83,6 +83,9 @@ test("repository agent policies share the single-candidate boundary", async () =
     assert.match(source, /PTGOV-103/);
     assert.match(source, /PTGOV-104/);
   }
+  assert.match(readme, /single-candidate, scope-bound/);
+  assert.match(readme, /Preview first without owner assertions/);
+  assert.match(readme, /governance applies/);
 });
 
 test("normative guidance fixes scope context without changing interface identity", async () => {

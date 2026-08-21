@@ -140,10 +140,4 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.equal(lockfile.packages["node_modules/fast-uri"].version, "3.1.5");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/);
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(
-    readme,
-    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
-  );
-  assert.match(readme, /Version `0\.7\.0` beta atomically activates/);
-  assert.match(readme, /`0\.7\.0` remains the exact rollback pin/);
 });

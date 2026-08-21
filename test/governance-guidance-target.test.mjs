@@ -114,12 +114,13 @@ test("generated project, README, and process guidance share the exact warning", 
     readFile(path.join(root, "README.md"), "utf8"),
     readFile(path.join(root, "docs/process/ai-development.md"), "utf8"),
   ]);
-  for (const source of [readme, processGuide]) {
-    assert.match(source, new RegExp(GOVERNANCE_DIRECT_EDIT_WARNING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(
-      source,
-      /guidance(?:, not| rather than) technical prevention/i,
-    );
+  assert.match(readme, new RegExp(GOVERNANCE_DIRECT_EDIT_WARNING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(readme, /guidance, not technical prevention/i);
+  assert.match(readme, /not authentication/i);
+  assert.match(processGuide, new RegExp(GOVERNANCE_DIRECT_EDIT_WARNING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(processGuide, /guidance(?:, not| rather than) technical prevention/i);
+  {
+    const source = processGuide;
     assert.match(source, /not\s+authentication/i);
     assert.match(source, /Contract 4/);
     assert.match(source, /Contract 6/);

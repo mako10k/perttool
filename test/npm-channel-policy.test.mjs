@@ -45,9 +45,10 @@ test("npm distribution policy maintains beta and latest without alpha", async ()
   assert.match(procedure, /After: `beta=0\.5\.2`, `latest=0\.5\.1`/);
   assert.match(procedure, /`perttool@0\.1\.0-alpha\.2` remains available/);
 
-  for (const guidance of [agents, copilot, readme]) {
+  for (const guidance of [agents, copilot]) {
     assert.match(guidance, /alpha.*(?:retired|exact pin)/is);
   }
+  assert.match(readme, /Current changelog and older versions/);
 });
 
 test("npm publication guard rejects an alpha artifact before publication", async () => {

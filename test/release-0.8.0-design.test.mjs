@@ -180,10 +180,6 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   assert.equal(mcpManifest.peerDependencies.perttool, "0.10.5");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.8\.0\] - 2026-08-07$/m);
-  assert.match(readme, /package=perttool@0\.9\.4/u);
-  assert.match(readme, /use `0\.8\.0` as\s+the prior Contract 7 rollback pin/u);
-  assert.match(readme, /left independently managed\s+`latest=0\.7\.1`/u);
-  assert.match(readme, /`beta=latest=0\.8\.0`/u);
   assert.deepEqual(Object.keys(manifest.exports), [
     ".",
     "./core",

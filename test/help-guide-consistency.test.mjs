@@ -82,19 +82,6 @@ test("current guidance and historical compatibility labels preserve their bounda
     read("docs/specs/governance-interface.md"),
   ]);
 
-  assert.match(
-    readme,
-    /made `beta=latest=0\.7\.1`/,
-  );
-  assert.match(readme, /package=perttool@0\.9\.4/);
-  assert.match(readme, /current repository source identifies `0\.10\.5`/);
-  assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
-  assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/);
-  assert.match(readme, /Version `0\.9\.2` is the durably accepted compatible Contract 8 emergency patch/);
-  assert.match(
-    readme,
-    /At its publication\s+boundary, this release does not move npm `latest` from Contract 6 `0\.6\.0`/,
-  );
   assert.match(requirements, /active Grammar 7 and CLI\s+Contract 8 source/);
   assert.match(requirements, /Perttool\.NextResult\.v7/);
   assert.match(examples, /retained Grammar 6 assurance source contract/);
