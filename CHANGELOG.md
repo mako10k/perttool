@@ -4,6 +4,17 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-08-21
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #20.
+
+### Fixed
+
+- Treat an unchanged retained assurance receipt whose producer is absent from
+  both adjacent historical snapshots as evidence extension instead of a
+  frozen-plan conflict, while preserving conflicts for one-sided presence,
+  changed receipts, and present frozen-task changes.
+
 ## [0.10.1] - 2026-08-20
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #22.
@@ -555,7 +566,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.2...HEAD
+[0.10.2]: https://github.com/mako10k/perttool/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/mako10k/perttool/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/mako10k/perttool/compare/v0.9.4...v0.10.0
 [0.9.4]: https://github.com/mako10k/perttool/compare/v0.9.3...v0.9.4

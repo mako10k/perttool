@@ -1,0 +1,127 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0102:
+  version 6
+  title "perttool 0.10.2 retained receipt history patch release"
+  description "Release suffix-free 0.10.2 as a compatible Grammar 8 and CLI Contract 9 patch for Issue #20. Correct historical frozen-task comparison for a stable retained assurance receipt whose producer is absent from both adjacent snapshots while retaining one-sided presence, present frozen-plan, immutable-evidence, noncanonical-removal, and canonical-advance proof protections. Preserve public commands, schemas, facades, assurance meanings, Git evidence limits, adapters, persistence, and unrelated history classifications. Candidate acceptance, PUBLISH, durable acceptance, Issue mutation, plan advance, npm latest movement, and unrelated work remain separately gated."
+  as_of 2026-08-21
+  duration_unit point
+  finish RELEASE_0102_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_0102_STARTED:
+  title "Version 0.10.2 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  capacity 1
+
+milestone RELEASE_0102_REVIEW_ACCEPTED:
+  title "Version 0.10.2 compatibility review accepted"
+
+milestone RELEASE_0102_SOURCE_PREPARED:
+  title "Version 0.10.2 source prepared"
+
+milestone RELEASE_0102_CANDIDATE_ACCEPTED:
+  title "Version 0.10.2 candidate accepted"
+
+milestone RELEASE_0102_PUBLISHED:
+  title "Version 0.10.2 published"
+
+milestone RELEASE_0102_ACCEPTED:
+  title "Version 0.10.2 patch accepted"
+
+task RELEASE_0102_SELF_REVIEW RELEASE_0102_STARTED -> RELEASE_0102_REVIEW_ACCEPTED:
+  title "Review the 0.10.2 compatibility boundary"
+  description "Confirm the exact 0.10.1 published baseline and Issue #20 correction, select patch version 0.10.2, prove unchanged Grammar 8, CLI Contract 9, command, schema and facade counts, historical and assurance identities, authority and adapter boundaries, and fix the bounded release procedure. This task performs no external write."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+  source "Issue #20"
+
+task RELEASE_0102_PREPARATION RELEASE_0102_REVIEW_ACCEPTED -> RELEASE_0102_SOURCE_PREPARED:
+  title "Prepare version 0.10.2 source"
+  description "Align package, lockfile, CLI, adapter peer, MCP, CHANGELOG, README, release records, tests, goldens and self-use identities to 0.10.2, then run the complete Node.js 22 repository and installed-package gates without external writes."
+  duration 4p
+  status active
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #20"
+
+task RELEASE_0102_CANDIDATE RELEASE_0102_SOURCE_PREPARED -> RELEASE_0102_CANDIDATE_ACCEPTED:
+  title "Accept one immutable 0.10.2 candidate"
+  description "Commit and recheck clean source, prove version, tag, GitHub Release and npm availability, verify authenticated routes, retain one immutable tarball outside the worktree, and accept its source commit, file count, size, SHA-256, installed Issue #20 behavior, compatibility, and 0.10.1 rollback pin. This task performs no external write."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "Issue #20"
+
+task RELEASE_0102_PUBLISH RELEASE_0102_CANDIDATE_ACCEPTED -> RELEASE_0102_PUBLISHED:
+  title "Publish 0.10.2 from the accepted candidate"
+  description "Only after exact candidate and external batch authorization, push and verify the release commit and annotated tag, require Node.js 22 and 24 CI, create one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through the exact secdat domain, and read back beta while leaving latest unchanged unless separately authorized."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "Issue #20"
+
+task RELEASE_0102_ACCEPTANCE RELEASE_0102_PUBLISHED -> RELEASE_0102_ACCEPTED:
+  title "Record durable 0.10.2 acceptance"
+  description "Independently verify Git, tag, CI, GitHub, npm, byte identity, exact and beta installations, Issue #20 behavior, unchanged public identities, and the exact 0.10.1 rollback pin. Issue closure, latest movement, plan advance, and unrelated work remain separate."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #20"
+
+work_event WE-d7f60436f20754b71c4744ee585978ca943cf5a41e3cdbee2ee9784483e1b806:
+  model 1
+  task RELEASE_0102_SELF_REVIEW
+  kind finish
+  occurred_at 2026-08-21T14:00:00+09:00
+  active_time 2h
+  effort 2ph
+
+work_event WE-6b4040e3ee58820a6688d82e5b940877fdc9b70da2a108fe0073711aaea5b57c:
+  model 1
+  task RELEASE_0102_PREPARATION
+  kind start
+  occurred_at 2026-08-21T14:01:00+09:00
+  planned_value 4p
