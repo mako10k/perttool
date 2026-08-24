@@ -13,19 +13,6 @@ project PLANNING_POOL:
   plan_assurance_hash_model 1
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:90aab8ca2f25ec18980a05374a543a682ce2b172:index:43b4466ad4877b928915ae2cd8264a3ddfc56c15
-  path "plans/planning-pool.pert"
-  object_format sha1
-  head 90aab8ca2f25ec18980a05374a543a682ce2b172
-  blob 43b4466ad4877b928915ae2cd8264a3ddfc56c15
-  source_digest sha256:151bbfae83acac337bc93df61af470e7eef5601ff2f793f4ac924db5b3a9d876
-  candidate_digest sha256:d3d0b0cfdb920883d5398a708ee8905fdf7a4b3068309addef4572ca5a4a9cc7
-  grandfathered PLANNING_POOL_SELECTED
-milestone PLANNING_POOL_SELECTED:
-  title "Issue #12 implementation selected"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -77,11 +64,10 @@ resource PACKAGE_SURFACE:
   description "Own public exports, installed-package behavior, adapter compatibility, and cross-surface acceptance."
   capacity 1
 
-milestone PLANNING_POOL_CONTRACT_ACCEPTED:
-  title "Planning pool contract accepted"
 
 milestone PLANNING_POOL_SOURCE_READY:
   title "Planning source model ready"
+  state reached
 
 milestone PLANNING_POOL_RESHAPE_READY:
   title "Semantic reshape preflight ready"
@@ -107,35 +93,7 @@ milestone PLANNING_POOL_PUBLIC_READY:
 milestone PLANNING_POOL_ACCEPTED:
   title "Planning pool and bounded Windows accepted"
 
-task PLANNING_POOL_CONTRACT PLANNING_POOL_SELECTED -> PLANNING_POOL_CONTRACT_ACCEPTED:
-  title "Accept the Work-centered planning-pool contract"
-  description "Promote ADR 0008 and PLAN-POOL-001 into one normative single-document contract and dependency-ordered machine case matrix before runtime work. Fix Work, Event, Activity and Window source semantics; logical namespace and title; many-to-many associations; total backlog order; planning-only dependencies and explicit disposition; Temporary Draft contraction; residual-description guidance; semantic reshape inventories; preflight normalization, hash, opaque token and user-response boundary; global same-identity projection; narrow deferral; active Window close, carry-over, timebox and objective; shared Task and Milestone non-allocation; unique aggregates; archival and Git evidence; commands, results, diagnostics, hard limits, migration and compatibility. Treat symmetrical consequences as contract cases and return for a new architecture decision only when they introduce a new semantic owner or contradict the ADR."
-  duration 8p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    LANGUAGE_SURFACE 1
-    SEMANTIC_MODEL 1
-    RESHAPE_SURFACE 1
-    MUTATION_SURFACE 1
-    OBSERVATION_MODEL 1
-    HISTORY_SURFACE 1
-    CLI_SURFACE 1
-  source "Issue #12"
 
-task PLANNING_POOL_SOURCE_CORE PLANNING_POOL_CONTRACT_ACCEPTED -> PLANNING_POOL_SOURCE_READY:
-  title "Implement planning source and semantic Core"
-  description "Implement the accepted declarations, qualified identity, project-owned Event and Activity AoA, Work associations, planning dependencies, projection links, global Work order, active Window records, source spans, validation, formatting, source-preserving migration and portable semantic projection. Preserve every existing strict-DAG document and public behavior and do not activate mutation commands yet."
-  duration 8p
-  status done
-  priority 95
-  requires:
-    DEVELOPERS 1
-    LANGUAGE_SURFACE 1
-    SEMANTIC_MODEL 1
-  source "Issue #12"
 
 task PLANNING_POOL_RESHAPE_CORE PLANNING_POOL_SOURCE_READY -> PLANNING_POOL_RESHAPE_READY:
   title "Implement semantic reshape and preflight navigation"
@@ -239,10 +197,6 @@ plan_seal PLANNING_POOL_ACCEPTANCE:
     PLANNING_POOL_PUBLIC_CONTRACT both sha256:7f1b36fcadfbf07048c59316342b9ba4c76a9712ccf11fb5757692a1d5515a9b
   reason "Initial reviewed PLAN-POOL-001 implementation baseline"
 
-plan_seal PLANNING_POOL_CONTRACT:
-  accepted_contract sha256:64a1320758889d40ac6d6d5450821ede63ad53cbca4424f990e219f38f70f63d
-  accepted_basis sha256:be41677b316bcd697e0c389b94c9884d30e3ed81952ba0155f769b6b954fa91c
-  reason "Initial reviewed PLAN-POOL-001 implementation baseline"
 
 plan_seal PLANNING_POOL_HISTORY_CORE:
   accepted_contract sha256:98558129943bda37027f33b3217bb75f6f6eaf0b442bee0a5b5457441c8ec7c2
@@ -280,12 +234,6 @@ plan_seal PLANNING_POOL_RESHAPE_CORE:
     PLANNING_POOL_SOURCE_CORE both sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
   reason "Initial reviewed PLAN-POOL-001 implementation baseline"
 
-plan_seal PLANNING_POOL_SOURCE_CORE:
-  accepted_contract sha256:fdcadca11bb636c9ec56387c0f0767bb705a07360b97e72e55e84447a03f63f0
-  accepted_basis sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
-  accepted_inputs:
-    PLANNING_POOL_CONTRACT both sha256:be41677b316bcd697e0c389b94c9884d30e3ed81952ba0155f769b6b954fa91c
-  reason "Initial reviewed PLAN-POOL-001 implementation baseline"
 
 plan_seal PLANNING_POOL_WINDOW_CORE:
   accepted_contract sha256:0a6bbce7fd82be4c899ff1fd73def07beab282ed4b8264dec5100e6fa6c6d03f
@@ -293,45 +241,24 @@ plan_seal PLANNING_POOL_WINDOW_CORE:
   accepted_inputs:
     PLANNING_POOL_SOURCE_CORE both sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
   reason "Initial reviewed PLAN-POOL-001 implementation baseline"
-
-task_outcome OUTCOME_PLANNING_POOL_CONTRACT:
+assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
-  task PLANNING_POOL_CONTRACT
-  against_basis sha256:be41677b316bcd697e0c389b94c9884d30e3ed81952ba0155f769b6b954fa91c
-  status conformant
-  reason "Accepted Work-centered planning-pool contract and forty closed cases"
+  receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45
+  producer PLANNING_POOL_SOURCE_CORE
+  producer_contract_hash sha256:fdcadca11bb636c9ec56387c0f0767bb705a07360b97e72e55e84447a03f63f0
+  producer_assurance_hash sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
+  outcome conformant
+  source_milestone PLANNING_POOL_SOURCE_READY
+  consumers:
+    PLANNING_POOL_RESHAPE_CORE both
+    PLANNING_POOL_WINDOW_CORE both
 
-task_outcome OUTCOME_PLANNING_POOL_SOURCE_CORE:
-  model 1
-  task PLANNING_POOL_SOURCE_CORE
-  against_basis sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
-  status conformant
-  reason "Accepted private Grammar 9 Planning Pool source Core and sixteen closed cases"
-
-milestone_criterion_set PLANNING_POOL_CONTRACT_ACCEPTED_R1:
-  milestone PLANNING_POOL_CONTRACT_ACCEPTED
-  revision R1
-  commitment sha256:b46a526af385baef91707b956a50cbf607ec4f9f36b114aea8d3bf6fe1a15e19
-  criterion CONTRACT_ACCEPTED required artifact "Accepted Work-centered planning-pool contract and forty closed cases"
 
 milestone_criterion_set PLANNING_POOL_SOURCE_READY_R1:
   milestone PLANNING_POOL_SOURCE_READY
   revision R1
   commitment sha256:d09f20b85579e38babbdbc7410287b22fd7e9f5c34af25d8a4fc464cdb9389c5
   criterion SOURCE_CORE_ACCEPTED required artifact "Accepted private Grammar 9 Planning Pool source Core and sixteen closed cases"
-
-milestone_acceptance_receipt PLANNING_POOL_CONTRACT_EVIDENCE:
-  model 1
-  set PLANNING_POOL_CONTRACT_ACCEPTED_R1
-  set_commitment sha256:b46a526af385baef91707b956a50cbf607ec4f9f36b114aea8d3bf6fe1a15e19
-  criterion CONTRACT_ACCEPTED
-  criterion_commitment sha256:2cdde35ec6cea25e2303fb26a45b80fb510e1c90ee7c052d535a7adddeb06f36
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/planning-pool-contract-acceptance.md"
-  evidence_revision 872decd8f0ee727bac44a142a5133d052318bba6
-  verifier codex
-  occurred_at 2026-08-24T10:34:39Z
 
 milestone_acceptance_receipt PLANNING_POOL_SOURCE_EVIDENCE:
   model 1
