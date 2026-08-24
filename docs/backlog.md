@@ -1208,13 +1208,31 @@ selected
 Add stable project-owned work outside the executable graph and persisted or ad
 hoc windows around the existing strict DAG. Pool placement, window membership,
 and task lifecycle remain separate facts. Only an explicit governed promotion
-may create executable task projections, and a narrow deferral may return only
-eligible unstarted work without rewriting actual history.
+may create executable projections. Narrow deferral is a separate explicit
+reverse projection and never follows automatically from Window operation.
+
+A persisted Window exists in current source only while active and has no stored
+closed or archived state. Close returns its report and removes the Window and
+memberships in one source-contraction candidate. The same candidate may
+explicitly select carry-over Work into a named next active Window; no automatic
+carry-over occurs, and Work and strict DAG facts remain unchanged. Former
+persisted Window state belongs to Git history. An ad hoc Window is observation
+input only and has no stored membership or lifecycle.
+
+Narrow deferral accepts only a closed selected fragment of planned, unstarted
+strict entities that retain live Work projection links and have no execution
+history. A returned Task becomes the same-identity planning Activity; an
+explicitly selected unreached and unaccepted internal Milestone may become the
+same-identity planning Event. Boundary Milestones remain strict, every linked
+Work association is restored atomically, and the remaining strict DAG must
+stay valid, closed, acyclic, and connected to `project.finish`. Deferral does
+not alter Window membership, Work description, dependency, or backlog order,
+and ambiguous protected evidence makes it unavailable.
 
 The strict AoA DAG, single `project.finish`, global recommendation authority,
 milestone acceptance, plan assurance, actuals, velocity, and canonical advance
 remain unchanged. The first selected contract must close work identity,
-link/split/merge cardinality, shaping, window lifecycle and timeboxes,
+link/split/merge cardinality, shaping, active Window, close, and timeboxes,
 promotion/deferral, CLI and schema surfaces, history, compatibility, and the
 boundary with multi-document `MULTI-001` before runtime work begins.
 
@@ -1228,9 +1246,16 @@ is many-to-many and does not move element meaning into Work. Its optional
 residual intent not yet allocated to an element or retained as current non-DAG
 rationale. Projection atomically moves same-identity Event and Activity
 meaning to strict Milestone and Task owners and removes the planning-side
-declaration. A still-useful Work
-association may remain as trace. The interface exposes `Add residual
-description`, CLI `--add-residual-description`, and JSON
+declaration. Projection selects the project-owned element rather than one Work
+association. If an element is shared, every associated Work is an affected
+subject and every association becomes a same-target projection link in the
+same candidate. A still-useful link may remain as trace. Removing a non-last
+association preserves the element; removing the last requires explicit
+re-association, projection, or discard, and no orphan Temporary Draft remains.
+An Activity projects only when both endpoints are existing same-identity strict
+Milestones or Events projected in the same closed acyclic candidate. The
+interface exposes `Add residual description`, CLI
+`--add-residual-description`, and JSON
 `add_residual_description`; if projection leaves a prior non-empty parsed Work
 description unchanged without that explicit action, it emits one prominent
 non-blocking reminder. It performs no natural-language equivalence, fragment,

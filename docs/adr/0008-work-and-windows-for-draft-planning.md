@@ -98,9 +98,15 @@ Work does not own or contain them. A Work may associate with multiple planning
 elements, and multiple Work may associate with the same Event or Activity.
 These many-to-many associations organize current backlog meaning but do not
 duplicate the associated element's premise, desired state, transition, title,
-estimate, or resource facts. The first normative contract must close exact
-association, split, merge, removal, and last-consumer behavior without moving
-semantic ownership into Work.
+estimate, or resource facts.
+
+Removing one Work association does not remove the project-owned element while
+another Work association remains. Removing the last association is valid only
+when the same final candidate explicitly re-associates the element with another
+Work, projects it to its strict same-identity owner, or labels it for discard.
+An unassociated planning Event or Activity is not retained as an orphan
+Temporary Draft, and neither association removal nor discard recursively
+disposes of another connected element unless that disposition is also explicit.
 
 Planning Events have no execution Milestone state or outcome acceptance, and
 planning Activities have no execution authority. They may carry candidate
@@ -113,8 +119,10 @@ Disconnected and cyclic planning fragments may remain in a valid draft because
 forcing complete strict topology would defeat refinement. They are not
 projectable as strict structure. Projection must select a closed,
 endpoint-complete, acyclic fragment and make every fact required by the strict
-execution grammar explicit in its final candidate. The planning AoA is never
-independently schedulable.
+execution grammar explicit in its final candidate. A projected Activity must
+resolve each endpoint either to an existing strict Milestone that already owns
+the same identity or to an Event projected in the same candidate. The planning
+AoA is never independently schedulable.
 
 ### Work dependencies
 
@@ -154,7 +162,10 @@ one atomic `Work semantic reshape` across Work boundaries. The mutation operates
 on one source-digest-bound project snapshot and declares all directly changed
 Work plus every otherwise unchanged Work whose ownership is relevant to a new
 meaning assertion. It never uses an intermediate duplicated source state as a
-candidate.
+candidate. An operation that changes or projects a shared Event or Activity
+must declare every Work currently associated with that element as affected,
+even when a particular Work's residual description is unchanged. Omitting one
+of those Work makes the request incomplete and preflight fails.
 
 The reshape request carries one normalized operation-local semantic inventory.
 It enumerates every semantic element in every directly affected Work, including
@@ -315,7 +326,10 @@ changes in the same manifest. Event and Activity facts themselves remain
 project-owned and are not transferred or copied; only their Work associations
 are moved, added, retained, or removed. Deliberately associating one shared
 project-owned element with multiple Work is therefore distinct from assigning
-one Work-owned residual semantic element to multiple Work.
+one Work-owned residual semantic element to multiple Work. The audit also
+verifies complete enumeration of every Work affected by shared-element
+projection and rejects any last-association removal without one explicit
+re-association, projection, or discard disposition.
 
 The general model yields the familiar operations without separate semantics:
 
@@ -393,6 +407,16 @@ copy and synchronization relationship:
   elements, its own ID and backlog-item title, current non-DAG relationships,
   and any still-useful projection links.
 
+Projection selects project-owned Event and Activity entities, not one Work's
+association with those entities. Projecting a shared element is therefore one
+global atomic ownership move: every associated Work is an affected subject,
+the planning declaration is materialized exactly once in its strict owner, and
+every Work association to that declaration is replaced by a same-target
+projection link in the same candidate. The candidate may immediately prune a
+link only by applying the accepted Work archival rule; it cannot leave one Work
+associated with a planning copy or project only one association. Preflight
+reports the complete cross-Work impact before execution.
+
 A projection link is current trace information retained only while the Work
 identity still has planning value. It is not a permanent transfer ledger and
 does not own a copied premise, target, acceptance condition, estimate, or Task
@@ -407,7 +431,9 @@ Projection is an explicit previewable mutation. Its final candidate must
 supply every fact required by the execution grammar and pass the existing DAG,
 assurance, governance, source-binding, and safe-write gates. Direct creation of
 strict Milestones and Tasks without Work remains valid. Window selection never
-projects Work.
+projects Work. An Activity projection fails unless both endpoint identities
+resolve to existing strict Milestones or to Events projected in the same
+candidate, and the resulting strict fragment is closed and acyclic.
 
 ### Residual-description interface reminder
 
@@ -475,20 +501,47 @@ guards.
 
 ### Narrow deferral
 
-Deferral is a separate explicit candidate. The first model may remove only
-eligible unstarted strict projections with no Work events and move their
-current meaning back to same-identity planning Events or Activities. It must
-not duplicate meaning, change the Work identity, or rewrite actual history.
-Active, suspended, or completed execution is not converted into pool-only
-Work.
+Deferral is a separate explicit previewable reverse-projection candidate.
+Window close, carry-over, backlog selection, and dependency reporting never
+invoke it automatically. The first model accepts only a closed selected strict
+fragment whose entities retain at least one current Work projection link. A
+directly created strict entity with no live projection link has no current Work
+destination and is not eligible for this operation.
+
+Every selected Task must be planned and unstarted and have no Work event,
+actual, active, suspended, completed, or other execution history. It is removed
+from the strict DAG and materialized exactly once as the same-identity planning
+Activity. An explicitly selected internal Milestone may be removed and
+materialized exactly once as the same-identity planning Event only when it is
+neither reached nor accepted and no retained strict Task, Gate, or
+`project.finish` needs it. Boundary Milestones remain strict and may serve as
+endpoints of returned Activities. The final candidate must leave the remaining
+strict DAG valid, closed, acyclic, and connected to `project.finish` under the
+existing execution invariants.
+
+Every live Work projection link to a returned entity becomes a Work
+association in the same candidate. A shared entity therefore affects every
+linked Work atomically, and preflight lists that complete affected-Work set.
+Deferral does not automatically rewrite Work descriptions, Work dependencies,
+backlog order, or Window membership. It does not create a copy, change Work or
+entity identity, rewrite actual history, or act as a Git revert.
+
+Any plan-assurance record, milestone criterion or receipt, accepted outcome,
+governance or history-owned record, or other protected evidence whose valid
+disposition is not explicit and contract-defined makes deferral unavailable.
+Ordinary source binding, validation, authority, history-loss, race, and
+safe-write gates still apply to the strict declarations removed by the final
+candidate. Active, suspended, or completed execution is never converted into
+pool-only Work.
 
 ### Windows and sprint operation
 
 A `Window` is a selection and reporting scope over Work, independent of pool or
 DAG placement:
 
-- a persisted Window can have a stable identity, title, objective, optional
-  time bounds, selected Work, and an open or closed state;
+- a persisted Window has a stable identity, title, objective, optional time
+  bounds, and selected Work, and its presence in current source means that it
+  is active; it has no stored open, closed, or archived state;
 - an ad hoc Window can provide the same observation boundary without becoming
   stored project state;
 - one Window can select pool-only Work, Work with strict Task projections, or
@@ -500,6 +553,22 @@ DAG placement:
 - reports distinguish selected completion, accepted outcomes, additional
   completed work, uncovered selected Work, and carry-over without equating
   Window closure with `project.finish` or milestone acceptance.
+
+Closing a persisted Window is one explicit previewable source-contraction
+candidate. It returns the close report and removes that Window and all of its
+memberships from current `.pert` in the same successful write; it does not
+retain a closed declaration, tombstone, or separate archival state. The same
+candidate may create or update a next active Window and explicitly select any
+carry-over Work there. No Work is carried automatically. Without such an
+explicit next selection, incomplete Work remains ordinary backlog Work outside
+the removed Window.
+
+Window close and carry-over do not change Work residual meaning, project-owned
+Event or Activity facts, projection ownership, Task lifecycle, Milestone state
+or acceptance, actuals, or canonical advance. An ad hoc Window has no stored
+membership or close operation. The close result is immediate observation
+evidence; the former persisted Window and membership state belong to Git
+history after source contraction.
 
 Whole-project DAG recommendation remains authoritative. Window-oriented output
 must not hide a globally critical or higher-priority executable Task outside
@@ -657,6 +726,29 @@ its accepted `dag advance` boundary without a new contract.
     at an intended user-approval boundary, not authenticate OS users or defend
     against deliberate local tampering, intentional false assertions, or user
     coercion.
+- **C17:** Shared planning elements must project globally by project-owned
+  entity, and the last Work association must have an explicit disposition, to
+  preserve one semantic owner without hidden cross-Work mutation or orphan
+  Temporary Draft.
+  - **E30:** The decision owner accepted on 2026-08-24 global atomic projection
+    of a shared Event or Activity, complete affected-Work reporting,
+    association-to-link replacement, explicit last-consumer disposition, and
+    closed endpoint-complete Activity projection.
+- **C18:** Persisted Window closure must contract current source and make
+  carry-over an explicit new selection so sprint reporting does not introduce a
+  closed-to-archived lifecycle or silently change Work and DAG state.
+  - **E31:** The decision owner accepted on 2026-08-24 that persisted Window
+    presence means active, close returns its report while removing it in the
+    same candidate, optional carry-over is an explicit next-Window selection,
+    ad hoc Windows have no lifecycle, and former Window state belongs to Git.
+- **C19:** Narrow deferral must be an explicit closed reverse projection of
+  only unstarted linked strict meaning so it cannot silently change sprint
+  selection, erase execution evidence, or make the remaining DAG invalid.
+  - **E32:** The decision owner accepted on 2026-08-24 the recommended model:
+    same-identity Task-to-Activity return, explicitly selected internal
+    Milestone-to-Event return, strict boundary Milestone retention, atomic
+    restoration of every linked Work association, no Window coupling, and
+    fail-closed protected-evidence handling.
 
 ## Alternatives
 
@@ -676,6 +768,33 @@ reconsidered under Issue #3, but no multi-document model is accepted here.
 Rejected because sprint selection and closure would then alter execution
 dependency, project completion, or milestone acceptance meanings. A Window is
 orthogonal selection and reporting state.
+
+### Retain a closed Window until a later archive operation
+
+Rejected because a closed declaration plus later archival would create a
+second Window lifecycle and keep past sprint state in the latest-source
+document. Close instead returns the report and contracts the Window in one
+candidate; Git retains the former state.
+
+### Carry every incomplete selected Work automatically
+
+Rejected because carry-over is a new backlog selection decision, not a Task or
+Work lifecycle consequence. Close reports incomplete selected Work, but only
+an explicit membership in a named next Window performs carry-over.
+
+### Defer incomplete Window Work when the Window closes
+
+Rejected because Window selection does not establish projection ownership or
+deferral eligibility. Closing a reporting boundary must not remove strict Tasks
+or Milestones, alter execution evidence, or infer that incomplete Work should
+return to Temporary Draft.
+
+### Implement deferral as Git revert or raw strict deletion
+
+Rejected because Git revert restores file history rather than current semantic
+ownership, and raw deletion can strand Work links or invalidate the strict DAG.
+Deferral is a candidate-bound same-identity reverse projection with explicit
+affected-Work, evidence, and remaining-graph checks.
 
 ### Put backlog and sprint state in a separate document now
 
@@ -756,6 +875,21 @@ Rejected because the same residual meaning would temporarily have two owners
 and could diverge. Split must produce the source remainder and transferred Work
 as one final candidate.
 
+### Project only one Work association to a shared element
+
+Rejected because Event and Activity meaning is owned by the project entity,
+not by each Work association. Per-association projection would require either a
+second semantic copy or one Work to keep pointing at a planning declaration
+that no longer exists. Shared projection instead affects every associated Work
+atomically and reports that complete impact before execution.
+
+### Retain an orphan planning element after its last Work association
+
+Rejected because the pool is the current Work refinement boundary and a
+consumerless Temporary Draft has no current Work consumer or archive meaning.
+The last association can disappear only with explicit re-association,
+projection, or discard in the same candidate.
+
 ### Retain an absorbed Work as a merged redirect
 
 Rejected because a redirect would add a Work lifecycle and permanent transfer
@@ -774,6 +908,10 @@ Positive:
   granting schedule or start authority.
 - Project-owned Events and Activities can be associated with multiple Work
   without duplicating their AoA meaning.
+- Shared-element projection exposes every affected Work and moves the entity
+  once without a per-Work planning copy or a hidden partial projection.
+- Last-consumer handling cannot silently orphan or remove Temporary Draft
+  meaning; one explicit re-association, projection, or discard is required.
 - Work boundaries can be created, removed, split, merged, or partially
   rearranged through one semantic inventory while Event and Activity remain the
   explicit AoA semantic primitives.
@@ -795,6 +933,15 @@ Positive:
   human recognition and reserve a compatible path toward Issue #3.
 - Scrum-like sprint selection, Kanban-like observation, and direct waterfall
   DAG operation coexist around the same execution source of truth.
+- Window close returns current reporting evidence and removes past selection
+  state without adding a closed-to-archived lifecycle.
+- Explicit carry-over prevents Window closure from silently selecting future
+  work or changing Work and strict DAG facts.
+- Narrow deferral can return a closed unstarted fragment to planning ownership
+  without copying meaning, rewriting actual history, or coupling that movement
+  to Window close.
+- Boundary Milestones and complete remaining-DAG validation keep reverse
+  projection from weakening the strict execution structure.
 - Milestone lifecycle remains unchanged; Windows report but do not own outcome
   criteria or evidence.
 - Multi-document hierarchy remains a separate design rather than silently
@@ -804,12 +951,14 @@ Costs and open design work:
 
 - Exact inventory and preflight binding, normalization vectors, description
   coverage and reconstruction, token generation, transient registry behavior,
-  expiry, one-time consumption, deliberate shared associations, reference
-  rebinding, dependency cycles, and last-consumer behavior require closed cases
-  that fail safely on ambiguity.
+  expiry, one-time consumption, accepted shared-association projection,
+  reference rebinding, dependency cycles, and last-consumer disposition require
+  closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
-  source syntax, ID retirement enforcement, deferral, archival, Window closure,
-  carry-over, and coverage reporting require normative cases.
+  source syntax, ID retirement enforcement, accepted narrow-deferral
+  eligibility and protected-evidence closure, archival, accepted Window close
+  contraction, explicit carry-over, and coverage reporting require normative
+  cases.
 - Source grammar, migration, CLI, Core, result, schema, Help, Guide,
   diagnostics, hard limits, and installed-package compatibility remain open.
 
@@ -863,7 +1012,23 @@ LLM-operation navigation: preflight and a later user-response boundary should
 be conspicuous to an LLM following standard perttool operation, while OS-user
 authentication, resistance to deliberate local tampering or false assertions,
 and prevention of user coercion remain non-goals. Details named as contract
-work remain unaccepted until separately reviewed.
+work remain unaccepted until separately reviewed. The owner then accepted
+project-owned entity projection as the only projection unit for a shared Event
+or Activity: all associated Work are affected, their associations become
+projection links atomically, the last association requires an explicit
+re-association, projection, or discard, no orphan Temporary Draft remains, and
+Activity projection requires existing or simultaneously projected Milestone
+endpoints in one closed acyclic candidate. The owner then accepted active-only
+persisted Windows: close returns the report and removes the Window in one
+source-contraction candidate, optional carry-over is an explicit membership in
+a next active Window, Work and DAG facts remain unchanged, ad hoc Windows have
+no lifecycle, and Git retains the former persisted selection state.
+The owner then accepted narrow deferral as a separate explicit reverse
+projection: only a closed fragment of unstarted strict entities with live Work
+projection links can return, Tasks become same-identity Activities, explicitly
+selected internal Milestones become same-identity Events, boundary Milestones
+remain strict, every linked Work association is restored atomically, Window
+operation remains independent, and ambiguous protected evidence fails closed.
 
 ## Follow-ups
 
@@ -875,21 +1040,30 @@ work remain unaccepted until separately reviewed.
    stale invalidation, execution rebinding, reference rebinding, last-consumer,
    and Temporary Draft discard semantics. Do not add an LLM-review record or
    assertion, substitute a salt for the token, or introduce OS-user separation,
-   authentication, protected signing, or secure transport.
+   authentication, protected signing, or secure transport. Normative cases must
+   preserve the accepted global shared-element projection, complete affected-
+   Work enumeration, association-to-link replacement, explicit last-consumer
+   disposition, and closed Activity endpoint rules.
 2. Define residual-description mutation, the exact four-condition reminder,
    Event-to-Milestone and Activity-to-Task projection coverage, same-identity
-   materialization, current link retention, and narrow unstarted deferral
-   through concrete scenarios. Do not add natural-language semantic-equivalence
-   or coverage inference.
+   materialization, and current link retention through concrete scenarios.
+   Preserve narrow deferral as a separate explicit reverse projection limited
+   to closed unstarted linked fragments, with same-identity Task-to-Activity,
+   explicitly selected internal Milestone-to-Event, retained boundary
+   Milestones, complete affected-Work restoration, remaining-DAG validation,
+   no Window coupling, and fail-closed protected-evidence handling. Do not add
+   natural-language semantic-equivalence or coverage inference.
 3. Define root namespace source projection, qualified-ID result representation,
    title display, ID retirement, diagnostics, and compatibility. Leave
    multi-file binding, alias, mounting, and nested resolution to Issue #3.
 4. Define directional Work dependency source syntax, advisory readiness,
    unresolved and cyclic diagnostics, removal, and archive interaction. Do not
    add a generic related relationship or infer a strict DAG edge.
-5. Define persisted and ad hoc Window lifecycle, timeboxes, objectives,
-   dependency coverage, closure, carry-over, and global-DAG conflict reporting
-   through Scrum-like and Kanban-like scenarios.
+5. Define persisted and ad hoc Window source and result contracts, timeboxes,
+   objectives, dependency coverage, global-DAG conflict reporting, and
+   Scrum-like and Kanban-like cases. Preserve active-by-presence persisted
+   Windows, close-and-contract reporting, explicit next-Window carry-over, no
+   stored closed state, and no ad hoc lifecycle.
 6. Define Work and projection-link archival, advance cleanup composition, and
    history-safety ownership for canonical Work, links, and Windows, including
    the exact exclusion of Temporary Draft ranges.
