@@ -1229,6 +1229,28 @@ stay valid, closed, acyclic, and connected to `project.finish`. Deferral does
 not alter Window membership, Work description, dependency, or backlog order,
 and ambiguous protected evidence makes it unavailable.
 
+Work has no stored lifecycle or completion flag. Window and Work observation
+reports refinement coverage, linked Task execution, linked Milestone outcome,
+current organization and archiveability, and close disposition as independent
+axes. Selected execution completion requires identified Activity coverage,
+complete corresponding Tasks, and a complete evidence basis. No identified
+coverage is uncovered rather than complete; missing or pruned linkage and
+execution evidence is unknown or unavailable rather than inferred. Accepted
+outcomes, additional completed work, explicit carry-over, and archiveability
+remain separate facts.
+
+Current `.pert` bytes and their source digest remain authoritative for current
+Work, Window, projection, and strict-DAG facts. When advance or another
+accepted contraction has removed projection targets or Window state, a report
+may reconstruct the stable-identity association, projection, execution,
+outcome, and former membership chain from bounded immutable first-parent Git
+evidence. Results expose the exact current and Git evidence basis, completeness,
+and gaps. Missing, shallow, actually lost across a forced boundary, invalid,
+ambiguous, raced, or hard-limit-exceeded evidence yields unknown or unavailable
+facts. Current source retains no completion snapshot, projection tombstone,
+closed Window, or durable close report; post-close reporting is an explicit
+historical observation.
+
 The strict AoA DAG, single `project.finish`, global recommendation authority,
 milestone acceptance, plan assurance, actuals, velocity, and canonical advance
 remain unchanged. The first selected contract must close work identity,

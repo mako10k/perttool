@@ -570,6 +570,85 @@ membership or close operation. The close result is immediate observation
 evidence; the former persisted Window and membership state belong to Git
 history after source contraction.
 
+### Derived Work and Window observations
+
+Work has no persisted `status`, `done`, `completed`, or `accepted` fact. Its
+presence in current source identifies a useful planning and organization
+boundary, not a lifecycle phase. Window reporting derives independent
+observations from the semantic owners rather than writing a summary state back
+to Work:
+
+- refinement coverage reports residual-description presence, associated
+  planning Events and Activities, current projection links, and uncovered Work
+  dependencies without deciding whether natural-language meaning is complete;
+- execution observation groups linked strict Tasks by their authoritative
+  lifecycle, Work-event, and actual facts;
+- outcome observation groups linked strict Milestones by reach and acceptance
+  facts and remains separate from Task completion;
+- organization observation reports current Window membership, backlog
+  relationships, useful trace links, and archiveability; and
+- close disposition reports explicit next-Window carry-over, ordinary backlog
+  retention, or a separately requested archive candidate without deriving one
+  from another axis.
+
+`selected execution completion` is a Window observation, not a Work state. It
+is reported for selected Work only when at least one Activity obligation is
+identified, no identified Activity remains unprojected, every corresponding
+strict Task is complete, and the evidence basis is complete. Work with no
+identified Activity or Task coverage is uncovered, not complete. Residual
+description presence is reported independently because perttool does not infer
+whether that prose is unfinished execution meaning or intentionally retained
+non-DAG rationale.
+
+Accepted outcomes, additional completed work outside the Window, uncovered
+selected Work, and explicit carry-over remain separate result sets. A shared
+Task or Milestone contributes the same authoritative observation to every
+linked Work without creating per-Work copies. Missing, pruned, or unavailable
+current or historical linkage and execution evidence produces an explicit
+unknown or unavailable observation; absence is never treated as completion.
+Archiveability means only that current Work organization is no longer needed.
+It is not proof of Task completion, outcome acceptance, or project completion.
+
+### Current and historical observation evidence
+
+The parsed current `.pert` bytes and their source digest are the only authority
+for current Work, Window membership, residual description, planning elements,
+live projection links, and strict DAG state. Historical evidence never
+overrides or silently restores a declaration absent from the current source.
+When a current observation needs a projection, Task, Milestone, actual, or
+acceptance fact that canonical advance or another accepted contraction has
+removed, perttool may reconstruct that former fact from bounded immutable Git
+evidence instead of retaining it as current planning state.
+
+Historical reconstruction follows the existing first-parent, same-repository,
+same-path model. It traces the stable fully qualified identity from a Work
+association through a projection-link occurrence to the same-identity strict
+Task or Milestone, then uses authoritative lifecycle, Work-event, actual,
+outcome-acceptance, and canonical-advance evidence. A historical Window query
+may likewise reconstruct its former declaration and membership from Git. An ID
+match without the required association and projection lineage is not evidence
+that a direct strict entity belonged to a Work.
+
+Every observation exposes its evidence basis and completeness. The basis binds
+the current source digest, repository and path identity, requested and resolved
+Git endpoints, relevant commit, blob, and source digests, and any continuity or
+validity gaps. Exact field names remain result-contract work. A current-source,
+path, `HEAD`, repository-snapshot, or captured-object race invalidates the
+result. Missing history, shallow history, history actually lost across a forced
+boundary, invalid historical source, ambiguous ID reuse, unavailable objects,
+or an exceeded hard limit yields explicit unknown or unavailable facts for the
+affected axis rather than inferred completion.
+
+A persisted Window close report is computed from one source-bound current
+snapshot and any exact historical evidence needed by its selected Work. The
+close mutation rechecks those bindings before contracting the Window. After
+close, ordinary current-state observation does not synthesize the removed
+Window; a later report is a separately requested historical observation over
+Git evidence. No completion snapshot, projection tombstone, closed-Window
+record, or durable close report is added to current `.pert`. Uncommitted
+Temporary Draft that was permitted to disappear has no historical
+reconstruction guarantee.
+
 Whole-project DAG recommendation remains authoritative. Window-oriented output
 must not hide a globally critical or higher-priority executable Task outside
 the Window. Backlog order and execution recommendation remain distinct facts.
@@ -749,6 +828,22 @@ its accepted `dag advance` boundary without a new contract.
     Milestone-to-Event return, strict boundary Milestone retention, atomic
     restoration of every linked Work association, no Window coupling, and
     fail-closed protected-evidence handling.
+- **C20:** Work completion must remain a derived multi-axis observation rather
+  than a stored Work lifecycle so Task execution, Milestone acceptance,
+  planning coverage, Window disposition, and archiveability retain distinct
+  semantic owners.
+  - **E33:** The decision owner accepted on 2026-08-24 the recommended model:
+    no persisted Work completion flag, independent refinement, execution,
+    outcome, organization, and close-disposition observations, and no inferred
+    completion from absent or incomplete evidence.
+- **C21:** Observation must combine current-source authority with bounded
+  immutable Git reconstruction so advance and source contraction do not force
+  historical ledgers back into current `.pert` or erase reportable evidence.
+  - **E34:** The decision owner accepted on 2026-08-24 the recommended model:
+    latest `.pert` for current facts, Git for removed projection, execution,
+    outcome, and Window evidence, explicit evidence binding and completeness,
+    and unknown or unavailable results rather than inference when proof is
+    incomplete.
 
 ## Alternatives
 
@@ -768,6 +863,32 @@ reconsidered under Issue #3, but no multi-document model is accepted here.
 Rejected because sprint selection and closure would then alter execution
 dependency, project completion, or milestone acceptance meanings. A Window is
 orthogonal selection and reporting state.
+
+### Store a lifecycle or completion flag on Work
+
+Rejected because Work would become a second owner of facts already owned by
+Task lifecycle and Milestone acceptance. It would also require synchronization
+after projection, deferral, advance, Window close, and direct strict-DAG use.
+
+### Collapse Work observations into one computed done value
+
+Rejected because a single value cannot distinguish projected Task completion,
+accepted outcomes, unprojected planning meaning, incomplete evidence,
+carry-over selection, and source archiveability. The result would either hide
+material facts or invent a product-specific completion policy.
+
+### Retain projection links after their strict targets advance
+
+Rejected because a link to a removed current entity would require a tombstone
+or historical target declaration and turn the latest source into a reporting
+ledger. Git reconstruction preserves the former link and target together.
+
+### Persist completion snapshots or Window close reports in current source
+
+Rejected because the snapshot would duplicate Task, Milestone, actual, and Git
+history facts and require its own invalidation rules. Close returns an
+evidence-bound result, contracts current Window state, and leaves later review
+to an explicit historical observation.
 
 ### Retain a closed Window until a later archive operation
 
@@ -937,6 +1058,16 @@ Positive:
   state without adding a closed-to-archived lifecycle.
 - Explicit carry-over prevents Window closure from silently selecting future
   work or changing Work and strict DAG facts.
+- Multi-axis observation shows refinement coverage, Task execution, outcome
+  acceptance, organization, and close disposition without adding a competing
+  Work lifecycle.
+- Incomplete evidence remains visible as unknown or unavailable instead of
+  turning missing links or history into a false completion claim.
+- Bounded Git reconstruction preserves reportable projection, execution,
+  outcome, and former Window evidence while current `.pert` stays limited to
+  latest planning and execution state.
+- Exact source and Git bindings distinguish a reproducible historical
+  observation from a best-effort ID match or stale mixed-revision summary.
 - Narrow deferral can return a closed unstarted fragment to planning ownership
   without copying meaning, rewriting actual history, or coupling that movement
   to Window close.
@@ -957,8 +1088,10 @@ Costs and open design work:
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
-  contraction, explicit carry-over, and coverage reporting require normative
-  cases.
+  contraction, explicit carry-over, multi-axis observation, selected execution
+  completion coverage, current-and-historical evidence composition,
+  first-parent continuity and gaps, race handling, evidence completeness, and
+  unknown handling require normative cases.
 - Source grammar, migration, CLI, Core, result, schema, Help, Guide,
   diagnostics, hard limits, and installed-package compatibility remain open.
 
@@ -1029,6 +1162,16 @@ projection links can return, Tasks become same-identity Activities, explicitly
 selected internal Milestones become same-identity Events, boundary Milestones
 remain strict, every linked Work association is restored atomically, Window
 operation remains independent, and ambiguous protected evidence fails closed.
+The owner then accepted derived multi-axis observation instead of a Work
+completion lifecycle: refinement coverage, Task execution, Milestone outcome,
+organization and archiveability, and Window close disposition remain separate;
+selected execution completion is observational, absent coverage is not
+completion, and incomplete evidence is reported rather than inferred.
+The owner then accepted current-source plus Git evidence composition: latest
+`.pert` remains the authority for current facts, bounded immutable first-parent
+history reconstructs removed projection, execution, outcome, and Window facts,
+every result exposes its evidence basis and completeness, and gaps or races
+produce unknown or unavailable observations without a current-source ledger.
 
 ## Follow-ups
 
@@ -1063,9 +1206,21 @@ operation remains independent, and ambiguous protected evidence fails closed.
    objectives, dependency coverage, global-DAG conflict reporting, and
    Scrum-like and Kanban-like cases. Preserve active-by-presence persisted
    Windows, close-and-contract reporting, explicit next-Window carry-over, no
-   stored closed state, and no ad hoc lifecycle.
+   stored closed state, and no ad hoc lifecycle. Preserve the absence of Work
+   lifecycle state and report refinement, execution, outcome, organization,
+   and close-disposition axes independently. Define selected execution
+   completion only from identified Activity coverage, complete corresponding
+   Task execution, and a complete evidence basis; report absent or incomplete
+   evidence explicitly and never infer completion from it. Bind current
+   observations and close reports to one exact current-source snapshot and any
+   bounded first-parent Git evidence used; leave post-close reporting to an
+   explicit historical observation.
 6. Define Work and projection-link archival, advance cleanup composition, and
    history-safety ownership for canonical Work, links, and Windows, including
-   the exact exclusion of Temporary Draft ranges.
+   the exact exclusion of Temporary Draft ranges. Define stable-identity
+   projection-lineage reconstruction, Git endpoint and object bindings,
+   continuity and validity gaps, source and repository races, shallow and
+   forced-history-loss behavior, and hard limits without retaining tombstones,
+   completion snapshots, or closed-Window reports in current source.
 7. Define the closed source, Core, CLI, result, schema, Help, Guide, migration,
    hard-limit, and backward-compatibility contracts.
