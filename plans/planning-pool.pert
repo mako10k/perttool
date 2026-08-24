@@ -307,3 +307,41 @@ task_outcome OUTCOME_PLANNING_POOL_SOURCE_CORE:
   against_basis sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
   status conformant
   reason "Accepted private Grammar 9 Planning Pool source Core and sixteen closed cases"
+
+milestone_criterion_set PLANNING_POOL_CONTRACT_ACCEPTED_R1:
+  milestone PLANNING_POOL_CONTRACT_ACCEPTED
+  revision R1
+  commitment sha256:b46a526af385baef91707b956a50cbf607ec4f9f36b114aea8d3bf6fe1a15e19
+  criterion CONTRACT_ACCEPTED required artifact "Accepted Work-centered planning-pool contract and forty closed cases"
+
+milestone_criterion_set PLANNING_POOL_SOURCE_READY_R1:
+  milestone PLANNING_POOL_SOURCE_READY
+  revision R1
+  commitment sha256:d09f20b85579e38babbdbc7410287b22fd7e9f5c34af25d8a4fc464cdb9389c5
+  criterion SOURCE_CORE_ACCEPTED required artifact "Accepted private Grammar 9 Planning Pool source Core and sixteen closed cases"
+
+milestone_acceptance_receipt PLANNING_POOL_CONTRACT_EVIDENCE:
+  model 1
+  set PLANNING_POOL_CONTRACT_ACCEPTED_R1
+  set_commitment sha256:b46a526af385baef91707b956a50cbf607ec4f9f36b114aea8d3bf6fe1a15e19
+  criterion CONTRACT_ACCEPTED
+  criterion_commitment sha256:2cdde35ec6cea25e2303fb26a45b80fb510e1c90ee7c052d535a7adddeb06f36
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-contract-acceptance.md"
+  evidence_revision 872decd8f0ee727bac44a142a5133d052318bba6
+  verifier codex
+  occurred_at 2026-08-24T10:34:39Z
+
+milestone_acceptance_receipt PLANNING_POOL_SOURCE_EVIDENCE:
+  model 1
+  set PLANNING_POOL_SOURCE_READY_R1
+  set_commitment sha256:d09f20b85579e38babbdbc7410287b22fd7e9f5c34af25d8a4fc464cdb9389c5
+  criterion SOURCE_CORE_ACCEPTED
+  criterion_commitment sha256:02867a25a1a1e5a3c20d151af31dee3cb407c70fa6233b9daeba37780f4a001e
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-source-core-acceptance.md"
+  evidence_revision 3587a80794134dcef26a969c7f5efa35aad6bf57
+  verifier codex
+  occurred_at 2026-08-24T11:20:30Z
