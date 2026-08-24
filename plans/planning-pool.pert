@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project PLANNING_POOL:
-  version 6
+  version 7
   title "Work-centered planning pool and bounded Windows"
   description "Implement PLAN-POOL-001 and Issue #12 as an independent single-document Work-centered planning workstream. First accept one normative contract for Work, project-owned Event and Activity AoA, active persisted and ad hoc Windows, semantic reshape, ownership-transfer projection, narrow deferral, observation, archival, and bounded Git reconstruction. Then implement source semantics, governed mutations, read models, history composition, the public CLI contract, and complete acceptance. Preserve the current strict DAG, one project finish, Task actuals and velocity, Milestone outcome acceptance, governance, plan assurance, history safety, Grammar 8 and CLI Contract 9 behavior until an accepted public-contract decision changes them. Multi-file and nested composition from Issue #3, a generic related relationship, editor or MCP mutation, release selection, publication, remote writes, Issue mutation, and plan advance remain separate decisions."
   as_of 2026-08-24
@@ -12,6 +12,17 @@ project PLANNING_POOL:
   plan_assurance_model 1
   plan_assurance_hash_model 1
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:90aab8ca2f25ec18980a05374a543a682ce2b172:index:43b4466ad4877b928915ae2cd8264a3ddfc56c15
+  path "plans/planning-pool.pert"
+  object_format sha1
+  head 90aab8ca2f25ec18980a05374a543a682ce2b172
+  blob 43b4466ad4877b928915ae2cd8264a3ddfc56c15
+  source_digest sha256:151bbfae83acac337bc93df61af470e7eef5601ff2f793f4ac924db5b3a9d876
+  candidate_digest sha256:d3d0b0cfdb920883d5398a708ee8905fdf7a4b3068309addef4572ca5a4a9cc7
+  grandfathered PLANNING_POOL_SELECTED
 milestone PLANNING_POOL_SELECTED:
   title "Issue #12 implementation selected"
   state reached
