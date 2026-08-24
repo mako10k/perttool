@@ -1,8 +1,9 @@
 # ADR 0007: Model the planning pool as outcome-driven AoA
 
-- Status: Accepted
+- Status: Superseded
 - Date: 2026-08-24
 - Decision owner: user
+- Superseded by: [ADR 0008](0008-work-and-windows-for-draft-planning.md)
 - Related backlog: [PLAN-POOL-001](../backlog.md#plan-pool-001-add-a-planning-pool-and-bounded-work-windows)
 - Related issue: [GitHub Issue #12](https://github.com/mako10k/perttool/issues/12)
 - Related decisions: [ADR 0001](0001-activity-on-arrow.md), [ADR 0006](0006-explicit-work-events-in-git-history.md)
@@ -220,9 +221,15 @@ composition before runtime work begins.
 
 ## Review
 
-The decision owner accepted this level of design on 2026-08-24. Remaining
-questions are follow-up decisions and must not be inferred as accepted by this
-ADR.
+The decision owner initially accepted this level of design on 2026-08-24. A
+subsequent use-case review on the same date showed that the mandatory planning
+AoA centered the separate multi-document and upper-plan use case instead of
+Issue #12's single-document draft, backlog, and sprint-window use cases. The
+decision owner therefore superseded this record with [ADR 0008](0008-work-and-windows-for-draft-planning.md).
+
+This record preserves the superseded rationale. It is not an implementation
+basis for Issue #12, and its Planning Event and Change Intent types are not
+accepted source concepts.
 
 ## Follow-ups
 

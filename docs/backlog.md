@@ -1197,8 +1197,11 @@ decision.
 
 Priority: P2
 
-Status: Design request (2026-08-14); outcome-driven planning AoA architecture
-accepted (2026-08-24); [Issue
+Status: Design request (2026-08-14); use-case-centered single-document Work,
+residual intent, project-owned AoA planning elements, planning-only Work
+dependency, auditable Work semantic reshape, ownership-transfer projection,
+namespace, display-name, archive, and Window architecture accepted
+(2026-08-24); [Issue
 #12](https://github.com/mako10k/perttool/issues/12); implementation plan not
 selected
 
@@ -1215,18 +1218,75 @@ link/split/merge cardinality, shaping, window lifecycle and timeboxes,
 promotion/deferral, CLI and schema surfaces, history, compatibility, and the
 boundary with multi-document `MULTI-001` before runtime work begins.
 
-[ADR 0007](adr/0007-outcome-driven-planning-pool.md) accepts the first
-architecture boundary. The planning pool is a non-executable AoA whose
-Planning Event nodes state premise or target conditions and whose Change Intent
-edges state desired transitions rather than executable actions. A Milestone is
-an explicit execution projection of a Planning Event, and a replaceable strict
-Task/Gate/Milestone subgraph realizes a Change Intent. Invalidated premises or
-withdrawn targets require governed replanning instead of automatic adherence
-to a stale Do. The current source keeps only the latest planning state; former
-revisions belong to Git history, and every destructive latest-state in-place
-mutation requires exact recoverability proof before writing. Source identities,
-projection cardinality, criterion ownership, invalidation evidence, interfaces,
-and implementation remain contract work.
+[ADR 0008](adr/0008-work-and-windows-for-draft-planning.md) supersedes the
+upper-plan-biased [ADR 0007](adr/0007-outcome-driven-planning-pool.md) and
+accepts the use-case boundary. Work is an independently orderable and
+selectable backlog item and an organization boundary associated with separate,
+project-owned Event-node and Activity-edge planning primitives. The association
+is many-to-many and does not move element meaning into Work. Its optional
+`description` owns the problem, value, hypothesis, constraint, or other
+residual intent not yet allocated to an element or retained as current non-DAG
+rationale. Projection atomically moves same-identity Event and Activity
+meaning to strict Milestone and Task owners and removes the planning-side
+declaration. A still-useful Work
+association may remain as trace. The interface exposes `Add residual
+description`, CLI `--add-residual-description`, and JSON
+`add_residual_description`; if projection leaves a prior non-empty parsed Work
+description unchanged without that explicit action, it emits one prominent
+non-blocking reminder. It performs no natural-language equivalence, fragment,
+or coverage inference. Work otherwise retains only residual meaning, its own
+ID and title, current non-goal relationships, and useful trace links. When
+neither residual meaning nor a current relation needs Work, archival removes
+Work and its links from current source and leaves history to Git. Temporary
+planning elements need no tombstone or Git recoverability proof, while
+canonical Work, Window, link, and DAG loss retains exact history safety. Stable
+identity is a logical namespace path plus local ID, `::` is reserved for future
+qualified references, and mutable non-unique `title` is the human display name.
+Current single-document use has the project ID as root namespace; multi-file
+binding, alias, and nesting remain in `MULTI-001`. Exact source syntax,
+association and sharing, projection coverage, archival, Window behavior,
+interfaces, and implementation remain contract work.
+
+Work also has a directional planning-only `depends_on` relationship. It may
+guide backlog refinement and report uncovered or cyclic dependencies, but it
+does not affect execution analysis or authority and is never automatically
+converted into a strict DAG edge. Window selection and partial projection stay
+permitted with an unresolved dependency. A current dependency prevents Work
+archival until removed or represented completely by current AoA or DAG meaning.
+A generic `related_to` relationship is deferred until a demonstrated use case
+establishes its behavior.
+
+Work creation, removal, split, merge, and partial movement use one atomic
+semantic-reshape rule. An operation-local inventory enumerates every semantic
+element in every affected Work, including removed elements, plus every newly
+introduced element. Each element has one labeled origin and exactly one final
+Work or explicit discard destination. Final Work descriptions are reconstructed
+from the destination elements. This permits mechanical checks for complete
+source coverage, one disposition, explicit creation and discard, exact output
+reconstruction, and closed references without claiming natural-language
+equivalence. The inventory is request/result evidence rather than a persistent
+statement, transfer, redirect, lineage, or tombstone model in `.pert`.
+
+The LLM first submits the complete reshape plan to a read-only preflight. The
+preflight parses the input into a versioned typed normalized model and returns
+its SHA-256 `preflight_hash` and one tool-managed opaque one-time
+`preflight_token` together with the actual before and candidate descriptions,
+both semantic decompositions, the origin-to-destination mapping, relationship
+changes, and mechanical diagnostics. The LLM evaluates that evidence internally
+and, when needed, reconstructs the input and repeats preflight. No self-review
+flag, assertion, receipt, or other LLM-review record is produced. Execution
+requires a normalized-equivalent input, the exact hash, and the matching
+unexpired unused token; it re-normalizes, re-audits, verifies the token binding,
+and then applies the existing governance, history, race, and safe-write gates.
+The token is generated only after successful preflight and cannot be replaced
+by a public salt, nonce, or caller-computable value. Hash and token do not
+independently grant mutation authority. An ordinary perttool-managed transient
+registry binds the token across CLI invocations; no OS-user separation,
+authentication service, protected signer, or secure transport is required.
+This is guided LLM-operation navigation, not adversarial access control. An LLM
+must still stop after preflight and obtain a new user response before supplying
+any separately required owner confirmation. Governance inputs are excluded
+from the reshape hash and remain independent candidate-bound caller assertions.
 
 ### MULTI-001: Design backlog hierarchy and multi-plan composition
 
