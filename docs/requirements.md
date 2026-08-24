@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.29
+- Document status: Draft 0.30
 - Created: 2026-07-21
-- Updated: 2026-08-17
+- Updated: 2026-08-24
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -29,6 +29,9 @@ The central mission of `perttool` is not PERT analysis itself. It is to provide 
   is restored
 - Declaration of a macro task's closed detail partition without silently
   composing schedules or weakening the macro assurance boundary
+- Registration and progressive AoA refinement of Work outside the strict DAG,
+  with independently selected persisted or ad hoc Windows and explicit
+  same-identity projection into Milestone and Task owners
 - Conversion to visualization formats such as Mermaid
 - Equivalent operations from the CLI, CI, and AI agents using CLI JSON; MCP and editor adapters will be added after the MVP
 
@@ -3696,6 +3699,35 @@ Before implementation, separate the specifications in the following order.
       to npm `beta`, and leave `latest` unchanged.
     - [x] Independently verify durable public identity, installed Contract 9
       behavior, compatibility, and the exact `0.9.4` rollback pin.
+25. [ ] Implement the Work-centered planning pool and bounded Windows under
+    `PLAN-POOL-001` and
+    [`plans/planning-pool.pert`](../plans/planning-pool.pert).
+    - [x] Accept [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md)
+      as the single-document use-case boundary and supersede the upper-plan-
+      biased ADR 0007 without moving Issue #3 composition into this scope.
+    - [x] Accept the
+      [Work-centered Planning Pool and Window Contract](specs/planning-pool.md)
+      as the Grammar 9 and CLI Contract 10 target for Work, project-owned Event
+      and Activity AoA, semantic reshape and guided preflight, same-identity
+      projection and narrow deferral, active Windows, observations, history,
+      migration, diagnostics, limits, and compatibility.
+    - [x] Fix forty dependency-ordered machine cases and two SHA-256
+      normalization vectors in
+      [`planning-pool-contract-v1.json`](../test/fixtures/planning-pool-contract-v1.json)
+      while retaining the active Grammar 8 and CLI Contract 9 runtime.
+    - [ ] Implement the private Grammar 9 planning source and semantic Core.
+    - [ ] Implement semantic reshape, preflight hash and opaque token,
+      projection, archival, advance cleanup, and narrow deferral.
+    - [ ] Implement persisted and ad hoc Window mutation and independent Work
+      and Window observations with identity-deduplicated shared facts.
+    - [ ] Compose bounded first-parent Git reconstruction without adding
+      tombstones, closed Windows, or completion snapshots to current source.
+    - [ ] Atomically activate the eleven commands, three new root result
+      identities, replacement advance and unit-migration results, schemas,
+      Help, Guide, package surfaces, migration, and compatibility.
+    - [ ] Complete the end-to-end acceptance task without selecting a release,
+      publishing, mutating an Issue, activating editor or MCP writes, or
+      advancing the selected plan.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

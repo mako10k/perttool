@@ -1,0 +1,425 @@
+{
+  "schema_version": "Perttool.PlanningPoolContractCases.v1",
+  "contract_id": "PLAN-POOL-001",
+  "status": "normative",
+  "target": {
+    "grammar_version": 9,
+    "cli_contract_version": 10,
+    "source_model": "Perttool.PlanningPoolModel.v1",
+    "normalization_contract": "perttool.planning-reshape-normalization@1",
+    "request_identities": [
+      "Perttool.PlanningReshapeRequest.v1",
+      "Perttool.WindowMutationRequest.v1",
+      "Perttool.PlanningObservationRequest.v1"
+    ],
+    "result_identities": [
+      "Perttool.PlanningPoolResult.v1",
+      "Perttool.PlanningReshapePreflightResult.v1",
+      "Perttool.PlanningMutationResult.v1",
+      "Perttool.AdvanceResult.v4",
+      "Perttool.UnitMigrationResult.v5"
+    ],
+    "new_commands": [
+      "work list",
+      "work show",
+      "work observe",
+      "work reshape preflight",
+      "work reshape apply",
+      "window list",
+      "window show",
+      "window observe",
+      "window add",
+      "window set",
+      "window close"
+    ],
+    "active_command_count_after_public_activation": 67,
+    "active_root_schema_count_after_public_activation": 26,
+    "diagnostics": [
+      "PTPOOL-101",
+      "PTPOOL-102",
+      "PTPOOL-103",
+      "PTPOOL-104",
+      "PTPOOL-105",
+      "PTPOOL-106",
+      "PTPOOL-107",
+      "PTPOOL-108",
+      "PTPOOL-109",
+      "PTPOOL-110",
+      "PTPOOL-111",
+      "PTPOOL-112",
+      "PTPOOL-113",
+      "PTPOOL-114",
+      "PTPOOL-115",
+      "PTPOOL-116",
+      "PTPOOL-117"
+    ],
+    "hard_limits": {
+      "source_or_candidate_utf8_bytes": 8388608,
+      "works": 10000,
+      "events": 20000,
+      "activities": 20000,
+      "associations_plus_projection_links": 100000,
+      "work_dependencies": 100000,
+      "persisted_windows": 2048,
+      "persisted_window_memberships": 100000,
+      "reshape_request_utf8_bytes": 8388608,
+      "affected_work_per_reshape": 2048,
+      "semantic_rows_per_reshape": 50000,
+      "relationship_dispositions_per_reshape": 200000,
+      "unexpired_preflight_tokens": 256,
+      "preflight_token_lifetime_seconds": 3600,
+      "first_parent_commits": 2048,
+      "raw_bytes_per_historical_snapshot": 8388608,
+      "aggregate_historical_raw_bytes": 134217728,
+      "derived_observation_entity_records": 100000
+    },
+    "unchanged_runtime": {
+      "package_version": "0.10.5",
+      "grammar_version": 8,
+      "cli_contract_version": 9,
+      "commands": 56,
+      "root_schemas": 23,
+      "root_exports": 129,
+      "node_exports": 129,
+      "core_exports": 45
+    }
+  },
+  "hash_vectors": [
+    {
+      "id": "PPRH-001",
+      "summary": "Complete byte-identical one-Work reshape",
+      "canonical_utf8": "{\"add_residual_description\":[],\"affected_work_ids\":[\"POOL::W1\"],\"association_dispositions\":[],\"created_works\":[],\"dependency_dispositions\":[],\"final_work_order\":[\"POOL::W1\"],\"intent\":\"reshape\",\"normalization_contract\":\"perttool.planning-reshape-normalization@1\",\"planning_entity_dispositions\":[],\"projection_link_dispositions\":[],\"removed_work_ids\":[],\"request_schema_version\":\"Perttool.PlanningReshapeRequest.v1\",\"semantic_elements\":[{\"destination\":{\"kind\":\"work\",\"position\":0,\"text\":\"Keep meaning\",\"work_id\":\"POOL::W1\"},\"element_id\":\"E1\",\"origin\":{\"end_utf16\":12,\"kind\":\"existing\",\"source_text\":\"Keep meaning\",\"start_utf16\":0,\"work_id\":\"POOL::W1\"}}],\"source_digest\":\"sha256:0000000000000000000000000000000000000000000000000000000000000000\",\"strict_fragment\":null,\"window_close\":null,\"window_membership_dispositions\":[]}",
+      "utf8_bytes": 821,
+      "preflight_hash": "sha256:96236bd37e88b6010fbf2584e711fd65a7d01949ee2c850517e4c4ace6455bf4"
+    },
+    {
+      "id": "PPRH-002",
+      "summary": "Meaning-bearing destination text changes the hash",
+      "canonical_utf8": "{\"add_residual_description\":[],\"affected_work_ids\":[\"POOL::W1\"],\"association_dispositions\":[],\"created_works\":[],\"dependency_dispositions\":[],\"final_work_order\":[\"POOL::W1\"],\"intent\":\"reshape\",\"normalization_contract\":\"perttool.planning-reshape-normalization@1\",\"planning_entity_dispositions\":[],\"projection_link_dispositions\":[],\"removed_work_ids\":[],\"request_schema_version\":\"Perttool.PlanningReshapeRequest.v1\",\"semantic_elements\":[{\"destination\":{\"kind\":\"work\",\"position\":0,\"text\":\"Changed meaning\",\"work_id\":\"POOL::W1\"},\"element_id\":\"E1\",\"origin\":{\"end_utf16\":12,\"kind\":\"existing\",\"source_text\":\"Keep meaning\",\"start_utf16\":0,\"work_id\":\"POOL::W1\"}}],\"source_digest\":\"sha256:0000000000000000000000000000000000000000000000000000000000000000\",\"strict_fragment\":null,\"window_close\":null,\"window_membership_dispositions\":[]}",
+      "utf8_bytes": 824,
+      "preflight_hash": "sha256:a2531273dedb201eb173decd937cf242360ccf4e87dddabcab296fd87b84a265"
+    }
+  ],
+  "cases": [
+    {
+      "id": "PPC-001",
+      "depends_on": [],
+      "area": "incomplete-draft",
+      "given": "Grammar 9 Work has a stable ID, non-empty title, and no description or planning element.",
+      "when": "The document is checked and the Work is listed.",
+      "then": "The Work is valid uncovered backlog input, has no lifecycle state, and does not affect the strict DAG."
+    },
+    {
+      "id": "PPC-002",
+      "depends_on": ["PPC-001"],
+      "area": "aoa-refinement",
+      "given": "A Work associates one project-owned Event but no Activity.",
+      "when": "Refinement is observed.",
+      "then": "The desired or premise state is retained without inventing a Do, endpoint-free Activity, or execution authority."
+    },
+    {
+      "id": "PPC-003",
+      "depends_on": ["PPC-002"],
+      "area": "draft-topology",
+      "given": "Associated Events and Activities form disconnected or cyclic planning fragments with complete Activity endpoints.",
+      "when": "The Grammar 9 source is validated.",
+      "then": "The Temporary Draft remains valid but is not schedulable or projectable as an invalid strict fragment."
+    },
+    {
+      "id": "PPC-004",
+      "depends_on": ["PPC-003"],
+      "area": "identity",
+      "given": "Project POOL contains local Work W1 with title Trusted sign-in.",
+      "when": "Machine and human identities are projected.",
+      "then": "The machine result keeps id W1 and qualified_id POOL::W1 while title is mutable, non-unique display text; source rejects :: references."
+    },
+    {
+      "id": "PPC-005",
+      "depends_on": ["PPC-004"],
+      "area": "identity-retirement",
+      "given": "A tracked first-parent history contains a removed POOL::W1 with different meaning.",
+      "when": "A mutation tries to create W1 again.",
+      "then": "The creation is unavailable or rejected; incomplete history never proves reuse safe and untracked new documents remain creatable."
+    },
+    {
+      "id": "PPC-006",
+      "depends_on": ["PPC-005"],
+      "area": "backlog-order",
+      "given": "The document contains three Work declarations in source order C, A, B and work_order A, B, C.",
+      "when": "Work is listed or a Window filters the project.",
+      "then": "A, B, C is the only semantic order; declaration movement, title, dependency, and DAG facts do not change it."
+    },
+    {
+      "id": "PPC-007",
+      "depends_on": ["PPC-006"],
+      "area": "backlog-order-mutation",
+      "given": "Split creates S, merge absorbs B into A, and a partial reshape does not request reorder.",
+      "when": "Candidates are planned.",
+      "then": "Split requires an insertion anchor, A keeps its former position, B disappears, and all unaffected positions remain exact."
+    },
+    {
+      "id": "PPC-008",
+      "depends_on": ["PPC-007"],
+      "area": "work-dependency",
+      "given": "A depends on B while B appears later and lies outside a selected Window.",
+      "when": "The dependency is observed.",
+      "then": "Direction, order conflict, and uncovered Window coverage are separate advisory facts; no Work is blocked, satisfied, reordered, auto-selected, or made executable."
+    },
+    {
+      "id": "PPC-009",
+      "depends_on": ["PPC-008"],
+      "area": "work-dependency-cycle",
+      "given": "A depends on B and B depends on A.",
+      "when": "The planning pool is checked and observed.",
+      "then": "The source is valid, the cycle is prominent and has no advisory ready order, and it is never a valid strict DAG cycle."
+    },
+    {
+      "id": "PPC-010",
+      "depends_on": ["PPC-009"],
+      "area": "dependency-disposition",
+      "given": "A reshape affects all incoming and outgoing dependencies of removed Work B.",
+      "when": "Preflight audits retain, rebind, represented, or no_longer_required dispositions.",
+      "then": "Every incident pair has one disposition, duplicates coalesce, cited final owners exist, self-internalization is explicit, and semantic equivalence is not claimed."
+    },
+    {
+      "id": "PPC-011",
+      "depends_on": ["PPC-010"],
+      "area": "reshape-split",
+      "given": "One source description is partitioned exactly into retained and moved semantic rows.",
+      "when": "A new Work receives the moved rows and the principal Work retains the complement.",
+      "then": "Both final descriptions reconstruct exactly, no row is copied, and split is one atomic transfer."
+    },
+    {
+      "id": "PPC-012",
+      "depends_on": ["PPC-011"],
+      "area": "reshape-merge",
+      "given": "Absorbed Work contributes every residual row and every typed reference to surviving Work.",
+      "when": "Merge is preflighted.",
+      "then": "All meaning and references have one final destination, the absorbed Work and order entry disappear, and no redirect or tombstone remains."
+    },
+    {
+      "id": "PPC-013",
+      "depends_on": ["PPC-012"],
+      "area": "reshape-create-discard",
+      "given": "A composite reshape introduces asserted-new rows, moves existing rows, and explicitly discards others.",
+      "when": "The inventory is audited.",
+      "then": "Every row has one labeled origin and one Work or discard destination; machine audit proves structural conservation but not natural-language novelty or wisdom."
+    },
+    {
+      "id": "PPC-014",
+      "depends_on": ["PPC-013"],
+      "area": "reshape-coverage",
+      "given": "An affected non-empty description has a gap, overlap, mismatched source text, duplicate position, or non-reconstructing final text.",
+      "when": "Preflight runs.",
+      "then": "PTPOOL-110 rejects the request and issues no token."
+    },
+    {
+      "id": "PPC-015",
+      "depends_on": ["PPC-014"],
+      "area": "normalization",
+      "given": "Equivalent requests differ only in object key order and unordered-set order.",
+      "when": "Normalization contract 1 runs.",
+      "then": "They produce the PPRH fixed hash, while destination text or semantic array order changes the hash."
+    },
+    {
+      "id": "PPC-016",
+      "depends_on": ["PPC-015"],
+      "area": "preflight-evidence",
+      "given": "A complete valid reshape request is bound to exact source bytes.",
+      "when": "Read-only preflight succeeds.",
+      "then": "It returns actual before and candidate descriptions, both decompositions, all mappings and dispositions, exact source/request/candidate bindings, diagnostics, hash, and one opaque token without writing."
+    },
+    {
+      "id": "PPC-017",
+      "depends_on": ["PPC-016"],
+      "area": "preflight-token",
+      "given": "A caller has only a reproducible preflight hash or caller-chosen salt.",
+      "when": "Apply is attempted without the registered random token.",
+      "then": "PTPOOL-111 rejects it; the token uses at least 256 random bits, lasts 3600 seconds, and is not authentication or owner approval."
+    },
+    {
+      "id": "PPC-018",
+      "depends_on": ["PPC-017"],
+      "area": "preflight-rebinding",
+      "given": "Source, request, normalization identity, candidate, hash, token state, or expiry differs from preflight.",
+      "when": "Apply re-normalizes and re-audits.",
+      "then": "It fails with no force or silent refresh and requires a new preflight."
+    },
+    {
+      "id": "PPC-019",
+      "depends_on": ["PPC-018"],
+      "area": "token-consumption",
+      "given": "A bound apply succeeds, fails before mutation, or is interrupted while committing.",
+      "when": "Consumption and retry are evaluated.",
+      "then": "Success including no-op consumes once, pre-mutation failure does not consume, exact old/candidate recovery is idempotent, and a third digest fails unavailable."
+    },
+    {
+      "id": "PPC-020",
+      "depends_on": ["PPC-019"],
+      "area": "guided-user-response",
+      "given": "A reproduced candidate affects the existing dag governance scope.",
+      "when": "The owner-assertion-free apply preview is returned.",
+      "then": "It marks the exact user-response boundary and required owner; the LLM records no self-review and cannot substitute the token for a fresh candidate-bound assertion."
+    },
+    {
+      "id": "PPC-021",
+      "depends_on": ["PPC-020"],
+      "area": "projection-event",
+      "given": "A selected Event has all associated Work enumerated and a valid final strict candidate.",
+      "when": "Projection applies.",
+      "then": "One same-identity Milestone owns the meaning, the Event disappears, and every association becomes one milestone link atomically."
+    },
+    {
+      "id": "PPC-022",
+      "depends_on": ["PPC-021"],
+      "area": "projection-activity",
+      "given": "A selected Activity resolves both endpoints to existing or simultaneously projected Milestones and has complete strict Task facts.",
+      "when": "Projection applies.",
+      "then": "One same-identity Task owns the meaning and all Work associations become task links; incomplete, open, or cyclic strict candidates fail PTPOOL-108."
+    },
+    {
+      "id": "PPC-023",
+      "depends_on": ["PPC-022"],
+      "area": "shared-projection",
+      "given": "Two Work associate with the same Event and Activity.",
+      "when": "One caller selects those project-owned entities for projection.",
+      "then": "Both Work are mandatory affected subjects, each entity materializes once, every association changes globally, and partial per-Work projection is invalid."
+    },
+    {
+      "id": "PPC-024",
+      "depends_on": ["PPC-023"],
+      "area": "residual-reminder",
+      "given": "Projection materializes meaning while a prior non-empty Work description remains parsed-equal and Add residual description is absent.",
+      "when": "Preflight and apply project the candidate.",
+      "then": "PTPOOL-112 warns without blocking; an explicit residual, changed value, or cleared value suppresses the warning and no semantic coverage claim is made."
+    },
+    {
+      "id": "PPC-025",
+      "depends_on": ["PPC-024"],
+      "area": "temporary-draft-history",
+      "given": "Projection or discard removes only Event and Activity Temporary Draft ranges.",
+      "when": "An in-place candidate passes source, race, validation, and atomic-write gates.",
+      "then": "Git recoverability is not required for those ranges, exact removal is previewed, and no tombstone or transfer ledger remains."
+    },
+    {
+      "id": "PPC-026",
+      "depends_on": ["PPC-025"],
+      "area": "canonical-history",
+      "given": "A reshape, archive, or Window mutation removes or replaces Work, order, dependency, link, membership, objective, or Window bytes.",
+      "when": "In-place persistence is requested.",
+      "then": "Exact HEAD and stage-0 recoverability is required; separate output is Git-independent and planning commands expose no history-force option."
+    },
+    {
+      "id": "PPC-027",
+      "depends_on": ["PPC-026"],
+      "area": "archive-and-advance",
+      "given": "Advance removes strict targets with Work links and some linked Work become otherwise archiveable.",
+      "when": "dag advance plans cleanup with and without --archive-empty-work.",
+      "then": "Links are always pruned, Work is archived only under the explicit option and only when newly eligible, AdvanceResult.v4 reports both sets, and existing advance history safety covers the complete candidate."
+    },
+    {
+      "id": "PPC-028",
+      "depends_on": ["PPC-027"],
+      "area": "shared-task-attribution",
+      "given": "One projected Task is linked to selected and unselected Work and has estimate, actual, completion, and velocity facts.",
+      "when": "Work, Window, and cross-Window details and aggregates are computed.",
+      "then": "Each detail may show the complete Task fact, unique totals count its qualified ID once, contribution is non-exclusive, and no Work allocation or retroactive actual split exists."
+    },
+    {
+      "id": "PPC-029",
+      "depends_on": ["PPC-028"],
+      "area": "shared-milestone-attribution",
+      "given": "One projected Milestone is linked to selected and unselected Work and owns reach, criteria, receipts, and acceptance.",
+      "when": "Outcome details and aggregates are computed.",
+      "then": "Each detail may show the complete Milestone fact, unique totals count its qualified ID once, contribution is non-exclusive, and acceptance does not complete Work, achieve a Window objective, or prove project finish."
+    },
+    {
+      "id": "PPC-030",
+      "depends_on": ["PPC-029"],
+      "area": "evidence-bearing-split",
+      "given": "A shared Task has execution evidence or a shared Milestone is reached or owns criterion or receipt evidence.",
+      "when": "A reshape tries to split, copy, or reallocate the authoritative fact among Work.",
+      "then": "The operation is unavailable; independent ownership requires a semantic split before evidence exists."
+    },
+    {
+      "id": "PPC-031",
+      "depends_on": ["PPC-030"],
+      "area": "narrow-deferral",
+      "given": "A closed linked strict fragment contains only unstarted Tasks and explicitly selected unreached evidence-free internal Milestones.",
+      "when": "Deferral is preflighted and applied.",
+      "then": "Tasks become same-identity Activities, selected internal Milestones become Events, boundary Milestones remain strict, all links restore as associations, and the remaining strict DAG stays valid."
+    },
+    {
+      "id": "PPC-032",
+      "depends_on": ["PPC-031"],
+      "area": "deferral-rejection",
+      "given": "The fragment is direct-without-link, active, suspended, completed, actual-bearing, sealed, accepted, criterion-bearing, ambiguous, or needed by retained strict structure.",
+      "when": "Deferral is requested or a Window closes.",
+      "then": "PTPOOL-109 makes deferral unavailable and Window operation never invokes it automatically."
+    },
+    {
+      "id": "PPC-033",
+      "depends_on": ["PPC-032"],
+      "area": "window-membership",
+      "given": "Two persisted and one ad hoc Window overlap and select shared Work.",
+      "when": "Window and cross-Window reports are produced.",
+      "then": "Each pair is unique, no primary Window exists, membership occurrences remain separate, and unique Work, Task, and Milestone totals do not multiply."
+    },
+    {
+      "id": "PPC-034",
+      "depends_on": ["PPC-033"],
+      "area": "window-timebox",
+      "given": "Windows are unbounded, one-sided, adjacent, overlapping, or incomparable and an explicit compatible observation or project.as_of may be present.",
+      "when": "Position and intersection are observed.",
+      "then": "Half-open comparable facts are deterministic, unavailable comparison stays explicit, no wall clock is read, and time passage triggers no lifecycle or DAG mutation."
+    },
+    {
+      "id": "PPC-035",
+      "depends_on": ["PPC-034"],
+      "area": "window-objective",
+      "given": "A persisted Window has an outcome-oriented objective and selected execution or outcomes change.",
+      "when": "The Window is observed.",
+      "then": "Exact objective text is returned without achieved state and remains separate from Work, Task, Milestone, acceptance, and project finish meaning."
+    },
+    {
+      "id": "PPC-036",
+      "depends_on": ["PPC-035"],
+      "area": "window-close",
+      "given": "Close explicitly discards the temporary objective and lists zero or more carry-over pairs to an existing or fully declared next Window.",
+      "when": "The history-safe candidate succeeds.",
+      "then": "The report and contraction are one result, source retains no closed Window, already-selected carry-over does not duplicate, other memberships remain, and Work or DAG facts do not change."
+    },
+    {
+      "id": "PPC-037",
+      "depends_on": ["PPC-036"],
+      "area": "observation-axes",
+      "given": "Selected Work has residual meaning, partial projections, complete Tasks, accepted Milestones, dependencies, and incomplete evidence in different combinations.",
+      "when": "Work or Window observation is derived.",
+      "then": "Refinement, execution, outcome, organization, temporal, archiveability, and close disposition remain independent; no coverage is uncovered and missing evidence is unknown or unavailable, not complete."
+    },
+    {
+      "id": "PPC-038",
+      "depends_on": ["PPC-037"],
+      "area": "historical-observation",
+      "given": "Current links or Windows were contracted and bounded immutable first-parent history may contain their continuous lineage.",
+      "when": "A historical Work or Window observation is requested.",
+      "then": "Exact repository, path, endpoint, commit, blob, digest, validity, and gap evidence is returned; shallow, forced-loss, invalid, ambiguous, raced, missing, or over-limit evidence yields axis-local unknown or unavailable facts and never restores current source."
+    },
+    {
+      "id": "PPC-039",
+      "depends_on": ["PPC-038"],
+      "area": "migration-compatibility",
+      "given": "A valid Grammar 8 source is migrated to Grammar 9 without planning declarations, or an older source is used directly with a planning mutation.",
+      "when": "Migration, strict analysis, and planning mutation are evaluated.",
+      "then": "Only explicit document migration changes the version, no planning meaning is inferred, strict DAG semantics stay identical, older planning mutation returns PTPOOL-116, and unit migration v5 alone includes Activity candidate values."
+    },
+    {
+      "id": "PPC-040",
+      "depends_on": ["PPC-039"],
+      "area": "public-and-nonactivation",
+      "given": "The contract artifacts are accepted before source implementation.",
+      "when": "The focused gate compares target catalogs and the current package.",
+      "then": "Grammar 9, CLI Contract 10, eleven new commands, three new root results, AdvanceResult.v4, UnitMigrationResult.v5, 67 commands, and 26 schemas are reserved while current 0.10.5 Grammar 8 Contract 9 counts and behavior remain unchanged."
+    }
+  ]
+}

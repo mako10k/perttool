@@ -88,7 +88,10 @@ test("current guidance and historical compatibility labels preserve their bounda
   assert.match(examples, /Grammar 7 and CLI Contract 8 source successor/);
   assert.match(assuranceInterface, /Published package boundary: `beta=latest=0\.8\.1`/);
   assert.match(assuranceInterface, /Contract 8 source successor/);
-  assert.match(grammar, /Grammar versions: 1, 2, 3, 4, 5, 6, and 7 active/);
+  assert.match(
+    grammar,
+    /Grammar versions: 1 through 8 active; Grammar 9 accepted but inactive/,
+  );
   assert.match(grammar, /^### 20\.6 Grammar version 7 milestone-acceptance delta/m);
   assert.match(milestoneAcceptance, /Status: Normative 1\.0/);
   assert.match(milestoneAcceptance, /Active source CLI contract: Contract 8/);
@@ -122,12 +125,12 @@ test("repository policy and self-use registration include the accepted workstrea
   assert.match(selfUseScript, /plans\/editor-mutations\.pert/);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/);
   assert.match(selfUseScript, /plans\/release-0\.9\.4\.pert/);
-  assert.match(selfUseScript, /44 plans; check, analyze, next/);
-  assert.match(selfUseGuide, /all forty-three current plans/);
+  assert.match(selfUseScript, /45 plans; check, analyze, next/);
+  assert.match(selfUseGuide, /all forty-five current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
   assert.match(planIndex, /`editor-mutations\.pert`/);
   assert.match(planIndex, /release-0\.9\.3\.pert/);
   assert.match(planIndex, /release-0\.9\.4\.pert/);
-  assert.match(planIndex, /All forty-three plans pass/);
+  assert.match(planIndex, /All forty-five plans pass/);
   assert.match(planIndex, /accepted reached final milestone/);
 });

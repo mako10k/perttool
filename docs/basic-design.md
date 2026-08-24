@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.28
+- Document status: Draft 1.29
 - Created: 2026-07-21
-- Updated: 2026-08-13
+- Updated: 2026-08-24
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -12,6 +12,7 @@
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
 - Calendar-aware temporal scheduling: [specs/temporal-schedule.md](specs/temporal-schedule.md)
+- Work-centered planning pool and Windows: [specs/planning-pool.md](specs/planning-pool.md)
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Historical DAG reconstruction: [specs/historical-dag.md](specs/historical-dag.md)
 - Historical editor protocol: [specs/historical-editor-protocol.md](specs/historical-editor-protocol.md)
@@ -3846,6 +3847,64 @@ complete repository gate with any unchanged pre-existing exception recorded,
 and one exact pre-advance plan snapshot agree. Calendar and
 constraint runtime, public activation, release selection, remote writes,
 publication, Issue mutation, and plan advance remain later boundaries.
+
+### Post-MVP Slice 8: Work-centered planning pool and bounded Windows
+
+The selected `PLAN-POOL-001` workstream is tracked in
+[`plans/planning-pool.pert`](../plans/planning-pool.pert). The
+[Work-centered Planning Pool and Window
+Contract](specs/planning-pool.md) is the single target Grammar 9 and CLI
+Contract 10 owner for incomplete Work, project-owned Event and Activity AoA,
+global Work order, planning-only dependencies, semantic reshape, guided
+preflight, same-identity projection, narrow deferral, active Windows,
+multi-axis observation, archival, and bounded first-parent reconstruction.
+
+The implementation keeps one semantic owner for every fact:
+
+```text
+Work residual intent
+  + project-owned Event and Activity Temporary Draft
+  -> audited same-identity projection
+  -> strict Milestone and Task ownership
+  -> current trace links while Work remains useful
+  -> explicit source contraction with Git-owned history
+```
+
+Work and Window remain planning and observation boundaries. They do not add a
+second executable graph, Work completion state, Window objective-achieved
+state, Task actual allocation, Milestone acceptance allocation, planning
+owner, or automatic lifecycle. The strict DAG, `project.finish`, `dag next`,
+Task actuals and velocity, Milestone acceptance, plan assurance, governance,
+and history-safety owners remain unchanged.
+
+The Domain layer owns qualified identity, Work and AoA associations, total
+order, dependency disposition, projection and deferral eligibility, Window
+intervals, unique aggregation, and historical completeness. Application owns
+source-bound request composition, candidate reproduction, governance,
+assurance, history, and safe-write sequencing. CLI owns only transport and
+presentation. Editor and MCP mutation remain absent.
+
+The implementation order is:
+
+```text
+normative Grammar 9 and Contract 10 boundary
+  -> private source and semantic Core
+  -> semantic reshape and opaque-token preflight
+  -> projection, archival, advance cleanup, and deferral
+  -> persisted and ad hoc Window mutation
+  -> independent Work and Window observation
+  -> bounded Git reconstruction
+  -> atomic public command, result, schema, Help, Guide, and package activation
+  -> cross-surface acceptance
+```
+
+The contract task exits after the forty dependency-ordered `PPC` cases, two
+fixed normalized SHA-256 vectors, focused contract checks, documentation and
+self-use gates, and one exact task-completion candidate agree while package
+`0.10.5`, Grammar 8, CLI Contract 9, 56 commands, 23 root schemas, 129 root and
+Node exports, and 45 Core exports remain unchanged. Runtime implementation,
+release selection, publication, remote writes, Issue mutation, editor or MCP
+mutation, and plan advance remain later boundaries.
 
 ### Milestone outcome acceptance Contract 8 slice
 

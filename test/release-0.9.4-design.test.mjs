@@ -73,7 +73,7 @@ test("0.9.4 retains Contract 8 while correcting Issue 19", async () => {
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.10\.5"/u);
   assert.match(changelog, /^## \[0\.9\.4\] - 2026-08-14$/m);
-  assert.match(planIndex, /All forty-three plans pass/u);
+  assert.match(planIndex, /All forty-five plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.4\.pert/u);
 
   assert.equal(perttool.COMMAND_REGISTRY.length, 56);

@@ -5,6 +5,12 @@ This directory contains `.pert` plans for the present and future work on
 
 Plans are separated by level of detail.
 
+- [planning-pool.pert](planning-pool.pert): selected and initially sealed
+  `PLAN-POOL-001` implementation workstream from the normative Work-centered
+  planning-pool contract through private source, reshape, projection, Window,
+  observation, history, public-contract, and final acceptance tasks; release,
+  publication, Issue mutation, editor or MCP mutation, and plan advance remain
+  separate
 - [release-0.10.0.pert](release-0.10.0.pert): selected six-stage beta release
   plan for the accepted Grammar 8 and CLI Contract 9 temporal scheduling
   boundary; only local gate design is currently ready, while source
@@ -152,7 +158,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All forty-three plans pass the self-use gate and are used as inputs to `document
+All forty-five plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.

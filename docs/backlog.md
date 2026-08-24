@@ -1201,9 +1201,10 @@ Status: Design request (2026-08-14); use-case-centered single-document Work,
 residual intent, project-owned AoA planning elements, planning-only Work
 dependency, auditable Work semantic reshape, ownership-transfer projection,
 namespace, display-name, archive, and Window architecture accepted
-(2026-08-24); [Issue
-#12](https://github.com/mako10k/perttool/issues/12); implementation plan not
-selected
+(2026-08-24); normative Grammar 9 and CLI Contract 10 planning-pool contract
+accepted and the independent implementation plan selected (2026-08-24);
+[Issue #12](https://github.com/mako10k/perttool/issues/12); runtime source
+implementation not started
 
 Add stable project-owned work outside the executable graph and persisted or ad
 hoc windows around the existing strict DAG. Pool placement, window membership,
@@ -1289,6 +1290,17 @@ link/split/merge cardinality, shaping, project-wide backlog order, active
 Window overlap, close, and timeboxes, promotion/deferral, CLI and schema
 surfaces, history, compatibility, and the boundary with multi-document
 `MULTI-001` before runtime work begins.
+
+The normative [Work-centered Planning Pool and Window
+Contract](specs/planning-pool.md) now closes that first boundary with five
+Grammar 9 planning declarations, logical root-qualified identity, eleven
+target CLI Contract 10 commands, three new command-result identities,
+replacement advance and unit-migration results, `PTPOOL-101` through
+`PTPOOL-117`, exact hard limits, two normalized SHA-256 vectors, and forty
+dependency-ordered cases. The selected implementation order is
+[`plans/planning-pool.pert`](../plans/planning-pool.pert). Current package
+`0.10.5`, Grammar 8, CLI Contract 9, and every active public count remain
+unchanged until the later public-contract task.
 
 [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md) supersedes the
 upper-plan-biased [ADR 0007](adr/0007-outcome-driven-planning-pool.md) and

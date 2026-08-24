@@ -100,6 +100,7 @@ task PLANNING_POOL_CONTRACT PLANNING_POOL_SELECTED -> PLANNING_POOL_CONTRACT_ACC
   title "Accept the Work-centered planning-pool contract"
   description "Promote ADR 0008 and PLAN-POOL-001 into one normative single-document contract and dependency-ordered machine case matrix before runtime work. Fix Work, Event, Activity and Window source semantics; logical namespace and title; many-to-many associations; total backlog order; planning-only dependencies and explicit disposition; Temporary Draft contraction; residual-description guidance; semantic reshape inventories; preflight normalization, hash, opaque token and user-response boundary; global same-identity projection; narrow deferral; active Window close, carry-over, timebox and objective; shared Task and Milestone non-allocation; unique aggregates; archival and Git evidence; commands, results, diagnostics, hard limits, migration and compatibility. Treat symmetrical consequences as contract cases and return for a new architecture decision only when they introduce a new semantic owner or contradict the ADR."
   duration 8p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
