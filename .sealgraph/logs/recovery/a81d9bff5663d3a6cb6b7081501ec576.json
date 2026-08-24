@@ -1,0 +1,1 @@
+{"schema":"sealgraph/recovery/v1","operation_id":"a81d9bff5663d3a6cb6b7081501ec576","state":"COMMITTED","kind":"seal","transitions":[{"ref":"spec/milestone-outcome-acceptance-v1","before":null,"after":"eyJzY2hlbWEiOiJzZWFsZ3JhcGgvcmVmL3YxIiwiaGVhZCI6IjI2YjI1NjA1OGUzZWI2NTY3ZmU3M2FhNjJiM2RmNDUyMTJlMTUwN2RiYmM4ZWE0NzYxY2I0NmYwOGQxZTU4YmMiLCJ0YWdzIjpbXX0="}]}

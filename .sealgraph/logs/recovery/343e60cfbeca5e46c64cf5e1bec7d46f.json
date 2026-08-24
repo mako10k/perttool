@@ -1,0 +1,1 @@
+{"schema":"sealgraph/recovery/v1","operation_id":"343e60cfbeca5e46c64cf5e1bec7d46f","state":"COMMITTED","kind":"seal","transitions":[{"ref":"spec/advance-history-safety-v1","before":null,"after":"eyJzY2hlbWEiOiJzZWFsZ3JhcGgvcmVmL3YxIiwiaGVhZCI6IjY5ZGQzNTkxODFiNDdiMDFjNDlmNjE4MTA0YzYwM2Q2MzNjMjdhNTI5MzkxOWUwYmRkNjg0YmRmYTNkM2Y4OTkiLCJ0YWdzIjpbXX0="}]}

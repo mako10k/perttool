@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-17
+- Updated: 2026-08-24
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -1197,7 +1197,8 @@ decision.
 
 Priority: P2
 
-Status: Design request (2026-08-14); [Issue
+Status: Design request (2026-08-14); outcome-driven planning AoA architecture
+accepted (2026-08-24); [Issue
 #12](https://github.com/mako10k/perttool/issues/12); implementation plan not
 selected
 
@@ -1214,13 +1215,27 @@ link/split/merge cardinality, shaping, window lifecycle and timeboxes,
 promotion/deferral, CLI and schema surfaces, history, compatibility, and the
 boundary with multi-document `MULTI-001` before runtime work begins.
 
+[ADR 0007](adr/0007-outcome-driven-planning-pool.md) accepts the first
+architecture boundary. The planning pool is a non-executable AoA whose
+Planning Event nodes state premise or target conditions and whose Change Intent
+edges state desired transitions rather than executable actions. A Milestone is
+an explicit execution projection of a Planning Event, and a replaceable strict
+Task/Gate/Milestone subgraph realizes a Change Intent. Invalidated premises or
+withdrawn targets require governed replanning instead of automatic adherence
+to a stale Do. The current source keeps only the latest planning state; former
+revisions belong to Git history, and every destructive latest-state in-place
+mutation requires exact recoverability proof before writing. Source identities,
+projection cardinality, criterion ownership, invalidation evidence, interfaces,
+and implementation remain contract work.
+
 ### MULTI-001: Design backlog hierarchy and multi-plan composition
 
 Priority: P3
 
-Status: Minimal semantic draft recorded (2026-08-05); open in
-[GitHub Issue #3](https://github.com/mako10k/perttool/issues/3), with runtime
-work not selected
+Status: Minimal semantic draft recorded (2026-08-05); capability request
+expanded (2026-08-24); open in [GitHub Issue
+#3](https://github.com/mako10k/perttool/issues/3), with runtime work not
+selected
 
 Define how a parent backlog or project relates to independently versioned
 child `.pert` documents without silently merging task identity, duration
@@ -1228,6 +1243,35 @@ units, governance, calendars, resource capacity, or completion state. The
 design must preserve deterministic per-document analysis and specify explicit
 roll-up, cross-plan dependency, history, and failure boundaries before any
 runtime or syntax change.
+
+The expanded capability request is to make a set of `.pert` files usable as
+one explicitly composed planning input while preserving each file as an
+independently owned document. It includes both a parent that references
+multiple child plans and bounded multi-level nesting. The contract may select
+an include, reference, manifest, or another explicit composition form, but it
+must not treat directory discovery or source concatenation as composition.
+
+Acceptance targets for the future contract:
+
+- one composition root can name multiple child `.pert` documents in a stable,
+  deterministic order;
+- a child can itself compose descendants to the contract's declared depth and
+  size limits;
+- every projected entity and diagnostic retains its owning document identity
+  and complete reference chain;
+- missing documents, duplicate references, reference cycles, depth or size
+  limit violations, and ambiguous document or entity identities fail closed;
+- relative-path resolution, workspace boundaries, symlinks, immutable source
+  bindings, and source-change races have explicit local-file security rules;
+- a composed read validates every member before roll-up and never silently
+  converts duration units, calendars, governance, assurance, resource
+  capacity, actuals, velocity, or milestone acceptance;
+- read-only check, analysis, next-task, and rendering behavior defines whether
+  it is per-document, rolled up, or unavailable, with machine-readable partial
+  and failure semantics; and
+- mutation, advance, history, and atomic multi-file persistence remain
+  unavailable until separately specified with ownership, recovery, and
+  transaction guarantees.
 
 The [Task Refinement and Assurance Boundary
 Contract](specs/task-refinement.md), its [normative design

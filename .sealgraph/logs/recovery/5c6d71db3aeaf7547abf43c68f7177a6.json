@@ -1,0 +1,1 @@
+{"schema":"sealgraph/recovery/v1","operation_id":"5c6d71db3aeaf7547abf43c68f7177a6","state":"COMMITTED","kind":"seal","transitions":[{"ref":"adr/0006-explicit-work-events","before":null,"after":"eyJzY2hlbWEiOiJzZWFsZ3JhcGgvcmVmL3YxIiwiaGVhZCI6ImU0NTI3ZGE1MTRlNjgyNjViYjA0OTdhZjRiNTA3MGY1YThiOTNhODhkODRiZTY3YWI0NDY5NzM1NjYxM2U4N2UiLCJ0YWdzIjpbXX0="}]}

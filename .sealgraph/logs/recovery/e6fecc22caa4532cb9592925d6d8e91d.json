@@ -1,0 +1,1 @@
+{"schema":"sealgraph/recovery/v1","operation_id":"e6fecc22caa4532cb9592925d6d8e91d","state":"COMMITTED","kind":"seal","transitions":[{"ref":"adr/0007-outcome-driven-planning-pool","before":null,"after":"eyJzY2hlbWEiOiJzZWFsZ3JhcGgvcmVmL3YxIiwiaGVhZCI6ImI1ZjY5N2MwYWQzY2YwY2RjNDM0Yzk3OGRmMDI4YjViMjc0YTc0MzNhNzM4ZmY4OTQ5NzQ5NWMyMTY1MDJmMTkiLCJ0YWdzIjpbXX0="}]}

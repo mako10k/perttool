@@ -1,0 +1,1 @@
+{"schema":"sealgraph/recovery/v1","operation_id":"589a32f9e2f2bceb3b40f45dae0980b5","state":"COMMITTED","kind":"seal","transitions":[{"ref":"adr/0001-activity-on-arrow","before":null,"after":"eyJzY2hlbWEiOiJzZWFsZ3JhcGgvcmVmL3YxIiwiaGVhZCI6ImE3OTlmOWI5OTBkZGU3NGQ0YmFhMWJlMzUyNWY1ZGZjOGIwMTI3ODkwOGY3NDY5Njk4ZmU3NDRmYjIwMmI2NDQiLCJ0YWdzIjpbXX0="}]}
