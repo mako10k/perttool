@@ -1326,6 +1326,18 @@ binding, alias, and nesting remain in `MULTI-001`. Exact source syntax,
 association and sharing, projection coverage, archival, Window behavior,
 interfaces, and implementation remain contract work.
 
+A shared Activity projects once to one same-identity Task. That Task alone owns
+its estimate, resource facts, work events, actual effort, completion, and
+velocity contribution; Work only retains reference links. Every linked Work
+detail may show the complete authoritative Task fact and the full linked-Work
+set, labeled shared and contributing, but no Work-specific effort, point, or
+duration allocation exists. Window and cross-Work totals form a set union of
+fully qualified Task IDs and count each Task once. A Task also linked outside
+the selection is reported as non-exclusive rather than exclusively attributed.
+If separate Work-level execution is needed, the Activity and Task meaning must
+be split before work events or actuals exist; actual-bearing Tasks are never
+split, copied, or reallocated retroactively.
+
 Work also has a directional planning-only `depends_on` relationship. It may
 guide backlog refinement and report uncovered, order-conflicting, or cyclic
 dependencies, but it has no satisfied, completed, blocked, or ready state, does

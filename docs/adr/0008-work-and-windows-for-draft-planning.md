@@ -512,6 +512,38 @@ projects Work. An Activity projection fails unless both endpoint identities
 resolve to existing strict Milestones or to Events projected in the same
 candidate, and the resulting strict fragment is closed and acyclic.
 
+### Shared Task execution and actual attribution
+
+A shared Activity materializes exactly once as one same-identity strict Task.
+That Task is the sole owner of its duration or PERT estimate, resource facts,
+status, work events, active time, actual effort, completion, and contribution
+to velocity observation. Projection links only associate Work with that one
+Task; they never copy or allocate any of those execution facts.
+
+Each linked Work observation may display the complete authoritative Task facts
+and the complete set of linked Work identities. It labels the Task as shared
+and contributing when more than one Work is linked, and does not expose an
+allocated Work effort, points, or duration. A per-Window or cross-Work aggregate
+forms the set union of fully qualified Task identities reached from the
+selected Work and counts each Task, its estimate, its actuals, and its velocity
+contribution exactly once. If that Task is also linked to Work outside the
+selection, the aggregate reports it as non-exclusive and does not claim that
+its effort belongs exclusively to the selected Work or Window. Membership
+attribution occurrences remain available separately from these unique totals.
+
+Completion of the shared Task contributes to the execution-observation axis of
+every linked Work. It does not make a Work complete, prove its residual intent,
+accept a Milestone, achieve a Window objective, or allocate the Task's outcome
+among Work.
+
+There is no percentage, weight, or post-hoc effort-split model. When separate
+Work-level execution facts are required, the Activity and resulting Task
+meaning must be semantically split before the Task starts or acquires any work
+event or actual. That split uses the accepted reshape and projection controls.
+Once execution evidence exists, perttool must not duplicate, split, or
+reallocate the Task retroactively for reporting; the historical fact remains
+owned by the one Task.
+
 ### Residual-description interface reminder
 
 Projection and refinement interfaces expose one explicit user action named
@@ -1061,6 +1093,15 @@ its accepted `dag advance` boundary without a new contract.
     disposition, cited replacement owners without machine semantic inference,
     explicit self-dependency internalization, and archive blocking while an
     incident relation remains.
+- **C27:** A shared projected Task's execution and actual facts must remain one
+  indivisible Task-owned record, while Work and Window observations reference
+  and identity-deduplicate that record without inventing allocation semantics.
+  - **E40:** The decision owner accepted on 2026-08-24 the recommended model:
+    full authoritative Task facts may appear in every linked Work detail,
+    aggregates count the fully qualified Task once and mark non-exclusive
+    contribution, velocity observes it once, no Work percentage or weight is
+    stored, independent execution requires a pre-execution semantic split, and
+    actual-bearing Tasks are never split or copied retroactively.
 
 ## Alternatives
 
@@ -1318,6 +1359,21 @@ second semantic copy or one Work to keep pointing at a planning declaration
 that no longer exists. Shared projection instead affects every associated Work
 atomically and reports that complete impact before execution.
 
+### Allocate a shared Task's effort to every linked Work
+
+Rejected because full allocation would multiply one execution fact, while a
+percentage or weight model would introduce a second accounting source whose
+sum, revision, and historical meaning would need independent governance. Work
+instead references the complete Task fact and aggregate views count its fully
+qualified identity once.
+
+### Split or copy an actual-bearing Task after execution
+
+Rejected because a retrospective split would rewrite one observed execution
+into facts that did not own the work when it occurred. Independent Work-level
+execution must be modeled by a semantic Activity and Task split before work
+events or actuals exist.
+
 ### Retain an orphan planning element after its last Work association
 
 Rejected because the pool is the current Work refinement boundary and a
@@ -1355,6 +1411,11 @@ Positive:
   without duplicating their AoA meaning.
 - Shared-element projection exposes every affected Work and moves the entity
   once without a per-Work planning copy or a hidden partial projection.
+- Shared Task estimates, work events, actual effort, completion, and velocity
+  contribution retain one strict execution owner without Work allocation or
+  cross-Window double counting.
+- Full linked-Work details and non-exclusive aggregate markers preserve useful
+  backlog and Window context without claiming exclusive effort ownership.
 - Last-consumer handling cannot silently orphan or remove Temporary Draft
   meaning; one explicit re-association, projection, or discard is required.
 - Work boundaries can be created, removed, split, merged, or partially
@@ -1426,6 +1487,9 @@ Costs and open design work:
   complete dependency disposition, cited replacement ownership, overlap
   reporting, identity-deduplicated aggregation, and last-consumer disposition
   require closed cases that fail safely on ambiguity.
+- Shared and non-exclusive Task presentation, fully qualified identity-union
+  aggregation, velocity deduplication, pre-execution split eligibility, and the
+  prohibition on retroactive actual reallocation require normative cases.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
@@ -1545,6 +1609,14 @@ retained, rebound, removed with cited AoA or DAG representation, or removed as
 no longer required, machine audit checks structure but not semantic equivalence,
 self-dependency internalization is explicit, and any unresolved incident
 relation blocks archival.
+The owner then accepted indivisible shared-Task actual attribution: one shared
+Activity projects once to one Task, all execution facts and velocity
+contribution remain Task-owned, linked Work details may show the complete fact
+with shared context, aggregate views use a fully qualified Task-identity union
+and report non-exclusive contribution, and no Work allocation percentage or
+weight exists. Independent execution accounting requires a semantic split
+before work begins; actual-bearing Tasks are never copied, split, or reallocated
+retroactively.
 
 ## Follow-ups
 
@@ -1559,7 +1631,8 @@ relation blocks archival.
    authentication, protected signing, or secure transport. Normative cases must
    preserve the accepted global shared-element projection, complete affected-
    Work enumeration, association-to-link replacement, explicit last-consumer
-   disposition, and closed Activity endpoint rules.
+   disposition, closed Activity endpoint rules, single Task execution ownership,
+   and the prohibition on retroactive splitting of an actual-bearing Task.
 2. Define residual-description mutation, the exact four-condition reminder,
    Event-to-Milestone and Activity-to-Task projection coverage, same-identity
    materialization, and current link retention through concrete scenarios.
@@ -1568,7 +1641,9 @@ relation blocks archival.
    explicitly selected internal Milestone-to-Event, retained boundary
    Milestones, complete affected-Work restoration, remaining-DAG validation,
    no Window coupling, and fail-closed protected-evidence handling. Do not add
-   natural-language semantic-equivalence or coverage inference.
+   natural-language semantic-equivalence or coverage inference. Define the
+   pre-execution-only semantic split needed when formerly shared Activity
+   meaning must own independent Task actuals.
 3. Define root namespace source projection, qualified-ID result representation,
    title display, ID retirement, diagnostics, and compatibility. Leave
    multi-file binding, alias, mounting, and nested resolution to Issue #3.
@@ -1589,11 +1664,16 @@ relation blocks archival.
    Window membership, unique Window-Work pairs, time and membership overlap
    facts, close isolation, already-selected carry-over, uncovered dependencies,
    and separate attribution-occurrence and identity-deduplicated totals without
-   a primary Window or dependency auto-selection. Define absent, one-sided, and
-   paired half-open bounds, comparable temporal kinds, explicit observation and
-   `project.as_of` fallback, unavailable position and intersection results, and
-   history-safe bound mutation without a wall-clock default, automatic close,
-   or Task scheduling effect. Require one non-empty outcome-oriented objective
+   a primary Window or dependency auto-selection. For Task aggregates, use the
+   set union of fully qualified Task identities, count estimate, actual,
+   completion, and velocity contribution once, retain separate membership
+   occurrences, and report a selected-and-unselected shared Task as
+   non-exclusive without allocating its effort to Work. Define absent,
+   one-sided, and paired half-open bounds, comparable temporal kinds, explicit
+   observation and `project.as_of` fallback, unavailable position and
+   intersection results, and history-safe bound mutation without a wall-clock
+   default, automatic close, or Task scheduling effect. Require one non-empty
+   outcome-oriented objective
    for persisted Windows, allow an optional request-local ad hoc objective,
    return exact objective text without achievement inference, expose its
    destructive close disposition, and define explicit audited transfer when
