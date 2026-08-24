@@ -13,6 +13,7 @@ import type {
   PlanningReshapeNormalizationResult,
   PlanningReshapeRequest,
   PlanningReshapeSemanticElement,
+  PlanningStrictFragment,
   PlanningWindowMembershipDisposition,
 } from "./reshape-types.js";
 
@@ -638,6 +639,36 @@ interface ParsedRequestFields {
   readonly memberships: readonly PlanningWindowMembershipDisposition[];
   readonly order: readonly string[];
   readonly residual: readonly PlanningResidualDescriptionAction[];
+  readonly strictFragment: PlanningStrictFragment | null;
+}
+
+function parseStrictFragment(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningStrictFragment | null {
+  if (value === null) return null;
+  const base = closedRecord(value, ["kind"], ["event_ids", "activity_ids", "task_ids", "milestone_ids"], "strict fragment", diagnostics);
+  if (base === null) return null;
+  const kind = enumValue(base["kind"], ["project", "defer"], "strict fragment kind", diagnostics);
+  if (kind === "project") {
+    const exact = closedRecord(value, ["kind", "event_ids", "activity_ids"], [], "projection strict fragment", diagnostics);
+    if (exact === null) return null;
+    const events = parseStringSet(exact["event_ids"], "projection Event", diagnostics);
+    const activities = parseStringSet(exact["activity_ids"], "projection Activity", diagnostics);
+    return events === null || activities === null
+      ? null
+      : Object.freeze({ kind, event_ids: events, activity_ids: activities });
+  }
+  if (kind === "defer") {
+    const exact = closedRecord(value, ["kind", "task_ids", "milestone_ids"], [], "deferral strict fragment", diagnostics);
+    if (exact === null) return null;
+    const tasks = parseStringSet(exact["task_ids"], "deferral Task", diagnostics);
+    const milestones = parseStringSet(exact["milestone_ids"], "deferral Milestone", diagnostics);
+    return tasks === null || milestones === null
+      ? null
+      : Object.freeze({ kind, task_ids: tasks, milestone_ids: milestones });
+  }
+  return null;
 }
 
 function parseFinalWorkOrder(
@@ -670,11 +701,13 @@ function parseRequestFields(
   const memberships = parseArray(record["window_membership_dispositions"], "window_membership_dispositions", diagnostics, parseWindowMembershipDisposition);
   const order = parseFinalWorkOrder(record["final_work_order"], diagnostics);
   const residual = parseArray(record["add_residual_description"], "add_residual_description", diagnostics, parseResidualAction);
+  const strictFragment = parseStrictFragment(record["strict_fragment"], diagnostics);
   if (hasNull([sourceDigest, intent, affected, created, removed, elements, entities, associations, links, dependencies, memberships, order, residual])) return null;
   return Object.freeze({
     sourceDigest: sourceDigest!, intent: intent!, affected: affected!, created: created!,
     removed: removed!, elements: elements!, entities: entities!, associations: associations!,
     links: links!, dependencies: dependencies!, memberships: memberships!, order: order!, residual: residual!,
+    strictFragment,
   });
 }
 
@@ -693,6 +726,14 @@ function validateRequestUniqueness(
   unique(fields.memberships, (item) => `${item.window_id}:${item.origin_work_id}`, "Window membership disposition", diagnostics);
   unique(fields.order, (item) => item, "final Work order", diagnostics);
   unique(fields.residual, (item) => item.work_id, "residual-description action", diagnostics);
+  if (fields.strictFragment?.kind === "project") {
+    unique(fields.strictFragment.event_ids, (item) => item, "projection Event", diagnostics);
+    unique(fields.strictFragment.activity_ids, (item) => item, "projection Activity", diagnostics);
+  }
+  if (fields.strictFragment?.kind === "defer") {
+    unique(fields.strictFragment.task_ids, (item) => item, "deferral Task", diagnostics);
+    unique(fields.strictFragment.milestone_ids, (item) => item, "deferral Milestone", diagnostics);
+  }
 }
 
 function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest {
@@ -712,7 +753,7 @@ function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest 
     window_membership_dispositions: sorted(fields.memberships, (item) => `${item.window_id}:${item.origin_work_id}`),
     final_work_order: fields.order,
     add_residual_description: sorted(fields.residual, (item) => item.work_id),
-    strict_fragment: null,
+    strict_fragment: fields.strictFragment,
     window_close: null,
   });
 }
@@ -733,10 +774,18 @@ export function normalizePlanningReshapeRequest(
   if (record === null) return failedNormalization(diagnostics);
   if (record["request_schema_version"] !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION) diagnostics.push(diagnostic("Planning reshape request schema identity is unsupported"));
   if (record["normalization_contract"] !== PLANNING_RESHAPE_NORMALIZATION_CONTRACT) diagnostics.push(diagnostic("Planning reshape normalization identity is unsupported"));
-  if (record["strict_fragment"] !== null) diagnostics.push(diagnostic("strict_fragment is unavailable before the projection Core"));
   if (record["window_close"] !== null) diagnostics.push(diagnostic("window_close is unavailable before the Window Core"));
   const fields = parseRequestFields(record, diagnostics);
   if (fields === null) return failedNormalization(diagnostics);
+  if ((fields.intent === "project") !== (fields.strictFragment?.kind === "project")) {
+    diagnostics.push(diagnostic("project intent requires exactly one projection strict fragment"));
+  }
+  if ((fields.intent === "defer") !== (fields.strictFragment?.kind === "defer")) {
+    diagnostics.push(diagnostic("defer intent requires exactly one deferral strict fragment"));
+  }
+  if (fields.intent !== "project" && fields.intent !== "defer" && fields.strictFragment !== null) {
+    diagnostics.push(diagnostic("strict_fragment requires project or defer intent"));
+  }
   validateRequestUniqueness(fields, diagnostics);
   if (diagnostics.length > 0) return failedNormalization(diagnostics);
   const request = normalizedRequest(fields);

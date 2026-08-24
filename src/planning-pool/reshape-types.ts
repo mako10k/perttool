@@ -102,6 +102,22 @@ export interface PlanningResidualDescriptionAction {
   readonly text: string;
 }
 
+export interface PlanningProjectionStrictFragment {
+  readonly kind: "project";
+  readonly event_ids: readonly string[];
+  readonly activity_ids: readonly string[];
+}
+
+export interface PlanningDeferralStrictFragment {
+  readonly kind: "defer";
+  readonly task_ids: readonly string[];
+  readonly milestone_ids: readonly string[];
+}
+
+export type PlanningStrictFragment =
+  | PlanningProjectionStrictFragment
+  | PlanningDeferralStrictFragment;
+
 export interface PlanningReshapeRequest {
   readonly request_schema_version: "Perttool.PlanningReshapeRequest.v1";
   readonly normalization_contract: "perttool.planning-reshape-normalization@1";
@@ -118,7 +134,7 @@ export interface PlanningReshapeRequest {
   readonly window_membership_dispositions: readonly PlanningWindowMembershipDisposition[];
   readonly final_work_order: readonly string[];
   readonly add_residual_description: readonly PlanningResidualDescriptionAction[];
-  readonly strict_fragment: null;
+  readonly strict_fragment: PlanningStrictFragment | null;
   readonly window_close: null;
 }
 

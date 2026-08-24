@@ -432,7 +432,11 @@ function descriptionRows(
   });
 }
 
-function strictQualifiedIds(text: string, documentId: string): Readonly<{
+function strictQualifiedIds(
+  text: string,
+  documentId: string,
+  request?: PlanningReshapeRequest,
+): Readonly<{
   milestones: ReadonlySet<string>;
   tasks: ReadonlySet<string>;
 }> {
@@ -442,7 +446,436 @@ function strictQualifiedIds(text: string, documentId: string): Readonly<{
     if (block.kind === "milestone") milestones.add(`${documentId}::${block.id}`);
     if (block.kind === "task") tasks.add(`${documentId}::${block.id}`);
   }
+  if (request?.strict_fragment?.kind === "project") {
+    for (const id of request.strict_fragment.event_ids) milestones.add(id);
+    for (const id of request.strict_fragment.activity_ids) tasks.add(id);
+  }
   return Object.freeze({ milestones, tasks });
+}
+
+function strictField(
+  block: ReturnType<typeof scanTemporalDeclarationBlocks>[number],
+  name: string,
+): string | null {
+  return block.lines.map(fieldLine).find((field) => field?.name === name)?.rawValue ?? null;
+}
+
+function qualifiedSelection(
+  ids: readonly string[],
+  documentId: string,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): ReadonlySet<string> {
+  const locals = new Set<string>();
+  for (const id of ids) {
+    const local = localId(id, documentId, label, diagnostics);
+    if (local !== null) locals.add(local);
+  }
+  return locals;
+}
+
+function entityDisposition(
+  request: PlanningReshapeRequest,
+  kind: "event" | "activity",
+  qualifiedId: string,
+  action: "project" | "defer",
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const matching = request.planning_entity_dispositions.filter((item) =>
+    item.entity_kind === kind && item.entity_id === qualifiedId && item.action === action);
+  if (matching.length !== 1) diagnostics.push(reshapeDiagnostic(
+    `${action} ${kind} ${qualifiedId} requires one exact planning-entity disposition`,
+    action === "project" ? "PTPOOL-108" : "PTPOOL-109",
+  ));
+}
+
+function hasAssociationDisposition(
+  request: PlanningReshapeRequest,
+  kind: "event" | "activity",
+  entityId: string,
+  originWorkId: string | null,
+  destinationWorkId: string | null,
+): boolean {
+  return request.association_dispositions.some((item) =>
+    item.entity_kind === kind && item.entity_id === entityId &&
+    item.origin_work_id === originWorkId && item.destination_work_id === destinationWorkId);
+}
+
+function hasLinkDisposition(
+  request: PlanningReshapeRequest,
+  kind: "milestone" | "task",
+  strictId: string,
+  originWorkId: string | null,
+  destinationWorkId: string | null,
+): boolean {
+  return request.projection_link_dispositions.some((item) =>
+    item.strict_kind === kind && item.strict_id === strictId &&
+    item.origin_work_id === originWorkId && item.destination_work_id === destinationWorkId);
+}
+
+function associatedWorkIds(
+  model: PlanningPoolSourceModel,
+  kind: "event" | "activity",
+  qualifiedId: string,
+): readonly string[] {
+  return Object.freeze(model.works.filter((work) =>
+    (kind === "event" ? work.events : work.activities).some((item) => item.qualifiedId === qualifiedId))
+    .map(({ qualifiedId: id }) => id).sort());
+}
+
+function linkedWorkIds(
+  model: PlanningPoolSourceModel,
+  kind: "milestone" | "task",
+  qualifiedId: string,
+): readonly string[] {
+  return Object.freeze(model.works.filter((work) =>
+    (kind === "milestone" ? work.milestoneLinks : work.taskLinks)
+      .some((item) => item.qualifiedId === qualifiedId))
+    .map(({ qualifiedId: id }) => id).sort());
+}
+
+function requireAffectedWorks(
+  request: PlanningReshapeRequest,
+  workIds: readonly string[],
+  label: string,
+  code: "PTPOOL-108" | "PTPOOL-109",
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const affected = new Set(request.affected_work_ids);
+  for (const workId of workIds) {
+    if (!affected.has(workId)) diagnostics.push(reshapeDiagnostic(
+      `${label} requires affected Work ${workId}`,
+      code,
+    ));
+  }
+}
+
+function validateProjectionEntity(
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  kind: "event" | "activity",
+  qualifiedId: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const entities = kind === "event" ? model.events : model.activities;
+  if (!entities.some((item) => item.qualifiedId === qualifiedId)) {
+    diagnostics.push(reshapeDiagnostic(`Projected ${kind} ${qualifiedId} does not exist`, "PTPOOL-108"));
+    return;
+  }
+  entityDisposition(request, kind, qualifiedId, "project", diagnostics);
+  const workIds = associatedWorkIds(model, kind, qualifiedId);
+  requireAffectedWorks(request, workIds, `Projection of ${qualifiedId}`, "PTPOOL-108", diagnostics);
+  const strictKind = kind === "event" ? "milestone" : "task";
+  for (const workId of workIds) {
+    if (!hasAssociationDisposition(request, kind, qualifiedId, workId, null)) {
+      diagnostics.push(reshapeDiagnostic(`Projection must remove ${kind} ${qualifiedId} association from ${workId}`, "PTPOOL-108"));
+    }
+    if (!hasLinkDisposition(request, strictKind, qualifiedId, null, workId)) {
+      diagnostics.push(reshapeDiagnostic(`Projection must create ${strictKind} ${qualifiedId} link for ${workId}`, "PTPOOL-108"));
+    }
+  }
+}
+
+function validateProjectionFragment(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const fragment = request.strict_fragment;
+  if (fragment?.kind !== "project") return;
+  if (fragment.event_ids.length + fragment.activity_ids.length === 0) {
+    diagnostics.push(reshapeDiagnostic("Projection strict fragment is empty", "PTPOOL-108"));
+  }
+  const existing = strictQualifiedIds(text, model.documentId);
+  for (const id of fragment.event_ids) {
+    if (existing.milestones.has(id)) diagnostics.push(reshapeDiagnostic(`Projected Event ${id} collides with an existing Milestone`, "PTPOOL-108"));
+    validateProjectionEntity(request, model, "event", id, diagnostics);
+    const event = model.events.find(({ qualifiedId }) => qualifiedId === id);
+    if (event?.source !== null && event?.source !== undefined) diagnostics.push(reshapeDiagnostic(
+      `Projected Event ${id} has a source field with no strict Milestone owner`,
+      "PTPOOL-108",
+    ));
+  }
+  const finalMilestones = new Set([...existing.milestones, ...fragment.event_ids]);
+  for (const id of fragment.activity_ids) {
+    if (existing.tasks.has(id)) diagnostics.push(reshapeDiagnostic(`Projected Activity ${id} collides with an existing Task`, "PTPOOL-108"));
+    validateProjectionEntity(request, model, "activity", id, diagnostics);
+    const activity = model.activities.find(({ qualifiedId }) => qualifiedId === id);
+    if (activity !== undefined) {
+      for (const endpoint of [activity.from.qualifiedId, activity.to.qualifiedId]) {
+        if (!finalMilestones.has(endpoint)) diagnostics.push(reshapeDiagnostic(
+          `Projected Activity ${id} endpoint ${endpoint} is not a final strict Milestone`,
+          "PTPOOL-108",
+        ));
+      }
+    }
+  }
+}
+
+function declarationContainsReference(
+  text: string,
+  headerPattern: RegExp,
+  fieldPattern: RegExp,
+): boolean {
+  const lines = text.split(/(?<=\n)/u);
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!headerPattern.test(lines[index]!.replace(/\r?\n$/u, ""))) continue;
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const line = lines[cursor]!.replace(/\r?\n$/u, "");
+      if (line !== "" && !line.startsWith(" ") && !line.startsWith("\t")) break;
+      if (fieldPattern.test(line)) return true;
+    }
+  }
+  return false;
+}
+
+function taskHasProtectedEvidence(text: string, id: string): boolean {
+  const escaped = id.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  return new RegExp(`^plan_seal ${escaped}:`, "mu").test(text) ||
+    declarationContainsReference(text, /^task_outcome [A-Za-z][A-Za-z0-9_-]*:$/u, new RegExp(`^  task ${escaped}$`, "u")) ||
+    declarationContainsReference(text, /^work_event [A-Za-z][A-Za-z0-9_-]*:$/u, new RegExp(`^  task ${escaped}$`, "u")) ||
+    declarationContainsReference(text, /^assurance_receipt [A-Za-z][A-Za-z0-9_-]*:$/u, new RegExp(`^(?:  producer|    ) ${escaped}(?: |$)`, "u")) ||
+    new RegExp(`^task_relation [A-Za-z][A-Za-z0-9_-]* ${escaped} ->|^task_relation [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> ${escaped}:`, "mu").test(text);
+}
+
+function milestoneHasProtectedEvidence(text: string, id: string): boolean {
+  const escaped = id.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  return declarationContainsReference(text, /^milestone_criterion_set [A-Za-z][A-Za-z0-9_-]*:$/u, new RegExp(`^  milestone ${escaped}$`, "u"));
+}
+
+function taskEndpoints(block: ReturnType<typeof scanTemporalDeclarationBlocks>[number]): readonly [string, string] | null {
+  const match = /^task [A-Za-z][A-Za-z0-9_-]* ([A-Za-z][A-Za-z0-9_-]*) -> ([A-Za-z][A-Za-z0-9_-]*):$/u.exec(block.header.text);
+  return match === null ? null : Object.freeze([match[1]!, match[2]!] as const);
+}
+
+function projectFinish(text: string): string | null {
+  const project = scanTemporalDeclarationBlocks(text).find(({ kind }) => kind === "project");
+  return project === undefined ? null : strictField(project, "finish");
+}
+
+function validateDeferralLinkRestoration(
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  kind: "milestone" | "task",
+  qualifiedId: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const planningKind = kind === "milestone" ? "event" : "activity";
+  entityDisposition(request, planningKind, qualifiedId, "defer", diagnostics);
+  const workIds = linkedWorkIds(model, kind, qualifiedId);
+  if (workIds.length === 0) diagnostics.push(reshapeDiagnostic(`Deferred ${kind} ${qualifiedId} has no live Work projection link`, "PTPOOL-109"));
+  requireAffectedWorks(request, workIds, `Deferral of ${qualifiedId}`, "PTPOOL-109", diagnostics);
+  for (const workId of workIds) {
+    if (!hasLinkDisposition(request, kind, qualifiedId, workId, null)) {
+      diagnostics.push(reshapeDiagnostic(`Deferral must remove ${kind} ${qualifiedId} link from ${workId}`, "PTPOOL-109"));
+    }
+    if (!hasAssociationDisposition(request, planningKind, qualifiedId, null, workId)) {
+      diagnostics.push(reshapeDiagnostic(`Deferral must restore ${planningKind} ${qualifiedId} association for ${workId}`, "PTPOOL-109"));
+    }
+  }
+}
+
+type TemporalBlock = ReturnType<typeof scanTemporalDeclarationBlocks>[number];
+
+interface DeferralValidationContext {
+  readonly text: string;
+  readonly request: PlanningReshapeRequest;
+  readonly model: PlanningPoolSourceModel;
+  readonly tasks: ReadonlyMap<string, TemporalBlock>;
+  readonly milestones: ReadonlyMap<string, TemporalBlock>;
+  readonly blocks: readonly TemporalBlock[];
+  readonly taskIds: ReadonlySet<string>;
+  readonly milestoneIds: ReadonlySet<string>;
+  readonly diagnostics: PlanningPoolSourceDiagnostic[];
+}
+
+function validateDeferredTask(
+  id: string,
+  context: DeferralValidationContext,
+): void {
+  const { text, request, model, tasks, milestones, milestoneIds, diagnostics } = context;
+  const block = tasks.get(id);
+  const qualified = `${model.documentId}::${id}`;
+  if (block === undefined) {
+    diagnostics.push(reshapeDiagnostic(`Deferred Task ${qualified} does not exist`, "PTPOOL-109"));
+    return;
+  }
+  const protectedEvidence = (strictField(block, "status") ?? "planned") !== "planned" ||
+    strictField(block, "blocked_reason") !== null || taskHasProtectedEvidence(text, id);
+  if (protectedEvidence) diagnostics.push(reshapeDiagnostic(
+    `Deferred Task ${qualified} has protected execution or assurance evidence`,
+    "PTPOOL-109",
+  ));
+  validateDeferralLinkRestoration(request, model, "task", qualified, diagnostics);
+  const endpoints = taskEndpoints(block);
+  if (endpoints === null) {
+    diagnostics.push(reshapeDiagnostic(`Deferred Task ${qualified} has invalid endpoints`, "PTPOOL-109"));
+    return;
+  }
+  for (const endpoint of endpoints) {
+    if (!milestones.has(endpoint) && !milestoneIds.has(endpoint)) diagnostics.push(reshapeDiagnostic(
+      `Deferred Task ${qualified} endpoint ${endpoint} is unavailable`,
+      "PTPOOL-109",
+    ));
+  }
+}
+
+function retainedMilestoneConsumer(
+  text: string,
+  id: string,
+  blocks: readonly TemporalBlock[],
+  taskIds: ReadonlySet<string>,
+): boolean {
+  const retainedTask = blocks.some((candidate) => {
+    if (candidate.kind !== "task" || taskIds.has(candidate.id)) return false;
+    return taskEndpoints(candidate)?.includes(id) ?? false;
+  });
+  const retainedGate = new RegExp(
+    `^gate [A-Za-z][A-Za-z0-9_-]* (?:${id} ->|[A-Za-z][A-Za-z0-9_-]* -> ${id}:)`,
+    "mu",
+  ).test(text);
+  return retainedTask || retainedGate;
+}
+
+function validateDeferredMilestone(
+  id: string,
+  context: DeferralValidationContext,
+): void {
+  const { text, request, model, milestones, blocks, taskIds, diagnostics } = context;
+  const block = milestones.get(id);
+  const qualified = `${model.documentId}::${id}`;
+  if (block === undefined) {
+    diagnostics.push(reshapeDiagnostic(`Deferred Milestone ${qualified} does not exist`, "PTPOOL-109"));
+    return;
+  }
+  const protectedEvidence = (strictField(block, "state") ?? "planned") !== "planned" ||
+    strictField(block, "deadline") !== null || strictField(block, "when") !== null ||
+    milestoneHasProtectedEvidence(text, id) || projectFinish(text) === id;
+  if (protectedEvidence) diagnostics.push(reshapeDiagnostic(
+    `Deferred Milestone ${qualified} has protected outcome, temporal, or finish evidence`,
+    "PTPOOL-109",
+  ));
+  if (retainedMilestoneConsumer(text, id, blocks, taskIds)) diagnostics.push(reshapeDiagnostic(
+    `Deferred Milestone ${qualified} is required by retained strict structure`,
+    "PTPOOL-109",
+  ));
+  validateDeferralLinkRestoration(request, model, "milestone", qualified, diagnostics);
+}
+
+function validateDeferralFragment(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const fragment = request.strict_fragment;
+  if (fragment?.kind !== "defer") return;
+  if (fragment.task_ids.length + fragment.milestone_ids.length === 0) {
+    diagnostics.push(reshapeDiagnostic("Deferral strict fragment is empty", "PTPOOL-109"));
+  }
+  const taskIds = qualifiedSelection(fragment.task_ids, model.documentId, "Deferred Task", diagnostics);
+  const milestoneIds = qualifiedSelection(fragment.milestone_ids, model.documentId, "Deferred Milestone", diagnostics);
+  const blocks = scanTemporalDeclarationBlocks(text);
+  const tasks = new Map(blocks.filter(({ kind }) => kind === "task").map((block) => [block.id, block]));
+  const milestones = new Map(blocks.filter(({ kind }) => kind === "milestone").map((block) => [block.id, block]));
+  const context: DeferralValidationContext = {
+    text, request, model, tasks, milestones, blocks, taskIds, milestoneIds, diagnostics,
+  };
+  for (const id of taskIds) {
+    validateDeferredTask(id, context);
+  }
+  for (const id of milestoneIds) {
+    validateDeferredMilestone(id, context);
+  }
+}
+
+function linkSelectedForDeferral(
+  request: PlanningReshapeRequest,
+  disposition: PlanningProjectionLinkDisposition,
+): boolean {
+  const fragment = request.strict_fragment;
+  if (fragment?.kind !== "defer") return false;
+  return disposition.strict_kind === "task"
+    ? fragment.task_ids.includes(disposition.strict_id)
+    : fragment.milestone_ids.includes(disposition.strict_id);
+}
+
+function linkTargetHasProtectedEvidence(
+  text: string,
+  disposition: PlanningProjectionLinkDisposition,
+  local: string,
+): boolean {
+  const block = scanTemporalDeclarationBlocks(text).find((candidate) =>
+    candidate.kind === disposition.strict_kind && candidate.id === local);
+  if (block === undefined) return false;
+  return disposition.strict_kind === "task"
+    ? (strictField(block, "status") ?? "planned") !== "planned" || taskHasProtectedEvidence(text, local)
+    : (strictField(block, "state") ?? "planned") !== "planned" || milestoneHasProtectedEvidence(text, local);
+}
+
+function validateProtectedLinkDisposition(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  disposition: PlanningProjectionLinkDisposition,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  if (disposition.origin_work_id === null || disposition.origin_work_id === disposition.destination_work_id) return;
+  const local = localId(disposition.strict_id, model.documentId, "Projection-link target", diagnostics);
+  if (local === null || linkSelectedForDeferral(request, disposition)) return;
+  if (linkTargetHasProtectedEvidence(text, disposition, local)) diagnostics.push(reshapeDiagnostic(
+      `Projection link ${disposition.strict_id} cannot be split or reallocated after authoritative evidence exists`,
+      "PTPOOL-109",
+  ));
+}
+
+function validateProtectedLinkReallocation(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  for (const disposition of request.projection_link_dispositions) {
+    validateProtectedLinkDisposition(text, request, model, disposition, diagnostics);
+  }
+}
+
+function workIsArchiveable(
+  work: PlanningWorkSource,
+  model: PlanningPoolSourceModel,
+): boolean {
+  const incidentDependency = model.works.some((candidate) =>
+    candidate.qualifiedId !== work.qualifiedId &&
+    candidate.dependsOn.some(({ qualifiedId }) => qualifiedId === work.qualifiedId));
+  const membership = model.windows.some((window) =>
+    window.works.some(({ qualifiedId }) => qualifiedId === work.qualifiedId));
+  const ownsMeaning = (work.description?.value ?? "").length > 0 || work.events.length > 0 ||
+    work.activities.length > 0 || work.milestoneLinks.length > 0 || work.taskLinks.length > 0;
+  return !ownsMeaning && work.dependsOn.length === 0 && !incidentDependency && !membership;
+}
+
+function validateArchiveIntent(
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  if (request.intent !== "archive") return;
+  if (request.removed_work_ids.length === 0 || request.created_works.length > 0 || request.strict_fragment !== null) {
+    diagnostics.push(reshapeDiagnostic("Archive requires removed Work and cannot create Work or transfer strict ownership", "PTPOOL-113"));
+  }
+  const removed = new Set(request.removed_work_ids);
+  const affected = new Set(request.affected_work_ids);
+  if (removed.size !== affected.size || [...removed].some((id) => !affected.has(id))) {
+    diagnostics.push(reshapeDiagnostic("Archive affected Work set must equal the removed Work set", "PTPOOL-113"));
+  }
+  for (const qualified of removed) {
+    const work = model.works.find(({ qualifiedId }) => qualifiedId === qualified);
+    if (work === undefined) continue;
+    if (!workIsArchiveable(work, model)) {
+      diagnostics.push(reshapeDiagnostic(`Work ${qualified} is not archiveable in the current source`, "PTPOOL-113"));
+    }
+  }
 }
 
 function existingRelations(model: PlanningPoolSourceModel): ExistingRelations {
@@ -464,12 +897,24 @@ function existingRelations(model: PlanningPoolSourceModel): ExistingRelations {
 }
 
 function entityDispositionMap(
+  request: PlanningReshapeRequest,
   dispositions: readonly PlanningEntityDisposition[],
   diagnostics: PlanningPoolSourceDiagnostic[],
 ): ReadonlyMap<string, PlanningEntityDisposition> {
   const result = new Map<string, PlanningEntityDisposition>();
   for (const disposition of dispositions) {
-    if (disposition.action !== "retain") {
+    const projected = request.strict_fragment?.kind === "project" && (
+      disposition.entity_kind === "event"
+        ? request.strict_fragment.event_ids.includes(disposition.entity_id)
+        : request.strict_fragment.activity_ids.includes(disposition.entity_id)
+    );
+    const deferred = request.strict_fragment?.kind === "defer" && (
+      disposition.entity_kind === "event"
+        ? request.strict_fragment.milestone_ids.includes(disposition.entity_id)
+        : request.strict_fragment.task_ids.includes(disposition.entity_id)
+    );
+    const expected = projected ? "project" : deferred ? "defer" : "retain";
+    if (disposition.action !== expected) {
       diagnostics.push(reshapeDiagnostic(`Planning entity action ${disposition.action} belongs to a later Core`));
     }
     result.set(`${disposition.entity_kind}:${disposition.entity_id}`, disposition);
@@ -506,6 +951,7 @@ function requireAffectedRelationDisposition(
 }
 
 function applyAssociationDisposition(
+  request: PlanningReshapeRequest,
   disposition: PlanningAssociationDisposition,
   entities: ReadonlyMap<string, PlanningEntityDisposition>,
   context: RelationMutationContext,
@@ -516,6 +962,11 @@ function applyAssociationDisposition(
   const entitySet = disposition.entity_kind === "event"
     ? new Set(model.events.map(({ qualifiedId }) => qualifiedId))
     : new Set(model.activities.map(({ qualifiedId }) => qualifiedId));
+  if (request.strict_fragment?.kind === "defer") {
+    for (const id of disposition.entity_kind === "event"
+      ? request.strict_fragment.milestone_ids
+      : request.strict_fragment.task_ids) entitySet.add(id);
+  }
   if (!entitySet.has(disposition.entity_id)) diagnostics.push(reshapeDiagnostic(`Association entity ${disposition.entity_id} does not exist`));
   if (!entities.has(`${disposition.entity_kind}:${disposition.entity_id}`)) diagnostics.push(reshapeDiagnostic(`Association entity ${disposition.entity_id} has no entity disposition`));
   if (disposition.origin_work_id !== null) {
@@ -555,11 +1006,11 @@ function applyAssociations(
   context: RelationMutationContext,
 ): void {
   const { works, affected, relations, diagnostics } = context;
-  const entities = entityDispositionMap(request.planning_entity_dispositions, diagnostics);
+  const entities = entityDispositionMap(request, request.planning_entity_dispositions, diagnostics);
   const seenOrigins = new Set<string>();
   const finalKeys = unaffectedRelations(relations.associations, affected, 2);
   for (const disposition of request.association_dispositions) {
-    applyAssociationDisposition(disposition, entities, context, seenOrigins, finalKeys);
+    applyAssociationDisposition(request, disposition, entities, context, seenOrigins, finalKeys);
   }
   requireAffectedRelationDisposition(relations.associations, affected, seenOrigins, "association", 2, diagnostics);
   rebuildAssociations(works, finalKeys);
@@ -612,7 +1063,7 @@ function applyProjectionLinks(
   context: RelationMutationContext,
 ): void {
   const { text, model, works, affected, relations, diagnostics } = context;
-  const strict = strictQualifiedIds(text, model.documentId);
+  const strict = strictQualifiedIds(text, model.documentId, request);
   const seenOrigins = new Set<string>();
   const finalKeys = unaffectedRelations(relations.projectionLinks, affected, 2);
   for (const disposition of request.projection_link_dispositions) {
@@ -641,12 +1092,18 @@ function unaffectedDependencies(
   }));
 }
 
-function planningOwners(context: RelationMutationContext): ReadonlySet<string> {
+function planningOwners(
+  request: PlanningReshapeRequest,
+  context: RelationMutationContext,
+): ReadonlySet<string> {
   const { text, model } = context;
-  const strict = strictQualifiedIds(text, model.documentId);
+  const strict = strictQualifiedIds(text, model.documentId, request);
   return new Set([
     ...model.events.map(({ qualifiedId }) => qualifiedId),
     ...model.activities.map(({ qualifiedId }) => qualifiedId),
+    ...(request.strict_fragment?.kind === "defer"
+      ? [...request.strict_fragment.milestone_ids, ...request.strict_fragment.task_ids]
+      : []),
     ...strict.milestones,
     ...strict.tasks,
   ]);
@@ -708,7 +1165,7 @@ function applyDependencies(
   context: RelationMutationContext,
 ): void {
   const { works, affected, relations, diagnostics } = context;
-  const owners = planningOwners(context);
+  const owners = planningOwners(request, context);
   const seen = new Set<string>();
   const finalPairs = unaffectedDependencies(relations.dependencies, affected);
   for (const disposition of request.dependency_dispositions) {
@@ -836,6 +1293,124 @@ function planningInsertionOffset(text: string, blocks: readonly PlanningDeclarat
   return firstStrict?.span.start.offset ?? text.length;
 }
 
+function declarationBody(
+  lines: readonly ReturnType<typeof scanTemporalDeclarationBlocks>[number]["lines"][number][],
+  removedFields: ReadonlySet<string>,
+): readonly string[] {
+  const result: string[] = [];
+  let removing = false;
+  for (const line of lines) {
+    const field = fieldLine(line);
+    if (field !== null) removing = removedFields.has(field.name);
+    if (!removing) result.push(line.text);
+  }
+  while (result.at(-1) === "") result.pop();
+  return Object.freeze(result);
+}
+
+function renderedTransferDeclaration(
+  header: string,
+  body: readonly string[],
+  ending: string,
+): string {
+  return `${[header, ...body].join(ending)}${ending}`;
+}
+
+interface TransferEdits {
+  readonly removals: readonly TextEdit[];
+  readonly insertion: string;
+}
+
+function projectionTransferEdits(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  ending: string,
+): TransferEdits {
+  const fragment = request.strict_fragment;
+  if (fragment?.kind !== "project") return Object.freeze({ removals: Object.freeze([]), insertion: "" });
+  const eventIds = qualifiedSelection(fragment.event_ids, model.documentId, "Projected Event", []);
+  const activityIds = qualifiedSelection(fragment.activity_ids, model.documentId, "Projected Activity", []);
+  const projectedIncoming = new Set(model.activities
+    .filter(({ id }) => activityIds.has(id))
+    .map(({ to }) => to.id));
+  const removals: TextEdit[] = [];
+  const declarations: string[] = [];
+  for (const block of scanPlanningDeclarationBlocks(text)) {
+    if (block.id === null) continue;
+    if (block.kind === "event" && eventIds.has(block.id)) {
+      removals.push({ startOffset: block.span.start.offset, endOffset: block.span.end.offset, replacement: "" });
+      const body = [...declarationBody(block.lines, new Set(["source"]))];
+      if (!projectedIncoming.has(block.id)) {
+        const tags = body.findIndex((line) => /^  tags /u.test(line));
+        body.splice(tags === -1 ? body.length : tags, 0, "  state reached");
+      }
+      declarations.push(renderedTransferDeclaration(
+        `milestone ${block.id}:`,
+        body,
+        ending,
+      ));
+    }
+    if (block.kind === "activity" && activityIds.has(block.id)) {
+      removals.push({ startOffset: block.span.start.offset, endOffset: block.span.end.offset, replacement: "" });
+      declarations.push(renderedTransferDeclaration(
+        `task ${block.id} ${block.from!} -> ${block.to!}:`,
+        declarationBody(block.lines, new Set()),
+        ending,
+      ));
+    }
+  }
+  return Object.freeze({ removals: Object.freeze(removals), insertion: declarations.join(ending) });
+}
+
+function deferralTransferEdits(
+  text: string,
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  ending: string,
+): TransferEdits {
+  const fragment = request.strict_fragment;
+  if (fragment?.kind !== "defer") return Object.freeze({ removals: Object.freeze([]), insertion: "" });
+  const taskIds = qualifiedSelection(fragment.task_ids, model.documentId, "Deferred Task", []);
+  const milestoneIds = qualifiedSelection(fragment.milestone_ids, model.documentId, "Deferred Milestone", []);
+  const removals: TextEdit[] = [];
+  const events: string[] = [];
+  const activities: string[] = [];
+  for (const block of scanTemporalDeclarationBlocks(text)) {
+    if (block.kind === "milestone" && milestoneIds.has(block.id)) {
+      removals.push({ startOffset: block.span.start.offset, endOffset: block.span.end.offset, replacement: "" });
+      events.push(renderedTransferDeclaration(
+        `event ${block.id}:`,
+        declarationBody(block.lines, new Set(["state", "deadline", "when"])),
+        ending,
+      ));
+    }
+    if (block.kind === "task" && taskIds.has(block.id)) {
+      const endpoints = taskEndpoints(block)!;
+      removals.push({ startOffset: block.span.start.offset, endOffset: block.span.end.offset, replacement: "" });
+      activities.push(renderedTransferDeclaration(
+        `activity ${block.id} ${endpoints[0]} -> ${endpoints[1]}:`,
+        declarationBody(block.lines, new Set(["status", "blocked_reason"])),
+        ending,
+      ));
+    }
+  }
+  return Object.freeze({ removals: Object.freeze(removals), insertion: [...events, ...activities].join(ending) });
+}
+
+function addCandidateReplacement(
+  replacements: Map<number, TextEdit>,
+  edit: TextEdit,
+): void {
+  const existing = replacements.get(edit.startOffset);
+  if (existing === undefined) replacements.set(edit.startOffset, edit);
+  else replacements.set(edit.startOffset, {
+    startOffset: edit.startOffset,
+    endOffset: Math.max(existing.endOffset, edit.endOffset),
+    replacement: `${edit.replacement}${existing.replacement}`,
+  });
+}
+
 function candidateReplacements(
   blocks: readonly PlanningDeclarationBlock[],
   state: CandidateState,
@@ -888,16 +1463,19 @@ function candidateText(
   text: string,
   model: PlanningPoolSourceModel,
   state: CandidateState,
+  request: PlanningReshapeRequest,
 ): string {
   const ending = lineEnding(text);
   const blocks = scanPlanningDeclarationBlocks(text);
   const replacements = candidateReplacements(blocks, state, ending);
-  const insertion = candidateInsertion(blocks, state, ending);
+  const projected = projectionTransferEdits(text, request, model, ending);
+  const deferred = deferralTransferEdits(text, request, model, ending);
+  for (const edit of [...projected.removals, ...deferred.removals]) addCandidateReplacement(replacements, edit);
+  const insertion = [candidateInsertion(blocks, state, ending), projected.insertion, deferred.insertion]
+    .filter((value) => value.length > 0).join(ending);
   if (insertion.length > 0) {
     const offset = planningInsertionOffset(text, blocks);
-    const existing = replacements.get(offset);
-    if (existing === undefined) replacements.set(offset, { startOffset: offset, endOffset: offset, replacement: insertion });
-    else replacements.set(offset, { ...existing, replacement: `${insertion}${existing.replacement}` });
+    addCandidateReplacement(replacements, { startOffset: offset, endOffset: offset, replacement: insertion });
   }
   const edits = normalizeTextEdits(text, [...replacements.values()], "planning reshape candidate");
   return applyTextEdits(text, edits);
@@ -1026,9 +1604,13 @@ export function auditPlanningReshape(
   const diagnostics: PlanningPoolSourceDiagnostic[] = [];
   enforceRequestLimits(normalized.request, diagnostics);
   if (normalized.request.source_digest !== sourceDigest) diagnostics.push(reshapeDiagnostic("Planning reshape source_digest does not match current raw source", "PTPOOL-111"));
-  if (normalized.request.intent !== "reshape" && normalized.request.intent !== "composite") {
+  if (!["reshape", "project", "defer", "archive", "composite"].includes(normalized.request.intent)) {
     diagnostics.push(reshapeDiagnostic(`Planning reshape intent ${normalized.request.intent} belongs to a later Core`));
   }
+  validateProjectionFragment(text, normalized.request, source.model, diagnostics);
+  validateDeferralFragment(text, normalized.request, source.model, diagnostics);
+  validateProtectedLinkReallocation(text, normalized.request, source.model, diagnostics);
+  validateArchiveIntent(normalized.request, source.model, diagnostics);
   const state = buildState(text, normalized.request, source.model, diagnostics);
   if (diagnostics.some(({ severity }) => severity === "error")) {
     return Object.freeze({
@@ -1040,7 +1622,7 @@ export function auditPlanningReshape(
       afterDescriptions: state.afterDescriptions,
     });
   }
-  const candidate = candidateText(text, source.model, state);
+  const candidate = candidateText(text, source.model, state, normalized.request);
   const mutation = planPlanningPoolSourceMutation(
     text,
     [{ startOffset: 0, endOffset: text.length, replacement: candidate }],

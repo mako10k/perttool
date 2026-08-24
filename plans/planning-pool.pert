@@ -112,6 +112,7 @@ task PLANNING_POOL_PROJECTION_CORE PLANNING_POOL_RESHAPE_READY -> PLANNING_POOL_
   title "Implement projection, contraction, and narrow deferral"
   description "Implement global project-owned Event-to-Milestone and Activity-to-Task ownership transfer with same identity, complete affected-Work links, closed Activity endpoints, residual-description reminder, explicit dependency disposition, last-consumer handling, Work and link archival, and history-safe final candidates. Add only the accepted reverse deferral for closed unstarted linked fragments, preserve boundary Milestones and the remaining strict DAG, and reject protected, actual-bearing, accepted, ambiguous, or retroactively split execution and outcome evidence."
   duration 10p
+  status done
   priority 85
   requires:
     DEVELOPERS 1

@@ -1,0 +1,22 @@
+{
+  "schema_version": "perttool.planning-pool-projection-core-cases@1",
+  "capability": "perttool.planning-projection-core@1",
+  "cases": [
+    {"id":"PPRJ-001","depends_on":[],"boundary":"private_capability_and_closed_fragment"},
+    {"id":"PPRJ-002","depends_on":["PPRJ-001"],"boundary":"same_identity_event_projection"},
+    {"id":"PPRJ-003","depends_on":["PPRJ-002"],"boundary":"same_identity_activity_projection"},
+    {"id":"PPRJ-004","depends_on":["PPRJ-003"],"boundary":"global_shared_work_coverage"},
+    {"id":"PPRJ-005","depends_on":["PPRJ-004"],"boundary":"closed_acyclic_finish_connected_candidate"},
+    {"id":"PPRJ-006","depends_on":["PPRJ-005"],"boundary":"residual_description_reminder"},
+    {"id":"PPRJ-007","depends_on":["PPRJ-006"],"boundary":"temporary_draft_and_canonical_ranges"},
+    {"id":"PPRJ-008","depends_on":["PPRJ-007"],"boundary":"archiveable_work_contraction"},
+    {"id":"PPRJ-009","depends_on":["PPRJ-008"],"boundary":"non_archiveable_work_rejected"},
+    {"id":"PPRJ-010","depends_on":["PPRJ-009"],"boundary":"same_identity_task_deferral"},
+    {"id":"PPRJ-011","depends_on":["PPRJ-010"],"boundary":"selected_internal_milestone_deferral"},
+    {"id":"PPRJ-012","depends_on":["PPRJ-011"],"boundary":"boundary_milestones_remain_strict"},
+    {"id":"PPRJ-013","depends_on":["PPRJ-012"],"boundary":"direct_or_started_task_deferral_rejected"},
+    {"id":"PPRJ-014","depends_on":["PPRJ-013"],"boundary":"retained_consumer_and_evidence_reallocation_rejected"},
+    {"id":"PPRJ-015","depends_on":["PPRJ-014"],"boundary":"normalized_preflight_binding_and_token_reuse"},
+    {"id":"PPRJ-016","depends_on":["PPRJ-015"],"boundary":"public_surface_unchanged"}
+  ]
+}
