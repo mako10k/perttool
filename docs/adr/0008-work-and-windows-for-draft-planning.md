@@ -653,6 +653,39 @@ unavailable temporal evidence produce unavailable overlap facts rather than a
 guess. Window bounds do not become Task constraints, deadlines, resource
 availability, dependency edges, or `dag next` authority.
 
+### Window objective ownership
+
+Every persisted Window has exactly one non-empty `objective`. It states the
+desired result or change that explains why its Work set and optional timebox
+are being observed together; it may include the relevant current context, but
+it is not a checklist or a sequence of Do instructions. An ad hoc Window may
+omit its request-local objective.
+
+The objective owns only the Window's temporary coordination rationale. It does
+not own or copy durable Work residual intent, Event state, Activity transition,
+Task execution meaning, Milestone outcome, acceptance criterion, or project
+completion. It is not projectable and has no reached, accepted, done,
+completed, or achieved state. When formal execution or acceptance meaning is
+required, that meaning must be stated explicitly by the proper AoA, Task, or
+Milestone owner.
+
+Window observation and close reports return the exact objective beside the
+independent refinement, execution, outcome, coverage, and disposition facts.
+They do not infer an objective-achieved Boolean from Task completion,
+Milestone acceptance, selected coverage, elapsed time, or natural-language
+similarity. A user or LLM may evaluate those facts, but perttool neither stores
+that evaluation nor changes another owner from it.
+
+If objective meaning must remain in current planning after close, the caller
+must explicitly restate or move it into Work description, Event, Activity,
+Milestone, or another proper owner before close or in one separately audited
+composite close candidate. No automatic copy or semantic conversion occurs.
+Close preview exposes the exact removed objective, and ordinary history safety
+protects the persisted Window bytes. Successful close removes the objective
+with the Window and leaves its former wording to Git history. Objective edits
+are explicit previewable, source-digest-bound, history-protected mutations; an
+ad hoc objective is neither persisted nor historically guaranteed.
+
 Closing a persisted Window is one explicit previewable source-contraction
 candidate. It returns the close report and removes that Window and all of its
 memberships from current `.pert` in the same successful write; it does not
@@ -968,6 +1001,14 @@ its accepted `dag advance` boundary without a new contract.
     `project.as_of`, no wall-clock inference, derived temporal-position and
     overlap facts, explicit close at any position, and no effect on the strict
     DAG or Work lifecycle.
+- **C25:** A required persisted Window objective must remain temporary
+  coordination rationale rather than a new execution or acceptance owner so a
+  Sprint Goal can guide selection without duplicating Work, AoA, or Milestone
+  meaning.
+  - **E38:** The decision owner explicitly approved on 2026-08-24 the
+    recommended model: outcome-oriented non-Do objective wording, no automatic
+    achieved state, exact objective reporting, explicit transfer of any meaning
+    that must survive close, and Git history after Window contraction.
 
 ## Alternatives
 
@@ -1046,6 +1087,25 @@ compatible anchor.
 Rejected because an inclusive end makes adjacent Windows overlap at one
 instant, while mandatory paired bounds exclude useful open-ended Kanban and
 observation scopes. Optional bounds form one half-open or open-ended interval.
+
+### Make the persisted Window objective optional or use only its title
+
+Rejected because a durable selection without its intended result loses the
+reason those Work were coordinated. The title remains a display name; the
+objective is required outcome-oriented Window rationale.
+
+### Give the objective acceptance criteria or derive an achieved state
+
+Rejected because Window would duplicate Milestone outcome ownership and Task
+completion facts. Reports present authoritative evidence without inventing a
+new acceptance lifecycle or natural-language achievement inference.
+
+### Copy objective text automatically when the Window closes
+
+Rejected because perttool cannot determine whether temporary coordination
+wording is durable Work intent, an Event state, an Activity transition, or a
+Milestone outcome. Any surviving meaning is moved or restated explicitly under
+the proper owner.
 
 ### Store a lifecycle or completion flag on Work
 
@@ -1250,6 +1310,10 @@ Positive:
   Windows deterministic observation ranges without adding lifecycle states.
 - Explicit temporal anchors keep Window observations reproducible and prevent
   elapsed wall time from causing hidden close, carry-over, or DAG mutations.
+- A required outcome-oriented objective preserves the reason for a persisted
+  Work selection without making Window a second Work, AoA, or acceptance owner.
+- Exact objective readback and explicit surviving-meaning transfer make Window
+  contraction reviewable without retaining an objective tombstone.
 - Window close returns current reporting evidence and removes past selection
   state without adding a closed-to-archived lifecycle.
 - Explicit carry-over prevents Window closure from silently selecting future
@@ -1282,8 +1346,9 @@ Costs and open design work:
   reference rebinding, complete total-order validation, insertion and reorder
   behavior, dependency-order conflicts, dependency cycles, unique Window
   membership, half-open and unbounded timeboxes, temporal-kind and anchor
-  compatibility, overlap reporting, identity-deduplicated aggregation, and
-  last-consumer disposition require closed cases that fail safely on ambiguity.
+  compatibility, objective validation and readback, surviving-meaning transfer,
+  overlap reporting, identity-deduplicated aggregation, and last-consumer
+  disposition require closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
@@ -1390,6 +1455,12 @@ comes only from an explicit observation value or `project.as_of`, unavailable
 comparison remains explicit, no wall clock is read, interval passage triggers
 no lifecycle or DAG change, close remains explicit at any position, and
 comparable overlap is reported without turning bounds into scheduling facts.
+The owner then explicitly approved one required non-empty persisted Window
+objective as temporary, outcome-oriented coordination rationale rather than a
+Do list or a new Work, AoA, execution, or acceptance owner. Reports return it
+without an achieved state, surviving meaning is moved or restated explicitly,
+and close removes it under history protection while Git retains former wording;
+ad hoc objectives remain optional and non-persistent.
 
 ## Follow-ups
 
@@ -1433,16 +1504,20 @@ comparable overlap is reported without turning bounds into scheduling facts.
    paired half-open bounds, comparable temporal kinds, explicit observation and
    `project.as_of` fallback, unavailable position and intersection results, and
    history-safe bound mutation without a wall-clock default, automatic close,
-   or Task scheduling effect. Preserve the absence of Work lifecycle state and
-   report refinement, execution, outcome, organization, and close-disposition
-   axes independently. Define selected execution completion only from
-   identified Activity coverage, complete corresponding Task execution, and a
-   complete evidence basis; report absent or incomplete evidence explicitly
-   and never infer completion from it. Bind current observations and close
-   reports to one exact current-source snapshot and any bounded first-parent
-   Git evidence used; leave post-close reporting to an explicit historical
-   observation. Window views must filter the project-wide Work order rather
-   than introduce a second semantic sequence.
+   or Task scheduling effect. Require one non-empty outcome-oriented objective
+   for persisted Windows, allow an optional request-local ad hoc objective,
+   return exact objective text without achievement inference, expose its
+   destructive close disposition, and define explicit audited transfer when
+   meaning must survive under a proper owner. Preserve the absence of Work
+   lifecycle state and report refinement, execution, outcome, organization,
+   and close-disposition axes independently. Define selected execution
+   completion only from identified Activity coverage, complete corresponding
+   Task execution, and a complete evidence basis; report absent or incomplete
+   evidence explicitly and never infer completion from it. Bind current
+   observations and close reports to one exact current-source snapshot and any
+   bounded first-parent Git evidence used; leave post-close reporting to an
+   explicit historical observation. Window views must filter the project-wide
+   Work order rather than introduce a second semantic sequence.
 6. Define Work and projection-link archival, advance cleanup composition, and
    history-safety ownership for canonical Work, links, and Windows, including
    the exact exclusion of Temporary Draft ranges. Define stable-identity

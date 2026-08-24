@@ -1240,6 +1240,16 @@ bound never creates, activates, closes, carries, archives, promotes, defers, or
 changes the DAG. Close remains explicit at any temporal position, and persisted
 bound changes are previewable history-protected mutations.
 
+Every persisted Window has one non-empty outcome-oriented `objective` stating
+why its Work and timebox are coordinated; it is not a Do list. The objective is
+temporary Window rationale, not durable Work intent, Event state, Activity or
+Task meaning, Milestone acceptance, or project completion. Reports return its
+exact text beside the independent evidence axes and never derive an achieved
+state. Meaning that must remain current is explicitly moved or restated under a
+proper owner before close or in an audited composite close candidate. Close
+exposes and history-protects removal, then leaves former wording to Git. Ad hoc
+objectives are optional request input and are not persisted.
+
 Narrow deferral accepts only a closed selected fragment of planned, unstarted
 strict entities that retain live Work projection links and have no execution
 history. A returned Task becomes the same-identity planning Activity; an
