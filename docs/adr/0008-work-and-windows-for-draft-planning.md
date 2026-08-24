@@ -155,6 +155,40 @@ Work with a current dependency is not archiveable. A generic symmetric
 `related_to` relationship is deferred until a demonstrated interaction or
 navigation use case establishes useful behavior.
 
+### Project-wide backlog order
+
+Every current Work appears exactly once in one explicit project-wide total
+order. The order is a current planning fact independent from source declaration
+placement, ID, title, `depends_on`, Window membership, and strict-DAG topology.
+The exact list, rank, or anchor serialization remains grammar-contract work,
+but every accepted representation must resolve deterministically to the same
+complete duplicate-free Work sequence. Formatting or moving declarations does
+not reorder Work.
+
+Order changes are explicit, previewable, source-digest-bound mutations. Their
+candidate and result show the complete affected before and after sequence. A
+Work creation or split must state the final insertion position of every new
+Work, including an explicit first or last position when selected. Merge removes
+every absorbed Work from the order while the selected surviving Work keeps its
+prior position. Partial semantic movement preserves every position unless the
+same candidate declares a separate reorder. Work archival removes the archived
+Work's order entry atomically. No operation derives an insertion or reorder
+from title, ID, estimate, projection status, Task lifecycle, or outcome state.
+
+`depends_on` can report that a prerequisite appears later than its dependent,
+but the diagnostic is advisory and never reorders either Work. A dependency
+cycle remains representable and cannot define a total order. A persisted or ad
+hoc Window has no second semantic order: its selected Work are presented by
+filtering the project-wide order. A different desired execution sequence must
+be stated in the strict AoA DAG rather than in Window membership.
+
+Backlog order does not grant execution priority or authority. `dag next`,
+critical-path and resource facts, and globally executable Tasks remain
+authoritative even when they differ from the backlog sequence. Window-oriented
+output shows both the selected Work's backlog positions and any applicable
+global execution recommendation without allowing either fact to overwrite the
+other.
+
 ### Work semantic reshape and operation-local audit
 
 Work creation, removal, split, merge, and partial movement are special cases of
@@ -488,16 +522,18 @@ A Work is archiveable when both of the following are true:
 
 1. it has no residual description, association with an unprojected Event or
    Activity, or other residual planning meaning; and
-2. no current backlog order, Window membership, non-DAG relationship, or
-   useful projection trace still needs its identity.
+2. no current Window membership, non-DAG relationship, or useful projection
+   trace still needs its identity.
 
 Archival removes the Work and all of its remaining projection links from the
-current `.pert`; it does not create an `archived` declaration, tombstone, or
-in-file history. When canonical advance removes a projected Milestone or Task,
-the same candidate must prune links to that removed target. If that contraction
-removes the last current reason for the Work to exist, the mutation may compose
-an exact Work archival candidate subject to the ordinary authority and history
-guards.
+current `.pert` and removes its mandatory project-wide order entry in the same
+candidate; that order entry is not an independent reason to retain an otherwise
+archiveable Work. Archival does not create an `archived` declaration, tombstone,
+or in-file history. When canonical advance removes a projected Milestone or
+Task, the same candidate must prune links to that removed target. If that
+contraction removes the last current reason for the Work to exist, the mutation
+may compose an exact Work archival candidate subject to the ordinary authority
+and history guards.
 
 ### Narrow deferral
 
@@ -844,6 +880,14 @@ its accepted `dag advance` boundary without a new contract.
     outcome, and Window evidence, explicit evidence binding and completeness,
     and unknown or unavailable results rather than inference when proof is
     incomplete.
+- **C22:** One explicit project-wide total Work order is necessary to make
+  backlog sequence stable without deriving planning priority from source
+  layout, advisory dependencies, Window selection, or execution authority.
+  - **E35:** The decision owner accepted on 2026-08-24 the recommended model:
+    every current Work appears exactly once in the global order, mutations
+    preserve or explicitly change positions, Windows filter that order,
+    `depends_on` reports conflicts without reordering, and `dag next` remains a
+    separate execution recommendation.
 
 ## Alternatives
 
@@ -863,6 +907,25 @@ reconsidered under Issue #3, but no multi-document model is accepted here.
 Rejected because sprint selection and closure would then alter execution
 dependency, project completion, or milestone acceptance meanings. A Window is
 orthogonal selection and reporting state.
+
+### Use declaration order as backlog order
+
+Rejected because formatting, source reorganization, and future document
+composition would then become semantic reorder operations. Declaration
+placement and the explicit backlog sequence remain independent facts.
+
+### Store only a priority value or derive order from `depends_on`
+
+Rejected because equal priorities do not form a deterministic total order, and
+dependency cycles cannot be topologically ordered. Dependencies describe
+planning prerequisites, not product-value priority, and therefore only produce
+advisory conflicts with the explicit order.
+
+### Give every Window an independent Work order
+
+Rejected for the first contract because overlapping Windows could silently
+assign competing positions to the same Work. Windows filter the project-wide
+order; execution sequencing remains owned by the strict DAG.
 
 ### Store a lifecycle or completion flag on Work
 
@@ -1027,6 +1090,11 @@ Positive:
   selectable Work before any Event or Activity is truthful.
 - Work dependencies can guide backlog refinement and Window coverage without
   granting schedule or start authority.
+- One explicit project-wide order gives every Work a deterministic backlog
+  position without turning declaration layout, dependency, or Window selection
+  into hidden priority.
+- Explicit insertion, preservation, merge, archival, and reorder rules keep
+  Work reshaping from changing backlog position accidentally.
 - Project-owned Events and Activities can be associated with multiple Work
   without duplicating their AoA meaning.
 - Shared-element projection exposes every affected Work and moves the entity
@@ -1083,8 +1151,9 @@ Costs and open design work:
 - Exact inventory and preflight binding, normalization vectors, description
   coverage and reconstruction, token generation, transient registry behavior,
   expiry, one-time consumption, accepted shared-association projection,
-  reference rebinding, dependency cycles, and last-consumer disposition require
-  closed cases that fail safely on ambiguity.
+  reference rebinding, complete total-order validation, insertion and reorder
+  behavior, dependency-order conflicts, dependency cycles, and last-consumer
+  disposition require closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
@@ -1172,6 +1241,13 @@ The owner then accepted current-source plus Git evidence composition: latest
 history reconstructs removed projection, execution, outcome, and Window facts,
 every result exposes its evidence basis and completeness, and gaps or races
 produce unknown or unavailable observations without a current-source ledger.
+The owner then accepted one explicit project-wide total Work order independent
+of declaration placement, `depends_on`, Window selection, and strict execution
+authority. Creation and split state insertion positions, merge preserves the
+surviving Work position, archival removes its entry, other reshapes preserve
+positions unless they explicitly reorder, Windows filter the global sequence,
+dependency conflicts remain advisory, and `dag next` remains authoritative for
+execution recommendation.
 
 ## Follow-ups
 
@@ -1200,8 +1276,9 @@ produce unknown or unavailable observations without a current-source ledger.
    title display, ID retirement, diagnostics, and compatibility. Leave
    multi-file binding, alias, mounting, and nested resolution to Issue #3.
 4. Define directional Work dependency source syntax, advisory readiness,
-   unresolved and cyclic diagnostics, removal, and archive interaction. Do not
-   add a generic related relationship or infer a strict DAG edge.
+   unresolved, cyclic, and explicit-order conflict diagnostics, removal, and
+   archive interaction. Do not automatically reorder Work, add a generic
+   related relationship, or infer a strict DAG edge.
 5. Define persisted and ad hoc Window source and result contracts, timeboxes,
    objectives, dependency coverage, global-DAG conflict reporting, and
    Scrum-like and Kanban-like cases. Preserve active-by-presence persisted
@@ -1214,7 +1291,8 @@ produce unknown or unavailable observations without a current-source ledger.
    evidence explicitly and never infer completion from it. Bind current
    observations and close reports to one exact current-source snapshot and any
    bounded first-parent Git evidence used; leave post-close reporting to an
-   explicit historical observation.
+   explicit historical observation. Window views must filter the project-wide
+   Work order rather than introduce a second semantic sequence.
 6. Define Work and projection-link archival, advance cleanup composition, and
    history-safety ownership for canonical Work, links, and Windows, including
    the exact exclusion of Temporary Draft ranges. Define stable-identity
@@ -1222,5 +1300,7 @@ produce unknown or unavailable observations without a current-source ledger.
    continuity and validity gaps, source and repository races, shallow and
    forced-history-loss behavior, and hard limits without retaining tombstones,
    completion snapshots, or closed-Window reports in current source.
-7. Define the closed source, Core, CLI, result, schema, Help, Guide, migration,
-   hard-limit, and backward-compatibility contracts.
+7. Define the complete duplicate-free project-wide Work order representation,
+   insertion and reorder requests, before-and-after results, migration, and
+   history-safe persistence together with the closed source, Core, CLI, result,
+   schema, Help, Guide, hard-limit, and backward-compatibility contracts.

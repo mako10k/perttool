@@ -1254,9 +1254,10 @@ historical observation.
 The strict AoA DAG, single `project.finish`, global recommendation authority,
 milestone acceptance, plan assurance, actuals, velocity, and canonical advance
 remain unchanged. The first selected contract must close work identity,
-link/split/merge cardinality, shaping, active Window, close, and timeboxes,
-promotion/deferral, CLI and schema surfaces, history, compatibility, and the
-boundary with multi-document `MULTI-001` before runtime work begins.
+link/split/merge cardinality, shaping, project-wide backlog order, active
+Window, close, and timeboxes, promotion/deferral, CLI and schema surfaces,
+history, compatibility, and the boundary with multi-document `MULTI-001`
+before runtime work begins.
 
 [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md) supersedes the
 upper-plan-biased [ADR 0007](adr/0007-outcome-driven-planning-pool.md) and
@@ -1302,6 +1303,18 @@ permitted with an unresolved dependency. A current dependency prevents Work
 archival until removed or represented completely by current AoA or DAG meaning.
 A generic `related_to` relationship is deferred until a demonstrated use case
 establishes its behavior.
+
+Every current Work appears exactly once in one explicit project-wide total
+backlog order independent from declaration placement, title, ID, `depends_on`,
+Window membership, and strict-DAG topology. Creation and split state every new
+insertion position; merge removes absorbed entries while preserving the
+surviving Work position; partial reshape preserves positions unless it
+explicitly reorders; and archive removes the Work and order entry atomically.
+Dependency-order conflicts are advisory and never reorder Work. Windows filter
+the project-wide sequence and have no separate semantic order. `dag next` and
+global critical or resource facts remain separate execution authority and may
+legitimately differ from backlog order. Exact list, rank, or anchor source
+syntax remains contract work.
 
 Work creation, removal, split, merge, and partial movement use one atomic
 semantic-reshape rule. An operation-local inventory enumerates every semantic
