@@ -590,6 +590,35 @@ DAG placement:
   completed work, uncovered selected Work, and carry-over without equating
   Window closure with `project.finish` or milestone acceptance.
 
+### Window overlap and cross-Window attribution
+
+A project may contain zero or more simultaneously active persisted Windows,
+including Windows with overlapping time bounds. Each Window selects a set of
+Work: one Window-to-Work membership pair is unique, while one Work may belong
+to zero or more persisted Windows. Ad hoc Window selection may overlap any
+persisted or other ad hoc selection. There is no primary Window, exclusive
+Window owner, or implicit transfer between Windows.
+
+Overlap is an ordinary reported planning fact, not a validation failure or
+warning by default. Window results list every other active Window sharing each
+selected Work and expose overlapping time bounds independently from shared
+membership. A `depends_on` edge to Work outside a Window remains uncovered and
+does not automatically add that prerequisite to any Window.
+
+Per-Window results retain each membership attribution. A cross-Window summary
+also reports unique Work, Task, and Milestone facts by fully qualified identity
+so one authoritative actual, completion, or acceptance fact is not multiplied
+by the number of memberships or linked Work. Membership-occurrence counts and
+unique-entity totals remain separate; exact result field names remain contract
+work.
+
+Closing a persisted Window removes only that Window and its membership pairs.
+Membership in every other active Window remains unchanged. Explicit carry-over
+to a target Window creates a missing target membership; when the target already
+selects that Work, the relation remains single and the result reports it as
+already selected. Work remains unarchiveable while any persisted Window
+membership exists.
+
 Closing a persisted Window is one explicit previewable source-contraction
 candidate. It returns the close report and removes that Window and all of its
 memberships from current `.pert` in the same successful write; it does not
@@ -888,6 +917,15 @@ its accepted `dag advance` boundary without a new contract.
     preserve or explicitly change positions, Windows filter that order,
     `depends_on` reports conflicts without reordering, and `dag next` remains a
     separate execution recommendation.
+- **C23:** Many-to-many persisted Window membership is necessary because a
+  Window is a selection and observation boundary rather than an exclusive Work
+  owner, while identity-deduplicated aggregation is necessary to avoid
+  multiplying authoritative execution and outcome facts.
+  - **E36:** The decision owner accepted on 2026-08-24 the recommended model:
+    overlapping active and ad hoc Windows, one relation per Window-Work pair,
+    close isolation, non-duplicating carry-over, no dependency auto-selection,
+    explicit overlap reporting, and separate membership-attribution and
+    unique-entity totals.
 
 ## Alternatives
 
@@ -926,6 +964,26 @@ advisory conflicts with the explicit order.
 Rejected for the first contract because overlapping Windows could silently
 assign competing positions to the same Work. Windows filter the project-wide
 order; execution sequencing remains owned by the strict DAG.
+
+### Permit only one active persisted Window per Work
+
+Rejected because exclusivity would make a reporting selection act like Work
+ownership and prevent simultaneous sprint, release, team, or thematic views.
+Overlap is safe while Window membership grants no execution authority and is
+reported explicitly.
+
+### Assign a primary Window and treat other memberships as secondary
+
+Rejected because primary status has no selected behavior in refinement,
+execution, outcome acceptance, carry-over, or archival. Adding it would create
+a synchronization and transfer lifecycle without resolving an accepted use
+case.
+
+### Sum every Window's Task and outcome totals directly
+
+Rejected because one Work or shared strict entity may occur in several Window
+views. Direct summation would multiply the same actual, completion, or accepted
+outcome; attribution occurrences and unique-entity totals remain separate.
 
 ### Store a lifecycle or completion flag on Work
 
@@ -1122,6 +1180,10 @@ Positive:
   human recognition and reserve a compatible path toward Issue #3.
 - Scrum-like sprint selection, Kanban-like observation, and direct waterfall
   DAG operation coexist around the same execution source of truth.
+- Overlapping Windows can express concurrent sprint, release, team, and
+  thematic views without making any Window an exclusive Work owner.
+- Separate attribution occurrences and identity-deduplicated totals prevent
+  cross-Window reports from multiplying shared Work, actuals, or outcomes.
 - Window close returns current reporting evidence and removes past selection
   state without adding a closed-to-archived lifecycle.
 - Explicit carry-over prevents Window closure from silently selecting future
@@ -1152,8 +1214,9 @@ Costs and open design work:
   coverage and reconstruction, token generation, transient registry behavior,
   expiry, one-time consumption, accepted shared-association projection,
   reference rebinding, complete total-order validation, insertion and reorder
-  behavior, dependency-order conflicts, dependency cycles, and last-consumer
-  disposition require closed cases that fail safely on ambiguity.
+  behavior, dependency-order conflicts, dependency cycles, unique Window
+  membership, overlap reporting, identity-deduplicated aggregation, and
+  last-consumer disposition require closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
@@ -1248,6 +1311,12 @@ surviving Work position, archival removes its entry, other reshapes preserve
 positions unless they explicitly reorder, Windows filter the global sequence,
 dependency conflicts remain advisory, and `dag next` remains authoritative for
 execution recommendation.
+The owner then accepted many-to-many Window selection: active persisted and ad
+hoc Windows may overlap, one Window-Work pair remains unique, close affects
+only its own memberships, carry-over does not duplicate an existing target
+membership, dependencies do not auto-select Work, overlap is reported without
+default prohibition, and cross-Window output separates membership attribution
+from identity-deduplicated Work, Task, Milestone, actual, and outcome facts.
 
 ## Follow-ups
 
@@ -1283,7 +1352,11 @@ execution recommendation.
    objectives, dependency coverage, global-DAG conflict reporting, and
    Scrum-like and Kanban-like cases. Preserve active-by-presence persisted
    Windows, close-and-contract reporting, explicit next-Window carry-over, no
-   stored closed state, and no ad hoc lifecycle. Preserve the absence of Work
+   stored closed state, and no ad hoc lifecycle. Define many-to-many active
+   Window membership, unique Window-Work pairs, time and membership overlap
+   facts, close isolation, already-selected carry-over, uncovered dependencies,
+   and separate attribution-occurrence and identity-deduplicated totals without
+   a primary Window or dependency auto-selection. Preserve the absence of Work
    lifecycle state and report refinement, execution, outcome, organization,
    and close-disposition axes independently. Define selected execution
    completion only from identified Activity coverage, complete corresponding

@@ -1219,6 +1219,16 @@ carry-over occurs, and Work and strict DAG facts remain unchanged. Former
 persisted Window state belongs to Git history. An ad hoc Window is observation
 input only and has no stored membership or lifecycle.
 
+Active persisted Windows and their time bounds may overlap. A Work may belong
+to any number of persisted or ad hoc Windows, while each Window-Work pair is
+unique and no primary Window exists. Overlap and shared Work are reported as
+ordinary facts; dependencies do not auto-select prerequisite Work. Closing one
+Window removes only its memberships, and carry-over to a target that already
+selects the Work preserves one membership and reports it as already selected.
+Cross-Window reporting separates membership attribution from fully qualified
+identity-deduplicated Work, Task, Milestone, actual, completion, and outcome
+facts. Any remaining persisted membership prevents Work archival.
+
 Narrow deferral accepts only a closed selected fragment of planned, unstarted
 strict entities that retain live Work projection links and have no execution
 history. A returned Task becomes the same-identity planning Activity; an
@@ -1255,9 +1265,9 @@ The strict AoA DAG, single `project.finish`, global recommendation authority,
 milestone acceptance, plan assurance, actuals, velocity, and canonical advance
 remain unchanged. The first selected contract must close work identity,
 link/split/merge cardinality, shaping, project-wide backlog order, active
-Window, close, and timeboxes, promotion/deferral, CLI and schema surfaces,
-history, compatibility, and the boundary with multi-document `MULTI-001`
-before runtime work begins.
+Window overlap, close, and timeboxes, promotion/deferral, CLI and schema
+surfaces, history, compatibility, and the boundary with multi-document
+`MULTI-001` before runtime work begins.
 
 [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md) supersedes the
 upper-plan-biased [ADR 0007](adr/0007-outcome-driven-planning-pool.md) and
