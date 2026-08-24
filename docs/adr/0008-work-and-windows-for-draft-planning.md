@@ -619,6 +619,40 @@ selects that Work, the relation remains single and the result reports it as
 already selected. Work remains unarchiveable while any persisted Window
 membership exists.
 
+### Window timebox observation
+
+Window `start` and `end` are independent optional temporal bounds. With both
+bounds absent the Window is unbounded; with one bound it is open-ended; with
+both bounds it denotes the half-open interval `[start, end)` and requires
+`start < end`. The pair must use one comparable tagged temporal kind. A date is
+not implicitly converted to a date-time, and an offset, midnight, named zone,
+or host-local zone is never invented. Exact source spellings remain
+grammar-contract work.
+
+Window bounds use only the accepted project temporal profile. Their position
+is observed relative to an explicit request observation value or, when that is
+absent, declared `project.as_of`. The comparison value must be compatible with
+the bound kind. If neither anchor exists or comparison is unavailable, the
+Window remains valid current planning state and its temporal position is
+unavailable. The derived before-bound, inside-interval, and after-bound facts
+are observations, not stored upcoming, active, elapsed, closed, or archived
+states. Re-evaluating the same source and explicit anchor is deterministic and
+never reads the wall clock, host locale, host time zone, Git timestamps, or an
+external calendar.
+
+Reaching `start` or `end` does not create, activate, close, carry, reorder,
+archive, promote, defer, start, finish, accept, or advance anything. A
+persisted Window remains active by source presence until an explicit close at
+any temporal position. Changing its bounds is an explicit previewable,
+source-digest-bound, history-protected mutation. Ad hoc Windows use the same
+interval and observation rules but persist neither bounds nor results.
+
+Comparable Window intervals expose their exact intersection and whether it is
+empty. An unbounded side participates as an open extent. Incomparable kinds or
+unavailable temporal evidence produce unavailable overlap facts rather than a
+guess. Window bounds do not become Task constraints, deadlines, resource
+availability, dependency edges, or `dag next` authority.
+
 Closing a persisted Window is one explicit previewable source-contraction
 candidate. It returns the close report and removes that Window and all of its
 memberships from current `.pert` in the same successful write; it does not
@@ -926,6 +960,14 @@ its accepted `dag advance` boundary without a new contract.
     close isolation, non-duplicating carry-over, no dependency auto-selection,
     explicit overlap reporting, and separate membership-attribution and
     unique-entity totals.
+- **C24:** Window time bounds must remain deterministic observation inputs
+  rather than lifecycle triggers so elapsed wall time cannot mutate planning,
+  execution, carry-over, or archival state.
+  - **E37:** The decision owner accepted on 2026-08-24 the recommended model:
+    optional half-open comparable bounds, explicit observation time or
+    `project.as_of`, no wall-clock inference, derived temporal-position and
+    overlap facts, explicit close at any position, and no effect on the strict
+    DAG or Work lifecycle.
 
 ## Alternatives
 
@@ -984,6 +1026,26 @@ case.
 Rejected because one Work or shared strict entity may occur in several Window
 views. Direct summation would multiply the same actual, completion, or accepted
 outcome; attribution occurrences and unique-entity totals remain separate.
+
+### Activate and close Windows automatically at their bounds
+
+Rejected because elapsed wall time would become an implicit source mutation
+and would couple reporting intervals to carry-over, Work organization, and DAG
+state. Source presence remains the only persisted active fact, and close is
+explicit.
+
+### Default temporal observation to the system clock
+
+Rejected because the same source would produce different results without an
+explicit input and would import host time-zone and clock ambiguity. Observation
+uses an explicit value or `project.as_of` and is unavailable without a
+compatible anchor.
+
+### Use an inclusive end bound or require both bounds
+
+Rejected because an inclusive end makes adjacent Windows overlap at one
+instant, while mandatory paired bounds exclude useful open-ended Kanban and
+observation scopes. Optional bounds form one half-open or open-ended interval.
 
 ### Store a lifecycle or completion flag on Work
 
@@ -1184,6 +1246,10 @@ Positive:
   thematic views without making any Window an exclusive Work owner.
 - Separate attribution occurrences and identity-deduplicated totals prevent
   cross-Window reports from multiplying shared Work, actuals, or outcomes.
+- Half-open, optionally unbounded timeboxes give adjacent and Kanban-like
+  Windows deterministic observation ranges without adding lifecycle states.
+- Explicit temporal anchors keep Window observations reproducible and prevent
+  elapsed wall time from causing hidden close, carry-over, or DAG mutations.
 - Window close returns current reporting evidence and removes past selection
   state without adding a closed-to-archived lifecycle.
 - Explicit carry-over prevents Window closure from silently selecting future
@@ -1215,7 +1281,8 @@ Costs and open design work:
   expiry, one-time consumption, accepted shared-association projection,
   reference rebinding, complete total-order validation, insertion and reorder
   behavior, dependency-order conflicts, dependency cycles, unique Window
-  membership, overlap reporting, identity-deduplicated aggregation, and
+  membership, half-open and unbounded timeboxes, temporal-kind and anchor
+  compatibility, overlap reporting, identity-deduplicated aggregation, and
   last-consumer disposition require closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
@@ -1317,6 +1384,12 @@ only its own memberships, carry-over does not duplicate an existing target
 membership, dependencies do not auto-select Work, overlap is reported without
 default prohibition, and cross-Window output separates membership attribution
 from identity-deduplicated Work, Task, Milestone, actual, and outcome facts.
+The owner then accepted Window timeboxes as optional half-open observation
+intervals: bounds use one comparable existing temporal kind, temporal position
+comes only from an explicit observation value or `project.as_of`, unavailable
+comparison remains explicit, no wall clock is read, interval passage triggers
+no lifecycle or DAG change, close remains explicit at any position, and
+comparable overlap is reported without turning bounds into scheduling facts.
 
 ## Follow-ups
 
@@ -1356,16 +1429,20 @@ from identity-deduplicated Work, Task, Milestone, actual, and outcome facts.
    Window membership, unique Window-Work pairs, time and membership overlap
    facts, close isolation, already-selected carry-over, uncovered dependencies,
    and separate attribution-occurrence and identity-deduplicated totals without
-   a primary Window or dependency auto-selection. Preserve the absence of Work
-   lifecycle state and report refinement, execution, outcome, organization,
-   and close-disposition axes independently. Define selected execution
-   completion only from identified Activity coverage, complete corresponding
-   Task execution, and a complete evidence basis; report absent or incomplete
-   evidence explicitly and never infer completion from it. Bind current
-   observations and close reports to one exact current-source snapshot and any
-   bounded first-parent Git evidence used; leave post-close reporting to an
-   explicit historical observation. Window views must filter the project-wide
-   Work order rather than introduce a second semantic sequence.
+   a primary Window or dependency auto-selection. Define absent, one-sided, and
+   paired half-open bounds, comparable temporal kinds, explicit observation and
+   `project.as_of` fallback, unavailable position and intersection results, and
+   history-safe bound mutation without a wall-clock default, automatic close,
+   or Task scheduling effect. Preserve the absence of Work lifecycle state and
+   report refinement, execution, outcome, organization, and close-disposition
+   axes independently. Define selected execution completion only from
+   identified Activity coverage, complete corresponding Task execution, and a
+   complete evidence basis; report absent or incomplete evidence explicitly
+   and never infer completion from it. Bind current observations and close
+   reports to one exact current-source snapshot and any bounded first-parent
+   Git evidence used; leave post-close reporting to an explicit historical
+   observation. Window views must filter the project-wide Work order rather
+   than introduce a second semantic sequence.
 6. Define Work and projection-link archival, advance cleanup composition, and
    history-safety ownership for canonical Work, links, and Windows, including
    the exact exclusion of Temporary Draft ranges. Define stable-identity

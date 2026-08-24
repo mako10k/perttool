@@ -1229,6 +1229,17 @@ Cross-Window reporting separates membership attribution from fully qualified
 identity-deduplicated Work, Task, Milestone, actual, completion, and outcome
 facts. Any remaining persisted membership prevents Work archival.
 
+Window `start` and `end` are independently optional observation bounds. Two
+bounds use one comparable temporal kind, require `start < end`, and form the
+half-open interval `[start, end)`; one missing side is unbounded. Temporal
+position uses an explicit observation value or compatible `project.as_of` and
+is unavailable without one. No date/time conversion, offset, named zone, host
+clock, locale, Git timestamp, or external calendar is inferred. Before, inside,
+after, and interval-intersection facts are derived observations only. Passing a
+bound never creates, activates, closes, carries, archives, promotes, defers, or
+changes the DAG. Close remains explicit at any temporal position, and persisted
+bound changes are previewable history-protected mutations.
+
 Narrow deferral accepts only a closed selected fragment of planned, unstarted
 strict entities that retain live Work projection links and have no execution
 history. A returned Task becomes the same-identity planning Activity; an
