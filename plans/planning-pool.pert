@@ -281,3 +281,10 @@ plan_seal PLANNING_POOL_WINDOW_CORE:
   accepted_inputs:
     PLANNING_POOL_SOURCE_CORE both sha256:f5eb55d8fc978089504fcbe500a2f4236e1caafa16804a58da809adbb76a1886
   reason "Initial reviewed PLAN-POOL-001 implementation baseline"
+
+task_outcome OUTCOME_PLANNING_POOL_CONTRACT:
+  model 1
+  task PLANNING_POOL_CONTRACT
+  against_basis sha256:be41677b316bcd697e0c389b94c9884d30e3ed81952ba0155f769b6b954fa91c
+  status conformant
+  reason "Accepted Work-centered planning-pool contract and forty closed cases"
