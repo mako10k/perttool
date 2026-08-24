@@ -1,0 +1,23 @@
+{
+  "schema_version": "Perttool.PlanningPoolSourceCoreCases.v1",
+  "contract_id": "PLAN-POOL-001",
+  "task_id": "PLANNING_POOL_SOURCE_CORE",
+  "cases": [
+    { "id": "PPSC-001", "depends_on": [], "claim": "The private Grammar 9 capability is identity checked and absent from public facades." },
+    { "id": "PPSC-002", "depends_on": ["PPSC-001"], "claim": "Grammar 1 through 8 delegate to the active parser without a planning model." },
+    { "id": "PPSC-003", "depends_on": ["PPSC-002"], "claim": "Incomplete Work projects stable local and qualified identities without execution state." },
+    { "id": "PPSC-004", "depends_on": ["PPSC-003"], "claim": "Project-owned Event and Activity fragments preserve complete endpoints and allow planning cycles." },
+    { "id": "PPSC-005", "depends_on": ["PPSC-004"], "claim": "All Work occurs exactly once in the singleton project-wide work order." },
+    { "id": "PPSC-006", "depends_on": ["PPSC-005"], "claim": "Associations, strict projection links, last-consumer ownership, and qualified references are validated." },
+    { "id": "PPSC-007", "depends_on": ["PPSC-006"], "claim": "Work dependencies reject self and duplicate references while retaining directed cycles as observations." },
+    { "id": "PPSC-008", "depends_on": ["PPSC-007"], "claim": "Activity candidate plan fields retain exact values without becoming strict Tasks." },
+    { "id": "PPSC-009", "depends_on": ["PPSC-008"], "claim": "Persisted Windows require objective, members, compatible ordered bounds, and many-to-many membership." },
+    { "id": "PPSC-010", "depends_on": ["PPSC-009"], "claim": "Planning entities share the local namespace with every active entity kind and reject qualified source references." },
+    { "id": "PPSC-011", "depends_on": ["PPSC-010"], "claim": "BOM and CRLF inputs retain exact UTF-16 source spans and total diagnostic counts." },
+    { "id": "PPSC-012", "depends_on": ["PPSC-011"], "claim": "The source-preserving formatter canonicalizes owned scalar values and is idempotent." },
+    { "id": "PPSC-013", "depends_on": ["PPSC-012"], "claim": "Grammar 8 to 9 migration changes only the explicit project version and is idempotent." },
+    { "id": "PPSC-014", "depends_on": ["PPSC-013"], "claim": "Source and entity hard limits fail closed with PTPOOL-115." },
+    { "id": "PPSC-015", "depends_on": ["PPSC-014"], "claim": "Complete requested edits are revalidated before a private candidate is returned." },
+    { "id": "PPSC-016", "depends_on": ["PPSC-015"], "claim": "Package, Grammar 8, Contract 9, commands, schemas, and facade counts remain unchanged." }
+  ]
+}

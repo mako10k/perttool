@@ -472,7 +472,7 @@ function inlineCommentDiagnostic(
   );
 }
 
-function splitTagItems(raw: string): readonly string[] | undefined {
+export function splitTagItems(raw: string): readonly string[] | undefined {
   if (!raw.startsWith("[") || !raw.endsWith("]")) return undefined;
   const body = raw.slice(1, -1).trim();
   if (body === "") return [];

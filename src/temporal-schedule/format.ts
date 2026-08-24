@@ -3,10 +3,12 @@ import {
 } from "../formatter/target-source-formatter.js";
 import { milestoneAcceptanceBaseText } from "../milestone-acceptance/source.js";
 import {
-  applyTextEdits,
-  normalizeTextEdits,
   type TextEdit,
 } from "../mutation/text-edits.js";
+import {
+  formatValidatedSource,
+  planValidatedSourceMutation,
+} from "../mutation/validated-source.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
 import {
   fieldLine,
@@ -195,20 +197,6 @@ function legacyFormatEdits(text: string): readonly TextEdit[] {
   return formatted.edits;
 }
 
-function formatFailure(
-  checked: ReturnType<typeof parseTemporalScheduleSource>,
-): TemporalScheduleFormatResult {
-  return Object.freeze({
-    ok: false,
-    documentId: checked.documentId,
-    changed: false,
-    formattedText: null,
-    edits: Object.freeze([]),
-    diagnostics: checked.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated,
-  });
-}
-
 export function formatTemporalScheduleSource(
   text: string,
   capability: TemporalScheduleSourceCapability,
@@ -217,27 +205,13 @@ export function formatTemporalScheduleSource(
   if (capability !== TEMPORAL_SCHEDULE_SOURCE_CAPABILITY) {
     throw new TypeError("the target Grammar 8 temporal schedule source capability is required");
   }
-  const checked = parseTemporalScheduleSource(text, capability, options);
-  if (!checked.ok || checked.model === null) return formatFailure(checked);
-  const edits = normalizeTextEdits(
+  return formatValidatedSource(
     text,
-    [...legacyFormatEdits(text), ...temporalOwnedEdits(text, checked.model)],
+    (candidate) => parseTemporalScheduleSource(candidate, capability, options),
+    (model) => [...legacyFormatEdits(text), ...temporalOwnedEdits(text, model)],
     "Grammar 8 temporal formatter",
+    "Grammar 8 temporal formatter produced an invalid candidate",
   );
-  const formattedText = applyTextEdits(text, edits);
-  const repeated = parseTemporalScheduleSource(formattedText, capability, options);
-  if (!repeated.ok || repeated.model === null) {
-    throw new Error("Grammar 8 temporal formatter produced an invalid candidate");
-  }
-  return Object.freeze({
-    ok: true,
-    documentId: checked.documentId,
-    changed: formattedText !== text,
-    formattedText,
-    edits: Object.freeze(edits),
-    diagnostics: checked.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated,
-  });
 }
 
 export function planTemporalScheduleSourceMutation(
@@ -249,28 +223,10 @@ export function planTemporalScheduleSourceMutation(
   if (capability !== TEMPORAL_SCHEDULE_SOURCE_CAPABILITY) {
     throw new TypeError("the target Grammar 8 temporal schedule source capability is required");
   }
-  const original = parseTemporalScheduleSource(text, capability, options);
-  if (!original.ok || original.model === null) {
-    return Object.freeze({
-      ok: false,
-      documentId: original.documentId,
-      changed: false,
-      updatedText: null,
-      edits: Object.freeze([]),
-      diagnostics: original.diagnostics,
-      diagnosticsTruncated: original.diagnosticsTruncated,
-    });
-  }
-  const edits = normalizeTextEdits(text, requestedEdits, "Grammar 8 temporal mutation");
-  const candidate = applyTextEdits(text, edits);
-  const checked = parseTemporalScheduleSource(candidate, capability, options);
-  return Object.freeze({
-    ok: checked.ok && checked.model !== null,
-    documentId: checked.documentId,
-    changed: candidate !== text,
-    updatedText: checked.ok && checked.model !== null ? candidate : null,
-    edits: checked.ok && checked.model !== null ? Object.freeze(edits) : Object.freeze([]),
-    diagnostics: checked.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated,
-  });
+  return planValidatedSourceMutation(
+    text,
+    requestedEdits,
+    (candidate) => parseTemporalScheduleSource(candidate, capability, options),
+    "Grammar 8 temporal mutation",
+  );
 }

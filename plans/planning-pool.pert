@@ -118,6 +118,7 @@ task PLANNING_POOL_SOURCE_CORE PLANNING_POOL_CONTRACT_ACCEPTED -> PLANNING_POOL_
   title "Implement planning source and semantic Core"
   description "Implement the accepted declarations, qualified identity, project-owned Event and Activity AoA, Work associations, planning dependencies, projection links, global Work order, active Window records, source spans, validation, formatting, source-preserving migration and portable semantic projection. Preserve every existing strict-DAG document and public behavior and do not activate mutation commands yet."
   duration 8p
+  status done
   priority 95
   requires:
     DEVELOPERS 1

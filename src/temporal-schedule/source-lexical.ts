@@ -107,7 +107,10 @@ function headerIdentity(
   return other === null ? null : { kind: "other", id: other[1]! };
 }
 
-function blockEnd(lines: readonly TemporalSourceLine[], start: number): number {
+export function sourceDeclarationBlockEnd(
+  lines: readonly TemporalSourceLine[],
+  start: number,
+): number {
   let index = start + 1;
   while (index < lines.length) {
     const text = lines[index]!.text;
@@ -117,32 +120,54 @@ function blockEnd(lines: readonly TemporalSourceLine[], start: number): number {
   return index;
 }
 
-export function scanTemporalDeclarationBlocks(
+interface SourceDeclarationSegment<Identity> {
+  readonly identity: Identity;
+  readonly header: TemporalSourceLine;
+  readonly lines: readonly TemporalSourceLine[];
+  readonly span: SourceSpan;
+}
+
+export function scanSourceDeclarationSegments<Identity>(
   text: string,
-): readonly TemporalDeclarationBlock[] {
+  identify: (line: TemporalSourceLine) => Identity | null,
+): readonly SourceDeclarationSegment<Identity>[] {
   const lines = splitTemporalSourceLines(text);
-  const result: TemporalDeclarationBlock[] = [];
+  const result: SourceDeclarationSegment<Identity>[] = [];
   for (let index = 0; index < lines.length; index += 1) {
     const header = lines[index]!;
-    const identity = headerIdentity(header);
+    const identity = identify(header);
     if (identity === null) continue;
-    const end = blockEnd(lines, index);
-    const blockLines = lines.slice(index + 1, end);
-    const idStart = header.text.indexOf(identity.id);
-    const last = blockLines.at(-1) ?? header;
+    const end = sourceDeclarationBlockEnd(lines, index);
+    const body = lines.slice(index + 1, end);
+    const last = body.at(-1) ?? header;
     result.push(Object.freeze({
-      ...identity,
+      identity,
       header,
-      lines: Object.freeze(blockLines),
+      lines: Object.freeze(body),
       span: Object.freeze({
         start: sourcePosition(header, 0),
         end: sourcePosition(last, last.text.length),
       }),
-      idSpan: sourceSliceSpan(header, idStart, idStart + identity.id.length),
     }));
     index = end - 1;
   }
   return Object.freeze(result);
+}
+
+export function scanTemporalDeclarationBlocks(
+  text: string,
+): readonly TemporalDeclarationBlock[] {
+  return Object.freeze(scanSourceDeclarationSegments(text, headerIdentity).map((segment) => {
+    const { identity, header, lines, span } = segment;
+    const idStart = header.text.indexOf(identity.id);
+    return Object.freeze({
+      ...identity,
+      header,
+      lines,
+      span,
+      idSpan: sourceSliceSpan(header, idStart, idStart + identity.id.length),
+    });
+  }));
 }
 
 export function fieldLine(

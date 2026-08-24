@@ -4,13 +4,11 @@ import {
   parseMilestoneAcceptanceSource,
 } from "../milestone-acceptance/source.js";
 import {
-  countDiagnostics,
-  limitDiagnostics,
   normalizeMaxDiagnostics,
-  sortDiagnostics,
   type Diagnostic,
   type SourceSpan,
 } from "../model/diagnostics.js";
+import { sourceValidationResult } from "../model/source-result.js";
 import { compare, type Rational } from "../model/rational.js";
 import { fieldNamed, type DeclarationNode } from "../model/syntax.js";
 import {
@@ -638,18 +636,13 @@ function result(
   diagnostics: readonly Diagnostic[],
   maximum: number,
 ): TemporalScheduleSourceResult {
-  const sorted = sortDiagnostics(diagnostics);
-  const limited = limitDiagnostics(sorted, maximum);
-  const counts = countDiagnostics(sorted);
-  return Object.freeze({
-    ok: counts.errors === 0,
+  return sourceValidationResult<TemporalScheduleSourceModel, TemporalSourceDiagnostic>(
     grammarVersion,
     documentId,
-    model: counts.errors === 0 ? model : null,
-    diagnostics: Object.freeze(limited.diagnostics as readonly TemporalSourceDiagnostic[]),
-    diagnosticCounts: Object.freeze(counts),
-    diagnosticsTruncated: limited.truncated,
-  });
+    model,
+    diagnostics,
+    maximum,
+  );
 }
 
 export function parseTemporalScheduleSource(
