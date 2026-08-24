@@ -1327,13 +1327,21 @@ association and sharing, projection coverage, archival, Window behavior,
 interfaces, and implementation remain contract work.
 
 Work also has a directional planning-only `depends_on` relationship. It may
-guide backlog refinement and report uncovered or cyclic dependencies, but it
-does not affect execution analysis or authority and is never automatically
-converted into a strict DAG edge. Window selection and partial projection stay
-permitted with an unresolved dependency. A current dependency prevents Work
-archival until removed or represented completely by current AoA or DAG meaning.
-A generic `related_to` relationship is deferred until a demonstrated use case
-establishes its behavior.
+guide backlog refinement and report uncovered, order-conflicting, or cyclic
+dependencies, but it has no satisfied, completed, blocked, or ready state, does
+not affect execution authority, and is never automatically converted into a
+strict DAG edge. Projection, execution, acceptance, Window close, and elapsed
+time do not remove it. An affected operation enumerates every incoming and
+outgoing relation and explicitly retains it, rebinds its endpoints, removes it
+with cited Event, Activity, Milestone, or Task representation, or removes it as
+no longer required. Machine audit verifies complete disposition, endpoint and
+cited-owner existence, duplicate coalescing, and reference closure, not semantic
+equivalence. Self-dependency after rebind requires explicit internalization.
+Any remaining incident relation prevents Work archival. Results report
+direction, order, cycle, Window coverage, target observation axes, and evidence
+completeness without collapsing them into dependency satisfaction. Removed
+relations leave result and Git evidence but no current tombstone. A generic
+`related_to` relationship remains deferred.
 
 Every current Work appears exactly once in one explicit project-wide total
 backlog order independent from declaration placement, title, ID, `depends_on`,

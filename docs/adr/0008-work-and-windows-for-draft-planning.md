@@ -131,14 +131,15 @@ depends on Work B, A requires B to be considered or sufficiently refined to
 shape A responsibly. The relationship is many-to-many and belongs to backlog
 planning, not to the execution graph.
 
-A Work dependency may affect advisory backlog readiness, refinement order, and
-Window coverage reporting. It never by itself affects PERT/CPM analysis,
-resource scheduling, critical paths, float, `dag next`, Task start authority,
-Milestone reachability or acceptance, `project.finish`, or canonical advance.
-It is not automatically converted into an Event connection, Activity, Task, or
-strict DAG edge. When the dependency becomes an execution constraint, the user
-must state that constraint explicitly through Event and Activity structure and
-project a valid strict fragment.
+A Work dependency may affect advisory refinement attention and order and Window
+coverage reporting. It has no stored or derived satisfied, completed, blocked,
+or ready state. It never by itself affects PERT/CPM analysis, resource
+scheduling, critical paths, float, `dag next`, Task start authority, Milestone
+reachability or acceptance, `project.finish`, or canonical advance. It is not
+automatically converted into an Event connection, Activity, Task, or strict DAG
+edge. When the dependency becomes an execution constraint, the user must state
+that constraint explicitly through Event and Activity structure and project a
+valid strict fragment.
 
 Window selection and partial projection remain permitted when a dependency is
 outside the selected Window or otherwise unresolved; the interface reports the
@@ -148,12 +149,53 @@ inside the cycle and must be reported prominently. It is not a valid execution
 DAG cycle and cannot be projected as one.
 
 The model stores only the `depends_on` direction; an inverse `blocks` view may
-be derived for display but is not a second relationship. A dependency remains
-only while it carries current non-DAG planning meaning. It must be removed when
-that meaning has moved completely into the planning AoA or strict DAG, and a
-Work with a current dependency is not archiveable. A generic symmetric
-`related_to` relationship is deferred until a demonstrated interaction or
-navigation use case establishes useful behavior.
+be derived for display but is not a second relationship. Projection, Task
+completion, Milestone reach or acceptance, Window close, and elapsed time never
+remove or satisfy the relationship automatically. A dependency remains current
+until an explicit candidate retains, rebinds, or removes it. A generic
+symmetric `related_to` relationship is deferred until a demonstrated
+interaction or navigation use case establishes useful behavior.
+
+### Work dependency disposition and observation
+
+Any projection, semantic reshape, merge, removal, or archival candidate that
+affects a Work enumerates every incoming and outgoing `depends_on` relation for
+that Work. Each relation has exactly one explicit final disposition:
+
+- `retain` preserves the same two Work endpoints because non-DAG planning
+  meaning remains;
+- `rebind` replaces one or both endpoints with identified surviving or newly
+  created Work;
+- `represented` removes the planning relation and cites a non-empty set of
+  Event, Activity, Milestone, or Task identities that now owns the relevant
+  planning or execution structure; or
+- `no_longer_required` removes the relation because the premise itself is no
+  longer current planning meaning.
+
+Exact interface labels remain contract work, but these four meanings are
+closed. A rationale may accompany removal but is not required for structural
+accounting. The machine audit verifies complete incident-relation enumeration,
+one disposition, final endpoint existence, duplicate coalescing, cited-entity
+existence and final ownership, and closed final references. It does not claim
+that cited AoA or DAG structure is semantically equivalent to the former
+dependency; the LLM and user review that meaning through the accepted preflight
+flow. Removed relations leave no satisfied marker, representation link, or
+tombstone in current `.pert`; the preflight/result and Git history retain the
+change evidence.
+
+Merge and Work removal cannot silently absorb relationship meaning. Rebound
+duplicate relations coalesce. A relation that would become a self-dependency
+is removed only when the manifest explicitly labels it internalized under the
+`represented` or `no_longer_required` disposition; otherwise preflight fails.
+Any incoming or outgoing current dependency prevents Work archival unless the
+same archival candidate rebinds or removes it.
+
+Observation reports structural existence, direction, target Work facts,
+project-wide order alignment or conflict, cycle membership, and Window coverage
+or absence as independent facts. It also presents the target Work's refinement,
+execution, outcome, and evidence-completeness axes. None of those observations
+collapses into a dependency-satisfied Boolean or grants strict execution
+authority.
 
 ### Project-wide backlog order
 
@@ -376,13 +418,14 @@ The general model yields the familiar operations without separate semantics:
 - removal moves or explicitly discards every element and resolves every
   reference before removing the empty Work boundary.
 
-Duplicate relationship references coalesce, and a dependency that would become
-a self-dependency after rebinding is internalized and removed. The current
-source keeps no split, merged, redirect, transfer, lineage, or tombstone record;
-Git retains former Work states. The complete operation is previewable,
-digest-bound, validating, and atomic. Removing canonical meaning or a Work
-remains subject to the ordinary history-loss proof, while Temporary Draft
-elements retain their separately accepted disposable boundary.
+Duplicate relationship references coalesce. A dependency that would become a
+self-dependency after rebinding requires the explicit internalized disposition
+fixed above and otherwise fails. The current source keeps no split, merged,
+redirect, transfer, lineage, or tombstone record; Git retains former Work
+states. The complete operation is previewable, digest-bound, validating, and
+atomic. Removing canonical meaning or a Work remains subject to the ordinary
+history-loss proof, while Temporary Draft elements retain their separately
+accepted disposable boundary.
 
 ### Identity namespace and display name
 
@@ -1009,6 +1052,15 @@ its accepted `dag advance` boundary without a new contract.
     recommended model: outcome-oriented non-Do objective wording, no automatic
     achieved state, exact objective reporting, explicit transfer of any meaning
     that must survive close, and Git history after Window contraction.
+- **C26:** Work dependency lifecycle must use explicit per-relation disposition
+  rather than automatic satisfaction so projection and execution facts cannot
+  silently erase or duplicate non-DAG planning meaning.
+  - **E39:** The decision owner accepted on 2026-08-24 the recommended model:
+    no dependency satisfaction state, complete incoming and outgoing
+    enumeration, explicit retain, rebind, represented, or no-longer-required
+    disposition, cited replacement owners without machine semantic inference,
+    explicit self-dependency internalization, and archive blocking while an
+    incident relation remains.
 
 ## Alternatives
 
@@ -1203,6 +1255,25 @@ necessarily an execution precedence constraint. Automatic conversion would
 grant schedule and start-authority meaning before truthful Events and
 Activities exist.
 
+### Mark a dependency satisfied or remove it automatically
+
+Rejected because Task completion, Milestone acceptance, projection, and Window
+closure do not prove that the dependency's non-DAG planning premise has ended.
+The relation remains until an explicit final disposition is reviewed.
+
+### Retain a satisfied dependency marker in current source
+
+Rejected because it would add a relationship lifecycle and permanent ledger to
+the latest `.pert`. Removal evidence belongs to the mutation result and Git
+history, not a tombstone or status field.
+
+### Require perttool to prove semantic equivalence of a replacement DAG
+
+Rejected because existence, ownership, and graph closure are mechanically
+checkable, but natural-language dependency meaning and its complete expression
+are not. Preflight exposes the cited replacement structure for LLM and user
+review without making a false proof claim.
+
 ### Add a generic related-to relationship now
 
 Deferred because a symmetric association with no selected behavior could add
@@ -1270,6 +1341,11 @@ Positive:
   selectable Work before any Event or Activity is truthful.
 - Work dependencies can guide backlog refinement and Window coverage without
   granting schedule or start authority.
+- Explicit dependency disposition preserves non-DAG meaning through projection,
+  reshape, and execution until retain, rebind, represented removal, or
+  no-longer-required removal is deliberately selected.
+- Incident-relation enumeration and explicit self-dependency internalization
+  prevent merge and archive from silently discarding planning prerequisites.
 - One explicit project-wide order gives every Work a deterministic backlog
   position without turning declaration layout, dependency, or Window selection
   into hidden priority.
@@ -1347,8 +1423,9 @@ Costs and open design work:
   behavior, dependency-order conflicts, dependency cycles, unique Window
   membership, half-open and unbounded timeboxes, temporal-kind and anchor
   compatibility, objective validation and readback, surviving-meaning transfer,
-  overlap reporting, identity-deduplicated aggregation, and last-consumer
-  disposition require closed cases that fail safely on ambiguity.
+  complete dependency disposition, cited replacement ownership, overlap
+  reporting, identity-deduplicated aggregation, and last-consumer disposition
+  require closed cases that fail safely on ambiguity.
 - Element projection coverage, the residual-description warning, namespace
   source syntax, ID retirement enforcement, accepted narrow-deferral
   eligibility and protected-evidence closure, archival, accepted Window close
@@ -1461,6 +1538,13 @@ Do list or a new Work, AoA, execution, or acceptance owner. Reports return it
 without an achieved state, surviving meaning is moved or restated explicitly,
 and close removes it under history protection while Git retains former wording;
 ad hoc objectives remain optional and non-persistent.
+The owner then accepted explicit Work-dependency disposition instead of a
+satisfaction lifecycle: projection and execution never remove a relation,
+affected operations enumerate all incoming and outgoing relations, each is
+retained, rebound, removed with cited AoA or DAG representation, or removed as
+no longer required, machine audit checks structure but not semantic equivalence,
+self-dependency internalization is explicit, and any unresolved incident
+relation blocks archival.
 
 ## Follow-ups
 
@@ -1489,9 +1573,14 @@ ad hoc objectives remain optional and non-persistent.
    title display, ID retirement, diagnostics, and compatibility. Leave
    multi-file binding, alias, mounting, and nested resolution to Issue #3.
 4. Define directional Work dependency source syntax, advisory readiness,
-   unresolved, cyclic, and explicit-order conflict diagnostics, removal, and
-   archive interaction. Do not automatically reorder Work, add a generic
-   related relationship, or infer a strict DAG edge.
+   unresolved, cyclic, explicit-order conflict, Window coverage, and target-axis
+   observations. Define complete incoming and outgoing enumeration; retain,
+   endpoint rebind, cited AoA or DAG representation, and no-longer-required
+   disposition; duplicate coalescing; explicit self-dependency internalization;
+   structural cited-owner checks; result and Git evidence; and archive
+   interaction. Do not add a satisfied state, automatically remove or reorder a
+   relation, claim semantic-equivalence proof, add a generic related
+   relationship, or infer a strict DAG edge.
 5. Define persisted and ad hoc Window source and result contracts, timeboxes,
    objectives, dependency coverage, global-DAG conflict reporting, and
    Scrum-like and Kanban-like cases. Preserve active-by-presence persisted
