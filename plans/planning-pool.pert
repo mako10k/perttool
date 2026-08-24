@@ -99,6 +99,7 @@ task PLANNING_POOL_RESHAPE_CORE PLANNING_POOL_SOURCE_READY -> PLANNING_POOL_RESH
   title "Implement semantic reshape and preflight navigation"
   description "Implement one atomic Work-boundary reshape model over complete labeled origins and Work or discard destinations. Return normalized before and after decompositions, actual descriptions, conservation and reference checks, exact candidate and source bindings, preflight hash, and a perttool-issued one-time opaque token. Require exact hash and token rebinding for execution, invalidate stale candidates, keep LLM self-audit unrecorded, make the later user-response boundary conspicuous, and retain ordinary governance and safe-write authority without OS-user authentication claims."
   duration 10p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

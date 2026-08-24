@@ -1,0 +1,751 @@
+import { sha256DigestUtf8 } from "../model/sha256.js";
+import type { PlanningPoolSourceDiagnostic } from "./source-types.js";
+import type {
+  PlanningAssociationDisposition,
+  PlanningDependencyDisposition,
+  PlanningEntityDisposition,
+  PlanningProjectionLinkDisposition,
+  PlanningResidualDescriptionAction,
+  PlanningReshapeCreatedWork,
+  PlanningReshapeElementDestination,
+  PlanningReshapeElementOrigin,
+  PlanningReshapeIntent,
+  PlanningReshapeNormalizationResult,
+  PlanningReshapeRequest,
+  PlanningReshapeSemanticElement,
+  PlanningWindowMembershipDisposition,
+} from "./reshape-types.js";
+
+export const PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION =
+  "Perttool.PlanningReshapeRequest.v1" as const;
+export const PLANNING_RESHAPE_NORMALIZATION_CONTRACT =
+  "perttool.planning-reshape-normalization@1" as const;
+export const PLANNING_RESHAPE_REQUEST_UTF8_LIMIT = 8_388_608;
+export const PLANNING_RESHAPE_NORMALIZED_LIMITS = Object.freeze({
+  affectedWorks: 2_048,
+  semanticRows: 50_000,
+  relationshipDispositions: 200_000,
+});
+
+type JsonRecord = Record<string, unknown>;
+
+function diagnostic(message: string, code = "PTPOOL-110"): PlanningPoolSourceDiagnostic {
+  return Object.freeze({
+    code,
+    severity: "error" as const,
+    message,
+    data: Object.freeze({}),
+  });
+}
+
+function isRecord(value: unknown): value is JsonRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function closedRecord(
+  value: unknown,
+  required: readonly string[],
+  optional: readonly string[],
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): JsonRecord | null {
+  if (!isRecord(value)) {
+    diagnostics.push(diagnostic(`${label} must be an object`));
+    return null;
+  }
+  const allowed = new Set([...required, ...optional]);
+  const unknown = Object.keys(value).filter((key) => !allowed.has(key));
+  const missing = required.filter((key) => !Object.hasOwn(value, key));
+  if (unknown.length > 0) diagnostics.push(diagnostic(`${label} has unknown fields: ${unknown.join(", ")}`));
+  if (missing.length > 0) diagnostics.push(diagnostic(`${label} is missing fields: ${missing.join(", ")}`));
+  return unknown.length === 0 && missing.length === 0 ? value : null;
+}
+
+function stringValue(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+  nonEmpty = true,
+): string | null {
+  if (typeof value !== "string" || (nonEmpty && value.length === 0)) {
+    diagnostics.push(diagnostic(`${label} must be ${nonEmpty ? "a non-empty" : "a"} string`));
+    return null;
+  }
+  return value;
+}
+
+function integerValue(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): number | null {
+  if (!Number.isSafeInteger(value) || (value as number) < 0) {
+    diagnostics.push(diagnostic(`${label} must be a non-negative safe integer`));
+    return null;
+  }
+  return value as number;
+}
+
+const qualifiedIdPattern = /^[A-Za-z][A-Za-z0-9_-]*::[A-Za-z][A-Za-z0-9_-]*$/u;
+const elementIdPattern = /^[A-Za-z][A-Za-z0-9_-]*$/u;
+const digestPattern = /^sha256:[0-9a-f]{64}$/u;
+
+function qualifiedId(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): string | null {
+  const result = stringValue(value, label, diagnostics);
+  if (result !== null && !qualifiedIdPattern.test(result)) {
+    diagnostics.push(diagnostic(`${label} must be a fully qualified planning identity`));
+    return null;
+  }
+  return result;
+}
+
+function enumValue<T extends string>(
+  value: unknown,
+  values: readonly T[],
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): T | null {
+  if (typeof value !== "string" || !values.includes(value as T)) {
+    diagnostics.push(diagnostic(`${label} has an unknown value`));
+    return null;
+  }
+  return value as T;
+}
+
+function nullableQualifiedId(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): string | null | undefined {
+  return value === null ? null : qualifiedId(value, label, diagnostics) ?? undefined;
+}
+
+function parseCreatedWork(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeCreatedWork | null {
+  const record = closedRecord(
+    value,
+    ["work_id", "title", "insert_after_work_id"],
+    [],
+    "created Work",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const workId = qualifiedId(record["work_id"], "created Work work_id", diagnostics);
+  const title = stringValue(record["title"], "created Work title", diagnostics);
+  const anchor = nullableQualifiedId(record["insert_after_work_id"], "created Work insertion anchor", diagnostics);
+  return workId === null || title === null || anchor === undefined
+    ? null
+    : Object.freeze({ work_id: workId, title, insert_after_work_id: anchor });
+}
+
+function parseExistingOrigin(
+  record: JsonRecord,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeElementOrigin | null {
+  const checked = closedRecord(
+    record,
+    ["kind", "work_id", "start_utf16", "end_utf16", "source_text"],
+    [],
+    "existing semantic origin",
+    diagnostics,
+  );
+  if (checked === null || checked["kind"] !== "existing") return null;
+  const workId = qualifiedId(checked["work_id"], "semantic origin work_id", diagnostics);
+  const start = integerValue(checked["start_utf16"], "semantic origin start_utf16", diagnostics);
+  const end = integerValue(checked["end_utf16"], "semantic origin end_utf16", diagnostics);
+  const sourceText = stringValue(checked["source_text"], "semantic origin source_text", diagnostics, false);
+  if (start !== null && end !== null && end < start) diagnostics.push(diagnostic("semantic origin end_utf16 precedes start_utf16"));
+  return workId === null || start === null || end === null || sourceText === null || end < start
+    ? null
+    : Object.freeze({ kind: "existing", work_id: workId, start_utf16: start, end_utf16: end, source_text: sourceText });
+}
+
+function parseCreatedOrigin(
+  record: JsonRecord,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeElementOrigin | null {
+  const checked = closedRecord(
+    record,
+    ["kind", "source_text", "asserted_new_meaning"],
+    [],
+    "created semantic origin",
+    diagnostics,
+  );
+  if (checked === null || checked["kind"] !== "created") return null;
+  const sourceText = stringValue(checked["source_text"], "created semantic origin source_text", diagnostics, false);
+  if (checked["asserted_new_meaning"] !== true) diagnostics.push(diagnostic("created semantic origin requires asserted_new_meaning true"));
+  return sourceText === null || checked["asserted_new_meaning"] !== true
+    ? null
+    : Object.freeze({ kind: "created", source_text: sourceText, asserted_new_meaning: true });
+}
+
+function parseOrigin(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeElementOrigin | null {
+  if (!isRecord(value)) {
+    diagnostics.push(diagnostic("semantic origin must be an object"));
+    return null;
+  }
+  if (value["kind"] === "existing") return parseExistingOrigin(value, diagnostics);
+  if (value["kind"] === "created") return parseCreatedOrigin(value, diagnostics);
+  diagnostics.push(diagnostic("semantic origin has an unknown kind"));
+  return null;
+}
+
+function parseDestination(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeElementDestination | null {
+  if (!isRecord(value)) {
+    diagnostics.push(diagnostic("semantic destination must be an object"));
+    return null;
+  }
+  if (value["kind"] === "work") {
+    const record = closedRecord(
+      value,
+      ["kind", "work_id", "position", "text"],
+      [],
+      "Work semantic destination",
+      diagnostics,
+    );
+    if (record === null) return null;
+    const workId = qualifiedId(record["work_id"], "semantic destination work_id", diagnostics);
+    const position = integerValue(record["position"], "semantic destination position", diagnostics);
+    const text = stringValue(record["text"], "semantic destination text", diagnostics, false);
+    return workId === null || position === null || text === null
+      ? null
+      : Object.freeze({ kind: "work", work_id: workId, position, text });
+  }
+  if (value["kind"] === "discard") {
+    const record = closedRecord(value, ["kind"], ["reason"], "discard destination", diagnostics);
+    if (record === null) return null;
+    const reason = record["reason"] === undefined
+      ? undefined
+      : stringValue(record["reason"], "discard reason", diagnostics, false) ?? undefined;
+    return record["reason"] !== undefined && reason === undefined
+      ? null
+      : Object.freeze({ kind: "discard", ...(reason === undefined ? {} : { reason }) });
+  }
+  diagnostics.push(diagnostic("semantic destination has an unknown kind"));
+  return null;
+}
+
+function parseSemanticElement(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningReshapeSemanticElement | null {
+  const record = closedRecord(value, ["element_id", "origin", "destination"], [], "semantic element", diagnostics);
+  if (record === null) return null;
+  const elementId = stringValue(record["element_id"], "semantic element_id", diagnostics);
+  if (elementId !== null && !elementIdPattern.test(elementId)) {
+    diagnostics.push(diagnostic("semantic element_id is invalid"));
+  }
+  const origin = parseOrigin(record["origin"], diagnostics);
+  const destination = parseDestination(record["destination"], diagnostics);
+  return elementId === null || !elementIdPattern.test(elementId) || origin === null || destination === null
+    ? null
+    : Object.freeze({ element_id: elementId, origin, destination });
+}
+
+function parseEntityDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningEntityDisposition | null {
+  const record = closedRecord(value, ["entity_kind", "entity_id", "action"], ["reason"], "planning entity disposition", diagnostics);
+  if (record === null) return null;
+  const kind = enumValue(record["entity_kind"], ["event", "activity"], "planning entity kind", diagnostics);
+  const id = qualifiedId(record["entity_id"], "planning entity id", diagnostics);
+  const action = enumValue(record["action"], ["retain", "create", "project", "defer", "discard"], "planning entity action", diagnostics);
+  const reason = record["reason"] === undefined ? undefined : stringValue(record["reason"], "planning entity reason", diagnostics, false) ?? undefined;
+  return kind === null || id === null || action === null || (record["reason"] !== undefined && reason === undefined)
+    ? null
+    : Object.freeze({ entity_kind: kind, entity_id: id, action, ...(reason === undefined ? {} : { reason }) });
+}
+
+function parseAssociationDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningAssociationDisposition | null {
+  const record = closedRecord(
+    value,
+    ["entity_kind", "entity_id", "origin_work_id", "destination_work_id"],
+    [],
+    "association disposition",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const kind = enumValue(record["entity_kind"], ["event", "activity"], "association entity kind", diagnostics);
+  const entityId = qualifiedId(record["entity_id"], "association entity id", diagnostics);
+  const origin = nullableQualifiedId(record["origin_work_id"], "association origin Work", diagnostics);
+  const destination = nullableQualifiedId(record["destination_work_id"], "association destination Work", diagnostics);
+  if (origin === null && destination === null) diagnostics.push(diagnostic("association disposition must retain one endpoint"));
+  return kind === null || entityId === null || origin === undefined || destination === undefined || (origin === null && destination === null)
+    ? null
+    : Object.freeze({ entity_kind: kind, entity_id: entityId, origin_work_id: origin, destination_work_id: destination });
+}
+
+function parseProjectionLinkDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningProjectionLinkDisposition | null {
+  const record = closedRecord(
+    value,
+    ["strict_kind", "strict_id", "origin_work_id", "destination_work_id"],
+    [],
+    "projection-link disposition",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const kind = enumValue(record["strict_kind"], ["milestone", "task"], "strict entity kind", diagnostics);
+  const strictId = qualifiedId(record["strict_id"], "strict entity id", diagnostics);
+  const origin = nullableQualifiedId(record["origin_work_id"], "projection-link origin Work", diagnostics);
+  const destination = nullableQualifiedId(record["destination_work_id"], "projection-link destination Work", diagnostics);
+  if (origin === null && destination === null) diagnostics.push(diagnostic("projection-link disposition must retain one endpoint"));
+  return kind === null || strictId === null || origin === undefined || destination === undefined || (origin === null && destination === null)
+    ? null
+    : Object.freeze({ strict_kind: kind, strict_id: strictId, origin_work_id: origin, destination_work_id: destination });
+}
+
+function parseStringSet(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): readonly string[] | null {
+  if (!Array.isArray(value)) {
+    diagnostics.push(diagnostic(`${label} must be an array`));
+    return null;
+  }
+  const result = value.map((item) => qualifiedId(item, label, diagnostics));
+  return result.some((item) => item === null)
+    ? null
+    : Object.freeze((result as string[]).sort(compareUnicodeScalars));
+}
+
+function optionalQualifiedId(
+  record: JsonRecord,
+  field: string,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): string | undefined | null {
+  return record[field] === undefined
+    ? undefined
+    : qualifiedId(record[field], label, diagnostics) ?? null;
+}
+
+function optionalQualifiedIdSet(
+  record: JsonRecord,
+  field: string,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): readonly string[] | undefined | null {
+  return record[field] === undefined
+    ? undefined
+    : parseStringSet(record[field], label, diagnostics) ?? null;
+}
+
+function optionalText(
+  record: JsonRecord,
+  field: string,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): string | undefined | null {
+  return record[field] === undefined
+    ? undefined
+    : stringValue(record[field], label, diagnostics, false) ?? null;
+}
+
+function validateDependencyDispositionShape(
+  action: PlanningDependencyDisposition["action"] | null,
+  finalDependent: string | undefined | null,
+  finalPrerequisite: string | undefined | null,
+  representedBy: readonly string[] | undefined | null,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  validateDependencyEndpoints(action, finalDependent, finalPrerequisite, diagnostics);
+  validateDependencyOwners(action, representedBy, diagnostics);
+}
+
+function validateDependencyEndpoints(
+  action: PlanningDependencyDisposition["action"] | null,
+  finalDependent: string | undefined | null,
+  finalPrerequisite: string | undefined | null,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  if (action === "retain" && (finalDependent !== undefined || finalPrerequisite !== undefined)) {
+    diagnostics.push(diagnostic("retained dependency cannot declare final endpoints"));
+  }
+  if (action !== null && action !== "rebind" && (finalDependent !== undefined || finalPrerequisite !== undefined)) {
+    diagnostics.push(diagnostic("only a rebound dependency may declare final endpoints"));
+  }
+  if (action === "rebind" && (typeof finalDependent !== "string" || typeof finalPrerequisite !== "string")) {
+    diagnostics.push(diagnostic("rebound dependency requires both final endpoints"));
+  }
+}
+
+function validateDependencyOwners(
+  action: PlanningDependencyDisposition["action"] | null,
+  representedBy: readonly string[] | undefined | null,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  if (action === "represented" && (!Array.isArray(representedBy) || representedBy.length === 0)) {
+    diagnostics.push(diagnostic("represented dependency requires final owners"));
+  }
+  if (action !== null && action !== "represented" && representedBy !== undefined) {
+    diagnostics.push(diagnostic("only a represented dependency may cite final owners"));
+  }
+}
+
+function hasNull(values: readonly unknown[]): boolean {
+  return values.some((value) => value === null);
+}
+
+function parseDependencyDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningDependencyDisposition | null {
+  const record = closedRecord(
+    value,
+    ["dependent_work_id", "prerequisite_work_id", "action"],
+    ["final_dependent_work_id", "final_prerequisite_work_id", "represented_by", "reason"],
+    "dependency disposition",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const dependent = qualifiedId(record["dependent_work_id"], "dependent Work", diagnostics);
+  const prerequisite = qualifiedId(record["prerequisite_work_id"], "prerequisite Work", diagnostics);
+  const action = enumValue(record["action"], ["retain", "rebind", "represented", "no_longer_required"], "dependency action", diagnostics);
+  const finalDependent = optionalQualifiedId(record, "final_dependent_work_id", "final dependent Work", diagnostics);
+  const finalPrerequisite = optionalQualifiedId(record, "final_prerequisite_work_id", "final prerequisite Work", diagnostics);
+  const representedBy = optionalQualifiedIdSet(record, "represented_by", "represented owner", diagnostics);
+  const reason = optionalText(record, "reason", "dependency reason", diagnostics);
+  validateDependencyDispositionShape(action, finalDependent, finalPrerequisite, representedBy, diagnostics);
+  if (hasNull([dependent, prerequisite, action, finalDependent, finalPrerequisite, representedBy, reason])) return null;
+  return Object.freeze({
+    dependent_work_id: dependent!,
+    prerequisite_work_id: prerequisite!,
+    action: action!,
+    ...(finalDependent === undefined ? {} : { final_dependent_work_id: finalDependent as string }),
+    ...(finalPrerequisite === undefined ? {} : { final_prerequisite_work_id: finalPrerequisite as string }),
+    ...(representedBy === undefined ? {} : { represented_by: representedBy as readonly string[] }),
+    ...(reason === undefined ? {} : { reason: reason as string }),
+  });
+}
+
+function parseWindowMembershipDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningWindowMembershipDisposition | null {
+  const record = closedRecord(
+    value,
+    ["window_id", "origin_work_id", "destination_work_id"],
+    [],
+    "Window membership disposition",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const windowId = qualifiedId(record["window_id"], "Window id", diagnostics);
+  const origin = qualifiedId(record["origin_work_id"], "Window origin Work", diagnostics);
+  const destination = nullableQualifiedId(record["destination_work_id"], "Window destination Work", diagnostics);
+  return windowId === null || origin === null || destination === undefined
+    ? null
+    : Object.freeze({ window_id: windowId, origin_work_id: origin, destination_work_id: destination });
+}
+
+function parseResidualAction(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningResidualDescriptionAction | null {
+  const record = closedRecord(value, ["work_id", "text"], [], "residual-description action", diagnostics);
+  if (record === null) return null;
+  const workId = qualifiedId(record["work_id"], "residual-description Work", diagnostics);
+  const text = stringValue(record["text"], "residual-description text", diagnostics, false);
+  return workId === null || text === null ? null : Object.freeze({ work_id: workId, text });
+}
+
+function parseArray<T>(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+  parse: (item: unknown, diagnostics: PlanningPoolSourceDiagnostic[]) => T | null,
+): readonly T[] | null {
+  if (!Array.isArray(value)) {
+    diagnostics.push(diagnostic(`${label} must be an array`));
+    return null;
+  }
+  const result = value.map((item) => parse(item, diagnostics));
+  return result.some((item) => item === null)
+    ? null
+    : Object.freeze(result as T[]);
+}
+
+function unique<T>(
+  values: readonly T[],
+  key: (value: T) => string,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): boolean {
+  const seen = new Set<string>();
+  for (const value of values) {
+    const identity = key(value);
+    if (seen.has(identity)) {
+      diagnostics.push(diagnostic(`Duplicate ${label} ${identity}`));
+      return false;
+    }
+    seen.add(identity);
+  }
+  return true;
+}
+
+function compareUnicodeScalars(left: string, right: string): number {
+  const leftPoints = Array.from(left, (value) => value.codePointAt(0)!);
+  const rightPoints = Array.from(right, (value) => value.codePointAt(0)!);
+  const length = Math.min(leftPoints.length, rightPoints.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = leftPoints[index]! - rightPoints[index]!;
+    if (difference !== 0) return difference;
+  }
+  return leftPoints.length - rightPoints.length;
+}
+
+function sorted<T>(values: readonly T[], key: (value: T) => string): readonly T[] {
+  return Object.freeze([...values].sort((left, right) => compareUnicodeScalars(key(left), key(right))));
+}
+
+function canonicalValue(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalValue).join(",")}]`;
+  const record = value as Readonly<Record<string, unknown>>;
+  const keys = Object.keys(record).sort(compareUnicodeScalars);
+  const fields = keys.map((key) => `${JSON.stringify(key)}:${canonicalValue(record[key])}`);
+  return `{${fields.join(",")}}`;
+}
+
+function rawRequestBytes(input: unknown): number | null {
+  try {
+    const text = typeof input === "string" ? input : JSON.stringify(input);
+    return new TextEncoder().encode(text).byteLength;
+  } catch {
+    return null;
+  }
+}
+
+function parsedInput(input: unknown, diagnostics: PlanningPoolSourceDiagnostic[]): unknown {
+  if (typeof input !== "string") return input;
+  try {
+    return JSON.parse(input) as unknown;
+  } catch {
+    diagnostics.push(diagnostic("Planning reshape request is not valid JSON"));
+    return null;
+  }
+}
+
+function arrayLength(record: JsonRecord, field: string): number {
+  const value = record[field];
+  return Array.isArray(value) ? value.length : 0;
+}
+
+function exceedsNormalizedLimits(
+  record: JsonRecord,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): boolean {
+  const relationCount = [
+    "planning_entity_dispositions",
+    "association_dispositions",
+    "projection_link_dispositions",
+    "dependency_dispositions",
+    "window_membership_dispositions",
+  ].reduce((total, field) => total + arrayLength(record, field), 0);
+  const violations = [
+    arrayLength(record, "affected_work_ids") > PLANNING_RESHAPE_NORMALIZED_LIMITS.affectedWorks,
+    arrayLength(record, "semantic_elements") > PLANNING_RESHAPE_NORMALIZED_LIMITS.semanticRows,
+    relationCount > PLANNING_RESHAPE_NORMALIZED_LIMITS.relationshipDispositions,
+  ];
+  if (!violations.some(Boolean)) return false;
+  diagnostics.push(diagnostic("Planning reshape request count limit exceeded", "PTPOOL-115"));
+  return true;
+}
+
+function failedNormalization(
+  diagnostics: readonly PlanningPoolSourceDiagnostic[],
+): PlanningReshapeNormalizationResult {
+  return Object.freeze({
+    ok: false,
+    request: null,
+    canonicalUtf8: null,
+    preflightHash: null,
+    diagnostics: Object.freeze(diagnostics),
+  });
+}
+
+const requestFields = Object.freeze([
+  "request_schema_version",
+  "normalization_contract",
+  "source_digest",
+  "intent",
+  "affected_work_ids",
+  "created_works",
+  "removed_work_ids",
+  "semantic_elements",
+  "planning_entity_dispositions",
+  "association_dispositions",
+  "projection_link_dispositions",
+  "dependency_dispositions",
+  "window_membership_dispositions",
+  "final_work_order",
+  "add_residual_description",
+  "strict_fragment",
+  "window_close",
+]);
+
+function planningRequestRecord(
+  input: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): JsonRecord | null {
+  const byteLength = rawRequestBytes(input);
+  if (byteLength === null) diagnostics.push(diagnostic("Planning reshape request cannot be serialized"));
+  if (byteLength !== null && byteLength > PLANNING_RESHAPE_REQUEST_UTF8_LIMIT) {
+    diagnostics.push(diagnostic(`Planning reshape request exceeds ${PLANNING_RESHAPE_REQUEST_UTF8_LIMIT} UTF-8 bytes`, "PTPOOL-115"));
+  }
+  const record = closedRecord(
+    parsedInput(input, diagnostics),
+    requestFields,
+    [],
+    "Planning reshape request",
+    diagnostics,
+  );
+  if (record !== null) exceedsNormalizedLimits(record, diagnostics);
+  return diagnostics.length === 0 ? record : null;
+}
+
+interface ParsedRequestFields {
+  readonly sourceDigest: string;
+  readonly intent: PlanningReshapeIntent;
+  readonly affected: readonly string[];
+  readonly created: readonly PlanningReshapeCreatedWork[];
+  readonly removed: readonly string[];
+  readonly elements: readonly PlanningReshapeSemanticElement[];
+  readonly entities: readonly PlanningEntityDisposition[];
+  readonly associations: readonly PlanningAssociationDisposition[];
+  readonly links: readonly PlanningProjectionLinkDisposition[];
+  readonly dependencies: readonly PlanningDependencyDisposition[];
+  readonly memberships: readonly PlanningWindowMembershipDisposition[];
+  readonly order: readonly string[];
+  readonly residual: readonly PlanningResidualDescriptionAction[];
+}
+
+function parseFinalWorkOrder(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): readonly string[] | null {
+  if (!Array.isArray(value)) {
+    diagnostics.push(diagnostic("final_work_order must be an array"));
+    return null;
+  }
+  return Object.freeze(value.map((item) =>
+    qualifiedId(item, "final_work_order", diagnostics)).filter((item): item is string => item !== null));
+}
+
+function parseRequestFields(
+  record: JsonRecord,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): ParsedRequestFields | null {
+  const sourceDigest = stringValue(record["source_digest"], "source_digest", diagnostics);
+  if (sourceDigest !== null && !digestPattern.test(sourceDigest)) diagnostics.push(diagnostic("source_digest must be a lowercase SHA-256 identity"));
+  const intent = enumValue(record["intent"], ["reshape", "project", "defer", "archive", "composite"], "reshape intent", diagnostics) as PlanningReshapeIntent | null;
+  const affected = parseStringSet(record["affected_work_ids"], "affected Work", diagnostics);
+  const created = parseArray(record["created_works"], "created_works", diagnostics, parseCreatedWork);
+  const removed = parseStringSet(record["removed_work_ids"], "removed Work", diagnostics);
+  const elements = parseArray(record["semantic_elements"], "semantic_elements", diagnostics, parseSemanticElement);
+  const entities = parseArray(record["planning_entity_dispositions"], "planning_entity_dispositions", diagnostics, parseEntityDisposition);
+  const associations = parseArray(record["association_dispositions"], "association_dispositions", diagnostics, parseAssociationDisposition);
+  const links = parseArray(record["projection_link_dispositions"], "projection_link_dispositions", diagnostics, parseProjectionLinkDisposition);
+  const dependencies = parseArray(record["dependency_dispositions"], "dependency_dispositions", diagnostics, parseDependencyDisposition);
+  const memberships = parseArray(record["window_membership_dispositions"], "window_membership_dispositions", diagnostics, parseWindowMembershipDisposition);
+  const order = parseFinalWorkOrder(record["final_work_order"], diagnostics);
+  const residual = parseArray(record["add_residual_description"], "add_residual_description", diagnostics, parseResidualAction);
+  if (hasNull([sourceDigest, intent, affected, created, removed, elements, entities, associations, links, dependencies, memberships, order, residual])) return null;
+  return Object.freeze({
+    sourceDigest: sourceDigest!, intent: intent!, affected: affected!, created: created!,
+    removed: removed!, elements: elements!, entities: entities!, associations: associations!,
+    links: links!, dependencies: dependencies!, memberships: memberships!, order: order!, residual: residual!,
+  });
+}
+
+function validateRequestUniqueness(
+  fields: ParsedRequestFields,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  unique(fields.affected, (item) => item, "affected Work", diagnostics);
+  unique(fields.created, (item) => item.work_id, "created Work", diagnostics);
+  unique(fields.removed, (item) => item, "removed Work", diagnostics);
+  unique(fields.elements, (item) => item.element_id, "semantic element", diagnostics);
+  unique(fields.entities, (item) => `${item.entity_kind}:${item.entity_id}`, "planning entity disposition", diagnostics);
+  unique(fields.associations, (item) => `${item.entity_kind}:${item.entity_id}:${item.origin_work_id ?? "-"}:${item.destination_work_id ?? "-"}`, "association disposition", diagnostics);
+  unique(fields.links, (item) => `${item.strict_kind}:${item.strict_id}:${item.origin_work_id ?? "-"}:${item.destination_work_id ?? "-"}`, "projection-link disposition", diagnostics);
+  unique(fields.dependencies, (item) => `${item.dependent_work_id}:${item.prerequisite_work_id}`, "dependency disposition", diagnostics);
+  unique(fields.memberships, (item) => `${item.window_id}:${item.origin_work_id}`, "Window membership disposition", diagnostics);
+  unique(fields.order, (item) => item, "final Work order", diagnostics);
+  unique(fields.residual, (item) => item.work_id, "residual-description action", diagnostics);
+}
+
+function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest {
+  return Object.freeze({
+    request_schema_version: PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION,
+    normalization_contract: PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
+    source_digest: fields.sourceDigest,
+    intent: fields.intent,
+    affected_work_ids: fields.affected,
+    created_works: sorted(fields.created, (item) => item.work_id),
+    removed_work_ids: fields.removed,
+    semantic_elements: fields.elements,
+    planning_entity_dispositions: sorted(fields.entities, (item) => `${item.entity_kind}:${item.entity_id}`),
+    association_dispositions: sorted(fields.associations, (item) => `${item.entity_kind}:${item.entity_id}:${item.origin_work_id ?? "-"}:${item.destination_work_id ?? "-"}`),
+    projection_link_dispositions: sorted(fields.links, (item) => `${item.strict_kind}:${item.strict_id}:${item.origin_work_id ?? "-"}:${item.destination_work_id ?? "-"}`),
+    dependency_dispositions: sorted(fields.dependencies, (item) => `${item.dependent_work_id}:${item.prerequisite_work_id}`),
+    window_membership_dispositions: sorted(fields.memberships, (item) => `${item.window_id}:${item.origin_work_id}`),
+    final_work_order: fields.order,
+    add_residual_description: sorted(fields.residual, (item) => item.work_id),
+    strict_fragment: null,
+    window_close: null,
+  });
+}
+
+export function planningReshapeSha256(text: string): string {
+  return sha256DigestUtf8(text);
+}
+
+export function canonicalPlanningReshapeJson(value: unknown): string {
+  return canonicalValue(value);
+}
+
+export function normalizePlanningReshapeRequest(
+  input: unknown,
+): PlanningReshapeNormalizationResult {
+  const diagnostics: PlanningPoolSourceDiagnostic[] = [];
+  const record = planningRequestRecord(input, diagnostics);
+  if (record === null) return failedNormalization(diagnostics);
+  if (record["request_schema_version"] !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION) diagnostics.push(diagnostic("Planning reshape request schema identity is unsupported"));
+  if (record["normalization_contract"] !== PLANNING_RESHAPE_NORMALIZATION_CONTRACT) diagnostics.push(diagnostic("Planning reshape normalization identity is unsupported"));
+  if (record["strict_fragment"] !== null) diagnostics.push(diagnostic("strict_fragment is unavailable before the projection Core"));
+  if (record["window_close"] !== null) diagnostics.push(diagnostic("window_close is unavailable before the Window Core"));
+  const fields = parseRequestFields(record, diagnostics);
+  if (fields === null) return failedNormalization(diagnostics);
+  validateRequestUniqueness(fields, diagnostics);
+  if (diagnostics.length > 0) return failedNormalization(diagnostics);
+  const request = normalizedRequest(fields);
+  const canonicalUtf8 = canonicalValue(request);
+  return Object.freeze({
+    ok: true,
+    request,
+    canonicalUtf8,
+    preflightHash: planningReshapeSha256(canonicalUtf8),
+    diagnostics: Object.freeze([]),
+  });
+}

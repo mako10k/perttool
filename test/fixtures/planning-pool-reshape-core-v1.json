@@ -1,0 +1,23 @@
+{
+  "schema_version": "Perttool.PlanningPoolReshapeCoreCases.v1",
+  "contract_id": "PLAN-POOL-001",
+  "task_id": "PLANNING_POOL_RESHAPE_CORE",
+  "cases": [
+    { "id": "PPRC-001", "depends_on": [], "claim": "The private reshape capability and closed request normalizer remain outside every public facade." },
+    { "id": "PPRC-002", "depends_on": ["PPRC-001"], "claim": "Canonical normalization reproduces both accepted fixed SHA-256 vectors." },
+    { "id": "PPRC-003", "depends_on": ["PPRC-002"], "claim": "Object and set order normalize while semantic-element and final-description order remain meaning-bearing." },
+    { "id": "PPRC-004", "depends_on": ["PPRC-003"], "claim": "A split partitions one description exactly and transfers rows to a newly anchored Work atomically." },
+    { "id": "PPRC-005", "depends_on": ["PPRC-004"], "claim": "A merge moves all residual rows and typed references, removes the absorbed Work and order entry, and creates no tombstone." },
+    { "id": "PPRC-006", "depends_on": ["PPRC-005"], "claim": "Created and explicitly discarded semantic rows are structurally accounted without claiming natural-language novelty or wisdom." },
+    { "id": "PPRC-007", "depends_on": ["PPRC-006"], "claim": "Gaps, overlaps, mismatched fragments, duplicate positions, and incomplete affected relationship coverage fail closed." },
+    { "id": "PPRC-008", "depends_on": ["PPRC-007"], "claim": "Association, projection-link, dependency, and Window membership dispositions reconstruct one valid final candidate." },
+    { "id": "PPRC-009", "depends_on": ["PPRC-008"], "claim": "Dependency retain, rebind, represented, and no-longer-required paths validate final endpoints and reject self-dependency." },
+    { "id": "PPRC-010", "depends_on": ["PPRC-009"], "claim": "Read-only preflight returns exact source, normalized request, hash, candidate, decompositions, authority impact, and one opaque token without changing source." },
+    { "id": "PPRC-011", "depends_on": ["PPRC-010"], "claim": "The transient registry accepts at least 256 random bits, stores only token digests, enforces capacity, and expires records after 3600 seconds." },
+    { "id": "PPRC-012", "depends_on": ["PPRC-011"], "claim": "Apply preparation re-normalizes and re-audits exact request, hash, token, source, candidate, expiry, and replay bindings." },
+    { "id": "PPRC-013", "depends_on": ["PPRC-012"], "claim": "Token committing recovery returns exact old source to unused, exact candidate to consumed, and rejects a third digest." },
+    { "id": "PPRC-014", "depends_on": ["PPRC-013"], "claim": "A complete byte-identical request emits PTPOOL-117 and still has a consumable one-time token." },
+    { "id": "PPRC-015", "depends_on": ["PPRC-014"], "claim": "Unchanged residual wording with materialized references emits only the bounded PTPOOL-112 assistance unless explicitly acknowledged." },
+    { "id": "PPRC-016", "depends_on": ["PPRC-015"], "claim": "The apply preview marks the candidate-bound user-response boundary and required DAG owner without storing LLM self-review or changing the active public runtime." }
+  ]
+}

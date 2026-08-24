@@ -64,8 +64,9 @@ test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async 
   assert.match(design, /### Post-MVP Slice 8: Work-centered planning pool and bounded Windows/u);
   assert.match(backlog, /normative Grammar 9 and CLI Contract 10 planning-pool contract\s+accepted/u);
   assert.match(grammar, /Accepted Grammar 9 target: \[Work-centered Planning Pool and Window Contract\]/u);
-  assert.match(plan, /task PLANNING_POOL_CONTRACT/u);
-  assert.match(plan, /task PLANNING_POOL_SOURCE_CORE/u);
+  assert.match(plan, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
+  assert.match(plan, /task PLANNING_POOL_RESHAPE_CORE/u);
+  assert.doesNotMatch(plan, /task PLANNING_POOL_CONTRACT|task PLANNING_POOL_SOURCE_CORE/u);
 });
 
 test("all forty planning-pool cases are dependency ordered and closed", async () => {
@@ -169,7 +170,7 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("accepted contract task hands off only to the source Core", async () => {
+test("accepted contract history and completed reshape expose only the governed projection frontier", async () => {
   const [source, acceptance, selfUse] = await Promise.all([
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
@@ -185,16 +186,18 @@ test("accepted contract task hands off only to the source Core", async () => {
   assert.equal(analyzed.ok, true);
   assert.equal(next.ok, true);
   assert.equal(metadata.project.id, "PLANNING_POOL");
-  assert.equal(metadata.grammarVersion, 6);
-  assert.match(source, /task PLANNING_POOL_CONTRACT[\s\S]*?status done/u);
+  assert.equal(metadata.grammarVersion, 7);
+  assert.match(source, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
+  assert.match(source, /task PLANNING_POOL_RESHAPE_CORE[\s\S]*?status done/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "PLANNING_POOL_SOURCE_CORE",
+    "PLANNING_POOL_PROJECTION_CORE",
   ]);
   const assurancePartition = new Set([
     ...next.temporal.authority.startableRecommendedTaskIds,
     ...next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
   ]);
-  assert.deepEqual([...assurancePartition], ["PLANNING_POOL_SOURCE_CORE"]);
+  assert.deepEqual([...assurancePartition], ["PLANNING_POOL_PROJECTION_CORE"]);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
