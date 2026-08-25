@@ -282,6 +282,13 @@ task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:
   status conformant
   reason "Accepted private planning history Core and sixteen closed cases"
 
+task_outcome OUTCOME_PLANNING_POOL_PUBLIC_CONTRACT:
+  model 1
+  task PLANNING_POOL_PUBLIC_CONTRACT
+  against_basis sha256:7f1b36fcadfbf07048c59316342b9ba4c76a9712ccf11fb5757692a1d5515a9b
+  status conformant
+  reason "Accepted public planning-pool contract, implementation, and complete gates"
+
 assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
   receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45
