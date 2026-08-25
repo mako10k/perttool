@@ -258,6 +258,13 @@ task_outcome OUTCOME_PLANNING_POOL_PROJECTION_CORE:
   status conformant
   reason "Accepted private planning projection and deferral Core and sixteen closed cases"
 
+task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:
+  model 1
+  task PLANNING_POOL_WINDOW_CORE
+  against_basis sha256:96c10157f5e586de495513a7127b05a1b3d80f99e47cb81cb8fab499b80eea1b
+  status conformant
+  reason "Accepted private planning Window mutation and contraction Core and sixteen closed cases"
+
 assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
   receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45

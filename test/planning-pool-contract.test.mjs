@@ -170,7 +170,7 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("completed Window Core exposes only its separately governed outcome frontier", async () => {
+test("accepted Window Core exposes only the Observation Core execution frontier", async () => {
   const [source, acceptance, windowAcceptance, selfUse] = await Promise.all([
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
@@ -192,24 +192,15 @@ test("completed Window Core exposes only its separately governed outcome frontie
   assert.match(source, /task PLANNING_POOL_RESHAPE_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_PROJECTION_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
+  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
     "PLANNING_POOL_OBSERVATION_CORE",
   ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
     "PLANNING_POOL_OBSERVATION_CORE",
   ]);
-  assert.deepEqual(next.assurance.requiredActions, [{
-    kind: "restore_assurance_evidence",
-    rootTaskIds: ["PLANNING_POOL_WINDOW_CORE"],
-    affectedTaskIds: [
-      "PLANNING_POOL_ACCEPTANCE",
-      "PLANNING_POOL_HISTORY_CORE",
-      "PLANNING_POOL_OBSERVATION_CORE",
-      "PLANNING_POOL_PUBLIC_CONTRACT",
-      "PLANNING_POOL_WINDOW_CORE",
-    ],
-  }]);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
+  assert.deepEqual(next.assurance.requiredActions, []);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
