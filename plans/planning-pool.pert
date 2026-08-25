@@ -266,6 +266,13 @@ task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:
   status conformant
   reason "Accepted private planning Window mutation and contraction Core and sixteen closed cases"
 
+task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:
+  model 1
+  task PLANNING_POOL_OBSERVATION_CORE
+  against_basis sha256:0a65b5c1e60af50ffeda4e39da3b9bf63b95037323ef7db9e433f29774cc5464
+  status conformant
+  reason "Accepted private planning observation Core and sixteen closed cases"
+
 assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
   receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45

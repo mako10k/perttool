@@ -170,7 +170,7 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("completed Observation Core withholds the History Core execution frontier pending outcome", async () => {
+test("accepted Observation Core exposes only the History Core execution frontier", async () => {
   const [source, acceptance, windowAcceptance, observationAcceptance, selfUse] = await Promise.all([
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
@@ -195,24 +195,15 @@ test("completed Observation Core withholds the History Core execution frontier p
   assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_OBSERVATION_CORE[\s\S]*?status done/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
-  assert.doesNotMatch(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:/u);
+  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
     "PLANNING_POOL_HISTORY_CORE",
   ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
     "PLANNING_POOL_HISTORY_CORE",
   ]);
-  assert.deepEqual(next.assurance.requiredActions, [{
-    kind: "restore_assurance_evidence",
-    rootTaskIds: ["PLANNING_POOL_OBSERVATION_CORE"],
-    affectedTaskIds: [
-      "PLANNING_POOL_ACCEPTANCE",
-      "PLANNING_POOL_HISTORY_CORE",
-      "PLANNING_POOL_OBSERVATION_CORE",
-      "PLANNING_POOL_PUBLIC_CONTRACT",
-    ],
-  }]);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
+  assert.deepEqual(next.assurance.requiredActions, []);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
