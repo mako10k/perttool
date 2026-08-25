@@ -385,3 +385,9 @@ milestone_acceptance_receipt PLANNING_POOL_PROJECTION_EVIDENCE:
   evidence_revision f32eba5eb451443d53a7a9b88b8524d74a56cf9d
   verifier codex
   occurred_at 2026-08-25T09:25:56Z
+
+milestone_criterion_set PLANNING_POOL_WINDOW_READY_R1:
+  milestone PLANNING_POOL_WINDOW_READY
+  revision R1
+  commitment sha256:f707d0699adb473ca1eff3bdbcdcafef353b5d423785b246676974da6c5def10
+  criterion WINDOW_CORE_ACCEPTED required artifact "Accepted active Planning Pool Window mutations and contraction Core"
