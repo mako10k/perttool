@@ -429,3 +429,16 @@ milestone_criterion_set PLANNING_POOL_OBSERVATION_READY_R1:
   revision R1
   commitment sha256:982e1ec679893d4a614517c2a52dcfff38a4fc31415bb5366d142f9d14c150f6
   criterion OBSERVATION_CORE_ACCEPTED required artifact "Accepted Planning Pool Work and Window observation Core"
+
+milestone_acceptance_receipt PLANNING_POOL_OBSERVATION_EVIDENCE:
+  model 1
+  set PLANNING_POOL_OBSERVATION_READY_R1
+  set_commitment sha256:982e1ec679893d4a614517c2a52dcfff38a4fc31415bb5366d142f9d14c150f6
+  criterion OBSERVATION_CORE_ACCEPTED
+  criterion_commitment sha256:f800c3569456e30da9b942249c669cd051b6074aeac3c5b769965d169878a90f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-observation-core-acceptance.md"
+  evidence_revision f924c5765b011089cc5aac4b35d88cc99115f48a
+  verifier codex
+  occurred_at 2026-08-25T10:40:39Z
