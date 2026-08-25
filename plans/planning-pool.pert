@@ -290,6 +290,13 @@ task_outcome OUTCOME_PLANNING_POOL_PUBLIC_CONTRACT:
   status conformant
   reason "Accepted public planning-pool contract, implementation, and complete gates"
 
+task_outcome OUTCOME_PLANNING_POOL_ACCEPTANCE:
+  model 1
+  task PLANNING_POOL_ACCEPTANCE
+  against_basis sha256:31462d42b58f47aaa34caca46db8ea5acdcd91c565606a8c9899adf6a7b522bc
+  status conformant
+  reason "Accepted end-to-end Planning Pool and Xvfb-isolated VSIX gates"
+
 assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
   receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45
