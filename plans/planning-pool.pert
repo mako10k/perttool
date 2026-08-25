@@ -182,6 +182,7 @@ task PLANNING_POOL_ACCEPTANCE PLANNING_POOL_PUBLIC_READY -> PLANNING_POOL_ACCEPT
   title "Accept planning pool and bounded Windows end to end"
   description "Trace every normative case through portable Core, governed preview and write, token rebinding, source contraction, Git history, public CLI and schemas, Help and Guide, temporary link and isolated packages. Exercise incomplete Draft use, backlog refinement into AoA, global shared projection, split and merge, dependency disposition, Scrum-like and Kanban-like Windows, close and carry-over, shared actual and outcome deduplication, direct strict-DAG use, narrow deferral, advance cleanup, gaps and races. Prove current strict DAG, actual, velocity, acceptance, assurance, governance and history meanings remain compatible and perform no release, publication, remote, Issue, editor, MCP or plan-advance mutation."
   duration 7p
+  status done
   priority 60
   requires:
     DEVELOPERS 1

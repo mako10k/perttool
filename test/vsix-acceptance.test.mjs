@@ -49,6 +49,11 @@ test("repository gate runs the exact supported VS Code host workflow", async () 
   assert.match(rootManifest.scripts.check, /check:vsix-shell/u);
   assert.match(shell, /check-vsix-host\.mjs/u);
   assert.match(shell, /xvfb-run/u);
+  assert.match(shell, /if \[\[ "\$\(uname -s\)" == "Linux" \]\]/u);
+  assert.doesNotMatch(shell, /-z "\$\{DISPLAY:-\}"/u);
+  assert.match(shell, /-u WAYLAND_DISPLAY/u);
+  assert.match(shell, /XDG_SESSION_TYPE=x11/u);
+  assert.match(shell, /-screen 0 1280x1024x24 -nolisten tcp/u);
   assert.match(host, /const vscodeVersion = "1\.101\.0"/u);
   assert.match(host, /--install-extension/u);
   assert.match(host, /--uninstall-extension/u);

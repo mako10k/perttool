@@ -54,13 +54,14 @@ fi
   "$unpacked/extension/dist/server/main.cjs" \
   "$repository_root/plans/historical-dag.pert"
 if [[ "${PERTTOOL_SKIP_VSIX_HOST:-0}" != "1" ]]; then
-  if [[ "$(uname -s)" == "Linux" && -z "${DISPLAY:-}" ]]; then
+  if [[ "$(uname -s)" == "Linux" ]]; then
     if ! command -v xvfb-run >/dev/null; then
       printf 'xvfb-run is required for the supported VS Code host gate\n' >&2
       exit 1
     fi
-    env -u VSCODE_IPC_HOOK_CLI -u ELECTRON_RUN_AS_NODE \
-      -u VSCODE_ESM_ENTRYPOINT xvfb-run -a "$node_binary" \
+    env -u WAYLAND_DISPLAY -u VSCODE_IPC_HOOK_CLI -u ELECTRON_RUN_AS_NODE \
+      -u VSCODE_ESM_ENTRYPOINT XDG_SESSION_TYPE=x11 xvfb-run -a \
+      --server-args="-screen 0 1280x1024x24 -nolisten tcp" "$node_binary" \
       "$repository_root/scripts/check-vsix-host.mjs" "$vsix_path"
   else
     env -u VSCODE_IPC_HOOK_CLI -u ELECTRON_RUN_AS_NODE \

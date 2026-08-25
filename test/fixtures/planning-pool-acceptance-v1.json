@@ -1,0 +1,180 @@
+{
+  "schema_version": "Perttool.PlanningPoolAcceptanceTrace.v1",
+  "contract_id": "PLAN-POOL-001",
+  "target": {
+    "grammar_version": 9,
+    "cli_contract_version": 10,
+    "commands": 67,
+    "root_schemas": 26,
+    "root_exports": 139,
+    "node_exports": 139,
+    "core_exports": 51
+  },
+  "traces": [
+    {
+      "id": "PPA-001",
+      "contract_case_ids": [
+        "PPC-001", "PPC-002", "PPC-003", "PPC-004", "PPC-005",
+        "PPC-006", "PPC-007", "PPC-008", "PPC-009", "PPC-010"
+      ],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-source-core-v1.json",
+          "ids": ["PPSC-003", "PPSC-004", "PPSC-005", "PPSC-006", "PPSC-007"]
+        },
+        {
+          "file": "test/fixtures/planning-pool-reshape-core-v1.json",
+          "ids": ["PPRC-004", "PPRC-008", "PPRC-009"]
+        },
+        {
+          "file": "test/fixtures/planning-pool-history-core-v1.json",
+          "ids": ["PPHC-011"]
+        }
+      ]
+    },
+    {
+      "id": "PPA-002",
+      "contract_case_ids": [
+        "PPC-011", "PPC-012", "PPC-013", "PPC-014", "PPC-015",
+        "PPC-016", "PPC-017", "PPC-018", "PPC-019", "PPC-020"
+      ],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-reshape-core-v1.json",
+          "ids": [
+            "PPRC-002", "PPRC-003", "PPRC-004", "PPRC-005", "PPRC-006",
+            "PPRC-007", "PPRC-008", "PPRC-009", "PPRC-010", "PPRC-011",
+            "PPRC-012", "PPRC-013", "PPRC-014", "PPRC-015"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PPA-003",
+      "contract_case_ids": [
+        "PPC-021", "PPC-022", "PPC-023", "PPC-024", "PPC-025",
+        "PPC-026", "PPC-027"
+      ],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-projection-core-v1.json",
+          "ids": [
+            "PPRJ-002", "PPRJ-003", "PPRJ-004", "PPRJ-005",
+            "PPRJ-006", "PPRJ-007", "PPRJ-008", "PPRJ-009"
+          ]
+        },
+        {
+          "file": "test/planning-pool-public-contract.test.mjs",
+          "ids": []
+        }
+      ]
+    },
+    {
+      "id": "PPA-004",
+      "contract_case_ids": ["PPC-028", "PPC-029", "PPC-030"],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-observation-core-v1.json",
+          "ids": ["PPOC-004", "PPOC-005", "PPOC-006", "PPOC-007"]
+        },
+        {
+          "file": "test/fixtures/planning-pool-projection-core-v1.json",
+          "ids": ["PPRJ-013", "PPRJ-014"]
+        }
+      ]
+    },
+    {
+      "id": "PPA-005",
+      "contract_case_ids": ["PPC-031", "PPC-032"],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-projection-core-v1.json",
+          "ids": ["PPRJ-010", "PPRJ-011", "PPRJ-012", "PPRJ-013", "PPRJ-014"]
+        }
+      ]
+    },
+    {
+      "id": "PPA-006",
+      "contract_case_ids": ["PPC-033", "PPC-034", "PPC-035", "PPC-036", "PPC-037"],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-window-core-v1.json",
+          "ids": [
+            "PPWC-004", "PPWC-005", "PPWC-006", "PPWC-007", "PPWC-008",
+            "PPWC-009", "PPWC-010", "PPWC-011", "PPWC-012", "PPWC-013"
+          ]
+        },
+        {
+          "file": "test/fixtures/planning-pool-observation-core-v1.json",
+          "ids": [
+            "PPOC-008", "PPOC-009", "PPOC-010", "PPOC-011",
+            "PPOC-012", "PPOC-013", "PPOC-014", "PPOC-015"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PPA-007",
+      "contract_case_ids": ["PPC-038"],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-history-core-v1.json",
+          "ids": [
+            "PPHC-002", "PPHC-003", "PPHC-004", "PPHC-005", "PPHC-006",
+            "PPHC-007", "PPHC-008", "PPHC-009", "PPHC-010", "PPHC-011",
+            "PPHC-012", "PPHC-013", "PPHC-014", "PPHC-015"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PPA-008",
+      "contract_case_ids": ["PPC-039"],
+      "evidence": [
+        {
+          "file": "test/fixtures/planning-pool-source-core-v1.json",
+          "ids": ["PPSC-002", "PPSC-008", "PPSC-013", "PPSC-015"]
+        },
+        {
+          "file": "test/planning-pool-public-contract.test.mjs",
+          "ids": []
+        }
+      ]
+    },
+    {
+      "id": "PPA-009",
+      "contract_case_ids": ["PPC-040"],
+      "evidence": [
+        {
+          "file": "test/planning-pool-contract.test.mjs",
+          "ids": []
+        },
+        {
+          "file": "test/planning-pool-public-contract.test.mjs",
+          "ids": []
+        }
+      ]
+    }
+  ],
+  "required_gates": [
+    "npm run check:static",
+    "npm test",
+    "npm run check:english",
+    "npm run check:docs",
+    "npm run check:self-use",
+    "npm run check:lsp-package",
+    "npm run check:mcp-package",
+    "npm run check:vsix-shell",
+    "npm run check:link",
+    "npm run check:package"
+  ],
+  "forbidden_effects": [
+    "release_selection",
+    "publication",
+    "remote_write",
+    "issue_mutation",
+    "editor_mutation",
+    "mcp_mutation",
+    "plan_advance"
+  ]
+}

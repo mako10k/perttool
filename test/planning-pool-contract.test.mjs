@@ -58,7 +58,7 @@ test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async 
 
   assert.match(
     requirements,
-    /25\. \[ \] Implement the Work-centered planning pool and bounded Windows/u,
+    /25\. \[x\] Implement the Work-centered planning pool and bounded Windows/u,
   );
   assert.match(requirements, /\[Work-centered Planning Pool and Window Contract\]\(specs\/planning-pool\.md\)/u);
   assert.match(design, /### Post-MVP Slice 8: Work-centered planning pool and bounded Windows/u);
@@ -170,7 +170,7 @@ test("public contract activates the reserved planning runtime atomically", async
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("completed Public Contract exposes Acceptance but withholds start until its outcome", async () => {
+test("completed final Acceptance awaits its separate assurance outcome", async () => {
   const [
     source,
     acceptance,
@@ -207,17 +207,14 @@ test("completed Public Contract exposes Acceptance but withholds start until its
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:[\s\S]*?status conformant/u);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "PLANNING_POOL_ACCEPTANCE",
-  ]);
+  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_PUBLIC_CONTRACT:[\s\S]*?status conformant/u);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
-    "PLANNING_POOL_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.deepEqual(next.assurance.requiredActions, [{
     kind: "restore_assurance_evidence",
-    rootTaskIds: ["PLANNING_POOL_PUBLIC_CONTRACT"],
-    affectedTaskIds: ["PLANNING_POOL_ACCEPTANCE", "PLANNING_POOL_PUBLIC_CONTRACT"],
+    rootTaskIds: ["PLANNING_POOL_ACCEPTANCE"],
+    affectedTaskIds: ["PLANNING_POOL_ACCEPTANCE"],
   }]);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);

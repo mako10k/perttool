@@ -121,8 +121,11 @@ disposable directory, exercises the extracted server and DAG assets, and uses
 exact `@vscode/test-electron` `3.1.0` to install and activate the artifact in
 trusted and untrusted VS Code `1.101.0` Extension Hosts. The host cache stays
 outside the repository by default; profiles, extension directories, and
-workspaces are disposable. The gate verifies replacement, uninstall readback,
-and unchanged project bytes without a global install or publication.
+workspaces are disposable. On Linux, the host workflow always runs in a fresh
+Xvfb display with Wayland disabled, even when the calling desktop already has
+an ambient `DISPLAY`; the test UI therefore never shares the operator's visible
+display. The gate verifies replacement, uninstall readback, and unchanged
+project bytes without a global install or publication.
 
 Then use `git diff -- <target-file>` to confirm the following.
 

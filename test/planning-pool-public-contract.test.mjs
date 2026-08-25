@@ -186,7 +186,7 @@ test("Grammar 9 and Contract 10 publish closed planning read, observe, mutation,
   validate(ajv, migrated);
 });
 
-test("public contract acceptance fixes the source boundary and leaves final acceptance separate", () => {
+test("public contract acceptance fixes its historical source boundary", () => {
   const acceptance = readFileSync(
     path.join(root, "docs", "process", "planning-pool-public-contract-acceptance.md"),
     "utf8",
@@ -203,5 +203,5 @@ test("public contract acceptance fixes the source boundary and leaves final acce
   assert.match(acceptance, /139 runtime values each, and the portable Core\s+exposes 51/u);
   assert.match(acceptance, /complete 1,296-test repository regression gate/u);
   assert.match(publicTask, /^  status done$/mu);
-  assert.doesNotMatch(finalTask, /^  status done$/mu);
+  assert.match(finalTask, /title "Accept planning pool and bounded Windows end to end"/u);
 });

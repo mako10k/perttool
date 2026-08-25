@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-24
+- Updated: 2026-08-25
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -1203,8 +1203,9 @@ dependency, auditable Work semantic reshape, ownership-transfer projection,
 namespace, display-name, archive, and Window architecture accepted
 (2026-08-24); normative Grammar 9 and CLI Contract 10 planning-pool contract
 accepted and the independent implementation plan selected (2026-08-24);
-[Issue #12](https://github.com/mako10k/perttool/issues/12); runtime source
-implementation not started
+[Issue #12](https://github.com/mako10k/perttool/issues/12); runtime and
+end-to-end acceptance complete (2026-08-25); release selection, publication,
+Issue mutation, and plan advance remain separate
 
 Add stable project-owned work outside the executable graph and persisted or ad
 hoc windows around the existing strict DAG. Pool placement, window membership,
@@ -1299,8 +1300,12 @@ replacement advance and unit-migration results, `PTPOOL-101` through
 `PTPOOL-117`, exact hard limits, two normalized SHA-256 vectors, and forty
 dependency-ordered cases. The selected implementation order is
 [`plans/planning-pool.pert`](../plans/planning-pool.pert). Current package
-`0.10.5`, Grammar 8, CLI Contract 9, and every active public count remain
-unchanged until the later public-contract task.
+`0.10.5` remains the published Grammar 8 and CLI Contract 9 baseline. The
+unreleased source has activated Grammar 9 and CLI Contract 10 and completed
+the end-to-end acceptance recorded in
+[`planning-pool-acceptance.md`](process/planning-pool-acceptance.md). Release
+selection, publication, remote writes, Issue mutation, editor or MCP mutation,
+and plan advance remain separate.
 
 [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md) supersedes the
 upper-plan-biased [ADR 0007](adr/0007-outcome-driven-planning-pool.md) and

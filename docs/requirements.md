@@ -2,7 +2,7 @@
 
 - Document status: Draft 0.30
 - Created: 2026-07-21
-- Updated: 2026-08-24
+- Updated: 2026-08-25
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -3699,7 +3699,7 @@ Before implementation, separate the specifications in the following order.
       to npm `beta`, and leave `latest` unchanged.
     - [x] Independently verify durable public identity, installed Contract 9
       behavior, compatibility, and the exact `0.9.4` rollback pin.
-25. [ ] Implement the Work-centered planning pool and bounded Windows under
+25. [x] Implement the Work-centered planning pool and bounded Windows under
     `PLAN-POOL-001` and
     [`plans/planning-pool.pert`](../plans/planning-pool.pert).
     - [x] Accept [ADR 0008](adr/0008-work-and-windows-for-draft-planning.md)
@@ -3725,7 +3725,7 @@ Before implementation, separate the specifications in the following order.
     - [x] Atomically activate the eleven commands, three new root result
       identities, replacement advance and unit-migration results, schemas,
       Help, Guide, package surfaces, migration, and compatibility.
-    - [ ] Complete the end-to-end acceptance task without selecting a release,
+    - [x] Complete the end-to-end acceptance task without selecting a release,
       publishing, mutating an Issue, activating editor or MCP writes, or
       advancing the selected plan.
 
