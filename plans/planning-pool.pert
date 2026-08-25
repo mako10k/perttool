@@ -442,3 +442,9 @@ milestone_acceptance_receipt PLANNING_POOL_OBSERVATION_EVIDENCE:
   evidence_revision f924c5765b011089cc5aac4b35d88cc99115f48a
   verifier codex
   occurred_at 2026-08-25T10:40:39Z
+
+milestone_criterion_set PLANNING_POOL_HISTORY_READY_R1:
+  milestone PLANNING_POOL_HISTORY_READY
+  revision R1
+  commitment sha256:07f920f4a1662a52ee883fadc5da9a2d0e755d9050c57889edff787122c85722
+  criterion HISTORY_CORE_ACCEPTED required artifact "Accepted bounded historical Planning Pool observation Core"
