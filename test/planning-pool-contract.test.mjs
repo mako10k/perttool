@@ -170,12 +170,20 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("accepted Observation Core exposes only the History Core execution frontier", async () => {
-  const [source, acceptance, windowAcceptance, observationAcceptance, selfUse] = await Promise.all([
+test("accepted History Core exposes only the Public Contract structural frontier", async () => {
+  const [
+    source,
+    acceptance,
+    windowAcceptance,
+    observationAcceptance,
+    historyAcceptance,
+    selfUse,
+  ] = await Promise.all([
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
     repositoryText("docs/process/planning-pool-window-core-acceptance.md"),
     repositoryText("docs/process/planning-pool-observation-core-acceptance.md"),
+    repositoryText("docs/process/planning-pool-history-core-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = rootApi.checkDocument(source);
@@ -194,16 +202,26 @@ test("accepted Observation Core exposes only the History Core execution frontier
   assert.match(source, /task PLANNING_POOL_PROJECTION_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_OBSERVATION_CORE[\s\S]*?status done/u);
+  assert.match(source, /task PLANNING_POOL_HISTORY_CORE[\s\S]*?status done/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
+  assert.doesNotMatch(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "PLANNING_POOL_HISTORY_CORE",
+    "PLANNING_POOL_PUBLIC_CONTRACT",
   ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "PLANNING_POOL_HISTORY_CORE",
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+    "PLANNING_POOL_PUBLIC_CONTRACT",
   ]);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
-  assert.deepEqual(next.assurance.requiredActions, []);
+  assert.deepEqual(next.assurance.requiredActions, [{
+    kind: "restore_assurance_evidence",
+    rootTaskIds: ["PLANNING_POOL_HISTORY_CORE"],
+    affectedTaskIds: [
+      "PLANNING_POOL_ACCEPTANCE",
+      "PLANNING_POOL_HISTORY_CORE",
+      "PLANNING_POOL_PUBLIC_CONTRACT",
+    ],
+  }]);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
@@ -212,5 +230,7 @@ test("accepted Observation Core exposes only the History Core execution frontier
   assert.match(windowAcceptance, /complete 1,278-test repository regression gate/u);
   assert.match(observationAcceptance, /Document status: Accepted 1\.0/u);
   assert.match(observationAcceptance, /complete 1,286-test repository regression gate/u);
+  assert.match(historyAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(historyAcceptance, /complete 1,294-test repository regression gate/u);
   assert.match(selfUse, /plans\/planning-pool\.pert/u);
 });

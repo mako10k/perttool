@@ -155,6 +155,7 @@ task PLANNING_POOL_HISTORY_CORE PLANNING_POOL_OBSERVATION_READY -> PLANNING_POOL
   title "Implement bounded historical planning observations"
   description "Compose the accepted current-source observation model with bounded immutable first-parent Git evidence to reconstruct removed Work, projection-link, Task, Milestone, Window and close lineage after contraction or canonical advance. Bind repository, endpoint, blob and source identities, preserve exact latest-source authority, expose gaps, shallow and forced-loss boundaries, invalid history, races and hard limits, and retain no tombstone, completion snapshot, closed Window or durable close report in current source."
   duration 7p
+  status done
   priority 70
   requires:
     DEVELOPERS 1
