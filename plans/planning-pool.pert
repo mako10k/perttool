@@ -423,3 +423,9 @@ milestone_acceptance_receipt PLANNING_POOL_OBSERVATION_INPUT_EVIDENCE:
   evidence_revision 0cb59180bd9b7ec55f1a821d628dba861aaa39de
   verifier codex
   occurred_at 2026-08-25T10:27:14Z
+
+milestone_criterion_set PLANNING_POOL_OBSERVATION_READY_R1:
+  milestone PLANNING_POOL_OBSERVATION_READY
+  revision R1
+  commitment sha256:982e1ec679893d4a614517c2a52dcfff38a4fc31415bb5366d142f9d14c150f6
+  criterion OBSERVATION_CORE_ACCEPTED required artifact "Accepted Planning Pool Work and Window observation Core"
