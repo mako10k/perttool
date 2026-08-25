@@ -410,3 +410,16 @@ milestone_criterion_set PLANNING_POOL_OBSERVATION_INPUT_R1:
   revision R1
   commitment sha256:bbf05eb05c301f7c328748f2ec061e6cd88fd963ebfb010468847b4400ec0874
   criterion OBSERVATION_INPUTS_ACCEPTED required observation "Accepted projection and Window prerequisite milestones for Planning Pool observation"
+
+milestone_acceptance_receipt PLANNING_POOL_OBSERVATION_INPUT_EVIDENCE:
+  model 1
+  set PLANNING_POOL_OBSERVATION_INPUT_R1
+  set_commitment sha256:bbf05eb05c301f7c328748f2ec061e6cd88fd963ebfb010468847b4400ec0874
+  criterion OBSERVATION_INPUTS_ACCEPTED
+  criterion_commitment sha256:4d46ac15a1619a143c2a25676b95ad0bc58783f976bedca9b3ea20943955c3bb
+  action verify
+  evidence_kind observation
+  evidence_reference "PLANNING_POOL_PROJECTION_READY and PLANNING_POOL_WINDOW_READY accepted"
+  evidence_revision 0cb59180bd9b7ec55f1a821d628dba861aaa39de
+  verifier codex
+  occurred_at 2026-08-25T10:27:14Z
