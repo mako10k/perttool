@@ -1,0 +1,22 @@
+{
+  "schema_version": "Perttool.PlanningObservationCoreCases.v1",
+  "capability": "perttool.planning-observation-core@1",
+  "cases": [
+    {"id":"PPOC-001","depends_on":[],"boundary":"private_capability_and_closed_request"},
+    {"id":"PPOC-002","depends_on":["PPOC-001"],"boundary":"exact_current_source_and_execution_binding"},
+    {"id":"PPOC-003","depends_on":["PPOC-002"],"boundary":"independent_refinement_axis"},
+    {"id":"PPOC-004","depends_on":["PPOC-003"],"boundary":"authoritative_task_lifecycle_and_actuals"},
+    {"id":"PPOC-005","depends_on":["PPOC-004"],"boundary":"shared_task_nonexclusive_attribution"},
+    {"id":"PPOC-006","depends_on":["PPOC-005"],"boundary":"authoritative_milestone_reach_and_acceptance"},
+    {"id":"PPOC-007","depends_on":["PPOC-006"],"boundary":"shared_milestone_nonexclusive_attribution"},
+    {"id":"PPOC-008","depends_on":["PPOC-007"],"boundary":"global_order_and_window_membership_occurrences"},
+    {"id":"PPOC-009","depends_on":["PPOC-008"],"boundary":"fully_qualified_unique_aggregates"},
+    {"id":"PPOC-010","depends_on":["PPOC-009"],"boundary":"selected_execution_coverage"},
+    {"id":"PPOC-011","depends_on":["PPOC-010"],"boundary":"temporal_position_without_wall_clock"},
+    {"id":"PPOC-012","depends_on":["PPOC-011"],"boundary":"window_overlap_and_exact_objective_without_achievement"},
+    {"id":"PPOC-013","depends_on":["PPOC-012"],"boundary":"work_dependency_cycle_trace_and_archiveability"},
+    {"id":"PPOC-014","depends_on":["PPOC-013"],"boundary":"explicit_close_disposition_only"},
+    {"id":"PPOC-015","depends_on":["PPOC-014"],"boundary":"incomplete_unavailable_and_invalid_evidence_fail_closed"},
+    {"id":"PPOC-016","depends_on":["PPOC-015"],"boundary":"public_surface_unchanged_and_history_deferred"}
+  ]
+}

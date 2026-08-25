@@ -143,6 +143,7 @@ task PLANNING_POOL_OBSERVATION_CORE PLANNING_POOL_OBSERVATION_INPUT -> PLANNING_
   title "Implement Work and Window observations"
   description "Implement independent refinement, execution, outcome, organization, archiveability, temporal-position, overlap, dependency-coverage and close-disposition observations over exact source bindings. Show complete authoritative shared Task and Milestone facts to every linked Work, aggregate fully qualified identities once, mark selected-and-unselected contributions non-exclusive, preserve membership occurrences separately, and report absent, incomplete or unavailable evidence without Work completion or Window-objective achievement states."
   duration 8p
+  status done
   priority 75
   requires:
     DEVELOPERS 1
