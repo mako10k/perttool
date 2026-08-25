@@ -334,3 +334,16 @@ milestone_criterion_set PLANNING_POOL_ACCEPTANCE_R1:
   revision R1
   commitment sha256:77ed59c27ec5556c5ae1de437488663fd04c1b2671c34edeef3ce6369faedfe9
   criterion END_TO_END_ACCEPTED required artifact "Accepted Planning Pool and bounded Windows end to end"
+
+milestone_acceptance_receipt PLANNING_POOL_ACCEPTANCE_EVIDENCE:
+  model 1
+  set PLANNING_POOL_ACCEPTANCE_R1
+  set_commitment sha256:77ed59c27ec5556c5ae1de437488663fd04c1b2671c34edeef3ce6369faedfe9
+  criterion END_TO_END_ACCEPTED
+  criterion_commitment sha256:92d26a78ee549cbc91d10b593ef207fc308b14f7244feef1ed5cef375e99f195
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-acceptance.md"
+  evidence_revision 9f187d044dbeb95b9a25374bfd6d7e19dc35422f
+  verifier codex
+  occurred_at 2026-08-25T08:42:03Z
