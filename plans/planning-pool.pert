@@ -328,3 +328,9 @@ milestone_acceptance_receipt PLANNING_POOL_SOURCE_EVIDENCE:
   evidence_revision 3587a80794134dcef26a969c7f5efa35aad6bf57
   verifier codex
   occurred_at 2026-08-24T11:20:30Z
+
+milestone_criterion_set PLANNING_POOL_ACCEPTANCE_R1:
+  milestone PLANNING_POOL_ACCEPTED
+  revision R1
+  commitment sha256:77ed59c27ec5556c5ae1de437488663fd04c1b2671c34edeef3ce6369faedfe9
+  criterion END_TO_END_ACCEPTED required artifact "Accepted Planning Pool and bounded Windows end to end"
