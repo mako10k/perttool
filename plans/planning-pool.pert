@@ -274,6 +274,13 @@ task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:
   status conformant
   reason "Accepted private planning observation Core and sixteen closed cases"
 
+task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:
+  model 1
+  task PLANNING_POOL_HISTORY_CORE
+  against_basis sha256:93c58fb4251a94b8ddca57d629f374848fd309e32bb901087052b9fc4b8fd712
+  status conformant
+  reason "Accepted private planning history Core and sixteen closed cases"
+
 assurance_receipt AR_PLANNING_POOL_SOURCE_CORE:
   model 1
   receipt_hash sha256:4efaf537d4c818772c8abebd4fe6e0d77cd18424d67dc502186079240c3fff45

@@ -170,7 +170,7 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("accepted History Core exposes only the Public Contract structural frontier", async () => {
+test("accepted History outcome exposes only the Public Contract execution frontier", async () => {
   const [
     source,
     acceptance,
@@ -205,23 +205,15 @@ test("accepted History Core exposes only the Public Contract structural frontier
   assert.match(source, /task PLANNING_POOL_HISTORY_CORE[\s\S]*?status done/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
-  assert.doesNotMatch(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:/u);
+  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:[\s\S]*?status conformant/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
     "PLANNING_POOL_PUBLIC_CONTRACT",
   ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
     "PLANNING_POOL_PUBLIC_CONTRACT",
   ]);
-  assert.deepEqual(next.assurance.requiredActions, [{
-    kind: "restore_assurance_evidence",
-    rootTaskIds: ["PLANNING_POOL_HISTORY_CORE"],
-    affectedTaskIds: [
-      "PLANNING_POOL_ACCEPTANCE",
-      "PLANNING_POOL_HISTORY_CORE",
-      "PLANNING_POOL_PUBLIC_CONTRACT",
-    ],
-  }]);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
+  assert.deepEqual(next.assurance.requiredActions, []);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
