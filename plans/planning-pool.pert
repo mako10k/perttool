@@ -467,3 +467,16 @@ milestone_criterion_set PLANNING_POOL_PUBLIC_READY_R1:
   revision R1
   commitment sha256:f2da2cb978d7d107ef356a99dc2e0d30b99513ccfb7258f047e02580ff21e9ef
   criterion PUBLIC_CONTRACT_ACCEPTED required artifact "Accepted public Planning Pool contract, implementation, and complete gates"
+
+milestone_acceptance_receipt PLANNING_POOL_PUBLIC_EVIDENCE:
+  model 1
+  set PLANNING_POOL_PUBLIC_READY_R1
+  set_commitment sha256:f2da2cb978d7d107ef356a99dc2e0d30b99513ccfb7258f047e02580ff21e9ef
+  criterion PUBLIC_CONTRACT_ACCEPTED
+  criterion_commitment sha256:23513b2fc0560739663f578be6a91a4cb0076ccadc39a8e0d8fbb7bf2251b9af
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-public-contract-acceptance.md"
+  evidence_revision a8859edd5d3b2d5a83da929e2dc3596f094744d9
+  verifier codex
+  occurred_at 2026-08-25T10:48:13Z
