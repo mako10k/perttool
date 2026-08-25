@@ -353,3 +353,16 @@ milestone_criterion_set PLANNING_POOL_RESHAPE_READY_R1:
   revision R1
   commitment sha256:2ed21cb06be704203f39876763d3a24b5d0404b196337d7a03f270b9be90ef78
   criterion RESHAPE_CORE_ACCEPTED required artifact "Accepted portable Planning Pool reshape Core and sixteen closed cases"
+
+milestone_acceptance_receipt PLANNING_POOL_RESHAPE_EVIDENCE:
+  model 1
+  set PLANNING_POOL_RESHAPE_READY_R1
+  set_commitment sha256:2ed21cb06be704203f39876763d3a24b5d0404b196337d7a03f270b9be90ef78
+  criterion RESHAPE_CORE_ACCEPTED
+  criterion_commitment sha256:7ac15485d89b18a7b0316773ba699faa5f82238d5722b126e4f53dd05f2e004f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-reshape-core-acceptance.md"
+  evidence_revision 36beeadd976a4d8a35f8d8dbe663af855cd3f0bf
+  verifier codex
+  occurred_at 2026-08-25T09:03:18Z
