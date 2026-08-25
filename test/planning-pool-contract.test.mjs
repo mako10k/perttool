@@ -170,10 +170,11 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("accepted contract history and completed projection expose only the governed Window frontier", async () => {
-  const [source, acceptance, selfUse] = await Promise.all([
+test("completed Window Core exposes only its separately governed outcome frontier", async () => {
+  const [source, acceptance, windowAcceptance, selfUse] = await Promise.all([
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
+    repositoryText("docs/process/planning-pool-window-core-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = rootApi.checkDocument(source);
@@ -190,18 +191,30 @@ test("accepted contract history and completed projection expose only the governe
   assert.match(source, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
   assert.match(source, /task PLANNING_POOL_RESHAPE_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_PROJECTION_CORE[\s\S]*?status done/u);
+  assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "PLANNING_POOL_WINDOW_CORE",
+    "PLANNING_POOL_OBSERVATION_CORE",
   ]);
-  const assurancePartition = new Set([
-    ...next.temporal.authority.startableRecommendedTaskIds,
-    ...next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+    "PLANNING_POOL_OBSERVATION_CORE",
   ]);
-  assert.deepEqual([...assurancePartition], ["PLANNING_POOL_WINDOW_CORE"]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, ["PLANNING_POOL_WINDOW_CORE"]);
+  assert.deepEqual(next.assurance.requiredActions, [{
+    kind: "restore_assurance_evidence",
+    rootTaskIds: ["PLANNING_POOL_WINDOW_CORE"],
+    affectedTaskIds: [
+      "PLANNING_POOL_ACCEPTANCE",
+      "PLANNING_POOL_HISTORY_CORE",
+      "PLANNING_POOL_OBSERVATION_CORE",
+      "PLANNING_POOL_PUBLIC_CONTRACT",
+      "PLANNING_POOL_WINDOW_CORE",
+    ],
+  }]);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);
   assert.match(acceptance, /There are no open normative contract findings/u);
+  assert.match(windowAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(windowAcceptance, /complete 1,278-test repository regression gate/u);
   assert.match(selfUse, /plans\/planning-pool\.pert/u);
 });

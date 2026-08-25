@@ -32,6 +32,13 @@ import type {
   PlanningReshapeSemanticElement,
   PlanningWindowMembershipDisposition,
 } from "./reshape-types.js";
+import type {
+  PlanningCarryOverTarget,
+  PlanningNewCarryOverTarget,
+  PlanningWindowCloseIntent,
+  PlanningWindowCloseReport,
+  PlanningWindowSnapshot,
+} from "./window-types.js";
 import {
   planningFields,
   scanPlanningDeclarationBlocks,
@@ -70,7 +77,13 @@ interface MutableWork {
 }
 
 interface MutableWindow {
-  readonly source: PlanningWindowSource;
+  readonly source: PlanningWindowSource | null;
+  readonly id: string;
+  readonly qualifiedId: string;
+  readonly title: string;
+  readonly objective: string;
+  readonly start: string | null;
+  readonly end: string | null;
   readonly works: Set<string>;
   changed: boolean;
 }
@@ -82,9 +95,11 @@ interface CandidateState {
   readonly affectedLocalIds: ReadonlySet<string>;
   readonly removedLocalIds: ReadonlySet<string>;
   readonly createdLocalIds: readonly string[];
+  readonly createdWindowIds: readonly string[];
   readonly writeWorkOrder: boolean;
   readonly beforeDescriptions: readonly PlanningReshapeDescriptionRow[];
   readonly afterDescriptions: readonly PlanningReshapeDescriptionRow[];
+  readonly windowCloseReport: PlanningWindowCloseReport | null;
 }
 
 interface ExistingRelations {
@@ -1175,6 +1190,67 @@ function applyDependencies(
   rebuildDependencies(works, finalPairs);
 }
 
+function mutableWindow(window: PlanningWindowSource): MutableWindow {
+  return {
+    source: window,
+    id: window.id,
+    qualifiedId: window.qualifiedId,
+    title: window.title,
+    objective: window.objective,
+    start: window.start?.sourceText ?? null,
+    end: window.end?.sourceText ?? null,
+    works: new Set(window.works.map(({ id }) => id)),
+    changed: false,
+  };
+}
+
+interface MembershipMutationContext {
+  readonly model: PlanningPoolSourceModel;
+  readonly works: ReadonlyMap<string, MutableWork>;
+  readonly affected: ReadonlySet<string>;
+  readonly relations: ExistingRelations;
+  readonly windows: Map<string, MutableWindow>;
+  readonly seen: Set<string>;
+  readonly diagnostics: PlanningPoolSourceDiagnostic[];
+}
+
+function applyMembershipDisposition(
+  disposition: PlanningWindowMembershipDisposition,
+  context: MembershipMutationContext,
+): void {
+  const { model, works, affected, relations, windows, seen, diagnostics } = context;
+  const windowId = localId(disposition.window_id, model.documentId, "Window", diagnostics);
+  const origin = localId(disposition.origin_work_id, model.documentId, "Window origin Work", diagnostics);
+  const destination = disposition.destination_work_id === null
+    ? null
+    : localId(disposition.destination_work_id, model.documentId, "Window destination Work", diagnostics);
+  if (windowId === null || origin === null || (disposition.destination_work_id !== null && destination === null)) return;
+  const key = `${disposition.window_id}|${disposition.origin_work_id}`;
+  if (!relations.memberships.has(key)) diagnostics.push(reshapeDiagnostic(`Window membership origin ${key} does not exist`));
+  if (!affected.has(origin)) diagnostics.push(reshapeDiagnostic(`Window membership origin ${disposition.origin_work_id} is not affected`));
+  const window = windows.get(windowId);
+  if (window === undefined) diagnostics.push(reshapeDiagnostic(`Window ${disposition.window_id} does not exist`));
+  if (destination !== null && !works.has(destination)) diagnostics.push(reshapeDiagnostic(`Window destination Work ${disposition.destination_work_id} is not final`));
+  window?.works.delete(origin);
+  if (destination !== null) window?.works.add(destination);
+  if (window !== undefined) window.changed = true;
+  seen.add(key);
+}
+
+function requireAffectedMembershipDispositions(
+  relations: ExistingRelations,
+  affected: ReadonlySet<string>,
+  seen: ReadonlySet<string>,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  for (const key of relations.memberships) {
+    const origin = key.split("|")[1]!;
+    if (affected.has(origin.slice(origin.indexOf("::") + 2)) && !seen.has(key)) {
+      diagnostics.push(reshapeDiagnostic(`Affected Window membership ${key} has no disposition`));
+    }
+  }
+}
+
 function applyMemberships(
   request: PlanningReshapeRequest,
   model: PlanningPoolSourceModel,
@@ -1183,38 +1259,163 @@ function applyMemberships(
   relations: ExistingRelations,
   diagnostics: PlanningPoolSourceDiagnostic[],
 ): Map<string, MutableWindow> {
-  const windows = new Map(model.windows.map((window) => [window.id, {
-    source: window,
-    works: new Set(window.works.map(({ id }) => id)),
-    changed: false,
-  }]));
+  const windows = new Map<string, MutableWindow>();
+  for (const window of model.windows) windows.set(window.id, mutableWindow(window));
   const seen = new Set<string>();
+  const context: MembershipMutationContext = {
+    model, works, affected, relations, windows, seen, diagnostics,
+  };
   for (const disposition of request.window_membership_dispositions) {
-    const windowId = localId(disposition.window_id, model.documentId, "Window", diagnostics);
-    const origin = localId(disposition.origin_work_id, model.documentId, "Window origin Work", diagnostics);
-    const destination = disposition.destination_work_id === null
-      ? null
-      : localId(disposition.destination_work_id, model.documentId, "Window destination Work", diagnostics);
-    if (windowId === null || origin === null || (disposition.destination_work_id !== null && destination === null)) continue;
-    const key = `${disposition.window_id}|${disposition.origin_work_id}`;
-    if (!relations.memberships.has(key)) diagnostics.push(reshapeDiagnostic(`Window membership origin ${key} does not exist`));
-    if (!affected.has(origin)) diagnostics.push(reshapeDiagnostic(`Window membership origin ${disposition.origin_work_id} is not affected`));
-    const window = windows.get(windowId);
-    if (window === undefined) diagnostics.push(reshapeDiagnostic(`Window ${disposition.window_id} does not exist`));
-    if (destination !== null && !works.has(destination)) diagnostics.push(reshapeDiagnostic(`Window destination Work ${disposition.destination_work_id} is not final`));
-    window?.works.delete(origin);
-    if (destination !== null) window?.works.add(destination);
-    if (window !== undefined) window.changed = true;
-    seen.add(key);
+    applyMembershipDisposition(disposition, context);
   }
-  for (const key of relations.memberships) {
-    const origin = key.split("|")[1]!;
-    if (affected.has(origin.slice(origin.indexOf("::") + 2)) && !seen.has(key)) diagnostics.push(reshapeDiagnostic(`Affected Window membership ${key} has no disposition`));
-  }
-  for (const window of windows.values()) {
-    if (window.works.size === 0) diagnostics.push(reshapeDiagnostic(`Persisted Window ${window.source.qualifiedId} cannot become empty`));
-  }
+  requireAffectedMembershipDispositions(relations, affected, seen, diagnostics);
   return windows;
+}
+
+function windowSnapshot(
+  window: MutableWindow,
+  documentId: string,
+): PlanningWindowSnapshot {
+  return Object.freeze({
+    kind: "persisted" as const,
+    qualifiedId: window.qualifiedId,
+    title: window.title,
+    objective: window.objective,
+    start: window.start,
+    end: window.end,
+    workIds: Object.freeze([...window.works].sort().map((id) => `${documentId}::${id}`)),
+  });
+}
+
+function carryTargetWindow(
+  target: PlanningCarryOverTarget,
+  model: PlanningPoolSourceModel,
+  windows: ReadonlyMap<string, MutableWindow>,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): Readonly<{ localId: string; existing: MutableWindow | undefined }> | null {
+  const targetId = localId(target.window_id, model.documentId, "carry-over Window", diagnostics);
+  const existing = targetId === null ? undefined : windows.get(targetId);
+  if (target.kind === "existing" && existing === undefined) {
+    diagnostics.push(reshapeDiagnostic(`Carry-over Window ${target.window_id} does not exist`));
+  }
+  if (target.kind === "new" && existing !== undefined) {
+    diagnostics.push(reshapeDiagnostic(`New carry-over Window ${target.window_id} already exists`));
+  }
+  return targetId === null ? null : Object.freeze({ localId: targetId, existing });
+}
+
+function newCarryWindow(
+  target: PlanningNewCarryOverTarget,
+  local: string,
+  works: readonly string[],
+): MutableWindow {
+  return {
+    source: null,
+    id: local,
+    qualifiedId: target.window_id,
+    title: target.title,
+    objective: target.objective,
+    start: target.start,
+    end: target.end,
+    works: new Set(works),
+    changed: true,
+  };
+}
+
+function validateFinalWindows(
+  windows: ReadonlyMap<string, MutableWindow>,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  for (const window of windows.values()) {
+    if (window.works.size === 0) diagnostics.push(reshapeDiagnostic(`Persisted Window ${window.qualifiedId} cannot become empty`));
+  }
+}
+
+interface CompositeWindowClose {
+  readonly report: PlanningWindowCloseReport | null;
+  readonly createdWindowIds: readonly string[];
+}
+
+function compositeCarryWorkIds(
+  close: PlanningWindowCloseIntent,
+  model: PlanningPoolSourceModel,
+  works: ReadonlyMap<string, MutableWork>,
+  source: MutableWindow | undefined,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): readonly string[] {
+  const result: string[] = [];
+  for (const qualified of close.carry_over_work_ids) {
+    const id = localId(qualified, model.documentId, "carry-over Work", diagnostics);
+    if (id === null) continue;
+    result.push(id);
+    if (!works.has(id)) diagnostics.push(reshapeDiagnostic(`Carry-over Work ${qualified} is not final`));
+    if (source !== undefined && !source.works.has(id)) diagnostics.push(reshapeDiagnostic(`Carry-over Work ${qualified} is not selected by ${close.window_id}`));
+  }
+  return Object.freeze(result);
+}
+
+function applyCompositeCarryTarget(
+  target: PlanningCarryOverTarget | null,
+  resolved: Readonly<{ localId: string; existing: MutableWindow | undefined }> | null,
+  carryLocal: readonly string[],
+  windows: Map<string, MutableWindow>,
+): readonly string[] {
+  if (target?.kind === "existing" && resolved?.existing !== undefined) {
+    for (const id of carryLocal) resolved.existing.works.add(id);
+    resolved.existing.changed = true;
+  }
+  if (target?.kind !== "new" || resolved === null) return Object.freeze([]);
+  windows.set(resolved.localId, newCarryWindow(target, resolved.localId, carryLocal));
+  return Object.freeze([resolved.localId]);
+}
+
+function compositeCloseReport(
+  close: PlanningWindowCloseIntent,
+  source: MutableWindow | undefined,
+  model: PlanningPoolSourceModel,
+  existingWorks: ReadonlySet<string>,
+): PlanningWindowCloseReport | null {
+  if (source === undefined) return null;
+  const target = close.carry_over_target;
+  return Object.freeze({
+    removedWindow: windowSnapshot(source, model.documentId),
+    objectiveDisposition: "discard" as const,
+    carryOver: Object.freeze(close.carry_over_work_ids.map((workId) => Object.freeze({
+      workId,
+      targetWindowId: target?.window_id ?? "",
+      status: existingWorks.has(workId.slice(workId.indexOf("::") + 2)) ? "already_selected" as const : "selected" as const,
+    }))),
+    targetCreated: target?.kind === "new",
+  });
+}
+
+function applyWindowClose(
+  request: PlanningReshapeRequest,
+  model: PlanningPoolSourceModel,
+  works: ReadonlyMap<string, MutableWork>,
+  windows: Map<string, MutableWindow>,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): CompositeWindowClose {
+  const close = request.window_close;
+  if (close === null) {
+    validateFinalWindows(windows, diagnostics);
+    return Object.freeze({ report: null, createdWindowIds: Object.freeze([]) });
+  }
+  const sourceId = localId(close.window_id, model.documentId, "closed Window", diagnostics);
+  const source = sourceId === null ? undefined : windows.get(sourceId);
+  if (source === undefined) diagnostics.push(reshapeDiagnostic(`Window ${close.window_id} does not exist`));
+  const carryLocal = compositeCarryWorkIds(close, model, works, source, diagnostics);
+  const target = close.carry_over_target;
+  if (target?.window_id === close.window_id) diagnostics.push(reshapeDiagnostic("Window cannot carry over to itself"));
+  const resolved = target === null ? null : carryTargetWindow(target, model, windows, diagnostics);
+  const existingWorks = new Set(resolved?.existing?.works ?? []);
+  const createdWindowIds = applyCompositeCarryTarget(target, resolved, carryLocal, windows);
+  if (sourceId !== null) windows.delete(sourceId);
+  validateFinalWindows(windows, diagnostics);
+  return Object.freeze({
+    report: compositeCloseReport(close, source, model, existingWorks),
+    createdWindowIds,
+  });
 }
 
 function validateFinalOrder(
@@ -1267,14 +1468,13 @@ function renderWork(work: MutableWork, lineEnding: string): string {
 }
 
 function renderWindow(window: MutableWindow, lineEnding: string): string {
-  const source = window.source;
   const lines = [
-    `window ${source.id}:`,
-    `  title ${JSON.stringify(source.title)}`,
-    `  objective ${JSON.stringify(source.objective)}`,
+    `window ${window.id}:`,
+    `  title ${JSON.stringify(window.title)}`,
+    `  objective ${JSON.stringify(window.objective)}`,
   ];
-  if (source.start !== null) lines.push(`  start ${source.start.sourceText}`);
-  if (source.end !== null) lines.push(`  end ${source.end.sourceText}`);
+  if (window.start !== null) lines.push(`  start ${window.start}`);
+  if (window.end !== null) lines.push(`  end ${window.end}`);
   lines.push("  works:", ...[...window.works].sort().map((id) => `    ${id}`));
   return `${lines.join(lineEnding)}${lineEnding}`;
 }
@@ -1418,31 +1618,58 @@ function candidateReplacements(
 ): Map<number, TextEdit> {
   const replacements = new Map<number, TextEdit>();
   for (const block of blocks) {
-    if (block.kind === "work" && block.id !== null && state.affectedLocalIds.has(block.id)) {
-      const work = state.works.get(block.id);
-      replacements.set(block.span.start.offset, {
-        startOffset: block.span.start.offset,
-        endOffset: block.span.end.offset,
-        replacement: work === undefined ? "" : renderWork(work, ending),
-      });
-    }
-    if (block.kind === "window" && block.id !== null) {
-      const window = state.windows.get(block.id);
-      if (window?.changed === true) replacements.set(block.span.start.offset, {
-        startOffset: block.span.start.offset,
-        endOffset: block.span.end.offset,
-        replacement: renderWindow(window, ending),
-      });
-    }
-    if (block.kind === "work_order" && state.writeWorkOrder) replacements.set(block.span.start.offset, {
-      startOffset: block.span.start.offset,
-      endOffset: block.span.end.offset,
-      replacement: state.order.length === 0
-        ? ""
-        : `work_order:${ending}${state.order.map((id) => `  ${id}`).join(ending)}${ending}`,
-    });
+    addWorkCandidateReplacement(replacements, block, state, ending);
+    addWindowCandidateReplacement(replacements, block, state, ending);
+    addOrderCandidateReplacement(replacements, block, state, ending);
   }
   return replacements;
+}
+
+function addWorkCandidateReplacement(
+  replacements: Map<number, TextEdit>,
+  block: PlanningDeclarationBlock,
+  state: CandidateState,
+  ending: string,
+): void {
+  if (block.kind !== "work" || block.id === null || !state.affectedLocalIds.has(block.id)) return;
+  const work = state.works.get(block.id);
+  replacements.set(block.span.start.offset, {
+    startOffset: block.span.start.offset,
+    endOffset: block.span.end.offset,
+    replacement: work === undefined ? "" : renderWork(work, ending),
+  });
+}
+
+function addWindowCandidateReplacement(
+  replacements: Map<number, TextEdit>,
+  block: PlanningDeclarationBlock,
+  state: CandidateState,
+  ending: string,
+): void {
+  if (block.kind !== "window" || block.id === null) return;
+  const window = state.windows.get(block.id);
+  if (window !== undefined && !window.changed) return;
+  replacements.set(block.span.start.offset, {
+    startOffset: block.span.start.offset,
+    endOffset: block.span.end.offset,
+    replacement: window === undefined ? "" : renderWindow(window, ending),
+  });
+}
+
+function addOrderCandidateReplacement(
+  replacements: Map<number, TextEdit>,
+  block: PlanningDeclarationBlock,
+  state: CandidateState,
+  ending: string,
+): void {
+  if (block.kind !== "work_order" || !state.writeWorkOrder) return;
+  replacements.set(block.span.start.offset, {
+    startOffset: block.span.start.offset,
+    endOffset: block.span.end.offset,
+    replacement: state.order.length === 0
+      ? ""
+      : `work_order:${ending}${state.order.map((id) => `  ${id}`).join(ending)}${ending}`,
+  });
 }
 
 function candidateInsertion(
@@ -1450,7 +1677,10 @@ function candidateInsertion(
   state: CandidateState,
   ending: string,
 ): string {
-  let insertion = state.createdLocalIds.map((id) => renderWork(state.works.get(id)!, ending)).join(ending);
+  let insertion = [
+    ...state.createdWindowIds.map((id) => renderWindow(state.windows.get(id)!, ending)),
+    ...state.createdLocalIds.map((id) => renderWork(state.works.get(id)!, ending)),
+  ].join(ending);
   const hasOrder = blocks.some(({ kind }) => kind === "work_order");
   if (!hasOrder && state.order.length > 0) {
     if (insertion.length > 0) insertion += ending;
@@ -1508,6 +1738,7 @@ function buildState(
   applyProjectionLinks(request, relationContext);
   applyDependencies(request, relationContext);
   const windows = applyMemberships(request, model, works, affected, relations, diagnostics);
+  const windowClose = applyWindowClose(request, model, works, windows, diagnostics);
   const order = validateFinalOrder(request, model, works, diagnostics);
   return Object.freeze({
     works,
@@ -1516,9 +1747,11 @@ function buildState(
     affectedLocalIds: affected,
     removedLocalIds: removed,
     createdLocalIds: created,
+    createdWindowIds: windowClose.createdWindowIds,
     writeWorkOrder: request.final_work_order.length > 0 || created.length > 0 || removed.size > 0,
     beforeDescriptions: descriptions.before,
     afterDescriptions: descriptions.after,
+    windowCloseReport: windowClose.report,
   });
 }
 
@@ -1553,6 +1786,7 @@ function failedAudit(
     edits: Object.freeze([]),
     beforeDescriptions: Object.freeze([]),
     afterDescriptions: Object.freeze([]),
+    windowCloseReport: null,
     diagnostics: Object.freeze(diagnostics),
   });
 }
@@ -1620,6 +1854,7 @@ export function auditPlanningReshape(
       preflightHash: normalized.preflightHash,
       beforeDescriptions: state.beforeDescriptions,
       afterDescriptions: state.afterDescriptions,
+      windowCloseReport: state.windowCloseReport,
     });
   }
   const candidate = candidateText(text, source.model, state, normalized.request);
@@ -1639,6 +1874,7 @@ export function auditPlanningReshape(
       preflightHash: normalized.preflightHash,
       beforeDescriptions: state.beforeDescriptions,
       afterDescriptions: state.afterDescriptions,
+      windowCloseReport: state.windowCloseReport,
     });
   }
   const changed = mutation.updatedText !== text;
@@ -1656,6 +1892,7 @@ export function auditPlanningReshape(
     edits: mutation.edits,
     beforeDescriptions: state.beforeDescriptions,
     afterDescriptions: state.afterDescriptions,
+    windowCloseReport: state.windowCloseReport,
     diagnostics: Object.freeze([
       ...warnings,
       ...(changed ? [] : [reshapeDiagnostic("Planning reshape candidate is byte-identical", "PTPOOL-117", "warning")]),

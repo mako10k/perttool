@@ -1,5 +1,9 @@
 import type { TextEdit } from "../mutation/text-edits.js";
 import type { PlanningPoolSourceDiagnostic } from "./source-types.js";
+import type {
+  PlanningWindowCloseIntent,
+  PlanningWindowCloseReport,
+} from "./window-types.js";
 
 export interface PlanningReshapeCoreCapability {
   readonly id: "perttool.planning-reshape-core";
@@ -135,7 +139,7 @@ export interface PlanningReshapeRequest {
   readonly final_work_order: readonly string[];
   readonly add_residual_description: readonly PlanningResidualDescriptionAction[];
   readonly strict_fragment: PlanningStrictFragment | null;
-  readonly window_close: null;
+  readonly window_close: PlanningWindowCloseIntent | null;
 }
 
 export interface PlanningReshapeNormalizationResult {
@@ -178,6 +182,7 @@ export interface PlanningReshapeAuditResult {
   readonly edits: readonly TextEdit[];
   readonly beforeDescriptions: readonly PlanningReshapeDescriptionRow[];
   readonly afterDescriptions: readonly PlanningReshapeDescriptionRow[];
+  readonly windowCloseReport: PlanningWindowCloseReport | null;
   readonly diagnostics: readonly PlanningPoolSourceDiagnostic[];
 }
 

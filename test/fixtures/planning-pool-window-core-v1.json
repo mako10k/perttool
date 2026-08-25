@@ -1,0 +1,22 @@
+{
+  "schema_version": "Perttool.PlanningWindowCoreCases.v1",
+  "capability": "perttool.planning-window-core@1",
+  "cases": [
+    {"id":"PPWC-001","depends_on":[],"boundary":"private_capability_and_closed_request"},
+    {"id":"PPWC-002","depends_on":["PPWC-001"],"boundary":"persisted_window_add"},
+    {"id":"PPWC-003","depends_on":["PPWC-002"],"boundary":"complete_window_set"},
+    {"id":"PPWC-004","depends_on":["PPWC-003"],"boundary":"global_work_order_filter"},
+    {"id":"PPWC-005","depends_on":["PPWC-004"],"boundary":"dependency_coverage"},
+    {"id":"PPWC-006","depends_on":["PPWC-005"],"boundary":"many_to_many_membership_overlap"},
+    {"id":"PPWC-007","depends_on":["PPWC-006"],"boundary":"ad_hoc_selection_is_not_persisted"},
+    {"id":"PPWC-008","depends_on":["PPWC-007"],"boundary":"half_open_and_incomparable_overlap"},
+    {"id":"PPWC-009","depends_on":["PPWC-008"],"boundary":"close_without_carry_over"},
+    {"id":"PPWC-010","depends_on":["PPWC-009"],"boundary":"close_to_existing_window"},
+    {"id":"PPWC-011","depends_on":["PPWC-010"],"boundary":"close_to_new_window"},
+    {"id":"PPWC-012","depends_on":["PPWC-011"],"boundary":"close_isolation_and_no_semantic_copy"},
+    {"id":"PPWC-013","depends_on":["PPWC-012"],"boundary":"invalid_objective_bounds_membership_and_close"},
+    {"id":"PPWC-014","depends_on":["PPWC-013"],"boundary":"source_and_candidate_binding"},
+    {"id":"PPWC-015","depends_on":["PPWC-014"],"boundary":"canonical_destructive_ranges_and_ordinary_authority"},
+    {"id":"PPWC-016","depends_on":["PPWC-015"],"boundary":"public_surface_unchanged"}
+  ]
+}

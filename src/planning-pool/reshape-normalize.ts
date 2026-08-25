@@ -16,6 +16,10 @@ import type {
   PlanningStrictFragment,
   PlanningWindowMembershipDisposition,
 } from "./reshape-types.js";
+import type {
+  PlanningCarryOverTarget,
+  PlanningWindowCloseIntent,
+} from "./window-types.js";
 
 export const PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION =
   "Perttool.PlanningReshapeRequest.v1" as const;
@@ -640,6 +644,90 @@ interface ParsedRequestFields {
   readonly order: readonly string[];
   readonly residual: readonly PlanningResidualDescriptionAction[];
   readonly strictFragment: PlanningStrictFragment | null;
+  readonly windowClose: PlanningWindowCloseIntent | null;
+}
+
+function nullableStringValue(
+  value: unknown,
+  label: string,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): string | null | undefined {
+  return value === null ? null : stringValue(value, label, diagnostics) ?? undefined;
+}
+
+function parseExistingCarryTarget(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningCarryOverTarget | null {
+  const record = closedRecord(value, ["kind", "window_id"], [], "existing carry-over target", diagnostics);
+  const windowId = record === null ? null : qualifiedId(record["window_id"], "carry-over Window", diagnostics);
+  return record === null || record["kind"] !== "existing" || windowId === null
+    ? null
+    : Object.freeze({ kind: "existing", window_id: windowId });
+}
+
+function parseNewCarryTarget(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningCarryOverTarget | null {
+  const record = closedRecord(
+    value,
+    ["kind", "window_id", "title", "objective", "start", "end"],
+    [],
+    "new carry-over target",
+    diagnostics,
+  );
+  if (record === null || record["kind"] !== "new") return null;
+  const windowId = qualifiedId(record["window_id"], "new carry-over Window", diagnostics);
+  const title = stringValue(record["title"], "new carry-over Window title", diagnostics);
+  const objective = stringValue(record["objective"], "new carry-over Window objective", diagnostics);
+  const start = nullableStringValue(record["start"], "new carry-over Window start", diagnostics);
+  const end = nullableStringValue(record["end"], "new carry-over Window end", diagnostics);
+  return windowId === null || title === null || objective === null || start === undefined || end === undefined
+    ? null
+    : Object.freeze({ kind: "new", window_id: windowId, title, objective, start, end });
+}
+
+function parseCarryTarget(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningCarryOverTarget | null {
+  if (value === null) return null;
+  const kind = isRecord(value) ? value["kind"] : undefined;
+  if (kind === "existing") return parseExistingCarryTarget(value, diagnostics);
+  if (kind === "new") return parseNewCarryTarget(value, diagnostics);
+  diagnostics.push(diagnostic("carry_over_target must be null, existing, or new"));
+  return null;
+}
+
+function parseWindowClose(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningWindowCloseIntent | null {
+  if (value === null) return null;
+  const record = closedRecord(
+    value,
+    ["window_id", "objective_disposition", "carry_over_work_ids", "carry_over_target"],
+    [],
+    "Window close",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const windowId = qualifiedId(record["window_id"], "closed Window", diagnostics);
+  const works = parseStringSet(record["carry_over_work_ids"], "carry-over Work", diagnostics);
+  const target = parseCarryTarget(record["carry_over_target"], diagnostics);
+  if (record["objective_disposition"] !== "discard") diagnostics.push(diagnostic("Window close must discard its objective"));
+  if (works !== null && (works.length === 0) !== (target === null)) {
+    diagnostics.push(diagnostic("Window close requires a target exactly when carry-over is non-empty"));
+  }
+  return windowId === null || works === null || record["objective_disposition"] !== "discard"
+    ? null
+    : Object.freeze({
+        window_id: windowId,
+        objective_disposition: "discard",
+        carry_over_work_ids: works,
+        carry_over_target: target,
+      });
 }
 
 function parseStrictFragment(
@@ -702,12 +790,13 @@ function parseRequestFields(
   const order = parseFinalWorkOrder(record["final_work_order"], diagnostics);
   const residual = parseArray(record["add_residual_description"], "add_residual_description", diagnostics, parseResidualAction);
   const strictFragment = parseStrictFragment(record["strict_fragment"], diagnostics);
+  const windowClose = parseWindowClose(record["window_close"], diagnostics);
   if (hasNull([sourceDigest, intent, affected, created, removed, elements, entities, associations, links, dependencies, memberships, order, residual])) return null;
   return Object.freeze({
     sourceDigest: sourceDigest!, intent: intent!, affected: affected!, created: created!,
     removed: removed!, elements: elements!, entities: entities!, associations: associations!,
     links: links!, dependencies: dependencies!, memberships: memberships!, order: order!, residual: residual!,
-    strictFragment,
+    strictFragment, windowClose,
   });
 }
 
@@ -734,6 +823,9 @@ function validateRequestUniqueness(
     unique(fields.strictFragment.task_ids, (item) => item, "deferral Task", diagnostics);
     unique(fields.strictFragment.milestone_ids, (item) => item, "deferral Milestone", diagnostics);
   }
+  if (fields.windowClose !== null) {
+    unique(fields.windowClose.carry_over_work_ids, (item) => item, "carry-over Work", diagnostics);
+  }
 }
 
 function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest {
@@ -754,7 +846,7 @@ function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest 
     final_work_order: fields.order,
     add_residual_description: sorted(fields.residual, (item) => item.work_id),
     strict_fragment: fields.strictFragment,
-    window_close: null,
+    window_close: fields.windowClose,
   });
 }
 
@@ -774,7 +866,6 @@ export function normalizePlanningReshapeRequest(
   if (record === null) return failedNormalization(diagnostics);
   if (record["request_schema_version"] !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION) diagnostics.push(diagnostic("Planning reshape request schema identity is unsupported"));
   if (record["normalization_contract"] !== PLANNING_RESHAPE_NORMALIZATION_CONTRACT) diagnostics.push(diagnostic("Planning reshape normalization identity is unsupported"));
-  if (record["window_close"] !== null) diagnostics.push(diagnostic("window_close is unavailable before the Window Core"));
   const fields = parseRequestFields(record, diagnostics);
   if (fields === null) return failedNormalization(diagnostics);
   if ((fields.intent === "project") !== (fields.strictFragment?.kind === "project")) {
@@ -785,6 +876,12 @@ export function normalizePlanningReshapeRequest(
   }
   if (fields.intent !== "project" && fields.intent !== "defer" && fields.strictFragment !== null) {
     diagnostics.push(diagnostic("strict_fragment requires project or defer intent"));
+  }
+  if (fields.windowClose !== null && fields.intent !== "composite") {
+    diagnostics.push(diagnostic("window_close requires composite intent"));
+  }
+  if (fields.windowClose !== null && fields.affected.length === 0) {
+    diagnostics.push(diagnostic("window_close requires an audited affected Work set"));
   }
   validateRequestUniqueness(fields, diagnostics);
   if (diagnostics.length > 0) return failedNormalization(diagnostics);

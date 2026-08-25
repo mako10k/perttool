@@ -125,6 +125,7 @@ task PLANNING_POOL_WINDOW_CORE PLANNING_POOL_SOURCE_READY -> PLANNING_POOL_WINDO
   title "Implement active Window mutations and contraction"
   description "Implement persisted and ad hoc Window construction, unique many-to-many Work membership, optional half-open comparable bounds, required persisted outcome-oriented objective, global-order filtering, overlap and dependency coverage, explicit close, optional next-Window carry-over, and history-protected source contraction. Keep Window operation independent from Work meaning, projection, Task scheduling, Milestone acceptance and wall-clock lifecycle triggers."
   duration 7p
+  status done
   priority 82
   requires:
     DEVELOPERS 1
