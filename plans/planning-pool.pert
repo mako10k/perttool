@@ -372,3 +372,16 @@ milestone_criterion_set PLANNING_POOL_PROJECTION_READY_R1:
   revision R1
   commitment sha256:b1f2a10ad6f6ef45661ac1375a70deaa341aeb37d626f1eeed370f7af5523269
   criterion PROJECTION_CORE_ACCEPTED required artifact "Accepted Planning Pool projection, contraction, and narrow deferral Core"
+
+milestone_acceptance_receipt PLANNING_POOL_PROJECTION_EVIDENCE:
+  model 1
+  set PLANNING_POOL_PROJECTION_READY_R1
+  set_commitment sha256:b1f2a10ad6f6ef45661ac1375a70deaa341aeb37d626f1eeed370f7af5523269
+  criterion PROJECTION_CORE_ACCEPTED
+  criterion_commitment sha256:bd59ae63a56082bdc6f834dfa706e01183687ed68c9979c380a541e73b629c28
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-projection-core-acceptance.md"
+  evidence_revision f32eba5eb451443d53a7a9b88b8524d74a56cf9d
+  verifier codex
+  occurred_at 2026-08-25T09:25:56Z
