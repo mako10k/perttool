@@ -366,3 +366,9 @@ milestone_acceptance_receipt PLANNING_POOL_RESHAPE_EVIDENCE:
   evidence_revision 36beeadd976a4d8a35f8d8dbe663af855cd3f0bf
   verifier codex
   occurred_at 2026-08-25T09:03:18Z
+
+milestone_criterion_set PLANNING_POOL_PROJECTION_READY_R1:
+  milestone PLANNING_POOL_PROJECTION_READY
+  revision R1
+  commitment sha256:b1f2a10ad6f6ef45661ac1375a70deaa341aeb37d626f1eeed370f7af5523269
+  criterion PROJECTION_CORE_ACCEPTED required artifact "Accepted Planning Pool projection, contraction, and narrow deferral Core"
