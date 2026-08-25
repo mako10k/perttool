@@ -347,3 +347,9 @@ milestone_acceptance_receipt PLANNING_POOL_ACCEPTANCE_EVIDENCE:
   evidence_revision 9f187d044dbeb95b9a25374bfd6d7e19dc35422f
   verifier codex
   occurred_at 2026-08-25T08:42:03Z
+
+milestone_criterion_set PLANNING_POOL_RESHAPE_READY_R1:
+  milestone PLANNING_POOL_RESHAPE_READY
+  revision R1
+  commitment sha256:2ed21cb06be704203f39876763d3a24b5d0404b196337d7a03f270b9be90ef78
+  criterion RESHAPE_CORE_ACCEPTED required artifact "Accepted portable Planning Pool reshape Core and sixteen closed cases"
