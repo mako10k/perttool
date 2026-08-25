@@ -391,3 +391,16 @@ milestone_criterion_set PLANNING_POOL_WINDOW_READY_R1:
   revision R1
   commitment sha256:f707d0699adb473ca1eff3bdbcdcafef353b5d423785b246676974da6c5def10
   criterion WINDOW_CORE_ACCEPTED required artifact "Accepted active Planning Pool Window mutations and contraction Core"
+
+milestone_acceptance_receipt PLANNING_POOL_WINDOW_EVIDENCE:
+  model 1
+  set PLANNING_POOL_WINDOW_READY_R1
+  set_commitment sha256:f707d0699adb473ca1eff3bdbcdcafef353b5d423785b246676974da6c5def10
+  criterion WINDOW_CORE_ACCEPTED
+  criterion_commitment sha256:21103901166908284532c31aee2bff4463de7fe39f3d7290ca48aa5bfcd8af12
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-window-core-acceptance.md"
+  evidence_revision c5d298844587a68bc80b78c7f948ca9589a2dc5f
+  verifier codex
+  occurred_at 2026-08-25T10:20:51Z
