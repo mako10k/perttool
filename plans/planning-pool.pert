@@ -448,3 +448,16 @@ milestone_criterion_set PLANNING_POOL_HISTORY_READY_R1:
   revision R1
   commitment sha256:07f920f4a1662a52ee883fadc5da9a2d0e755d9050c57889edff787122c85722
   criterion HISTORY_CORE_ACCEPTED required artifact "Accepted bounded historical Planning Pool observation Core"
+
+milestone_acceptance_receipt PLANNING_POOL_HISTORY_EVIDENCE:
+  model 1
+  set PLANNING_POOL_HISTORY_READY_R1
+  set_commitment sha256:07f920f4a1662a52ee883fadc5da9a2d0e755d9050c57889edff787122c85722
+  criterion HISTORY_CORE_ACCEPTED
+  criterion_commitment sha256:66a76c68afdf10cd7d1435d2911c972244cc6c25e99162d42a84cda393212b77
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/planning-pool-history-core-acceptance.md"
+  evidence_revision e0dd54003de5aab7ef835260918e295572cd8707
+  verifier codex
+  occurred_at 2026-08-25T10:45:09Z
