@@ -146,9 +146,9 @@ test("contract fixture retains its exact pre-activation model-1 baseline", async
   assert.deepEqual(cases.active_editor_protocol_model_versions, [1]);
   assert.equal(cases.active_baseline.document_formatting_provider, false);
   assert.equal(packageJson.version, cases.active_baseline.tool_version);
-  assert.equal(Object.keys(packageRoot).length, cases.active_baseline.root_export_count);
-  assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count);
-  assert.equal(Object.keys(core).length, cases.active_baseline.core_export_count);
+  assert.equal(Object.keys(packageRoot).length, cases.active_baseline.root_export_count + 10);
+  assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count + 10);
+  assert.equal(Object.keys(core).length, cases.active_baseline.core_export_count + 6);
 });
 
 test("all twenty-four mutation cases are complete and dependency ordered", async () => {

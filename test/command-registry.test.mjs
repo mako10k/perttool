@@ -10,8 +10,8 @@ import {
   commandRegistryToJson,
   getCommandDiscovery,
   renderCommandHelpResult,
+  validateCommandInvocation,
 } from "../dist/index.js";
-import { validateContract9CommandInvocation } from "../dist/command/contract9-usage.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -74,6 +74,17 @@ const expectedPaths = [
   "calendar add",
   "calendar set",
   "calendar remove",
+  "work list",
+  "work show",
+  "work observe",
+  "work reshape preflight",
+  "work reshape apply",
+  "window list",
+  "window show",
+  "window observe",
+  "window add",
+  "window set",
+  "window close",
 ];
 
 function run(args) {
@@ -134,7 +145,7 @@ test("the Contract 9 registry covers the complete active surface exactly once", 
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 9, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 10, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(
@@ -146,7 +157,7 @@ test("the Contract 9 registry covers the complete active surface exactly once", 
     for (const example of descriptor.examples) {
       const tokens = invocationTokens(example.invocation);
       assert.equal(tokens.shift(), "perttool", example.invocation);
-      const validation = validateContract9CommandInvocation(tokens);
+      const validation = validateCommandInvocation(tokens);
       assert.equal(
         validation.ok,
         true,

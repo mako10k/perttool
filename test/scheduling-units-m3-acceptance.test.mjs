@@ -253,8 +253,8 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
   assert.equal(help.stdout.includes("Perttool.AnalysisResult.v7"), true);
   assert.equal(help.stdout.includes('"not-before"'), true);
   assert.equal(help.stdout.includes('"deadline"'), true);
-  assert.equal(JSON.parse(help.stdout).cli_contract_version, 9);
-  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 9);
+  assert.equal(JSON.parse(help.stdout).cli_contract_version, 10);
+  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 10);
 
   const targetFixture = path.join(
     fixtureDirectory,
@@ -271,7 +271,7 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
     assert.equal(accepted.stderr, "");
     const result = JSON.parse(accepted.stdout);
     assert.equal(result.schema_version, schemaVersion);
-    assert.equal(result.cli_contract_version, 9);
+    assert.equal(result.cli_contract_version, 10);
     assert.equal(result.ok, true);
     assert.equal(result.grammar_version, 2);
   }

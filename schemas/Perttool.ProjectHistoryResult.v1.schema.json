@@ -225,7 +225,7 @@
       "const": "Perttool.ProjectHistoryResult.v1"
     },
     "cli_contract_version": {
-      "const": 9
+      "const": 10
     },
     "tool_version": {
       "type": "string"

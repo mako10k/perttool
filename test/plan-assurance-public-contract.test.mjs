@@ -29,8 +29,8 @@ test("Contract 9 retains the Grammar 6 plan-assurance surface", async () => {
     path.join(root, "docs", "examples", "minimal.pert"),
     "utf8",
   );
-  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 23);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
   assert.equal(perttool.getJsonSchema("Perttool.NextResult.v5"), null);
   assert.equal(perttool.getJsonSchema("Perttool.AdvanceResult.v1"), null);
   assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v2"));
@@ -125,7 +125,7 @@ test("Contract 9 retains the Grammar 6 plan-assurance surface", async () => {
     assert.equal(show.status, 0, show.stderr);
     const shown = JSON.parse(show.stdout);
     assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v2");
-    assert.equal(shown.cli_contract_version, 9);
+    assert.equal(shown.cli_contract_version, 10);
     assert.equal(shown.assurance.coverage, "complete");
   } finally {
     await rm(temporary, { recursive: true, force: true });
@@ -184,7 +184,7 @@ test("Issue 14 inspects valid Grammar 7 plans through file and stdin without mut
       assert.equal(shownRun.status, 0, shownRun.stderr);
       const shown = JSON.parse(shownRun.stdout);
       assert.equal(shown.ok, true);
-      assert.equal(shown.cli_contract_version, 9);
+      assert.equal(shown.cli_contract_version, 10);
       assert.equal(shown.grammar_version, 7);
       assert.equal(shown.source_digest, digest(migrated.candidateText));
       assert.deepEqual(shown.selected_task_ids, ["WORK"]);

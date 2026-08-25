@@ -75,6 +75,17 @@ const expectedPaths = [
   "calendar add",
   "calendar set",
   "calendar remove",
+  "work list",
+  "work show",
+  "work observe",
+  "work reshape preflight",
+  "work reshape apply",
+  "window list",
+  "window show",
+  "window observe",
+  "window add",
+  "window set",
+  "window close",
 ];
 
 const expectedResources = [
@@ -91,12 +102,14 @@ const expectedResources = [
   ["resource", ["add", "remove", "set"]],
   ["task", ["add", "finish", "remove", "resume", "set", "start", "suspend"]],
   ["task-outcome", ["add", "remove", "set"]],
+  ["window", ["add", "close", "list", "observe", "set", "show"]],
+  ["work", ["list", "observe", "reshape apply", "reshape preflight", "show"]],
 ];
 
 const knownSchemas = new Set([
   "Perttool.AgentGuidanceResult.v1",
   "Perttool.AnalysisResult.v7",
-  "Perttool.AdvanceResult.v3",
+  "Perttool.AdvanceResult.v4",
   "Perttool.CheckResult.v6",
   "Perttool.CliError.v1",
   "Perttool.CommandHelpResult.v1",
@@ -114,7 +127,10 @@ const knownSchemas = new Set([
   "Perttool.ProjectHistoryResult.v1",
   "Perttool.ProjectResult.v5",
   "Perttool.SchemaResult.v1",
-  "Perttool.UnitMigrationResult.v4",
+  "Perttool.PlanningMutationResult.v1",
+  "Perttool.PlanningPoolResult.v1",
+  "Perttool.PlanningReshapePreflightResult.v1",
+  "Perttool.UnitMigrationResult.v5",
   "Perttool.VelocityObservationResult.v1",
 ]);
 
@@ -125,7 +141,7 @@ function runCli(args) {
   });
 }
 
-test("Contract 9 command discovery projects every implemented capability in canonical order", () => {
+test("Contract 10 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
     COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
@@ -138,7 +154,7 @@ test("Contract 9 command discovery projects every implemented capability in cano
   );
   assert.ok(
     COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 9,
+      ({ contractVersion }) => contractVersion === 10,
     ),
   );
   for (const descriptor of COMMAND_REGISTRY) {
@@ -165,7 +181,7 @@ test("Contract 9 command discovery projects every implemented capability in cano
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 9);
+  assert.equal(top.cliContractVersion, 10);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
@@ -184,7 +200,7 @@ test("Contract 9 command discovery projects every implemented capability in cano
   }
 });
 
-test("Contract 9 projections are the active public surface", () => {
+test("Contract 10 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -240,7 +256,7 @@ test("Contract 9 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 9);
+    assert.equal(json.cli_contract_version, 10);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }

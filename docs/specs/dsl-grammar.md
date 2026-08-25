@@ -1,7 +1,7 @@
 # perttool DSL Grammar Specification
 
 - Document status: Draft 1.1
-- Grammar versions: 1 through 8 active; Grammar 9 accepted but inactive
+- Grammar versions: 1 through 9 active
 - Created: 2026-07-21
 - Updated: 2026-08-24
 - Related requirements: [../requirements.md](../requirements.md)
@@ -14,7 +14,7 @@
 - Conditional plan assurance interface: [plan-assurance-interface.md](plan-assurance-interface.md)
 - Milestone outcome acceptance: [milestone-acceptance.md](milestone-acceptance.md)
 - Active Grammar 8 owner: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
-- Accepted Grammar 9 target: [Work-centered Planning Pool and Window Contract](planning-pool.md)
+- Active Grammar 9 owner: [Work-centered Planning Pool and Window Contract](planning-pool.md)
 
 ## 1. Purpose
 
@@ -29,8 +29,8 @@ governance delta. Section 20.4 fixes the active Grammar 5 project-actuals
 delta. Section 20.5 fixes the Grammar 6 plan-assurance delta. Section 20.6
 fixes the active Grammar 7 milestone-acceptance delta. Section 20.7 records
 the active Grammar 8 owner without duplicating its integrated contract.
-Section 20.8 records the separately accepted but inactive Grammar 9 planning-
-pool owner without duplicating that contract. See the
+Section 20.8 records the active Grammar 9 planning-pool owner without
+duplicating that contract. See the
 following representative valid version 1
 documents.
 
@@ -58,8 +58,8 @@ When a discrepancy is found, do not patch only the lower-precedence artifact; sy
   `work_event`; Grammar 6 additionally accepts `task_relation`, `plan_seal`,
   `task_outcome`, and `assurance_receipt`; Grammar 7 additionally accepts
   milestone criterion, receipt, and migration records; Grammar 8 additionally
-  accepts calendars and calendar-aware fields. The accepted Grammar 9 target
-  additionally accepts `work`, `event`, `activity`, `window`, and
+  accepts calendars and calendar-aware fields. Grammar 9 additionally accepts
+  `work`, `event`, `activity`, `window`, and
   `work_order`.
 - Place task and gate endpoints in the header so that their nature as edges is visually apparent.
 - Use stable IDs, rather than titles, for references.
@@ -1341,18 +1341,18 @@ Grammar 8 inherits Grammar 7 and adds the accepted calendar, availability,
 event-bound, migration, formatting, and validation meanings atomically with
 CLI Contract 9.
 
-### 20.8 Grammar version 9 planning-pool target
+### 20.8 Grammar version 9 planning-pool delta
 
-The accepted but inactive Grammar 9 target is owned in full by the
+The active Grammar 9 boundary is owned in full by the
 [Work-centered Planning Pool and Window Contract](planning-pool.md). It
 inherits Grammar 8 and adds only `work`, `event`, `activity`, `window`, and
 `work_order` top-level declarations with their closed fields, references,
 identity, source-ownership, validation, formatting, and migration rules.
 
-The current runtime remains Grammar 8 until the dependency-ordered public-
-contract task atomically activates Grammar 9 with CLI Contract 10, commands,
-results, schemas, Help, Guide, migration, and installed-package acceptance.
-Issue #3 multi-file namespace binding remains separate.
+The dependency-ordered public-contract task atomically activates Grammar 9
+with CLI Contract 10, commands, results, schemas, Help, Guide, migration, and
+installed-package acceptance. Issue #3 multi-file namespace binding remains
+separate.
 
 ## 21. Grammar acceptance
 

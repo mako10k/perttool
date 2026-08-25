@@ -44,7 +44,7 @@ function json(args, expectedStatus = 0) {
   const result = invoke(installedCli, [...args, "--format=json"], expectedStatus);
   assert.equal(result.stderr, "");
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 9);
+  assert.equal(value.cli_contract_version, 10);
   return value;
 }
 
@@ -113,7 +113,7 @@ const migration = json([
   "--to-unit",
   "day",
 ]);
-assert.equal(migration.schema_version, "Perttool.UnitMigrationResult.v4");
+assert.equal(migration.schema_version, "Perttool.UnitMigrationResult.v5");
 assert.equal(migration.ok, true, JSON.stringify(migration, null, 2));
 assert.equal(
   migration.converted_fields.some(

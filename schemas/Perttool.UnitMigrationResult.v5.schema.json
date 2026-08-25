@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.UnitMigrationResult.v4.schema.json",
-  "title": "Perttool.UnitMigrationResult.v4",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.UnitMigrationResult.v5.schema.json",
+  "title": "Perttool.UnitMigrationResult.v5",
   "$defs": {
     "exactValue": {
       "type": "object",
@@ -42,19 +42,9 @@
     "source_digest",
     "diagnostics",
     "diagnostics_truncated",
-    "unit_migration",
     "source_grammar_version",
     "target_grammar_version",
-    "grammar_disposition",
-    "source_unit",
-    "target_unit",
-    "effective_velocity",
-    "velocity_disposition",
     "changed",
-    "converted_fields",
-    "reversibility",
-    "qualifications",
-    "unavailable_causes",
     "original_digest",
     "updated_digest",
     "updated_text",
@@ -64,16 +54,16 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.UnitMigrationResult.v4"
+      "const": "Perttool.UnitMigrationResult.v5"
     },
     "cli_contract_version": {
-      "const": 9
+      "const": 10
     },
     "tool_version": {
       "type": "string"
     },
     "operation": {
-      "const": "project.migrate-unit"
+      "enum": ["project.migrate-unit", "document.migrate"]
     },
     "ok": {
       "type": "boolean"
@@ -104,7 +94,7 @@
           "const": "perttool.unit-migration"
         },
         "version": {
-          "const": 4
+          "const": 5
         }
       },
       "additionalProperties": false
@@ -120,6 +110,8 @@
             5,
         6,
         7
+,            8,
+            9
           ]
         },
         {
@@ -138,6 +130,8 @@
             5,
         6,
         7
+,            8,
+            9
           ]
         },
         {
@@ -235,7 +229,8 @@
             "enum": [
               "project",
               "task",
-              "work_event"
+              "work_event",
+              "activity"
             ]
           },
           "entity_id": {
@@ -321,6 +316,12 @@
         "additionalProperties": false
       }
     },
+    "migrated_task_ids": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+    },
+    "required_action": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
     "original_digest": {
       "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
     },
@@ -343,5 +344,29 @@
       "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
     }
   },
+  "oneOf": [
+    {
+      "required": [
+        "operation", "unit_migration", "grammar_disposition", "source_unit",
+        "target_unit", "effective_velocity", "velocity_disposition",
+        "converted_fields", "reversibility", "qualifications",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "operation": { "const": "project.migrate-unit" },
+        "unit_migration": {}, "grammar_disposition": {}, "source_unit": {},
+        "target_unit": {}, "effective_velocity": {},
+        "velocity_disposition": {}, "converted_fields": {},
+        "reversibility": {}, "qualifications": {}, "unavailable_causes": {}
+      }
+    },
+    {
+      "required": ["operation", "migrated_task_ids", "required_action"],
+      "properties": {
+        "operation": { "const": "document.migrate" },
+        "migrated_task_ids": {}, "required_action": {}
+      }
+    }
+  ],
   "additionalProperties": false
 }

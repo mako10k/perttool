@@ -5,7 +5,7 @@ import {
   analyzeDocument as analyzeContract8Document,
   checkDocument as checkContract8Document,
   selectNextTasks as selectContract8NextTasks,
-} from "./contract8-milestone-acceptance.js";
+} from "./contract8-milestone-read.js";
 import type { AnalyzeOptions } from "./analyze.js";
 import type { CheckOptions } from "./check.js";
 import type { NextOptions } from "./next.js";

@@ -47,15 +47,27 @@ function activeTaskIds(text: string): readonly string[] {
     lines.some((line) => fieldLine(line)?.name === "status" && fieldLine(line)?.rawValue === "active")).map(({ id }) => id));
 }
 
-function assuranceImpact(text: string, candidate: string): PlanAssuranceImpactV1 | null {
-  const before = evaluateContract9PlanAssurance(text);
-  const after = evaluateContract9PlanAssurance(candidate);
+export function composeContract9AssuranceImpact(
+  before: ReturnType<typeof evaluateContract9PlanAssurance>,
+  after: ReturnType<typeof evaluateContract9PlanAssurance>,
+  beforeActiveTaskIds: readonly string[],
+  afterActiveTaskIds: readonly string[],
+): PlanAssuranceImpactV1 | null {
   if (before === null || after === null) return null;
   const beforeById = new Map(before.taskResults.map((result) => [result.taskId, result]));
   const affectedTaskIds = after.taskResults.filter((result) =>
     JSON.stringify(beforeById.get(result.taskId)) !== JSON.stringify(result)).map(({ taskId }) => taskId);
   return Object.freeze({ modelVersion: 1, affectedTaskIds: Object.freeze(affectedTaskIds), before, after,
-    projection: composePlanAssuranceMutationImpact(affectedTaskIds, before, after, activeTaskIds(text), activeTaskIds(candidate)) });
+    projection: composePlanAssuranceMutationImpact(affectedTaskIds, before, after, beforeActiveTaskIds, afterActiveTaskIds) });
+}
+
+function assuranceImpact(text: string, candidate: string): PlanAssuranceImpactV1 | null {
+  return composeContract9AssuranceImpact(
+    evaluateContract9PlanAssurance(text),
+    evaluateContract9PlanAssurance(candidate),
+    activeTaskIds(text),
+    activeTaskIds(candidate),
+  );
 }
 
 function failure(base: Contract9MutationResultV6, temporal: TemporalScheduleMutationResult,

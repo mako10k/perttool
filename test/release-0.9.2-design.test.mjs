@@ -120,9 +120,9 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.match(planIndex, /All forty-five plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.2\.pert/u);
 
-  assert.equal(Object.keys(perttool).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(Object.keys(perttool).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   assert.deepEqual(Object.keys(perttool), Object.keys(nodeApi));
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);

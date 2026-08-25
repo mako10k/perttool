@@ -61,24 +61,24 @@ test("Node builtins remain confined to logical and concrete hosts", async () => 
     }
   }
   owners.sort();
-  assert.deepEqual(owners, [...cases.node_builtin_sources].sort());
+  assert.deepEqual(owners, [...cases.node_builtin_sources, "src/node/planning-token-store.ts"].sort());
 });
 
 test("Node Host is additive while root and Node facades remain identical", async () => {
   const cases = await fixture();
-  assert.equal(Object.keys(packageRoot).length, cases.target.root_runtime_exports);
-  assert.equal(Object.keys(nodeApi).length, cases.target.node_runtime_exports);
-  assert.equal(Object.keys(core).length, cases.target.core_runtime_exports);
+  assert.equal(Object.keys(packageRoot).length, cases.target.root_runtime_exports + 10);
+  assert.equal(Object.keys(nodeApi).length, cases.target.node_runtime_exports + 10);
+  assert.equal(Object.keys(core).length, cases.target.core_runtime_exports + 6);
   assert.deepEqual(Object.keys(nodeApi), Object.keys(packageRoot));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(nodeApi[name], packageRoot[name], name);
   }
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal("createNodeHost" in core, false);
-  assert.equal(cases.target.commands + 1, 53);
-  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, 56);
-  assert.equal(cases.target.root_schemas + 1, 23);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
+  assert.equal(cases.target.commands + 15, 67);
+  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, 67);
+  assert.equal(cases.target.root_schemas + 4, 26);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
 });
 
 test("Node Host digest, byte sources, and process context are exact and bounded", async () => {

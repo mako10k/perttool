@@ -15,7 +15,7 @@ const identities = Object.freeze([
   "Perttool.NextResult.v8",
   "Perttool.PlanAssuranceResult.v2",
   "Perttool.ProjectResult.v5",
-  "Perttool.UnitMigrationResult.v4",
+  "Perttool.UnitMigrationResult.v5",
 ]);
 const grammar8 = `${[
   "project SCHEMA_WIRE:", "  version 8", '  title "Schema wire"', "  as_of 2026-08-17T09:00:00+09:00", "  duration_unit hour", "  finish END",
@@ -49,7 +49,7 @@ function wirePositions(value) {
   return projected;
 }
 
-test("Contract 9 activates exactly seven replacement schema artifacts at canonical paths", async () => {
+test("Contract 10 retains seven strict-result schema artifacts at canonical paths", async () => {
   const names = (await readdir(activeDirectory)).sort();
   for (const identity of identities) {
     assert.ok(names.includes(`${identity}.schema.json`), identity);
@@ -57,11 +57,11 @@ test("Contract 9 activates exactly seven replacement schema artifacts at canonic
     assert.equal(value.$id, `https://github.com/mako10k/perttool/schemas/${identity}.schema.json`);
     assert.equal(value.title, identity);
     assert.equal(value.properties.schema_version.const, identity);
-    assert.equal(value.properties.cli_contract_version.const, 9);
+    assert.equal(value.properties.cli_contract_version.const, 10);
   }
 });
 
-test("active Contract 9 schema references compile from canonical paths", async () => {
+test("active Contract 10 schema references compile from canonical paths", async () => {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   for (const name of (await readdir(activeDirectory)).filter((name) => name.endsWith(".schema.json"))) {
     ajv.addSchema(await schema(path.join(activeDirectory, name)));
@@ -71,7 +71,7 @@ test("active Contract 9 schema references compile from canonical paths", async (
   }
 });
 
-test("active Contract 9 schemas contain no unspecified object shape", async () => {
+test("active Contract 10 schemas contain no unspecified object shape", async () => {
   const failures = [];
   for (const identity of identities) {
     const value = await schema(path.join(activeDirectory, `${identity}.schema.json`));

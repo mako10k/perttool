@@ -22,6 +22,76 @@ export interface Contract9CandidateOptions {
   readonly updatedLabel?: string;
 }
 
+export function failedLiftedCandidate<T extends Contract9CandidateShape>(
+  planned: T,
+  originalDigest: string,
+  diagnostics: T["diagnostics"],
+  diagnosticsTruncated: boolean,
+): T {
+  return Object.freeze({
+    ...planned,
+    ok: false,
+    changed: false,
+    originalDigest,
+    updatedDigest: null,
+    updatedText: null,
+    diff: null,
+    edits: Object.freeze([]),
+    diagnostics,
+    diagnosticsTruncated,
+  }) as T;
+}
+
+export function successfulLiftedCandidate<T extends Contract9CandidateShape>(
+  planned: T,
+  text: string,
+  candidateText: string,
+  originalDigest: string,
+  options: Contract9CandidateOptions,
+): T {
+  return Object.freeze({
+    ...planned,
+    originalDigest,
+    changed: candidateText !== text,
+    updatedDigest: sha256DigestUtf8(candidateText),
+    updatedText: candidateText,
+    diff: createUnifiedDiff(text, candidateText, {
+      originalLabel: options.originalLabel ?? "original",
+      updatedLabel: options.updatedLabel ?? "candidate",
+    }),
+  }) as T;
+}
+
+export function finalizeLiftedCandidate<T extends Contract9CandidateShape>(
+  planned: T,
+  text: string,
+  candidateText: string,
+  originalDigest: string,
+  options: Contract9CandidateOptions,
+  checked: Readonly<{
+    ok: boolean;
+    model: unknown | null;
+    diagnostics: readonly unknown[];
+    diagnosticsTruncated: boolean;
+  }>,
+): T {
+  if (!checked.ok || checked.model === null) {
+    return failedLiftedCandidate(
+      planned,
+      originalDigest,
+      Object.freeze([...planned.diagnostics, ...checked.diagnostics]),
+      planned.diagnosticsTruncated || checked.diagnosticsTruncated,
+    );
+  }
+  return successfulLiftedCandidate(
+    planned,
+    text,
+    candidateText,
+    originalDigest,
+    options,
+  );
+}
+
 type Contract9Identity<T> = T extends { readonly schemaVersion: "Perttool.MutationResult.v5" }
   ? Omit<T, "schemaVersion"> & { readonly schemaVersion: "Perttool.MutationResult.v6" }
   : T extends { readonly schemaVersion: "Perttool.UnitMigrationResult.v3" }
@@ -57,14 +127,7 @@ export function liftContract9Candidate<T extends Contract9CandidateShape>(
   }
   const candidateText = applyTextEdits(text, planned.edits);
   const checked = parseTemporalScheduleSource(candidateText, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY);
-  if (!checked.ok || checked.model === null) {
-    return identity(Object.freeze({ ...planned, ok: false, changed: false, originalDigest,
-      updatedDigest: null, updatedText: null, diff: null, edits: Object.freeze([]),
-      diagnostics: Object.freeze([...planned.diagnostics, ...checked.diagnostics]),
-      diagnosticsTruncated: planned.diagnosticsTruncated || checked.diagnosticsTruncated }));
-  }
-  return identity(Object.freeze({ ...planned, originalDigest, changed: candidateText !== text,
-    updatedDigest: sha256DigestUtf8(candidateText), updatedText: candidateText,
-    diff: createUnifiedDiff(text, candidateText, { originalLabel: options.originalLabel ?? "original",
-      updatedLabel: options.updatedLabel ?? "candidate" }) }));
+  return identity(finalizeLiftedCandidate(
+    planned, text, candidateText, originalDigest, options, checked,
+  ));
 }

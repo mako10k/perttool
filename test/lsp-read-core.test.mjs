@@ -633,9 +633,9 @@ test("implementation cases are dependency ordered and root compatibility remains
     accepted.add(contractCase.id);
   }
   assert.deepEqual([...accepted], expectedIds("LSPC", 12));
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeFacade).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeFacade).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   assert.ok(Object.keys(packageRoot).every((name) =>
     packageRoot[name] === nodeFacade[name]
   ));

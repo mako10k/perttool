@@ -451,7 +451,7 @@
       "const": "Perttool.AgentGuidanceResult.v1"
     },
     "cli_contract_version": {
-      "const": 9
+      "const": 10
     },
     "guidance_interface_version": {
       "const": 1

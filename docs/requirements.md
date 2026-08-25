@@ -3715,14 +3715,14 @@ Before implementation, separate the specifications in the following order.
       normalization vectors in
       [`planning-pool-contract-v1.json`](../test/fixtures/planning-pool-contract-v1.json)
       while retaining the active Grammar 8 and CLI Contract 9 runtime.
-    - [ ] Implement the private Grammar 9 planning source and semantic Core.
-    - [ ] Implement semantic reshape, preflight hash and opaque token,
+    - [x] Implement the private Grammar 9 planning source and semantic Core.
+    - [x] Implement semantic reshape, preflight hash and opaque token,
       projection, archival, advance cleanup, and narrow deferral.
-    - [ ] Implement persisted and ad hoc Window mutation and independent Work
+    - [x] Implement persisted and ad hoc Window mutation and independent Work
       and Window observations with identity-deduplicated shared facts.
-    - [ ] Compose bounded first-parent Git reconstruction without adding
+    - [x] Compose bounded first-parent Git reconstruction without adding
       tombstones, closed Windows, or completion snapshots to current source.
-    - [ ] Atomically activate the eleven commands, three new root result
+    - [x] Atomically activate the eleven commands, three new root result
       identities, replacement advance and unit-migration results, schemas,
       Help, Guide, package surfaces, migration, and compatibility.
     - [ ] Complete the end-to-end acceptance task without selecting a release,

@@ -1162,7 +1162,7 @@
       "const": "Perttool.NextResult.v8"
     },
     "cli_contract_version": {
-      "const": 9
+      "const": 10
     },
     "recommendation_interface_version": {
       "const": 1

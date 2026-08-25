@@ -90,7 +90,10 @@ for required in \
   package/dist/node/historical-host.js \
   package/dist/node/historical-host.d.ts \
   package/schemas/Perttool.Common.v1.schema.json \
-  package/schemas/Perttool.AdvanceResult.v3.schema.json \
+  package/schemas/Perttool.AdvanceResult.v4.schema.json \
+  package/schemas/Perttool.PlanningMutationResult.v1.schema.json \
+  package/schemas/Perttool.PlanningPoolResult.v1.schema.json \
+  package/schemas/Perttool.PlanningReshapePreflightResult.v1.schema.json \
   package/schemas/Perttool.CheckResult.v6.schema.json \
   package/schemas/Perttool.HistoricalGraphResult.v1.schema.json \
   package/schemas/Perttool.PlanAssuranceResult.v2.schema.json \
@@ -135,7 +138,7 @@ fi
       const topicIds = result.topics?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 9 ||
+        result.cli_contract_version !== 10 ||
         result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
@@ -151,6 +154,7 @@ fi
           "historical-dag",
           "milestone-acceptance",
           "temporal-schedule",
+          "planning-pool",
         ]) ||
         /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
       ) process.exit(1);
@@ -167,7 +171,7 @@ fi
       const result = JSON.parse(input);
       if (
         result.schema_version !== "Perttool.HistoricalGraphResult.v1" ||
-        result.cli_contract_version !== 9 ||
+        result.cli_contract_version !== 10 ||
         result.operation !== "dag.history" ||
         result.ok !== true ||
         result.status !== "complete" ||
@@ -189,7 +193,7 @@ fi
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 9 ||
+        result.cli_contract_version !== 10 ||
         result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
@@ -215,7 +219,7 @@ fi
       const serialized = JSON.stringify(result);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 9 ||
+        result.cli_contract_version !== 10 ||
         result.operation !== "guide" ||
         result.topic_id !== "editing" ||
         !serialized.includes("PTADV-101") ||
@@ -353,9 +357,9 @@ const snapshot = core.createDocumentSnapshot(
   },
 );
 if (
-  Object.keys(root).length !== 129 ||
-  Object.keys(nodeApi).length !== 129 ||
-  Object.keys(core).length !== 45 ||
+  Object.keys(root).length !== 139 ||
+  Object.keys(nodeApi).length !== 139 ||
+  Object.keys(core).length !== 51 ||
   !Object.keys(root).every((name) =>
     ["analyzeDocument", "checkDocument", "selectNextTasks"].includes(name) ||
     root[name] === nodeApi[name]
@@ -390,9 +394,9 @@ const text = guide.renderGuideResult(guide.getGuide("syntax", "quick"));
 const missing = guide.guideResultToJson(guide.getGuide("missing", "detail"));
 if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
-  index.cli_contract_version !== 9 ||
+  index.cli_contract_version !== 10 ||
   index.operation !== "guide" ||
-  index.topics?.length !== 13 ||
+  index.topics?.length !== 14 ||
   !JSON.stringify(index).includes("Grammar versions 1 through 7") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
@@ -420,7 +424,7 @@ const exportedSchemaPath = require.resolve(
 );
 const exportedSchema = JSON.parse(readFileSync(exportedSchemaPath, "utf8"));
 const exportedAdvanceSchemaPath = require.resolve(
-  "perttool/schemas/Perttool.AdvanceResult.v3.schema.json",
+  "perttool/schemas/Perttool.AdvanceResult.v4.schema.json",
 );
 const exportedAdvanceSchema = JSON.parse(
   readFileSync(exportedAdvanceSchemaPath, "utf8"),
@@ -501,8 +505,8 @@ if (
   contract5Help.status !== 0 ||
   contract5Help.stderr !== "" ||
   contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
-  contract5HelpJson.cli_contract_version !== 9 ||
-  contract5HelpJson.commands?.length !== 56 ||
+  contract5HelpJson.cli_contract_version !== 10 ||
+  contract5HelpJson.commands?.length !== 67 ||
   !serializedHelp.includes("Perttool.SchemaResult.v1") ||
   !serializedHelp.includes("project migrate-unit") ||
   !serializedHelp.includes('"not-before"') ||
@@ -510,12 +514,12 @@ if (
   !serializedHelp.includes("Perttool.CheckResult.v6") ||
   !serializedHelp.includes("Perttool.ProjectResult.v5") ||
   !serializedHelp.includes("Perttool.MutationResult.v6") ||
-  !serializedHelp.includes("Perttool.AdvanceResult.v3") ||
+  !serializedHelp.includes("Perttool.AdvanceResult.v4") ||
   !serializedHelp.includes('"force-history-loss"') ||
   !serializedHelp.includes("Perttool.AnalysisResult.v7") ||
   !serializedHelp.includes("Perttool.NextResult.v8") ||
   !serializedHelp.includes("Perttool.PlanAssuranceResult.v2") ||
-  !serializedHelp.includes("Perttool.UnitMigrationResult.v4") ||
+  !serializedHelp.includes("Perttool.UnitMigrationResult.v5") ||
   !serializedHelp.includes('"actor"') ||
   !serializedHelp.includes('"accepted-by-owner"') ||
   !serializedHelp.includes('"goal-owner"')
@@ -535,7 +539,7 @@ const selectedSchema = spawnSync(
 const selectedSchemaJson = JSON.parse(selectedSchema.stdout);
 const selectedAdvanceSchema = spawnSync(
   process.argv[5],
-  ["schema", "Perttool.AdvanceResult.v3", "--format=json"],
+  ["schema", "Perttool.AdvanceResult.v4", "--format=json"],
   { encoding: "utf8" },
 );
 const selectedAdvanceSchemaJson = JSON.parse(
@@ -582,7 +586,7 @@ if (
   schemaCatalog.status !== 0 ||
   schemaCatalog.stderr !== "" ||
   schemaCatalogJson.schema_version !== "Perttool.SchemaResult.v1" ||
-  schemaCatalogJson.schemas?.length !== 23 ||
+  schemaCatalogJson.schemas?.length !== 26 ||
   schemaCatalogJson.schema !== null ||
   selectedSchema.status !== 0 ||
   selectedSchema.stderr !== "" ||
@@ -593,7 +597,7 @@ if (
   selectedAdvanceSchema.status !== 0 ||
   selectedAdvanceSchema.stderr !== "" ||
   selectedAdvanceSchemaJson.schema?.$id !==
-    "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v3.schema.json" ||
+    "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v4.schema.json" ||
   selectedAdvanceSchemaJson.schema?.properties?.history_guard === undefined ||
   selectedAdvanceSchemaJson.schema?.properties?.assurance_guard === undefined ||
   selectedAssuranceSchema.status !== 0 ||
@@ -610,12 +614,12 @@ if (
   detailSchema.stderr !== "" ||
   detailSchemaJson.schema?.properties?.result_decision === undefined ||
   JSON.stringify(apiOutline) !== JSON.stringify(outlineSchemaJson) ||
-  api.getJsonSchemaCatalog().length !== 23 ||
+  api.getJsonSchemaCatalog().length !== 26 ||
   api.getJsonSchema("Perttool.NextResult.v8")?.$id !==
     selectedSchemaJson.schema.$id ||
-  api.getJsonSchema("Perttool.AdvanceResult.v3")?.$id !==
+  api.getJsonSchema("Perttool.AdvanceResult.v4")?.$id !==
     selectedAdvanceSchemaJson.schema.$id ||
-  api.ADVANCE_RESULT_SCHEMA_VERSION !== "Perttool.AdvanceResult.v3" ||
+  api.ADVANCE_RESULT_SCHEMA_VERSION !== "Perttool.AdvanceResult.v4" ||
   exportedSchema.$id !== selectedSchemaJson.schema.$id ||
   exportedAdvanceSchema.$id !== selectedAdvanceSchemaJson.schema.$id
 ) throw new Error("installed schema contract mismatch");
@@ -641,7 +645,7 @@ for (const [fixture, grammarVersion] of [
       result.status !== 0 ||
       result.stderr !== "" ||
       json.schema_version !== schemaVersion ||
-      json.cli_contract_version !== 9 ||
+      json.cli_contract_version !== 10 ||
       json.ok !== true ||
       (route[1] === "format"
         ? "grammar_version" in json
@@ -669,7 +673,7 @@ const guidanceCoreJson = JSON.parse(
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceContract !== 9 ||
+  guidanceContract !== 10 ||
   JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) throw new Error("installed agent guidance mismatch");
 

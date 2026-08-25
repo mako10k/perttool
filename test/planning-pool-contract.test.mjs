@@ -63,7 +63,7 @@ test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async 
   assert.match(requirements, /\[Work-centered Planning Pool and Window Contract\]\(specs\/planning-pool\.md\)/u);
   assert.match(design, /### Post-MVP Slice 8: Work-centered planning pool and bounded Windows/u);
   assert.match(backlog, /normative Grammar 9 and CLI Contract 10 planning-pool contract\s+accepted/u);
-  assert.match(grammar, /Accepted Grammar 9 target: \[Work-centered Planning Pool and Window Contract\]/u);
+  assert.match(grammar, /Active Grammar 9 owner: \[Work-centered Planning Pool and Window Contract\]/u);
   assert.match(plan, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
   assert.match(plan, /task PLANNING_POOL_RESHAPE_CORE/u);
   assert.doesNotMatch(plan, /task PLANNING_POOL_CONTRACT|task PLANNING_POOL_SOURCE_CORE/u);
@@ -148,7 +148,7 @@ test("planning reshape normalization vectors are fixed SHA-256 bytes", async () 
   );
 });
 
-test("contract acceptance does not activate reserved planning runtime", async () => {
+test("public contract activates the reserved planning runtime atomically", async () => {
   const packageJson = JSON.parse(await repositoryText("package.json"));
   const commands = rootApi.COMMAND_REGISTRY.map(({ path: commandPath }) =>
     commandPath.join(" "),
@@ -156,21 +156,21 @@ test("contract acceptance does not activate reserved planning runtime", async ()
   const catalog = rootApi.getJsonSchemaCatalog();
 
   assert.equal(packageJson.version, "0.10.5");
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 56);
-  assert.equal(catalog.length, 23);
-  assert.equal(Object.keys(rootApi).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
-  assert.equal(Object.keys(coreApi).length, 45);
-  assert.equal(commands.some((command) => command.startsWith("work ")), false);
-  assert.equal(commands.some((command) => command.startsWith("window ")), false);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
+  assert.equal(catalog.length, 26);
+  assert.equal(Object.keys(rootApi).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(coreApi).length, 51);
+  assert.equal(commands.filter((command) => command.startsWith("work ")).length, 5);
+  assert.equal(commands.filter((command) => command.startsWith("window ")).length, 6);
   assert.equal(
     catalog.some(({ schemaId }) => schemaId === "Perttool.PlanningPoolResult.v1"),
-    false,
+    true,
   );
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("accepted History outcome exposes only the Public Contract execution frontier", async () => {
+test("completed Public Contract exposes Acceptance but withholds start until its outcome", async () => {
   const [
     source,
     acceptance,
@@ -203,17 +203,22 @@ test("accepted History outcome exposes only the Public Contract execution fronti
   assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_OBSERVATION_CORE[\s\S]*?status done/u);
   assert.match(source, /task PLANNING_POOL_HISTORY_CORE[\s\S]*?status done/u);
+  assert.match(source, /task PLANNING_POOL_PUBLIC_CONTRACT[\s\S]*?status done/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
   assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:[\s\S]*?status conformant/u);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "PLANNING_POOL_PUBLIC_CONTRACT",
+    "PLANNING_POOL_ACCEPTANCE",
   ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "PLANNING_POOL_PUBLIC_CONTRACT",
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, [
+    "PLANNING_POOL_ACCEPTANCE",
   ]);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
-  assert.deepEqual(next.assurance.requiredActions, []);
+  assert.deepEqual(next.assurance.requiredActions, [{
+    kind: "restore_assurance_evidence",
+    rootTaskIds: ["PLANNING_POOL_PUBLIC_CONTRACT"],
+    affectedTaskIds: ["PLANNING_POOL_ACCEPTANCE", "PLANNING_POOL_PUBLIC_CONTRACT"],
+  }]);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);

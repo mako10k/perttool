@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v3.schema.json",
-  "title": "Perttool.AdvanceResult.v3",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v4.schema.json",
+  "title": "Perttool.AdvanceResult.v4",
   "type": "object",
   "required": [
     "schema_version",
@@ -30,10 +30,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.AdvanceResult.v3"
+      "const": "Perttool.AdvanceResult.v4"
     },
     "cli_contract_version": {
-      "const": 9
+      "const": 10
     },
     "tool_version": {
       "type": "string"
@@ -101,18 +101,34 @@
         {
           "type": "object",
           "required": [
+            "kept_task_ids",
+            "kept_gate_ids",
+            "kept_milestone_ids",
             "removed_task_ids",
             "removed_gate_ids",
             "removed_milestone_ids",
+            "state_changed_milestone_ids",
+            "retained_satisfied_edges",
             "removed_work_event_ids",
             "removed_assurance_record_ids",
             "updated_assurance_receipt_ids",
+            "removed_planning_links",
+            "archived_work_ids",
             "frontier_before",
             "frontier_after",
             "ready_before",
             "ready_after"
           ],
           "properties": {
+            "kept_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "kept_gate_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "kept_milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
             "removed_task_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
@@ -122,6 +138,22 @@
             "removed_milestone_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
+            "state_changed_milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "retained_satisfied_edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "kind", "reason"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "kind": { "enum": ["task", "gate"] },
+                  "reason": { "const": "partial_satisfaction" }
+                },
+                "additionalProperties": false
+              }
+            },
             "removed_work_event_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
@@ -129,6 +161,12 @@
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "updated_assurance_receipt_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_planning_links": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "archived_work_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "frontier_before": {

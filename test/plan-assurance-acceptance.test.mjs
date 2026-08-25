@@ -3,6 +3,7 @@ import { spawn, spawnSync } from "node:child_process";
 import {
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   watch,
   writeFileSync,
@@ -463,19 +464,20 @@ test(
     writeFileSync(source, `${workflowSource()}\n${padding}`, "utf8");
 
     let wonRace = false;
-    const watcher = watch(directory, (_, filename) => {
-      if (
-        !wonRace &&
-        filename?.startsWith(".sealed.pert.perttool-") &&
-        filename.endsWith(".tmp")
-      ) {
+    const tryWinRace = (filename) => {
+      if (!wonRace && filename?.startsWith(".sealed.pert.perttool-") && filename.endsWith(".tmp")) {
         wonRace = true;
         writeFileSync(output, "external race winner\n", "utf8");
       }
-    });
+    };
+    const watcher = watch(directory, (_, filename) => tryWinRace(filename));
+    const poller = setInterval(() => {
+      for (const filename of readdirSync(directory)) tryWinRace(filename);
+    }, 1);
     t.after(() => {
       try {
         watcher.close();
+        clearInterval(poller);
       } catch {
         // The test closes the watcher as soon as the child process exits.
       }
@@ -508,6 +510,7 @@ test(
       child.once("close", resolve);
     });
     watcher.close();
+    clearInterval(poller);
 
     assert.equal(wonRace, true);
     assert.equal(status, 5, stderr);

@@ -1,0 +1,567 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanningMutationResult.v1.schema.json",
+  "title": "Perttool.PlanningMutationResult.v1",
+  "$defs": {
+    "windowFinal": {
+      "type": "object",
+      "required": [
+        "title",
+        "objective",
+        "start",
+        "end",
+        "work_ids"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "end": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "work_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "existingCarryTarget": {
+      "type": "object",
+      "required": [
+        "kind",
+        "window_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "existing"
+        },
+        "window_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "newCarryTarget": {
+      "type": "object",
+      "required": [
+        "kind",
+        "window_id",
+        "title",
+        "objective",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "kind": {
+          "const": "new"
+        },
+        "window_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "end": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "carryTarget": {
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/existingCarryTarget"
+            },
+            {
+              "$ref": "#/$defs/newCarryTarget"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "windowRequest": {
+      "type": "object",
+      "required": [
+        "request_schema_version",
+        "source_digest",
+        "operation",
+        "window_id",
+        "final",
+        "objective_disposition",
+        "carry_over_work_ids",
+        "carry_over_target"
+      ],
+      "properties": {
+        "request_schema_version": {
+          "const": "Perttool.WindowMutationRequest.v1"
+        },
+        "source_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "set",
+            "close"
+          ]
+        },
+        "window_id": {
+          "type": "string"
+        },
+        "final": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/windowFinal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "objective_disposition": {
+          "enum": [
+            "discard",
+            null
+          ]
+        },
+        "carry_over_work_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "carry_over_target": {
+          "$ref": "#/$defs/carryTarget"
+        }
+      },
+      "additionalProperties": false
+    },
+    "normalizedRequest": {
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/normalizedRequest"
+            },
+            {
+              "$ref": "#/$defs/windowRequest"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "windowSnapshot": {
+      "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/windowSnapshot"
+    },
+    "closeReport": {
+      "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/windowCloseReport"
+    },
+    "transfer": {
+      "type": "object",
+      "required": [
+        "direction",
+        "planning_kind",
+        "strict_kind",
+        "qualified_id",
+        "affected_work_ids"
+      ],
+      "properties": {
+        "direction": {
+          "enum": [
+            "to_strict",
+            "to_planning"
+          ]
+        },
+        "planning_kind": {
+          "enum": [
+            "event",
+            "activity"
+          ]
+        },
+        "strict_kind": {
+          "enum": [
+            "milestone",
+            "task"
+          ]
+        },
+        "qualified_id": {
+          "type": "string"
+        },
+        "affected_work_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "destructiveRecord": {
+      "type": "object",
+      "required": [
+        "owner_class",
+        "entity_kind",
+        "qualified_id",
+        "start_offset",
+        "end_offset"
+      ],
+      "properties": {
+        "owner_class": {
+          "enum": [
+            "temporary_draft",
+            "canonical"
+          ]
+        },
+        "entity_kind": {
+          "enum": [
+            "event",
+            "activity",
+            "work",
+            "window",
+            "work_order",
+            "milestone",
+            "task"
+          ]
+        },
+        "qualified_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "start_offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_offset": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "reshapeAuthority": {
+      "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/authorityImpact"
+    },
+    "windowAuthority": {
+      "type": "object",
+      "required": [
+        "affected_scopes",
+        "ordinary_maintenance",
+        "user_response_required"
+      ],
+      "properties": {
+        "affected_scopes": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "ordinary_maintenance": {
+          "const": true
+        },
+        "user_response_required": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorityImpact": {
+      "oneOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/reshapeAuthority"
+            },
+            {
+              "$ref": "#/$defs/windowAuthority"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "historyGuard": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "status",
+        "cause",
+        "repository_snapshot_id",
+        "repository_relative_path",
+        "head_commit_id",
+        "destructive_entity_ids",
+        "overlapping_entity_ids",
+        "force_requested"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "status": {
+          "enum": [
+            "not_applicable",
+            "passed",
+            "blocked",
+            "forced"
+          ]
+        },
+        "cause": {
+          "type": "string"
+        },
+        "repository_snapshot_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "repository_relative_path": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "head_commit_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "destructive_entity_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "overlapping_entity_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "force_requested": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tokenRecovery": {
+      "type": "object",
+      "required": [
+        "ok",
+        "state",
+        "recovered",
+        "completed"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "unused",
+            "committing",
+            "consumed",
+            "unknown",
+            "expired",
+            "mismatch"
+          ]
+        },
+        "recovered": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "normalized_request",
+    "candidate_digest",
+    "candidate_text",
+    "changed",
+    "edits",
+    "destructive_records",
+    "governance",
+    "assurance_impact",
+    "history_guard",
+    "write",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.PlanningMutationResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 10
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "work.reshape.apply",
+        "window.add",
+        "window.set",
+        "window.close"
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "reshape_capability": {
+      "const": "perttool.planning-reshape-core@1"
+    },
+    "window_capability": {
+      "const": "perttool.planning-window-core@1"
+    },
+    "normalized_request": {
+      "$ref": "#/$defs/normalizedRequest"
+    },
+    "canonical_request_utf8": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "preflight_hash": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "preflight_token_validated": {
+      "type": "boolean"
+    },
+    "candidate_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "candidate_text": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "changed": {
+      "type": "boolean"
+    },
+    "edits": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.Common.v1.schema.json#/$defs/edit"
+      }
+    },
+    "before_descriptions": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/descriptionRow"
+      }
+    },
+    "after_descriptions": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/descriptionRow"
+      }
+    },
+    "window_close_report": {
+      "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/nullableWindowCloseReport"
+    },
+    "before": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/windowSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "after": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/windowSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "close_report": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/closeReport"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "transfers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transfer"
+      }
+    },
+    "destructive_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/destructiveRecord"
+      }
+    },
+    "authority_impact": {
+      "$ref": "#/$defs/authorityImpact"
+    },
+    "governance": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/governanceDecision"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assurance_impact": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/planAssuranceImpact"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "history_guard": {
+      "$ref": "#/$defs/historyGuard"
+    },
+    "token_recovery": {
+      "$ref": "#/$defs/tokenRecovery"
+    },
+    "original_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "updated_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "updated_text": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "diff": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "write": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    }
+  },
+  "additionalProperties": false
+}

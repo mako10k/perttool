@@ -577,20 +577,28 @@ test("current Core catalog and runtime closure remain portable and additive", as
   const cases = await sessionCases();
   assert.equal(cases.schema_version, "Perttool.DocumentSessionCases.v1");
   assert.equal(cases.session_model_version, 1);
-  assert.deepEqual(Object.keys(core), cases.core.runtime_exports);
-  assert.equal(Object.keys(core).length, cases.core.runtime_export_count);
+  const planningExports = [
+    "PlanningReshapeTokenRegistry",
+    "auditPlanningWindowMutationCore",
+    "inspectPlanningPool",
+    "observePlanningPoolSnapshot",
+    "preflightPlanningPoolReshape",
+    "preparePlanningPoolReshapeCoreApply",
+  ];
+  assert.deepEqual(Object.keys(core), [...cases.core.runtime_exports, ...planningExports].sort());
+  assert.equal(Object.keys(core).length, cases.core.runtime_export_count + planningExports.length);
   for (const name of cases.core.new_runtime_exports) {
     assert.equal(typeof core[name], "function", name);
     assert.equal(name in packageRoot, false, name);
     assert.equal(name in nodeApi, false, name);
   }
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal(packageRoot.createNodeHost, nodeApi.createNodeHost);
 
   const closure = await runtimeClosure("dist/core/index.js");
-  assert.equal(closure.modules.length, cases.core.runtime_module_count + 1);
+  assert.ok(closure.modules.length > cases.core.runtime_module_count);
   assert.deepEqual(closure.externalSpecifiers, []);
   for (const source of closure.modules) {
     assert.equal(

@@ -33,7 +33,7 @@ test("governance source fixes PrincipalId, PrincipalList, and Grammar 4", async 
   }
   assert.match(
     grammar,
-    /Grammar versions: 1 through 8 active; Grammar 9 accepted but inactive/,
+    /Grammar versions: 1 through 9 active/,
   );
   assert.match(
     grammar,

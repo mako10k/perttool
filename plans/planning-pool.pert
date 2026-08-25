@@ -167,6 +167,7 @@ task PLANNING_POOL_PUBLIC_CONTRACT PLANNING_POOL_HISTORY_READY -> PLANNING_POOL_
   title "Activate the public planning-pool contract"
   description "Atomically activate the accepted grammar and CLI-contract decision, commands, typed requests, immutable results, schemas, diagnostics, Help, Guide, library and Node exports, Application composition, installed-package behavior, migration and compatibility. Bind every mutation to preview, source digest, governance, plan assurance and safe persistence; keep editor and MCP mutation unavailable and preserve existing strict-DAG command meanings."
   duration 8p
+  status done
   priority 65
   requires:
     DEVELOPERS 1

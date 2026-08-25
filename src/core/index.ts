@@ -8,11 +8,19 @@ export { analyzePrecedence } from "../analysis/precedence.js";
 export { analyzeResources } from "../analysis/resource.js";
 export { getHelp } from "../help/registry.js";
 export {
-  contract9GuideResultToJson as guideResultToJson,
-  getContract9Guide as getGuide,
-  renderContract9GuideResult as renderGuideResult,
-  serializeContract9GuideResult as serializeGuideResult,
-} from "../help/contract9-guide.js";
+  contract10GuideResultToJson as guideResultToJson,
+  getContract10Guide as getGuide,
+  renderContract10GuideResult as renderGuideResult,
+  serializeContract10GuideResult as serializeGuideResult,
+} from "../help/contract10-guide.js";
+export {
+  auditPlanningWindowMutationCore,
+  inspectPlanningPool,
+  observePlanningPoolSnapshot,
+  preflightPlanningPoolReshape,
+  preparePlanningPoolReshapeCoreApply,
+} from "../planning-pool/public-core.js";
+export { PlanningReshapeTokenRegistry } from "../planning-pool/reshape-token.js";
 export { recommendationAnalysisToJson } from "../recommendation/json.js";
 export {
   DEFAULT_MAX_DIAGNOSTICS,
@@ -87,8 +95,31 @@ export type {
   HelpSection,
 } from "../help/registry.js";
 export type {
-  Contract9GuideResult as GuideResult,
-} from "../help/contract9-guide.js";
+  Contract10GuideResult as GuideResult,
+} from "../help/contract10-guide.js";
+export type {
+  PlanningPoolReadOperation,
+  PlanningPoolReadQuery,
+  PlanningPoolReadResult,
+} from "../planning-pool/public-core.js";
+export type {
+  PlanningObservationRequest,
+  PlanningPoolObservationResult,
+} from "../planning-pool/observation-types.js";
+export type {
+  PlanningPoolHistoricalObservationResult,
+} from "../planning-pool/history-types.js";
+export type {
+  PlanningReshapeRequest,
+  PlanningReshapePreflightResult,
+} from "../planning-pool/reshape-types.js";
+export type {
+  PlanningWindowMutationRequest,
+  PlanningWindowMutationAuditResult,
+} from "../planning-pool/window-types.js";
+export type {
+  PlanningPoolSourceModel as PlanningPoolModelV1,
+} from "../planning-pool/source-types.js";
 export type {
   RecommendationAnalysis,
   RecommendationComparison,

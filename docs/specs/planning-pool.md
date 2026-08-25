@@ -640,7 +640,7 @@ current source or overrides a current declaration.
 
 ### 9.1 Closed command delta
 
-The later public task adds exactly these eleven command paths:
+CLI Contract 10 adds exactly these eleven command paths:
 
 ```text
 work list
@@ -689,9 +689,8 @@ Perttool.UnitMigrationResult.v5
 The three new command-result identities add three active root schemas;
 `AdvanceResult.v4` and `UnitMigrationResult.v5` replace their previous active
 identities. The active root catalog therefore moves from 23 to 26. Exact
-root, Node, and Core export counts are frozen by the public task after the
-implementation owners exist. Until that task, these identities and command
-paths are reserved but inactive.
+root, Node, and Core export counts are frozen at 139, 139, and 51 by the
+public task. These identities and command paths are active together.
 
 `PlanningPoolResult.v1` owns read and observation operations. It contains
 operation/query, source binding, complete/incomplete/unavailable state, Work
@@ -807,9 +806,11 @@ projectable by inference.
 
 `dag render`, `dag history`, `project history`, LSP GraphView, historical
 GraphView, and MCP retain strict-DAG or accepted read-only meanings. Planning
-views use the new commands. Current package `0.10.5`, Grammar 8, CLI Contract
-9, 56 commands, 23 schemas, 129 root and Node exports, and 45 Core exports
-remain unchanged by this contract task.
+views use the new commands. The current unreleased source activates Grammar 9
+and CLI Contract 10 with 67 commands, 26 active root schemas, 139 root exports,
+139 reference-identical Node exports, and 51 portable Core exports. Package
+version `0.10.5` remains unchanged; release selection and publication are
+separate.
 
 ## 14. Evidence chain and implementation gate
 
@@ -824,6 +825,9 @@ remain unchanged by this contract task.
   exports, and 45 Core exports.
 - **E-POOL-004:** The dependency-ordered `PPC-001` through `PPC-040` fixture
   fixes this contract's exact target cases and hash vectors.
+- **E-POOL-PUBLIC-001:** The atomic public implementation exposes Grammar 9,
+  CLI Contract 10, 67 commands, 26 schemas, and exact 139 / 139 / 51 package
+  facade counts while retaining strict-DAG authority.
 
 - **C-POOL-001 `high`:** One Grammar 9 and CLI Contract 10 boundary is
   sufficient for the three accepted Issue #12 use cases without changing the
@@ -832,6 +836,10 @@ remain unchanged by this contract task.
   source Core only after this specification, fixture, focused test, and
   acceptance record agree while the active runtime remains unchanged.
   References: E-POOL-002, E-POOL-003, E-POOL-004.
+- **C-POOL-PUBLIC-001 `high`:** The public boundary is one atomic replacement
+  of the active grammar, CLI contract, result, schema, Help, Guide, migration,
+  and package surfaces; partial activation is invalid. References:
+  E-POOL-004, E-POOL-PUBLIC-001.
 
 - **A-POOL-001 `implementation permitted`, executed:** accept only the
   normative contract artifacts and non-activation checks in this task.
@@ -840,6 +848,9 @@ remain unchanged by this contract task.
   Grammar 9 source and semantic Core in `PLANNING_POOL_SOURCE_CORE` after the
   current task has a separately accepted assurance outcome. Reference:
   C-POOL-001.
+- **A-POOL-PUBLIC-001 `implementation permitted`, executed:** activate the
+  complete public boundary and retain final end-to-end acceptance as the next
+  separately governed task. Reference: C-POOL-PUBLIC-001.
 
 ## 15. Normative cases and verification
 

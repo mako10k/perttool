@@ -158,11 +158,11 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.deepEqual(mcp.dependencies, { "@modelcontextprotocol/server": "2.0.0" });
   assert.equal(mcp.peerDependencies.perttool, "0.10.5");
 
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
-  assert.equal(Object.keys(core).length, 45);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(core).length, 51);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 67);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeApi[name], name);

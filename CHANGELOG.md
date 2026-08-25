@@ -4,6 +4,20 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Activate Grammar 9 and CLI Contract 10 with Work, project-owned Event and
+  Activity AoA, bounded Window operations, current and first-parent historical
+  observations, and guided reshape preflight/apply.
+- Publish 67 commands, 26 active root schemas, 139 root and Node exports, and
+  51 portable Core exports, including the three Planning Pool results.
+
+### Changed
+
+- Replace `Perttool.AdvanceResult.v3` with v4 for planning-link cleanup and
+  optional empty-Work archival, and replace `Perttool.UnitMigrationResult.v4`
+  with v5 for complete Activity unit conversion.
+
 ## [0.10.5] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #23.

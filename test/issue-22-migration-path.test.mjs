@@ -51,17 +51,17 @@ test("Issue 22 exposes the repository-bound Grammar 5 to 7 CLI route", (t) => {
   const help = run(directory, ["help", "document", "migrate", "--format", "json"]);
   assert.equal(help.status, 0, help.stderr || help.stdout);
   const descriptor = JSON.parse(help.stdout).commands[0];
-  assert.deepEqual(descriptor.options.find(({ name }) => name === "target-grammar").enum_values, ["7", "8"]);
+  assert.deepEqual(descriptor.options.find(({ name }) => name === "target-grammar").enum_values, ["7", "8", "9"]);
   assert.deepEqual(descriptor.result_schemas, [
     "Perttool.MilestoneAcceptanceMigrationResult.v1",
-    "Perttool.UnitMigrationResult.v4",
+    "Perttool.UnitMigrationResult.v5",
     "Perttool.CliError.v1",
   ]);
 
   const preview = run(directory, ["document", "migrate", "plan.pert", "--target-grammar", "7", "--format", "json"]);
   assert.equal(preview.status, 0, preview.stderr || preview.stdout);
   const projected = JSON.parse(preview.stdout);
-  assert.equal(projected.cli_contract_version, 9);
+  assert.equal(projected.cli_contract_version, 10);
   assert.equal(projected.source_grammar_version, 5);
   assert.equal(projected.target_grammar_version, 7);
   assert.match(projected.candidate_text, /^  version 7$/mu);

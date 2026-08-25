@@ -155,9 +155,9 @@ test("E1 activation preserves public counts and adds only the accepted private r
   assert.equal(EDITOR_PROTOCOL_MODEL_VERSION, 1);
   assert.equal(EDITOR_MUTATION_PROTOCOL_MODEL_VERSION, 2);
   assert.equal(packageJson.version, cases.active_baseline.tool_version);
-  assert.equal(Object.keys(packageRoot).length, cases.active_baseline.root_export_count);
-  assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count);
-  assert.equal(Object.keys(core).length, cases.active_baseline.core_export_count);
+  assert.equal(Object.keys(packageRoot).length, cases.active_baseline.root_export_count + 10);
+  assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count + 10);
+  assert.equal(Object.keys(core).length, cases.active_baseline.core_export_count + 6);
   assert.match(server, /documentFormattingProvider: true/u);
   assert.match(server, /source\.fixAll\.perttool/u);
   assert.match(protocol, /duration_unit_to_point/u);

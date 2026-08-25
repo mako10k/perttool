@@ -35,29 +35,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getContract9Guide as getAssuranceGuide,
-  renderContract9GuideResult as renderAssuranceGuideResult,
-  serializeContract9GuideResult as serializeAssuranceGuideResult,
-} from "./help/contract9-guide.js";
+  getContract10Guide as getAssuranceGuide,
+  renderContract10GuideResult as renderAssuranceGuideResult,
+  serializeContract10GuideResult as serializeAssuranceGuideResult,
+} from "./help/contract10-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  CONTRACT9_COMMAND_REGISTRY as ASSURANCE_COMMAND_REGISTRY,
-  getContract9CommandDiscovery as getAssuranceCommandDiscovery,
-  renderContract9CommandHelpResult as renderAssuranceCommandHelpResult,
-  serializeContract9CommandHelpResult as serializeAssuranceCommandHelpResult,
-  type Contract9CommandDescriptor as AssuranceCommandDescriptor,
-} from "./command/contract9-discovery.js";
+  CONTRACT10_COMMAND_REGISTRY as ASSURANCE_COMMAND_REGISTRY,
+  getContract10CommandDiscovery as getAssuranceCommandDiscovery,
+  renderContract10CommandHelpResult as renderAssuranceCommandHelpResult,
+  serializeContract10CommandHelpResult as serializeAssuranceCommandHelpResult,
+  type Contract10CommandDescriptor as AssuranceCommandDescriptor,
+} from "./command/contract10-discovery.js";
 import {
   handlerCommandUsageError,
 } from "./command/usage.js";
 import {
-  renderContract9CommandUsageError as renderAssuranceCommandUsageError,
-  serializeContract9CommandUsageError as serializeAssuranceCommandUsageError,
-  validateContract9CommandInvocation as validateAssuranceCommandInvocation,
-} from "./command/contract9-usage.js";
+  renderContract10CommandUsageError as renderAssuranceCommandUsageError,
+  serializeContract10CommandUsageError as serializeAssuranceCommandUsageError,
+  validateContract10CommandInvocation as validateAssuranceCommandInvocation,
+} from "./command/contract10-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -96,7 +96,11 @@ import type {
   TargetGovernanceProjectClearableField,
 } from "./mutation/target-types.js";
 import type { AdvanceDetails } from "./mutation/advance.js";
-import { applyTextEdits, normalizeTextEdits } from "./mutation/text-edits.js";
+import {
+  applyTextEdits,
+  normalizeTextEdits,
+  type TextEdit,
+} from "./mutation/text-edits.js";
 import { createUnifiedDiff } from "./editing/unified-diff.js";
 import { sha256DigestUtf8 } from "./model/sha256.js";
 import type { LifecycleMutation } from "./actuals/lifecycle.js";
@@ -116,8 +120,9 @@ import { TOOL_VERSION } from "./version.js";
 import {
   analyzeDocument as analyzeContract8Document,
   checkDocument as checkContract8Document,
+  planGrammarMigration as planContract10GrammarMigration,
   selectNextTasks as selectContract8NextTasks,
-} from "./application/contract9-temporal.js";
+} from "./application/contract10-runtime.js";
 import type { MutationResultV5 as Contract8MutationResultV5 } from "./application/contract8-milestone-acceptance.js";
 import {
   contract9CheckResultToJson,
@@ -150,7 +155,35 @@ import {
   planMilestoneAcceptanceAdvance,
   preserveMilestoneAcceptanceRecords,
 } from "./milestone-acceptance/advance.js";
+import {
+  beginPlanningPoolReshapeCommit,
+  inspectPlanningPool,
+  observeCurrentPlanningPool,
+  planPlanningWindowMutation,
+  preflightPlanningPoolReshape,
+  preparePlanningPoolReshapeApply,
+  recoverPlanningPoolReshapeCommit,
+  settlePlanningPoolReshapeCommit,
+} from "./application/contract10-planning.js";
+import { observeHistoricalPlanningPool } from "./application/contract10-planning-history.js";
+import {
+  parsePlanningPoolSource,
+  PLANNING_POOL_SOURCE_CAPABILITY,
+} from "./planning-pool/source.js";
+import { planPlanningAdvanceCleanup } from "./planning-pool/advance.js";
+import {
+  planningPoolBaseText,
+  scanPlanningDeclarationBlocks,
+} from "./planning-pool/source-lexical.js";
+import {
+  assessPlanningHistoryBaseline,
+  planningHistoryNotApplicable,
+  type PlanningHistoryGuard,
+} from "./planning-pool/history-guard.js";
+import type { PlanningDestructiveRecord } from "./planning-pool/projection.js";
+import { withPlanningReshapeTokenRegistry } from "./node/planning-token-store.js";
 
+const historicalGitEvidenceHost = createHistoricalGraphGitEvidenceHost();
 const {
   analyzeDocument: _analyzeContract7Document,
   checkDocument: _checkContract7Document,
@@ -206,7 +239,7 @@ const {
   targetHistoricalGraphResultToJson,
 } = createCliApplicationFacade(
   createNodeHost(),
-  createHistoricalGraphGitEvidenceHost(),
+  historicalGitEvidenceHost,
 );
 const analyzeDocument = analyzeContract8Document;
 const checkDocument = checkContract8Document;
@@ -461,7 +494,7 @@ function writeJson(value: unknown): void {
   const contract8Value =
     typeof value === "object" && value !== null && !Array.isArray(value) &&
       "cli_contract_version" in value
-      ? { ...value, cli_contract_version: 9 }
+      ? { ...value, cli_contract_version: 10 }
       : value;
   process.stdout.write(`${JSON.stringify(contract8Value)}\n`);
 }
@@ -863,7 +896,12 @@ async function persistContract8CandidateResult(
   if (!result.ok || !result.governance?.writeAuthorized || result.updatedText === null) {
     throw new TypeError("authorized Contract 8 result does not contain a digest-bound candidate");
   }
-  const validator = /^  version 8$/mu.test(result.updatedText)
+  const validator = /^  version 9$/mu.test(result.updatedText)
+    ? (candidate: string) => {
+        const parsed = parsePlanningPoolSource(candidate, PLANNING_POOL_SOURCE_CAPABILITY);
+        return { ok: parsed.ok, diagnostics: parsed.diagnostics };
+      }
+    : /^  version 8$/mu.test(result.updatedText)
     ? (candidate: string) => {
         const checked = checkDocument(candidate);
         return { ok: checked.ok, diagnostics: checked.diagnostics };
@@ -915,24 +953,19 @@ async function commitCandidate(
       "successful editing result has no candidate text",
     );
   }
+  if (/^  version 9$/mu.test(candidateText)) {
+    const validator = (candidate: string) => {
+      const parsed = parsePlanningPoolSource(candidate, PLANNING_POOL_SOURCE_CAPABILITY);
+      return { ok: parsed.ok, diagnostics: parsed.diagnostics };
+    };
+    return commitValidatedCandidate(request, candidateText, initialDigest, validator);
+  }
   if (/^  version 8$/mu.test(candidateText)) {
     const validator = (candidate: string) => {
       const checked = checkDocument(candidate);
       return { ok: checked.ok, diagnostics: checked.diagnostics };
     };
-    return request.mode === "in_place"
-      ? replaceValidatedDocumentFile(
-          request.target,
-          candidateText,
-          {
-            initialDigest,
-            ...(request.expectedDigest === undefined
-              ? {}
-              : { expectedDigest: request.expectedDigest }),
-          },
-          validator,
-        )
-      : createValidatedDocumentFile(request.target, candidateText, validator);
+    return commitValidatedCandidate(request, candidateText, initialDigest, validator);
   }
   const acceptanceSource = parseMilestoneAcceptanceSource(
     candidateText,
@@ -946,19 +979,7 @@ async function commitCandidate(
       );
       return { ok: parsed.ok, diagnostics: [] };
     };
-    return request.mode === "in_place"
-      ? replaceValidatedDocumentFile(
-          request.target,
-          candidateText,
-          {
-            initialDigest,
-            ...(request.expectedDigest === undefined
-              ? {}
-              : { expectedDigest: request.expectedDigest }),
-          },
-          validator,
-        )
-      : createValidatedDocumentFile(request.target, candidateText, validator);
+    return commitValidatedCandidate(request, candidateText, initialDigest, validator);
   }
   return request.mode === "in_place"
     ? replaceTargetGrammar6DocumentFile(
@@ -977,6 +998,28 @@ async function commitCandidate(
         candidateText,
         TARGET_GRAMMAR_6_CAPABILITY,
       );
+}
+
+function commitValidatedCandidate(
+  request: Exclude<EditingWriteRequest, { readonly mode: "preview" }>,
+  candidateText: string,
+  initialDigest: string,
+  validator: Parameters<typeof createValidatedDocumentFile>[2],
+): Promise<DocumentWriteResult> {
+  if (request.mode === "out") {
+    return createValidatedDocumentFile(request.target, candidateText, validator);
+  }
+  return replaceValidatedDocumentFile(
+    request.target,
+    candidateText,
+    {
+      initialDigest,
+      ...(request.expectedDigest === undefined
+        ? {}
+        : { expectedDigest: request.expectedDigest }),
+    },
+    validator,
+  );
 }
 
 function writeFailureExit(error: unknown, operation: string, json: boolean): number {
@@ -1001,6 +1044,72 @@ function renderGovernanceWriteSummary(
   return `WRITE ${operation} mode=${result.mode} target=${result.target ?? "-"} digest=${digest ?? "-"} written=${result.written}\n`;
 }
 
+function grammarMigrationResultJson(
+  result: Readonly<{
+    ok: boolean;
+    documentId: string | null;
+    changed: boolean;
+    originalDigest: string;
+    updatedDigest: string | null;
+    updatedText: string | null;
+    diff: string | null;
+    edits: readonly TextEdit[];
+    diagnostics: readonly { readonly code: string; readonly severity: "error" | "warning" | "info"; readonly message: string }[];
+    diagnosticsTruncated: boolean;
+    sourceGrammarVersion: number | null;
+    targetGrammarVersion: number | null;
+    migratedTaskIds: readonly string[];
+    requiredAction: string | null;
+  }>,
+  source: string,
+  sourceDigest: string,
+  write: TargetGovernanceWriteProjection,
+): Readonly<Record<string, unknown>> {
+  return Object.freeze({
+    schema_version: "Perttool.UnitMigrationResult.v5",
+    cli_contract_version: 10,
+    tool_version: TOOL_VERSION,
+    operation: "document.migrate",
+    ok: result.ok,
+    document_id: result.documentId,
+    source,
+    source_digest: sourceDigest,
+    diagnostics: planningDiagnosticsJson(result.diagnostics),
+    diagnostics_truncated: result.diagnosticsTruncated,
+    source_grammar_version: result.sourceGrammarVersion,
+    target_grammar_version: result.targetGrammarVersion,
+    changed: result.changed,
+    migrated_task_ids: [...result.migratedTaskIds],
+    required_action: result.requiredAction,
+    original_digest: result.originalDigest,
+    updated_digest: result.updatedDigest,
+    updated_text: result.updatedText,
+    diff: result.diff,
+    edits: snakeJson(result.edits),
+    write,
+  });
+}
+
+function emitGrammarMigrationResult(
+  format: OutputFormat,
+  result: Parameters<typeof grammarMigrationResultJson>[0],
+  sourceOperand: string,
+  sourceDigest: string,
+  write: Parameters<typeof grammarMigrationResultJson>[3],
+  diffOnly: boolean,
+): void {
+  if (format === "json") {
+    writeJson(grammarMigrationResultJson(
+      result,
+      sourceOperand === "-" ? "<stdin>" : sourceOperand,
+      sourceDigest,
+      write,
+    ));
+  } else if (result.updatedText !== null) {
+    process.stdout.write(diffOnly ? result.diff ?? "" : result.updatedText);
+  }
+}
+
 async function runContract9DocumentMigration(args: readonly string[]): Promise<number> {
   const parsed = parseCommandOptions("document.migrate", args);
   if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "8") throw new UsageError("document migrate requires <file> --target-grammar 8");
@@ -1008,15 +1117,69 @@ async function runContract9DocumentMigration(args: readonly string[]): Promise<n
   const format = outputFormat(parsed.values.get("format"));
   const input = await readDocument(sourceOperand);
   const result = planContract9GrammarMigration(input.text);
+  let written = false;
   if (result.ok && result.updatedText !== null && parsed.flags.has("write")) {
     if (sourceOperand === "-") throw new UsageError("document migrate --write requires a file");
     await replaceValidatedDocumentFile(sourceOperand, result.updatedText,
       { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) },
       (candidate) => ({ ok: checkDocument(candidate).ok, diagnostics: [] }));
+    written = result.changed;
   }
-  if (format === "json") writeJson({ schema_version: "Perttool.UnitMigrationResult.v4", cli_contract_version: 9,
-    tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
-  else if (result.updatedText !== null) process.stdout.write(parsed.flags.has("diff") ? result.diff ?? "" : result.updatedText);
+  emitGrammarMigrationResult(
+    format,
+    result,
+    sourceOperand,
+    input.digest,
+    Object.freeze({
+      mode: parsed.flags.has("write") ? "in_place" : "preview",
+      target: parsed.flags.has("write") ? sourceOperand : null,
+      written,
+    }),
+    parsed.flags.has("diff"),
+  );
+  return result.ok ? 0 : 1;
+}
+
+async function runContract10DocumentMigration(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("document.migrate", args);
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "9") {
+    throw new UsageError("document migrate requires <file> --target-grammar 9");
+  }
+  const sourceOperand = parsed.positionals[0]!;
+  const format = outputFormat(parsed.values.get("format"));
+  const input = await readDocument(sourceOperand);
+  const result = planContract10GrammarMigration(input.text);
+  let written = false;
+  if (result.ok && result.updatedText !== null && parsed.flags.has("write")) {
+    if (sourceOperand === "-") throw new UsageError("document migrate --write requires a file");
+    await replaceValidatedDocumentFile(
+      sourceOperand,
+      result.updatedText,
+      {
+        initialDigest: input.digest,
+        ...(parsed.values.get("expect-digest") === undefined
+          ? {}
+          : { expectedDigest: parsed.values.get("expect-digest")! }),
+      },
+      (candidate) => {
+        const checked = parsePlanningPoolSource(candidate, PLANNING_POOL_SOURCE_CAPABILITY);
+        return { ok: checked.ok, diagnostics: checked.diagnostics };
+      },
+    );
+    written = result.changed;
+  }
+  emitGrammarMigrationResult(
+    format,
+    result,
+    sourceOperand,
+    input.digest,
+    Object.freeze({
+      mode: parsed.flags.has("write") ? "in_place" : "preview",
+      target: parsed.flags.has("write") ? sourceOperand : null,
+      written,
+    }),
+    parsed.flags.has("diff"),
+  );
   return result.ok ? 0 : 1;
 }
 
@@ -1803,7 +1966,7 @@ async function runMutation(
       );
   const contract9Invocation = validateAssuranceCommandInvocation([resource, action, ...args]);
   const temporalRequest = contract9Invocation.ok
-    ? planContract9TemporalMutation(input.text, contract9Invocation, { maxDiagnostics })
+    ? planContract9TemporalMutation(input.text, contract9Invocation as never, { maxDiagnostics })
     : null;
   const legacyPreview = legacyPlanner(input.text);
   const result = temporalRequest === null
@@ -1811,13 +1974,13 @@ async function runMutation(
     : !legacyPreview.ok
     ? composeContract9TemporalMutation(
         input.text,
-        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as Extract<typeof contract9Invocation, { readonly ok: true }>, { maxDiagnostics })!,
+        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as never, { maxDiagnostics })!,
         { originalLabel: source, updatedLabel: "candidate" },
       )
     : composeContract9MixedMutation(
         input.text,
         (base) => legacyPlanner(base) as unknown as Contract8MutationResultV5,
-        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as Extract<typeof contract9Invocation, { readonly ok: true }>, { maxDiagnostics })!,
+        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as never, { maxDiagnostics })!,
         { originalLabel: source, updatedLabel: "candidate" },
       );
   const warningFailure =
@@ -2035,7 +2198,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 9,
+    cli_contract_version: 10,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -2450,6 +2613,7 @@ function renderAdvanceSummary(details: AdvanceDetails): string {
   const list = (ids: readonly string[]): string => ids.join(",") || "-";
   return [
     `ADVANCE removed_tasks=${list(details.removedTaskIds)} removed_gates=${list(details.removedGateIds)} removed_milestones=${list(details.removedMilestoneIds)} removed_work_events=${list("removedWorkEventIds" in details ? details.removedWorkEventIds as readonly string[] : [])}`,
+    `ADVANCE removed_planning_links=${list("removedPlanningLinks" in details ? details.removedPlanningLinks as readonly string[] : [])} archived_works=${list("archivedWorkIds" in details ? details.archivedWorkIds as readonly string[] : [])}`,
     `ADVANCE frontier_before=${list(details.frontierBefore)} frontier_after=${list(details.frontierAfter)} ready_before=${list(details.readyBefore)} ready_after=${list(details.readyAfter)}`,
     "",
   ].join("\n");
@@ -2525,7 +2689,17 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const acceptancePlan = planMilestoneAcceptanceAdvance(input.text, {
+  const grammar9 = /^  version 9$/mu.test(input.text);
+  const strictInputText = grammar9
+    ? planningPoolBaseText(input.text, scanPlanningDeclarationBlocks(input.text))
+    : input.text;
+  const acceptanceInputText = /^  version 8$/mu.test(strictInputText)
+    ? temporalScheduleBaseText(
+        strictInputText,
+        scanTemporalDeclarationBlocks(strictInputText),
+      )
+    : strictInputText;
+  const acceptancePlan = planMilestoneAcceptanceAdvance(acceptanceInputText, {
     maxDiagnostics,
     originalLabel: source,
     updatedLabel: "candidate",
@@ -2537,8 +2711,8 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   });
   if (!acceptancePlan.ok) {
     if (format === "json") writeJson({
-      schema_version: "Perttool.AdvanceResult.v3",
-      cli_contract_version: 8,
+      schema_version: "Perttool.AdvanceResult.v4",
+      cli_contract_version: 10,
       tool_version: TOOL_VERSION,
       operation: "dag.advance",
       ok: false,
@@ -2561,6 +2735,8 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         removedWorkEventIds: [],
         removedAssuranceRecordIds: [],
         updatedAssuranceReceiptIds: [],
+        removedPlanningLinks: [],
+        archivedWorkIds: [],
       }),
       history_guard: null,
       assurance_guard: null,
@@ -2572,7 +2748,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
     }
     return 1;
   }
-  const contract7BaseText = milestoneAcceptanceBaseText(input.text);
+  const contract7BaseText = milestoneAcceptanceBaseText(acceptanceInputText);
   const contract7Planned = planAdvance(
     contract7BaseText,
     {
@@ -2582,13 +2758,13 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       governance: governanceRequest(parsed, writeRequest),
     },
   );
-  const combinedEdits = contract7Planned.updatedText === null
+  const strictCombinedEdits = contract7Planned.updatedText === null
     ? contract7Planned.edits
     : normalizeTextEdits(
-        input.text,
+        acceptanceInputText,
         coalesceMilestoneAcceptanceDeletionOverlaps([
           ...preserveMilestoneAcceptanceRecords(
-            input.text,
+            acceptanceInputText,
             contract7Planned.edits,
             acceptancePlan.provisional!.advance.keptMilestoneIds,
           ),
@@ -2596,12 +2772,34 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         ]),
         "Contract 8 acceptance-aware advance",
       );
+  const planningCleanup = grammar9 && contract7Planned.updatedText !== null
+    ? planPlanningAdvanceCleanup(
+        input.text,
+        contract7Planned.advance?.removedMilestoneIds ?? [],
+        contract7Planned.advance?.removedTaskIds ?? [],
+        parsed.flags.has("archive-empty-work"),
+      )
+    : Object.freeze({
+        edits: Object.freeze([]),
+        removedPlanningLinks: Object.freeze([]),
+        archivedWorkIds: Object.freeze([]),
+        destructiveRecords: Object.freeze([]),
+      });
+  const combinedEdits = contract7Planned.updatedText === null
+    ? strictCombinedEdits
+    : normalizeTextEdits(
+        input.text,
+        [...strictCombinedEdits, ...planningCleanup.edits],
+        "Contract 10 planning-aware advance",
+      );
   const combinedText = contract7Planned.updatedText === null
     ? null
     : applyTextEdits(input.text, combinedEdits);
   const combinedCheck = combinedText === null
     ? null
-    : checkContract8Document(combinedText, { maxDiagnostics });
+    : grammar9
+      ? checkDocument(combinedText, { maxDiagnostics })
+      : checkContract8Document(combinedText, { maxDiagnostics });
   if (combinedCheck !== null && !combinedCheck.ok) {
     throw new Error("acceptance-aware assurance advance lost Contract 8 validation");
   }
@@ -2614,7 +2812,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       );
   const planned = Object.freeze({
     ...contract7Planned,
-    schemaVersion: "Perttool.AdvanceResult.v3" as const,
+    schemaVersion: "Perttool.AdvanceResult.v4" as const,
     originalDigest: input.digest,
     updatedText: combinedText,
     updatedDigest: combinedText === null ? null : sha256DigestUtf8(combinedText),
@@ -2630,6 +2828,13 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       (combinedCheck?.diagnosticsTruncated ?? false) ||
       (combinedDiagnostics?.truncated ?? false),
     acceptanceGuard: acceptancePlan.acceptanceGuard,
+    advance: contract7Planned.advance === null
+      ? null
+      : Object.freeze({
+          ...contract7Planned.advance,
+          removedPlanningLinks: planningCleanup.removedPlanningLinks,
+          archivedWorkIds: planningCleanup.archivedWorkIds,
+        }),
   });
   const initialWarningFailure =
     parsed.flags.has("warnings-as-errors") &&
@@ -2654,8 +2859,25 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       warningDenied: initialWarningFailure,
       maxDiagnostics,
       documentValidator: (candidateText, candidateMaxDiagnostics) => {
-        const acceptanceSource = parseMilestoneAcceptanceSource(candidateText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
-        const checked = checkContract8Document(candidateText, { maxDiagnostics: candidateMaxDiagnostics });
+        const planningBase = grammar9
+          ? planningPoolBaseText(
+              candidateText,
+              scanPlanningDeclarationBlocks(candidateText),
+            )
+          : candidateText;
+        const acceptanceBase = /^  version 8$/mu.test(planningBase)
+          ? temporalScheduleBaseText(
+              planningBase,
+              scanTemporalDeclarationBlocks(planningBase),
+            )
+          : planningBase;
+        const acceptanceSource = parseMilestoneAcceptanceSource(
+          acceptanceBase,
+          MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+        );
+        const checked = grammar9
+          ? checkDocument(candidateText, { maxDiagnostics: candidateMaxDiagnostics })
+          : checkContract8Document(candidateText, { maxDiagnostics: candidateMaxDiagnostics });
         return {
           ok: checked.ok && acceptanceSource.ok,
           document: checked.document,
@@ -2666,11 +2888,71 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       },
     },
   );
+  const planningAdvanceGuard = planningCleanup.destructiveRecords.length === 0
+    ? planningHistoryNotApplicable([], "no_canonical_records")
+    : writeRequest.mode === "preview"
+      ? planningHistoryNotApplicable(planningCleanup.destructiveRecords, "preview")
+      : writeRequest.mode === "out"
+        ? planningHistoryNotApplicable(planningCleanup.destructiveRecords, "separate_output")
+        : preparedBase.baseline === null
+          ? planningHistoryNotApplicable(planningCleanup.destructiveRecords, "authority_denied")
+          : assessPlanningHistoryBaseline(
+              input.text,
+              planningCleanup.destructiveRecords,
+              preparedBase.baseline,
+              forceRequested,
+            );
+  const planningAdvanceBlocked = planningAdvanceGuard.status === "blocked";
+  const baseHistoryGuard = preparedBase.result.historyGuard;
+  const combinedHistoryGuard = baseHistoryGuard === null
+    ? null
+    : planningCleanup.destructiveRecords.length === 0
+      ? baseHistoryGuard
+      : Object.freeze({
+          ...baseHistoryGuard,
+          status: planningAdvanceGuard.status === "blocked"
+            ? "blocked" as const
+            : planningAdvanceGuard.status === "forced"
+              ? "forced" as const
+              : baseHistoryGuard.status,
+          cause: planningAdvanceGuard.status === "passed" ||
+              planningAdvanceGuard.status === "not_applicable"
+            ? baseHistoryGuard.cause
+            : planningAdvanceGuard.cause as typeof baseHistoryGuard.cause,
+          destructiveEntityIds: Object.freeze([...new Set([
+            ...baseHistoryGuard.destructiveEntityIds,
+            ...planningAdvanceGuard.destructiveEntityIds,
+          ])].sort()),
+          overlappingEntityIds: Object.freeze([...new Set([
+            ...baseHistoryGuard.overlappingEntityIds,
+            ...planningAdvanceGuard.overlappingEntityIds,
+          ])].sort()),
+        });
+  const preparedDiagnostics = planningAdvanceBlocked
+    ? limitDiagnostics(sortDiagnostics([
+        ...preparedBase.result.diagnostics,
+        Object.freeze({
+          code: "PTADV-101",
+          severity: "error" as const,
+          message: "advance history proof is blocked for canonical planning facts",
+          helpTopic: "editing",
+          data: Object.freeze({
+            cause: planningAdvanceGuard.cause,
+            entity_ids: planningAdvanceGuard.overlappingEntityIds,
+          }),
+        }),
+      ]), maxDiagnostics)
+    : null;
   const prepared = Object.freeze({
     ...preparedBase,
     result: Object.freeze({
       ...preparedBase.result,
-      schemaVersion: "Perttool.AdvanceResult.v3" as const,
+      schemaVersion: "Perttool.AdvanceResult.v4" as const,
+      ok: preparedBase.result.ok && !planningAdvanceBlocked,
+      diagnostics: preparedDiagnostics?.diagnostics ?? preparedBase.result.diagnostics,
+      diagnosticsTruncated: preparedBase.result.diagnosticsTruncated ||
+        (preparedDiagnostics?.truncated ?? false),
+      historyGuard: combinedHistoryGuard,
       governance: planned.governance,
       assuranceGuard: planned.assuranceGuard,
       acceptanceGuard: acceptancePlan.acceptanceGuard,
@@ -2710,7 +2992,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         if (!recheck.ok) {
           result = Object.freeze({
             ...withAdvanceHistoryRace(result as never, recheck, maxDiagnostics),
-            schemaVersion: "Perttool.AdvanceResult.v3" as const,
+            schemaVersion: "Perttool.AdvanceResult.v4" as const,
             governance: result.governance,
             assuranceGuard: result.assuranceGuard,
             acceptanceGuard: result.acceptanceGuard,
@@ -2735,9 +3017,10 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         source,
         writeResult,
       ),
-      schema_version: "Perttool.AdvanceResult.v3",
-      cli_contract_version: 8,
+      schema_version: "Perttool.AdvanceResult.v4",
+      cli_contract_version: 10,
       acceptance_guard: snakeJson(result.acceptanceGuard),
+      advance: snakeJson(result.advance),
     });
   } else {
     if (result.advance !== null) {
@@ -4145,8 +4428,9 @@ async function runDocumentMigration(args: readonly string[]): Promise<number> {
     ? args[args.indexOf("--target-grammar") + 1]
     : args.find((value) => value.startsWith("--target-grammar="))?.slice("--target-grammar=".length);
   if (target === "8") return runContract9DocumentMigration(args);
+  if (target === "9") return runContract10DocumentMigration(args);
   const parsed = parseCommandOptions("document.migrate", args);
-  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 7 or 8");
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 7, 8, or 9");
   const sourceOperand = parsed.positionals[0]!;
   if (sourceOperand === "-") throw new UsageError("document migrate requires a repository file");
   const format = outputFormat(parsed.values.get("format"));
@@ -4614,7 +4898,7 @@ async function runCalendarMutation(action: string, args: readonly string[]): Pro
   const sourceOperand = parsed.positionals[0]!;
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
   const input = await readDocument(sourceOperand);
-  const temporal = (candidate: string) => planContract9TemporalMutation(candidate, validation)!;
+  const temporal = (candidate: string) => planContract9TemporalMutation(candidate, validation as never)!;
   const result = composeContract9TemporalMutation(input.text, temporal,
     { originalLabel: source, updatedLabel: "candidate" });
   const writeRequest = editingWriteRequest(parsed, sourceOperand);
@@ -4629,6 +4913,510 @@ async function runCalendarMutation(action: string, args: readonly string[]): Pro
     process.stdout.write(parsed.flags.has("diff") ? result.diff ?? "" : result.updatedText ?? "");
   }
   return result.ok ? 0 : 1;
+}
+
+function unknownRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+async function residualDescriptionOption(value: string): Promise<Readonly<{ work_id: string; text: string }>> {
+  const separator = value.indexOf("=");
+  if (separator <= 0) {
+    throw new UsageError("--add-residual-description requires WORK_ID=<JSON string> or WORK_ID=@<UTF-8 path>");
+  }
+  const workId = value.slice(0, separator);
+  const source = value.slice(separator + 1);
+  let text: unknown;
+  if (source.startsWith("@")) {
+    const bytes = await readBytes(source.slice(1));
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } else {
+    try {
+      text = JSON.parse(source) as unknown;
+    } catch {
+      throw new UsageError("--add-residual-description inline value must be one JSON string");
+    }
+  }
+  if (typeof text !== "string" || text.length === 0) {
+    throw new UsageError("--add-residual-description value must be a non-empty string");
+  }
+  return Object.freeze({ work_id: workId, text });
+}
+
+async function planningRequestInput(
+  parsed: ParsedOptions,
+  sourceOperand: string,
+): Promise<unknown> {
+  const requestSource = requiredOption(parsed, "request");
+  if (sourceOperand === "-" && requestSource === "-") {
+    throw new UsageError("document and planning request cannot both use stdin");
+  }
+  const input = await readMutationRequest(requestSource);
+  const additions = await Promise.all(
+    (parsed.repeatedValues.get("add-residual-description") ?? [])
+      .map(residualDescriptionOption),
+  );
+  if (additions.length === 0) return input;
+  const request = unknownRecord(input);
+  if (request === null) {
+    throw new UsageError("planning request must be one JSON object");
+  }
+  const existing = request["add_residual_description"];
+  if (!Array.isArray(existing)) {
+    throw new UsageError("planning reshape request add_residual_description must be an array");
+  }
+  return Object.freeze({
+    ...request,
+    add_residual_description: Object.freeze([...existing, ...additions]),
+  });
+}
+
+function planningDiagnosticsJson(
+  diagnostics: readonly { readonly code: string; readonly severity: "error" | "warning" | "info"; readonly message: string }[],
+) {
+  return diagnostics.map((diagnostic) => jsonDiagnostic(diagnostic));
+}
+
+function planningWireJson(value: unknown): unknown {
+  const projected = snakeJson(value);
+  function convert(candidate: unknown): unknown {
+    if (Array.isArray(candidate)) return candidate.map(convert);
+    const record = unknownRecord(candidate);
+    if (record === null) return candidate;
+    const start = unknownRecord(record["start"]);
+    const end = unknownRecord(record["end"]);
+    const sourcePosition = (position: Readonly<Record<string, unknown>> | null) =>
+      position !== null &&
+      typeof position["offset"] === "number" &&
+      typeof position["line"] === "number" &&
+      typeof position["column"] === "number";
+    if (sourcePosition(start) && sourcePosition(end)) {
+      const oneBased = (position: Readonly<Record<string, unknown>>) => ({
+        offset: position["offset"],
+        line: (position["line"] as number) + 1,
+        column: (position["column"] as number) + 1,
+      });
+      return { start: oneBased(start!), end: oneBased(end!) };
+    }
+    return Object.fromEntries(
+      Object.entries(record).map(([key, child]) => [key, convert(child)]),
+    );
+  }
+  return convert(projected);
+}
+
+function planningResultJson(
+  operation: string,
+  source: string,
+  result: Readonly<Record<string, unknown>>,
+  write: TargetGovernanceWriteProjection | null = null,
+) {
+  const projected = planningWireJson(result) as Readonly<Record<string, unknown>>;
+  const diagnostics = result["diagnostics"];
+  return {
+    ...projected,
+    ...(Array.isArray(diagnostics)
+      ? { diagnostics: planningDiagnosticsJson(diagnostics as Parameters<typeof planningDiagnosticsJson>[0]) }
+      : {}),
+    cli_contract_version: 10,
+    tool_version: TOOL_VERSION,
+    operation,
+    source,
+    ...(write === null ? {} : { write: snakeJson(write) }),
+  };
+}
+
+function emitPlanningResult(
+  format: OutputFormat,
+  operation: string,
+  sourceOperand: string,
+  result: Readonly<{ ok: boolean }>,
+): void {
+  if (format === "json") {
+    writeJson(planningResultJson(
+      operation,
+      sourceOperand === "-" ? "<stdin>" : sourceOperand,
+      result as unknown as Readonly<Record<string, unknown>>,
+    ));
+  } else {
+    process.stdout.write(`${JSON.stringify(snakeJson(result), null, 2)}\n`);
+  }
+}
+
+async function runPlanningRead(
+  resource: "work" | "window",
+  action: "list" | "show",
+  args: readonly string[],
+): Promise<number> {
+  const operation = `${resource}.${action}` as
+    | "work.list"
+    | "work.show"
+    | "window.list"
+    | "window.show";
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const input = await readDocument(sourceOperand);
+  const result = inspectPlanningPool(input.text, {
+    operation,
+    ...(action === "show" ? { id: parsed.positionals[1]! } : {}),
+  });
+  if (format === "json") {
+    writeJson(planningResultJson(operation, sourceOperand === "-" ? "<stdin>" : sourceOperand, result as unknown as Readonly<Record<string, unknown>>));
+  } else if (result.ok) {
+    if (resource === "work") {
+      const order = new Map(result.workOrder.map((id, index) => [id, index]));
+      for (const work of [...result.works].sort((left, right) => (order.get(left.qualifiedId) ?? 0) - (order.get(right.qualifiedId) ?? 0))) {
+        process.stdout.write(`${work.qualifiedId}\t${work.title}\n`);
+      }
+    } else {
+      for (const window of result.windows) {
+        process.stdout.write(`${window.qualifiedId}\t${window.title}\t${window.objective}\n`);
+      }
+    }
+  }
+  if (format !== "json") {
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${diagnostic.code} ${diagnostic.severity}: ${diagnostic.message}\n`);
+    }
+  }
+  return result.ok ? 0 : 1;
+}
+
+function historicalSelectionAbsent(text: string, requestInput: unknown): boolean {
+  const parsed = parsePlanningPoolSource(text, PLANNING_POOL_SOURCE_CAPABILITY);
+  const request = unknownRecord(requestInput);
+  const selection = unknownRecord(request?.["selection"]);
+  if (!parsed.ok || parsed.model === null || selection === null) return false;
+  if (selection["kind"] === "work" && Array.isArray(selection["work_ids"])) {
+    const available = new Set(parsed.model.works.map(({ qualifiedId }) => qualifiedId));
+    return (selection["work_ids"] as unknown[]).some((id) => typeof id === "string" && !available.has(id));
+  }
+  if (selection["kind"] === "persisted" && typeof selection["window_id"] === "string") {
+    return !parsed.model.windows.some(({ qualifiedId }) => qualifiedId === selection["window_id"]);
+  }
+  return false;
+}
+
+async function runPlanningObservation(
+  resource: "work" | "window",
+  args: readonly string[],
+): Promise<number> {
+  const operation = `${resource}.observe`;
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const input = await readDocument(sourceOperand);
+  const request = await planningRequestInput(parsed, sourceOperand);
+  let result: ReturnType<typeof observeCurrentPlanningPool> | ReturnType<typeof observeHistoricalPlanningPool> =
+    observeCurrentPlanningPool(input.text, request);
+  if (!result.ok && sourceOperand !== "-" && historicalSelectionAbsent(input.text, request)) {
+    const evidence = await historicalGitEvidenceHost.probe({
+      targetPath: sourceOperand,
+      expectedSourceDigest: input.digest,
+    });
+    result = observeHistoricalPlanningPool(input.text, request, evidence);
+  }
+  emitPlanningResult(format, operation, sourceOperand, result);
+  return result.ok ? 0 : 1;
+}
+
+async function runPlanningReshapePreflight(args: readonly string[]): Promise<number> {
+  const operation = "work.reshape.preflight";
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const input = await readDocument(sourceOperand);
+  const request = await planningRequestInput(parsed, sourceOperand);
+  const result = await withPlanningReshapeTokenRegistry((registry) =>
+    preflightPlanningPoolReshape(input.text, request, registry)
+  );
+  emitPlanningResult(format, operation, sourceOperand, result);
+  return result.ok ? 0 : 1;
+}
+
+function planningValidator(candidate: string) {
+  const checked = parsePlanningPoolSource(candidate, PLANNING_POOL_SOURCE_CAPABILITY);
+  return { ok: checked.ok && checked.grammarVersion === 9, diagnostics: [] };
+}
+
+async function persistPlanningCandidate(
+  request: EditingWriteRequest,
+  candidateText: string,
+  originalDigest: string,
+): Promise<TargetGovernanceWriteProjection> {
+  if (request.mode === "preview") {
+    return Object.freeze({ mode: "preview", target: null, written: false });
+  }
+  if (request.mode === "in_place") {
+    const output = await replaceValidatedDocumentFile(
+      request.target,
+      candidateText,
+      {
+        initialDigest: originalDigest,
+        ...(request.expectedDigest === undefined ? {} : { expectedDigest: request.expectedDigest }),
+      },
+      planningValidator,
+    );
+    return Object.freeze({ mode: "in_place", target: request.target, written: output.written });
+  }
+  const output = await createValidatedDocumentFile(
+    request.target,
+    candidateText,
+    planningValidator,
+  );
+  return Object.freeze({ mode: "out", target: request.target, written: output.written });
+}
+
+interface PreparedPlanningHistory {
+  readonly guard: PlanningHistoryGuard;
+  readonly baseline: Awaited<ReturnType<typeof captureAdvanceHistoryBaseline>> | null;
+}
+
+async function preparePlanningHistory(
+  sourceOperand: string,
+  sourceDigest: string,
+  sourceText: string,
+  writeRequest: EditingWriteRequest,
+  records: readonly PlanningDestructiveRecord[],
+  changed: boolean,
+  writeAuthorized: boolean,
+): Promise<PreparedPlanningHistory> {
+  const canonical = records.filter(({ ownerClass }) => ownerClass === "canonical");
+  const notApplicable = (
+    cause: Parameters<typeof planningHistoryNotApplicable>[1],
+  ): PreparedPlanningHistory => Object.freeze({
+    guard: planningHistoryNotApplicable(canonical, cause),
+    baseline: null,
+  });
+  if (writeRequest.mode === "preview") return notApplicable("preview");
+  if (writeRequest.mode === "out") return notApplicable("separate_output");
+  if (!changed) return notApplicable("no_change");
+  if (canonical.length === 0) return notApplicable("no_canonical_records");
+  if (!writeAuthorized) return notApplicable("authority_denied");
+  const baseline = await captureAdvanceHistoryBaseline({
+    targetPath: sourceOperand,
+    expectedSourceDigest: sourceDigest,
+  });
+  const prepared: PreparedPlanningHistory = Object.freeze({
+    guard: assessPlanningHistoryBaseline(sourceText, canonical, baseline),
+    baseline,
+  });
+  if (prepared.guard.status !== "passed" || writeRequest.mode !== "in_place") {
+    return prepared;
+  }
+  const recheck = await recheckAdvanceHistoryBaseline(baseline, sourceOperand);
+  if (recheck.ok) return prepared;
+  return Object.freeze({
+    ...prepared,
+    guard: Object.freeze({
+      ...prepared.guard,
+      status: "blocked" as const,
+      cause: recheck.cause ?? "baseline_race",
+    }),
+  });
+}
+
+function planningHistoryDiagnostic(guard: PlanningHistoryGuard): Diagnostic {
+  return Object.freeze({
+    code: "PTPOOL-113",
+    severity: "error" as const,
+    message: "Canonical planning history proof is blocked",
+    helpTopic: "editing",
+    data: Object.freeze({
+      cause: guard.cause,
+      entity_ids: guard.overlappingEntityIds.length > 0
+        ? guard.overlappingEntityIds
+        : guard.destructiveEntityIds,
+    }),
+  });
+}
+
+async function runPlanningReshapeApply(args: readonly string[]): Promise<number> {
+  const operation = "work.reshape.apply";
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const input = await readDocument(sourceOperand);
+  const requestInput = await planningRequestInput(parsed, sourceOperand);
+  const preflightHash = requiredOption(parsed, "preflight-hash");
+  const preflightToken = requiredOption(parsed, "preflight-token");
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const output = await withPlanningReshapeTokenRegistry(async (registry) => {
+    const recovered = recoverPlanningPoolReshapeCommit(preflightToken, input.digest, registry);
+    if (recovered.ok && recovered.completed) {
+      const snapshot = registry.snapshots().find(({ tokenDigest }) =>
+        tokenDigest === sha256DigestUtf8(preflightToken));
+      if (snapshot === undefined) {
+        throw new Error("completed planning reshape recovery lost its token binding");
+      }
+      return Object.freeze({
+        result: Object.freeze({
+          schemaVersion: "Perttool.PlanningMutationResult.v1" as const,
+          reshapeCapability: "perttool.planning-reshape-core@1" as const,
+          ok: true,
+          documentId: parsePlanningPoolSource(
+            input.text,
+            PLANNING_POOL_SOURCE_CAPABILITY,
+          ).documentId,
+          sourceDigest: snapshot.binding.sourceDigest,
+          normalizedRequest: null,
+          preflightHash: snapshot.binding.preflightHash,
+          candidateDigest: snapshot.binding.candidateDigest,
+          candidateText: input.text,
+          changed: false,
+          edits: Object.freeze([]),
+          diagnostics: Object.freeze([]),
+          diagnosticsTruncated: false,
+          transfers: Object.freeze([]),
+          destructiveRecords: Object.freeze([]),
+          governance: null,
+          assuranceImpact: null,
+          historyGuard: planningHistoryNotApplicable([], "no_change"),
+          tokenRecovery: recovered,
+        }),
+        write: Object.freeze({
+          mode: writeRequest.mode,
+          target: writeRequest.target,
+          written: false,
+        }),
+      });
+    }
+    const prepared = preparePlanningPoolReshapeApply(
+      input.text,
+      requestInput,
+      preflightHash,
+      preflightToken,
+      registry,
+      { governance: governanceRequest(parsed, writeRequest) },
+    );
+    const warningFailure = parsed.flags.has("warnings-as-errors") &&
+      prepared.diagnostics.some(({ severity }) => severity === "warning");
+    const history = await preparePlanningHistory(
+      sourceOperand,
+      input.digest,
+      input.text,
+      writeRequest,
+      prepared.destructiveRecords,
+      prepared.changed,
+      prepared.ok && !warningFailure && (prepared.governance?.writeAuthorized ?? false),
+    );
+    const historyBlocked = history.guard.status === "blocked";
+    const effectiveDiagnostics = historyBlocked
+      ? Object.freeze([...prepared.diagnostics, planningHistoryDiagnostic(history.guard)])
+      : prepared.diagnostics;
+    let write: TargetGovernanceWriteProjection = Object.freeze({
+      mode: writeRequest.mode,
+      target: writeRequest.target,
+      written: false,
+    });
+    if (prepared.ok && !warningFailure && !historyBlocked && writeRequest.mode !== "preview") {
+      if (prepared.candidateText === null || prepared.candidateDigest === null) {
+        throw new Error("successful planning reshape has no candidate");
+      }
+      assertExpectedDigest(writeRequest, input.digest);
+      const begun = beginPlanningPoolReshapeCommit(prepared, preflightToken, registry);
+      if (!begun.ok) throw new Error(`planning reshape token cannot enter commit: ${begun.state}`);
+      if (prepared.changed) {
+        write = await persistPlanningCandidate(
+          writeRequest,
+          prepared.candidateText,
+          input.digest,
+        );
+      }
+      const settled = settlePlanningPoolReshapeCommit(
+        preflightToken,
+        prepared.candidateDigest,
+        registry,
+      );
+      if (!settled.ok || !settled.completed) {
+        throw new Error(`planning reshape token cannot complete: ${settled.state}`);
+      }
+    }
+    return Object.freeze({
+      result: Object.freeze({
+        ...prepared,
+        ok: prepared.ok && !warningFailure && !historyBlocked,
+        diagnostics: effectiveDiagnostics,
+        historyGuard: history.guard,
+        tokenRecovery: recovered,
+      }),
+      write,
+    });
+  });
+  if (format === "json") {
+    writeJson(planningResultJson(operation, sourceOperand === "-" ? "<stdin>" : sourceOperand, output.result as unknown as Readonly<Record<string, unknown>>, output.write));
+  } else if (output.result.ok && output.result.candidateText !== null) {
+    process.stdout.write(parsed.flags.has("diff")
+      ? createUnifiedDiff(input.text, output.result.candidateText, { originalLabel: sourceOperand, updatedLabel: "candidate" })
+      : output.result.candidateText);
+  }
+  return output.result.ok ? 0 : 1;
+}
+
+async function runPlanningWindowMutation(
+  action: "add" | "set" | "close",
+  args: readonly string[],
+): Promise<number> {
+  const operation = `window.${action}`;
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const input = await readDocument(sourceOperand);
+  const requestInput = await planningRequestInput(parsed, sourceOperand);
+  const request = unknownRecord(requestInput);
+  if (request === null || request["window_id"] !== parsed.positionals[1] &&
+      request["window_id"] !== `${/^project ([A-Za-z][A-Za-z0-9_-]*):$/mu.exec(input.text)?.[1] ?? ""}::${parsed.positionals[1]}`) {
+    throw new UsageError("Window operand and request window_id must identify the same Window");
+  }
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const result = planPlanningWindowMutation(input.text, requestInput, {
+    governance: governanceRequest(parsed, writeRequest),
+  });
+  const history = await preparePlanningHistory(
+    sourceOperand,
+    input.digest,
+    input.text,
+    writeRequest,
+    result.destructiveRecords,
+    result.changed,
+    result.ok && (result.governance?.writeAuthorized ?? false),
+  );
+  const historyBlocked = history.guard.status === "blocked";
+  let write: TargetGovernanceWriteProjection = Object.freeze({
+    mode: writeRequest.mode,
+    target: writeRequest.target,
+    written: false,
+  });
+  if (result.ok && !historyBlocked && result.candidateText !== null && writeRequest.mode !== "preview") {
+    assertExpectedDigest(writeRequest, input.digest);
+    if (result.changed) {
+      write = await persistPlanningCandidate(writeRequest, result.candidateText, input.digest);
+    }
+  }
+  const projected = Object.freeze({
+    ...result,
+    ok: result.ok && !historyBlocked,
+    originalDigest: input.digest,
+    updatedDigest: result.candidateDigest,
+    updatedText: result.candidateText,
+    diff: result.candidateText === null ? null : createUnifiedDiff(input.text, result.candidateText, {
+      originalLabel: sourceOperand,
+      updatedLabel: "candidate",
+    }),
+    diagnostics: historyBlocked
+      ? Object.freeze([...result.diagnostics, planningHistoryDiagnostic(history.guard)])
+      : result.diagnostics,
+    historyGuard: history.guard,
+  });
+  if (format === "json") {
+    writeJson(planningResultJson(operation, sourceOperand === "-" ? "<stdin>" : sourceOperand, projected as unknown as Readonly<Record<string, unknown>>, write));
+  } else if (result.ok && result.candidateText !== null) {
+    process.stdout.write(parsed.flags.has("diff") ? projected.diff ?? "" : result.candidateText);
+  }
+  return projected.ok ? 0 : 1;
 }
 
 async function dispatchCommand(
@@ -4676,6 +5464,24 @@ async function dispatchCommand(
     case "calendar.set":
     case "calendar.remove":
       return runCalendarMutation(descriptor.path[1]!, args);
+    case "work.list":
+    case "work.show":
+      return runPlanningRead("work", descriptor.path[1] as "list" | "show", args);
+    case "work.observe":
+      return runPlanningObservation("work", args);
+    case "work.reshape.preflight":
+      return runPlanningReshapePreflight(args);
+    case "work.reshape.apply":
+      return runPlanningReshapeApply(args);
+    case "window.list":
+    case "window.show":
+      return runPlanningRead("window", descriptor.path[1] as "list" | "show", args);
+    case "window.observe":
+      return runPlanningObservation("window", args);
+    case "window.add":
+    case "window.set":
+    case "window.close":
+      return runPlanningWindowMutation(descriptor.path[1] as "add" | "set" | "close", args);
     case "task.start":
       return runLifecycleMutation("start", args);
     case "task.suspend":
@@ -4732,7 +5538,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 8 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 10 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(

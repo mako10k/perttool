@@ -39,7 +39,7 @@ function cliJson(args, expectedStatus = 0) {
   );
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 9);
+  assert.equal(json.cli_contract_version, 10);
   return json;
 }
 
@@ -192,7 +192,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     "--actor",
     "user",
   ], 1);
-  assert.equal(advanced.schema_version, "Perttool.AdvanceResult.v3");
+  assert.equal(advanced.schema_version, "Perttool.AdvanceResult.v4");
   assert.equal(advanced.diagnostics[0].code, "PTMAC-101");
   assert.equal(advanced.advance, null);
   assert.equal(
@@ -246,10 +246,10 @@ test("Contract 9 package root retains actuals services without target names", ()
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 67);
   assert.equal(
     publicApi.COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 9,
+      ({ contractVersion }) => contractVersion === 10,
     ),
     true,
   );

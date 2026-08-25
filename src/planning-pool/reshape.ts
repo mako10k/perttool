@@ -1760,11 +1760,18 @@ function ownerFromSource(text: string): string | null {
   return project?.lines.map(fieldLine).find((field) => field?.name === "dag_owner")?.rawValue ?? "user";
 }
 
-function authorityImpact(text: string, changed: boolean): PlanningReshapeAuthorityImpact {
+function authorityImpact(
+  text: string,
+  request: PlanningReshapeRequest,
+  changed: boolean,
+): PlanningReshapeAuthorityImpact {
+  const affectsDag = request.strict_fragment !== null;
   return Object.freeze({
-    affectedScopes: Object.freeze(["dag"] as const),
-    requiredOwner: ownerFromSource(text),
-    userResponseRequired: changed,
+    affectedScopes: affectsDag
+      ? Object.freeze(["dag"] as const)
+      : Object.freeze([] as const),
+    requiredOwner: affectsDag ? ownerFromSource(text) : null,
+    userResponseRequired: affectsDag && changed,
   });
 }
 
@@ -1933,7 +1940,7 @@ export function preflightPlanningReshape(
     schemaVersion: "Perttool.PlanningReshapePreflightResult.v1",
     preflightToken: null,
     tokenExpiresAt: null,
-    authorityImpact: authorityImpact(text, audit.changed),
+    authorityImpact: authorityImpact(text, audit.normalizedRequest!, audit.changed),
     diagnostics: Object.freeze([...audit.diagnostics, reshapeDiagnostic("Planning reshape token registry is full", "PTPOOL-115")]),
   });
   return Object.freeze({
@@ -1941,7 +1948,7 @@ export function preflightPlanningReshape(
     schemaVersion: "Perttool.PlanningReshapePreflightResult.v1",
     preflightToken: issue.token,
     tokenExpiresAt: issue.expiresAt,
-    authorityImpact: authorityImpact(text, audit.changed),
+    authorityImpact: authorityImpact(text, audit.normalizedRequest!, audit.changed),
   });
 }
 
@@ -1971,7 +1978,9 @@ export function preparePlanningReshapeApply(
     ok: valid,
     schemaVersion: "Perttool.PlanningMutationResult.v1",
     preflightTokenValidated: valid,
-    authorityImpact: audit.documentId === null ? null : authorityImpact(text, audit.changed),
+    authorityImpact: audit.documentId === null || audit.normalizedRequest === null
+      ? null
+      : authorityImpact(text, audit.normalizedRequest, audit.changed),
     diagnostics,
   });
 }

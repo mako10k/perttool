@@ -3,7 +3,7 @@
 - Document status: Normative 1.0
 - Schema artifact contract: 1
 - JSON Schema dialect: Draft 2020-12
-- Active CLI contract version: 8
+- Active CLI contract version: 10
 - Created: 2026-07-30
 - Requirements: [../requirements.md](../requirements.md)
 - Related issue: [Issue #5](https://github.com/mako10k/perttool/issues/5)
@@ -11,7 +11,7 @@
 ## 1. Scope
 
 This specification defines the machine-readable JSON Schema artifacts for
-every result identity advertised by the active Contract 8 command registry
+every result identity advertised by the active Contract 10 command registry
 and the supported public library-only override result. It also defines
 catalog discovery, package layout, reusable definitions, and compatibility
 rules.
@@ -45,7 +45,7 @@ also include `schemas/Perttool.Common.v1.schema.json`, which supplies relative
 Draft 2020-12 references shared by root artifacts.
 
 Every root artifact fixes its exact `schema_version` with `const`, fixes
-`cli_contract_version=8` for CLI envelopes, and rejects unknown root fields.
+`cli_contract_version=10` for CLI envelopes, and rejects unknown root fields.
 Nullable and unavailable states remain explicit in the owning result schema.
 
 Every nested object that represents a versioned result record MUST enumerate
@@ -66,9 +66,9 @@ and every cataloged command result is advertised by at least one descriptor.
 | Schema identity | Contract role |
 | --- | --- |
 | `Perttool.AgentGuidanceResult.v1` | `agent help` result |
-| `Perttool.AnalysisResult.v6` | `dag analyze` result with plan assurance and milestone acceptance |
-| `Perttool.AdvanceResult.v3` | history-, assurance-, and acceptance-aware `dag advance` result |
-| `Perttool.CheckResult.v5` | `document check` result with plan assurance and milestone acceptance |
+| `Perttool.AnalysisResult.v7` | `dag analyze` result with calendar scheduling and plan assurance |
+| `Perttool.AdvanceResult.v4` | history-, assurance-, acceptance-, and planning-aware `dag advance` result |
+| `Perttool.CheckResult.v6` | `document check` result with temporal and planning validation |
 | `Perttool.CliError.v1` | shared structured usage error |
 | `Perttool.CommandHelpResult.v1` | command discovery result |
 | `Perttool.ExportResult.v1` | Mermaid export result |
@@ -79,17 +79,20 @@ and every cataloged command result is advertised by at least one descriptor.
 | `Perttool.InitResult.v1` | project initialization result |
 | `Perttool.MilestoneAcceptanceMigrationResult.v1` | committed Grammar 7 migration result |
 | `Perttool.MilestoneAcceptanceResult.v1` | milestone criterion and receipt inspection result |
-| `Perttool.MutationResult.v5` | direct, lifecycle, batch, assurance, and acceptance mutation result |
-| `Perttool.NextResult.v7` | next-task result with assurance-aware start authority and milestone acceptance |
-| `Perttool.PlanAssuranceResult.v1` | assurance show and pinpoint hash result |
+| `Perttool.MutationResult.v6` | direct, lifecycle, batch, assurance, acceptance, and temporal mutation result |
+| `Perttool.NextResult.v8` | next-task result with temporal and assurance-aware start authority |
+| `Perttool.PlanAssuranceResult.v2` | model-2 assurance show and pinpoint hash result |
+| `Perttool.PlanningMutationResult.v1` | planning reshape and Window mutation result |
+| `Perttool.PlanningPoolResult.v1` | Work and Window read, current observation, and historical observation result |
+| `Perttool.PlanningReshapePreflightResult.v1` | normalized, audited, hash- and token-bound reshape preflight result |
 | `Perttool.ProjectHistoryResult.v1` | read-only project history result |
-| `Perttool.ProjectResult.v4` | project metadata with assurance model identity |
+| `Perttool.ProjectResult.v5` | project metadata with calendar-aware temporal source identity |
 | `Perttool.SchemaResult.v1` | schema catalog and lookup result |
-| `Perttool.UnitMigrationResult.v3` | exact unit-migration result |
+| `Perttool.UnitMigrationResult.v5` | exact complete DAG and Activity unit-migration result |
 | `Perttool.VelocityObservationResult.v1` | observed-velocity result |
 | `Perttool.OverrideDecision.v1` | supported public library-only result |
 
-The first twenty-two identities are command results. OverrideDecision is not a
+The twenty-five command identities are command results. OverrideDecision is not a
 CLI command result, but its public root projection is a supported contract and
 therefore has a root artifact.
 

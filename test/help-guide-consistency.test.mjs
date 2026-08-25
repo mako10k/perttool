@@ -90,7 +90,7 @@ test("current guidance and historical compatibility labels preserve their bounda
   assert.match(assuranceInterface, /Contract 8 source successor/);
   assert.match(
     grammar,
-    /Grammar versions: 1 through 8 active; Grammar 9 accepted but inactive/,
+    /Grammar versions: 1 through 9 active/,
   );
   assert.match(grammar, /^### 20\.6 Grammar version 7 milestone-acceptance delta/m);
   assert.match(milestoneAcceptance, /Status: Normative 1\.0/);

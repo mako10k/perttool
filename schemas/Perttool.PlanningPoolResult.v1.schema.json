@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanningPoolResult.v1.schema.json",
+  "title": "Perttool.PlanningPoolResult.v1",
+  "type": "object",
+  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "document_id", "source", "source_digest", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": "Perttool.PlanningPoolResult.v1" },
+    "cli_contract_version": { "const": 10 },
+    "tool_version": { "type": "string" },
+    "operation": { "enum": ["work.list", "work.show", "work.observe", "window.list", "window.show", "window.observe"] },
+    "ok": { "type": "boolean" },
+    "document_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+    "source": { "type": "string" },
+    "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+    "diagnostics": { "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics" },
+    "query": { "$ref": "#/$defs/query" },
+    "work_order": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+    "works": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/workSource" }, { "$ref": "#/$defs/workObservation" }] } },
+    "windows": { "type": "array", "items": { "$ref": "#/$defs/windowSource" } },
+    "observation_capability": { "const": "perttool.planning-observation-core@1" },
+    "history_capability": { "const": "perttool.planning-history-core@1" },
+    "normalized_request": { "oneOf": [{ "$ref": "#/$defs/request" }, { "type": "null" }] },
+    "evidence": { "oneOf": [{ "$ref": "#/$defs/currentEvidence" }, { "$ref": "#/$defs/historicalEvidence" }] },
+    "selected_work_order": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+    "window": { "oneOf": [{ "$ref": "#/$defs/windowObservation" }, { "type": "null" }] },
+    "membership_occurrences": { "type": "array", "items": { "$ref": "#/$defs/membership" } },
+    "aggregates": { "$ref": "#/$defs/aggregates" },
+    "global_execution": { "$ref": "#/$defs/globalExecution" },
+    "current": { "$ref": "#/$defs/currentAuthority" },
+    "axis_states": { "$ref": "#/$defs/axisStates" },
+    "snapshots": { "type": "array", "items": { "$ref": "#/$defs/snapshot" } },
+    "lineage": { "oneOf": [{ "$ref": "#/$defs/lineage" }, { "type": "null" }] }
+  },
+  "oneOf": [
+    {
+      "required": ["query", "work_order", "works", "windows"],
+      "properties": {
+        "operation": { "enum": ["work.list", "work.show", "window.list", "window.show"] },
+        "query": {}, "work_order": {}, "works": {}, "windows": {}
+      }
+    },
+    {
+      "required": ["observation_capability", "normalized_request", "evidence", "selected_work_order", "works", "window", "membership_occurrences", "aggregates", "global_execution"],
+      "properties": {
+        "operation": { "enum": ["work.observe", "window.observe"] },
+        "observation_capability": {}, "normalized_request": {},
+        "evidence": { "$ref": "#/$defs/currentEvidence" },
+        "selected_work_order": {}, "works": {}, "window": {},
+        "membership_occurrences": {}, "aggregates": {}, "global_execution": {}
+      }
+    },
+    {
+      "required": ["history_capability", "normalized_request", "current", "evidence", "axis_states", "snapshots", "lineage"],
+      "properties": {
+        "operation": { "enum": ["work.observe", "window.observe"] },
+        "history_capability": {}, "normalized_request": {}, "current": {},
+        "evidence": { "$ref": "#/$defs/historicalEvidence" },
+        "axis_states": {}, "snapshots": {}, "lineage": {}
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "query": {
+      "type": "object", "required": ["id"],
+      "properties": { "id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" } },
+      "additionalProperties": false
+    },
+    "reference": {
+      "type": "object", "required": ["id", "qualified_id", "span"],
+      "properties": { "id": { "type": "string" }, "qualified_id": { "type": "string" }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" } },
+      "additionalProperties": false
+    },
+    "description": {
+      "type": "object", "required": ["value", "style", "span", "content_span"],
+      "properties": {
+        "value": { "type": "string" }, "style": { "enum": ["quoted", "block"] },
+        "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" },
+        "content_span": { "oneOf": [{ "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
+    "workSource": {
+      "type": "object",
+      "required": ["kind", "id", "qualified_id", "title", "description", "events", "activities", "milestone_links", "task_links", "depends_on", "span", "id_span", "title_span"],
+      "properties": {
+        "kind": { "const": "work" }, "id": { "type": "string" }, "qualified_id": { "type": "string" }, "title": { "type": "string" },
+        "description": { "oneOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }] },
+        "events": { "$ref": "#/$defs/references" }, "activities": { "$ref": "#/$defs/references" },
+        "milestone_links": { "$ref": "#/$defs/references" }, "task_links": { "$ref": "#/$defs/references" }, "depends_on": { "$ref": "#/$defs/references" },
+        "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "id_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "title_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      },
+      "additionalProperties": false
+    },
+    "references": { "type": "array", "items": { "$ref": "#/$defs/reference" } },
+    "windowSource": {
+      "type": "object",
+      "required": ["kind", "id", "qualified_id", "title", "objective", "start", "end", "works", "span", "id_span", "title_span", "objective_span"],
+      "properties": {
+        "kind": { "const": "window" }, "id": { "type": "string" }, "qualified_id": { "type": "string" }, "title": { "type": "string" }, "objective": { "type": "string" },
+        "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue" }, "end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue" },
+        "works": { "$ref": "#/$defs/references" }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" },
+        "id_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "title_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "objective_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "oneOf": [
+        { "$ref": "#/$defs/poolSelection" }, { "$ref": "#/$defs/workSelection" },
+        { "$ref": "#/$defs/persistedSelection" }, { "$ref": "#/$defs/adHocSelection" }
+      ]
+    },
+    "poolSelection": { "type": "object", "required": ["kind"], "properties": { "kind": { "const": "pool" } }, "additionalProperties": false },
+    "workSelection": {
+      "type": "object", "required": ["kind", "work_ids"],
+      "properties": { "kind": { "const": "work" }, "work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" } }, "additionalProperties": false
+    },
+    "persistedSelection": {
+      "type": "object", "required": ["kind", "window_id"],
+      "properties": { "kind": { "const": "persisted" }, "window_id": { "type": "string" } }, "additionalProperties": false
+    },
+    "adHocSelection": {
+      "type": "object", "required": ["kind", "title", "objective", "start", "end", "work_ids"],
+      "properties": {
+        "kind": { "const": "ad_hoc" }, "title": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "objective": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    },
+    "closeDisposition": {
+      "type": "object", "required": ["work_id", "disposition"],
+      "properties": { "work_id": { "type": "string" }, "disposition": { "enum": ["carried_over", "retained_backlog", "archive_requested"] } }, "additionalProperties": false
+    },
+    "request": {
+      "type": "object", "required": ["request_schema_version", "source_digest", "selection", "observation_at", "close_dispositions"],
+      "properties": {
+        "request_schema_version": { "const": "Perttool.PlanningObservationRequest.v1" }, "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "selection": { "$ref": "#/$defs/selection" }, "observation_at": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "close_dispositions": { "type": "array", "items": { "$ref": "#/$defs/closeDisposition" } }
+      }, "additionalProperties": false
+    },
+    "currentEvidence": {
+      "type": "object", "required": ["mode", "state", "source_digest", "history_requested"],
+      "properties": { "mode": { "const": "current" }, "state": { "$ref": "#/$defs/evidenceState" }, "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" }, "history_requested": { "const": false } },
+      "additionalProperties": false
+    },
+    "evidenceState": { "enum": ["complete", "incomplete", "unavailable"] },
+    "criterion": {
+      "type": "object",
+      "required": ["criterion_id", "required", "evidence_kind", "commitment", "state", "effective_receipt_id", "evidence_reference", "evidence_revision", "verifier", "asserted_at", "waiver_reason", "revoked_receipt_ids"],
+      "properties": {
+        "criterion_id": { "type": "string" }, "required": { "type": "boolean" }, "evidence_kind": { "type": "string" }, "commitment": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "state": { "enum": ["pending", "satisfied", "failed", "unavailable", "waived"] }, "effective_receipt_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "evidence_reference": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "evidence_revision": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "verifier": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "asserted_at": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "waiver_reason": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "revoked_receipt_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    },
+    "taskObservation": {
+      "type": "object", "required": ["task_id", "status", "actuals_coverage", "work_event_ids", "complete", "attribution"],
+      "properties": {
+        "task_id": { "type": "string" }, "status": { "enum": ["planned", "active", "blocked", "suspended", "done"] },
+        "actuals_coverage": { "enum": ["complete", "open", "finish_only", "unrecorded", "unavailable"] }, "work_event_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "complete": { "type": "boolean" }, "attribution": { "enum": ["exclusive", "non_exclusive"] }
+      }, "additionalProperties": false
+    },
+    "milestoneObservation": {
+      "type": "object", "required": ["milestone_id", "closure", "acceptance", "criteria", "evidence_complete", "attribution"],
+      "properties": {
+        "milestone_id": { "type": "string" }, "closure": { "enum": ["unreached", "reached"] }, "acceptance": { "enum": ["not_declared", "pending", "accepted", "failed", "unavailable"] },
+        "criteria": { "type": "array", "items": { "$ref": "#/$defs/criterion" } }, "evidence_complete": { "type": "boolean" }, "attribution": { "enum": ["exclusive", "non_exclusive"] }
+      }, "additionalProperties": false
+    },
+    "refinement": {
+      "type": "object", "required": ["residual_description_present", "event_ids", "activity_ids", "milestone_link_ids", "task_link_ids", "uncovered_dependency_ids"],
+      "properties": {
+        "residual_description_present": { "type": "boolean" }, "event_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "activity_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "milestone_link_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "task_link_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "uncovered_dependency_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    },
+    "execution": {
+      "type": "object", "required": ["state", "activity_obligation_ids", "unprojected_activity_ids", "tasks"],
+      "properties": {
+        "state": { "enum": ["complete", "partial", "uncovered", "unknown", "unavailable"] }, "activity_obligation_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "unprojected_activity_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "tasks": { "type": "array", "items": { "$ref": "#/$defs/taskObservation" } }
+      }, "additionalProperties": false
+    },
+    "outcome": {
+      "type": "object", "required": ["state", "milestones"],
+      "properties": { "state": { "$ref": "#/$defs/evidenceState" }, "milestones": { "type": "array", "items": { "$ref": "#/$defs/milestoneObservation" } } }, "additionalProperties": false
+    },
+    "organization": {
+      "type": "object", "required": ["global_rank", "dependency_ids", "dependent_ids", "dependency_cycle_ids", "window_ids", "trace_useful", "archiveable"],
+      "properties": {
+        "global_rank": { "type": "integer", "minimum": 0 }, "dependency_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "dependent_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "dependency_cycle_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "window_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "trace_useful": { "type": "boolean" }, "archiveable": { "type": "boolean" }
+      }, "additionalProperties": false
+    },
+    "workObservation": {
+      "type": "object", "required": ["work_id", "title", "refinement", "execution", "outcome", "organization", "close_disposition"],
+      "properties": {
+        "work_id": { "type": "string" }, "title": { "type": "string" }, "refinement": { "$ref": "#/$defs/refinement" },
+        "execution": { "$ref": "#/$defs/execution" }, "outcome": { "$ref": "#/$defs/outcome" }, "organization": { "$ref": "#/$defs/organization" },
+        "close_disposition": { "enum": ["carried_over", "retained_backlog", "archive_requested", "not_applicable"] }
+      }, "additionalProperties": false
+    },
+    "windowSnapshot": {
+      "type": "object", "required": ["kind", "qualified_id", "title", "objective", "start", "end", "work_ids"],
+      "properties": {
+        "kind": { "enum": ["persisted", "ad_hoc"] }, "qualified_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "title": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "objective": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    },
+    "temporalOverlap": {
+      "type": "object", "required": ["window_id", "state", "intersection_start", "intersection_end", "cause"],
+      "properties": {
+        "window_id": { "type": "string" }, "state": { "enum": ["overlap", "disjoint", "unavailable"] },
+        "intersection_start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "intersection_end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "cause": { "enum": ["incomparable_temporal_kinds", null] }
+      }, "additionalProperties": false
+    },
+    "temporalPosition": {
+      "type": "object", "required": ["state", "observation_value", "source", "cause"],
+      "properties": {
+        "state": { "enum": ["before", "inside", "after", "unbounded", "unavailable"] }, "observation_value": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "source": { "enum": ["request", "project_as_of", null] }, "cause": { "enum": ["missing_observation_value", "incomparable_temporal_kinds", null] }
+      }, "additionalProperties": false
+    },
+    "windowObservation": {
+      "type": "object", "required": ["window", "objective", "temporal_position", "temporal_overlaps", "selected_execution"],
+      "properties": {
+        "window": { "$ref": "#/$defs/windowSnapshot" }, "objective": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "temporal_position": { "$ref": "#/$defs/temporalPosition" }, "temporal_overlaps": { "type": "array", "items": { "$ref": "#/$defs/temporalOverlap" } },
+        "selected_execution": { "enum": ["complete", "partial", "uncovered", "unknown", "unavailable"] }
+      }, "additionalProperties": false
+    },
+    "membership": {
+      "type": "object", "required": ["window_id", "work_id", "selected"],
+      "properties": { "window_id": { "type": "string" }, "work_id": { "type": "string" }, "selected": { "type": "boolean" } }, "additionalProperties": false
+    },
+    "aggregates": {
+      "type": "object", "required": ["unique_work_ids", "unique_task_ids", "unique_milestone_ids", "unique_work_event_ids", "completed_task_ids", "accepted_milestone_ids", "membership_occurrence_count"],
+      "properties": {
+        "unique_work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "unique_task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "unique_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "unique_work_event_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "completed_task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "accepted_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "membership_occurrence_count": { "type": "integer", "minimum": 0 }
+      }, "additionalProperties": false
+    },
+    "globalExecution": {
+      "type": "object", "required": ["evidence_state", "recommended_task_ids", "startable_task_ids"],
+      "properties": { "evidence_state": { "$ref": "#/$defs/evidenceState" }, "recommended_task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "startable_task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" } },
+      "additionalProperties": false
+    },
+    "coreObservation": {
+      "type": "object",
+      "required": ["schema_version", "observation_capability", "operation", "ok", "document_id", "source_digest", "normalized_request", "evidence", "selected_work_order", "works", "window", "membership_occurrences", "aggregates", "global_execution", "diagnostics"],
+      "properties": {
+        "schema_version": { "const": "Perttool.PlanningPoolResult.v1" }, "observation_capability": { "const": "perttool.planning-observation-core@1" }, "operation": { "const": "observe" },
+        "ok": { "type": "boolean" }, "document_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "normalized_request": { "oneOf": [{ "$ref": "#/$defs/request" }, { "type": "null" }] }, "evidence": { "$ref": "#/$defs/currentEvidence" },
+        "selected_work_order": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "works": { "type": "array", "items": { "$ref": "#/$defs/workObservation" } },
+        "window": { "oneOf": [{ "$ref": "#/$defs/windowObservation" }, { "type": "null" }] }, "membership_occurrences": { "type": "array", "items": { "$ref": "#/$defs/membership" } },
+        "aggregates": { "$ref": "#/$defs/aggregates" }, "global_execution": { "$ref": "#/$defs/globalExecution" }, "diagnostics": { "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics" }
+      }, "additionalProperties": false
+    },
+    "limits": {
+      "type": "object", "required": ["inspected_commits", "raw_bytes_per_snapshot", "aggregate_raw_snapshot_bytes"],
+      "properties": { "inspected_commits": { "type": "integer", "minimum": 0 }, "raw_bytes_per_snapshot": { "type": "integer", "minimum": 0 }, "aggregate_raw_snapshot_bytes": { "type": "integer", "minimum": 0 } },
+      "additionalProperties": false
+    },
+    "historicalCause": {
+      "type": "object", "required": ["cause", "subject", "commit_id", "limit", "actual"],
+      "properties": {
+        "cause": { "enum": ["no_repository", "no_head", "unknown_revision", "ambiguous_revision", "non_commit_revision", "endpoint_path_missing", "lower_path_missing", "lower_not_first_parent_ancestor", "shallow_origin", "unsupported_object_format", "object_read_failed", "repository_race", "hard_limit", "ambiguous_path", "target_changed"] },
+        "subject": { "enum": ["repository", "endpoint", "lower_boundary", "target_path", "inspection"] }, "commit_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "limit": { "enum": ["inspectedCommits", "rawBytesPerSnapshot", "aggregateRawSnapshotBytes", null] }, "actual": { "type": ["integer", "null"] }
+      }, "additionalProperties": false
+    },
+    "historicalEvidence": {
+      "type": "object",
+      "required": ["mode", "state", "ancestry_profile", "repository_id", "repository_relative_path", "repository_read_snapshot_id", "requested_endpoint", "resolved_endpoint", "requested_lower_boundary", "resolved_lower_boundary", "current_source_digest", "limits", "causes", "continuity_qualified", "forced_loss_distinguishable"],
+      "properties": {
+        "mode": { "const": "historical" }, "state": { "$ref": "#/$defs/evidenceState" }, "ancestry_profile": { "const": "first_parent" },
+        "repository_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "repository_relative_path": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "repository_read_snapshot_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "requested_endpoint": { "type": "string" },
+        "resolved_endpoint": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "requested_lower_boundary": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "resolved_lower_boundary": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "current_source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "limits": { "$ref": "#/$defs/limits" }, "causes": { "type": "array", "items": { "$ref": "#/$defs/historicalCause" } },
+        "continuity_qualified": { "type": "boolean" }, "forced_loss_distinguishable": { "const": false }
+      }, "additionalProperties": false
+    },
+    "axisStates": {
+      "type": "object", "required": ["refinement", "execution", "outcome", "organization", "temporal", "close_disposition"],
+      "properties": {
+        "refinement": { "$ref": "#/$defs/axisState" }, "execution": { "$ref": "#/$defs/axisState" }, "outcome": { "$ref": "#/$defs/axisState" },
+        "organization": { "$ref": "#/$defs/axisState" }, "temporal": { "$ref": "#/$defs/axisState" }, "close_disposition": { "$ref": "#/$defs/axisState" }
+      }, "additionalProperties": false
+    },
+    "axisState": { "enum": ["complete", "unknown", "unavailable"] },
+    "currentAuthority": {
+      "type": "object", "required": ["state", "source_digest", "observation", "overrides_historical_facts"],
+      "properties": {
+        "state": { "enum": ["observed", "selection_absent", "unavailable"] }, "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "observation": { "oneOf": [{ "$ref": "#/$defs/coreObservation" }, { "type": "null" }] }, "overrides_historical_facts": { "const": true }
+      }, "additionalProperties": false
+    },
+    "snapshotBasis": {
+      "type": "object", "required": ["repository_id", "repository_relative_path", "repository_read_snapshot_id", "commit_id", "parent_commit_ids", "blob_id", "source_digest", "recorded_at", "is_merge_commit", "is_endpoint", "is_lower_boundary"],
+      "properties": {
+        "repository_id": { "type": "string" }, "repository_relative_path": { "type": "string" }, "repository_read_snapshot_id": { "type": "string" }, "commit_id": { "type": "string" },
+        "parent_commit_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "blob_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest" }, "recorded_at": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "is_merge_commit": { "type": "boolean" }, "is_endpoint": { "type": "boolean" }, "is_lower_boundary": { "type": "boolean" }
+      }, "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object", "required": ["basis", "validity", "document_id", "selection_state", "observation", "global_execution_evidence", "diagnostic_codes"],
+      "properties": {
+        "basis": { "$ref": "#/$defs/snapshotBasis" }, "validity": { "enum": ["planning_valid", "planning_absent", "source_missing", "source_invalid", "source_binding_invalid"] },
+        "document_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "selection_state": { "enum": ["observed", "absent", "unavailable"] },
+        "observation": { "oneOf": [{ "$ref": "#/$defs/coreObservation" }, { "type": "null" }] }, "global_execution_evidence": { "$ref": "#/$defs/evidenceState" },
+        "diagnostic_codes": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    },
+    "epoch": {
+      "type": "object", "required": ["ordinal", "first_observed_commit_id", "last_observed_commit_id", "value_digest"],
+      "properties": { "ordinal": { "type": "integer", "minimum": 0 }, "first_observed_commit_id": { "type": "string" }, "last_observed_commit_id": { "type": "string" }, "value_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" } },
+      "additionalProperties": false
+    },
+    "workOccurrence": { "$ref": "#/$defs/workOccurrenceObject" },
+    "workOccurrenceObject": {
+      "type": "object", "required": ["occurrence_id", "work_id", "first_observed_commit_id", "last_observed_commit_id", "retired_at_commit_id", "ended_by", "observed_commit_ids", "semantic_epochs"],
+      "properties": {
+        "occurrence_id": { "type": "string" }, "work_id": { "type": "string" }, "first_observed_commit_id": { "type": "string" }, "last_observed_commit_id": { "type": "string" },
+        "retired_at_commit_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "ended_by": { "$ref": "#/$defs/occurrenceEnd" },
+        "observed_commit_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "semantic_epochs": { "type": "array", "items": { "$ref": "#/$defs/epoch" } }
+      }, "additionalProperties": false
+    },
+    "windowOccurrence": {
+      "type": "object", "required": ["occurrence_id", "window_id", "first_observed_commit_id", "last_observed_commit_id", "retired_at_commit_id", "ended_by", "observed_commit_ids", "semantic_epochs"],
+      "properties": {
+        "occurrence_id": { "type": "string" }, "window_id": { "type": "string" }, "first_observed_commit_id": { "type": "string" }, "last_observed_commit_id": { "type": "string" },
+        "retired_at_commit_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "ended_by": { "$ref": "#/$defs/occurrenceEnd" },
+        "observed_commit_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "semantic_epochs": { "type": "array", "items": { "$ref": "#/$defs/epoch" } }
+      }, "additionalProperties": false
+    },
+    "occurrenceEnd": { "enum": ["current_endpoint", "removed", "gap", "historical_endpoint"] },
+    "relationOccurrence": {
+      "type": "object", "required": ["occurrence_id", "kind", "owner_id", "target_id", "first_observed_commit_id", "last_observed_commit_id", "retired_at_commit_id", "ended_by", "observed_commit_ids", "fact_epochs"],
+      "properties": {
+        "occurrence_id": { "type": "string" }, "kind": { "enum": ["work_event", "work_activity", "work_milestone_projection", "work_task_projection", "work_dependency", "window_membership"] },
+        "owner_id": { "type": "string" }, "target_id": { "type": "string" }, "first_observed_commit_id": { "type": "string" }, "last_observed_commit_id": { "type": "string" },
+        "retired_at_commit_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "ended_by": { "$ref": "#/$defs/occurrenceEnd" },
+        "observed_commit_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "fact_epochs": { "type": "array", "items": { "$ref": "#/$defs/epoch" } }
+      }, "additionalProperties": false
+    },
+    "transition": {
+      "type": "object", "required": ["from_commit_id", "to_commit_id", "kind", "source_changed", "semantic_changed", "added_work_ids", "removed_work_ids", "added_window_ids", "removed_window_ids", "added_relation_keys", "removed_relation_keys", "removed_task_ids", "removed_milestone_ids", "strict_canonical_advance", "continuity"],
+      "properties": {
+        "from_commit_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "to_commit_id": { "type": "string" },
+        "kind": { "enum": ["baseline", "representation", "planning_change", "contraction", "window_close", "canonical_advance", "gap"] }, "source_changed": { "type": "boolean" }, "semantic_changed": { "type": "boolean" },
+        "added_work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "removed_work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "added_window_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "removed_window_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "added_relation_keys": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "removed_relation_keys": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "removed_task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "removed_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "strict_canonical_advance": { "type": "boolean" }, "continuity": { "enum": ["continuous", "gap"] }
+      }, "additionalProperties": false
+    },
+    "carry": {
+      "type": "object", "required": ["work_id", "target_window_id"],
+      "properties": { "work_id": { "type": "string" }, "target_window_id": { "type": "string" } }, "additionalProperties": false
+    },
+    "windowClose": {
+      "type": "object", "required": ["window_id", "from_commit_id", "to_commit_id", "member_work_ids", "carried_over", "unrecorded_disposition_work_ids", "exact_mutation_request_available"],
+      "properties": {
+        "window_id": { "type": "string" }, "from_commit_id": { "type": "string" }, "to_commit_id": { "type": "string" },
+        "member_work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "carried_over": { "type": "array", "items": { "$ref": "#/$defs/carry" } },
+        "unrecorded_disposition_work_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "exact_mutation_request_available": { "const": false }
+      }, "additionalProperties": false
+    },
+    "gap": {
+      "type": "object", "required": ["commit_id", "cause", "axis_states"],
+      "properties": {
+        "commit_id": { "type": "string" }, "cause": { "enum": ["planning_absent", "source_missing", "source_invalid", "source_binding_invalid", "project_discontinuity", "missing_or_forced_loss"] },
+        "axis_states": { "$ref": "#/$defs/axisStates" }
+      }, "additionalProperties": false
+    },
+    "lineage": {
+      "type": "object", "required": ["project_id", "work_occurrences", "window_occurrences", "relation_occurrences", "transitions", "window_closes", "gaps", "ambiguous_identity_ids"],
+      "properties": {
+        "project_id": { "type": "string" }, "work_occurrences": { "type": "array", "items": { "$ref": "#/$defs/workOccurrence" } },
+        "window_occurrences": { "type": "array", "items": { "$ref": "#/$defs/windowOccurrence" } }, "relation_occurrences": { "type": "array", "items": { "$ref": "#/$defs/relationOccurrence" } },
+        "transitions": { "type": "array", "items": { "$ref": "#/$defs/transition" } }, "window_closes": { "type": "array", "items": { "$ref": "#/$defs/windowClose" } },
+        "gaps": { "type": "array", "items": { "$ref": "#/$defs/gap" } }, "ambiguous_identity_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      }, "additionalProperties": false
+    }
+  }
+}

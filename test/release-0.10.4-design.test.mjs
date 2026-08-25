@@ -35,8 +35,8 @@ test("0.10.4 selects the compatible Issue 6 patch and retains public identities"
   assert.match(plan, /npm latest, public VSIX publication, plan advance, SCM-002/u);
   assert.match(acceptance, /--history-provenance new-root/u);
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
-  assert.equal(getJsonSchemaCatalog().length, 23);
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeFacade).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(getJsonSchemaCatalog().length, 26);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeFacade).length, 139);
+  assert.equal(Object.keys(core).length, 51);
 });

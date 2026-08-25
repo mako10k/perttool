@@ -38,8 +38,8 @@ test("0.10.2 retains the compatible Issue 20 patch record and public identities"
   assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);
   assert.match(acceptance, /producer is\s+absent in both snapshots/u);
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
-  assert.equal(getJsonSchemaCatalog().length, 23);
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeFacade).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(getJsonSchemaCatalog().length, 26);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeFacade).length, 139);
+  assert.equal(Object.keys(core).length, 51);
 });

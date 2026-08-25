@@ -73,11 +73,11 @@ test("Contract 9 package and private adapters retain one read-only semantic boun
   ]);
   const manifest = JSON.parse(manifestText);
   assert.equal(manifest.version, "0.10.5");
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeFacade).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 67);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeFacade).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeFacade));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeFacade[name], name);

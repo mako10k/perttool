@@ -189,10 +189,12 @@ test("PPRC-001 keeps a private capability and dependency-ordered cases", async (
   assert.equal(limited.ok, false);
   assert.equal(limited.diagnostics.some(({ code }) => code === "PTPOOL-115"), true);
   for (const api of [rootApi, nodeApi, coreApi]) {
-    for (const name of ["auditPlanningReshape", "preflightPlanningReshape", "PlanningReshapeTokenRegistry"]) {
+    for (const name of ["auditPlanningReshape", "preflightPlanningReshape"]) {
       assert.equal(name in api, false, name);
     }
   }
+  assert.equal(typeof rootApi.PlanningReshapeTokenRegistry, "function");
+  assert.equal(typeof coreApi.preflightPlanningPoolReshape, "function");
 });
 
 test("PPRC-002 reproduces the accepted canonical hash vectors", async () => {
@@ -338,7 +340,7 @@ test("PPRC-010 returns complete read-only preflight evidence and user boundary",
   assert.equal(result.tokenExpiresAt, "2026-08-24T01:00:00.000Z");
   assert.equal(result.sourceDigest, planningReshapeSha256(text));
   assert.equal(result.candidateDigest, planningReshapeSha256(result.candidateText));
-  assert.deepEqual(result.authorityImpact, { affectedScopes: ["dag"], requiredOwner: "owner", userResponseRequired: true });
+  assert.deepEqual(result.authorityImpact, { affectedScopes: [], requiredOwner: null, userResponseRequired: false });
   assert.equal("self_review" in result, false);
   assert.equal(text, source());
 });
@@ -425,11 +427,11 @@ test("PPRC-014 and PPRC-015 retain bounded no-op assistance and one-time consump
 });
 
 test("PPRC-016 preserves the public runtime and records no LLM self-review", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 56);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 23);
-  assert.equal(Object.keys(rootApi).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
-  assert.equal(Object.keys(coreApi).length, 45);
-  assert.equal(rootApi.getCommandDiscovery({ resource: null, action: null }).cliContractVersion, 9);
-  assert.equal(rootApi.COMMAND_REGISTRY.some(({ path }) => path[0] === "work" || path[0] === "window"), false);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(Object.keys(rootApi).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(coreApi).length, 51);
+  assert.equal(rootApi.getCommandDiscovery({ resource: null, action: null }).cliContractVersion, 10);
+  assert.equal(rootApi.COMMAND_REGISTRY.filter(({ path }) => path[0] === "work" || path[0] === "window").length, 11);
 });

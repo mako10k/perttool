@@ -54,7 +54,7 @@ function invokeJson(args) {
   );
   const value = JSON.parse(result.stdout);
   assert.equal(value.ok, true);
-  assert.equal(value.cli_contract_version, 9);
+  assert.equal(value.cli_contract_version, 10);
   return value;
 }
 
@@ -134,7 +134,7 @@ const migrated = invokeJson([
 ]);
 assert.equal(
   migrated.schema_version,
-  "Perttool.UnitMigrationResult.v4",
+  "Perttool.UnitMigrationResult.v5",
 );
 assert.equal(migrated.ok, true);
 assert.equal(migrated.target_grammar_version, 8);

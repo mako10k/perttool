@@ -86,7 +86,7 @@ test("Contract 9 guide preserves every HelpNode topic and adds plan assurance", 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 9);
+    assert.equal(guide.cliContractVersion, 10);
     assert.equal(guide.operation, "guide");
     const help = getHelp(topicId, level);
     assert.equal(guide.ok, help.ok);
@@ -104,6 +104,7 @@ test("Contract 9 guide preserves every HelpNode topic and adds plan assurance", 
       "historical-dag",
       "milestone-acceptance",
       "temporal-schedule",
+      "planning-pool",
     ],
   );
 });

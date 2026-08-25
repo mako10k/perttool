@@ -104,7 +104,7 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 61);
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 74);
 });
 
 test("relocated services retain exact compatibility facades", async () => {
@@ -143,14 +143,14 @@ test("public package closure and dependency cases remain stable", async () => {
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
   assert.equal(
     Object.keys(packageRoot).length,
-    nodeHost.target.root_runtime_exports,
+    nodeHost.target.root_runtime_exports + 10,
   );
   assert.equal(
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 12);
-  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 3);
+  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 23);
+  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 6);
 
   const accepted = new Set();
   for (const contractCase of fixture.cases) {

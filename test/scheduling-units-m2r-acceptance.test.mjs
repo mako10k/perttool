@@ -246,7 +246,7 @@ test("active Contract 6 routes retain Grammar 3", () => {
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 9);
+    assert.equal(json.cli_contract_version, 10);
     assert.equal(json.ok, true);
     if (schemaVersion !== "Perttool.FormatResult.v1") {
       assert.equal(json.grammar_version, 3);

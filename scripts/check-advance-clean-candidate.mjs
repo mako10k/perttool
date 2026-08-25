@@ -158,7 +158,7 @@ const indexBefore = git("ls-files", "--stage", "--", path.basename(planPath));
 const refsBefore = git("show-ref", "--head");
 
 const preview = invokeJson(["dag", "advance", planPath]);
-assert.equal(preview.schema_version, "Perttool.AdvanceResult.v3");
+assert.equal(preview.schema_version, "Perttool.AdvanceResult.v4");
 assert.equal(preview.changed, true);
 assert.equal(preview.write.mode, "preview");
 assert.equal(preview.write.written, false);

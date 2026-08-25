@@ -11,7 +11,7 @@ export {
   planMutation,
   planUnitMigration,
   selectNextTasks,
-} from "./application/contract9-runtime.js";
+} from "./application/contract10-runtime.js";
 export {
   planMilestoneAcceptanceMigration,
   recheckCommittedMigrationProof,
@@ -23,7 +23,7 @@ export {
   showMilestoneAcceptance,
 } from "./milestone-acceptance/mutation.js";
 export { planMilestoneAcceptanceAdvance } from "./milestone-acceptance/advance.js";
-export const ADVANCE_RESULT_SCHEMA_VERSION = "Perttool.AdvanceResult.v3" as const;
+export const ADVANCE_RESULT_SCHEMA_VERSION = "Perttool.AdvanceResult.v4" as const;
 export { createNodeHost } from "./node/host.js";
 export { getAgentHelp } from "./application/agent-help.js";
 export {
@@ -63,26 +63,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  CONTRACT9_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  contract9CommandDescriptorToJson as commandDescriptorToJson,
-  contract9CommandHelpResultToJson as commandHelpResultToJson,
-  contract9CommandRegistryToJson as commandRegistryToJson,
-  getContract9CommandDiscovery as getCommandDiscovery,
-  renderContract9CommandHelpResult as renderCommandHelpResult,
-  serializeContract9CommandHelpResult as serializeCommandHelpResult,
-} from "./command/contract9-discovery.js";
+  CONTRACT10_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  contract10CommandDescriptorToJson as commandDescriptorToJson,
+  contract10CommandHelpResultToJson as commandHelpResultToJson,
+  contract10CommandRegistryToJson as commandRegistryToJson,
+  getContract10CommandDiscovery as getCommandDiscovery,
+  renderContract10CommandHelpResult as renderCommandHelpResult,
+  serializeContract10CommandHelpResult as serializeCommandHelpResult,
+} from "./command/contract10-discovery.js";
 export {
-  contract9CommandUsageErrorToJson as commandUsageErrorToJson,
-  renderContract9CommandUsageError as renderCommandUsageError,
-  serializeContract9CommandUsageError as serializeCommandUsageError,
-  validateContract9CommandInvocation as validateCommandInvocation,
-} from "./command/contract9-usage.js";
+  contract10CommandUsageErrorToJson as commandUsageErrorToJson,
+  renderContract10CommandUsageError as renderCommandUsageError,
+  serializeContract10CommandUsageError as serializeCommandUsageError,
+  validateContract10CommandInvocation as validateCommandInvocation,
+} from "./command/contract10-usage.js";
 export {
-  contract9GuideResultToJson as guideResultToJson,
-  getContract9Guide as getGuide,
-  renderContract9GuideResult as renderGuideResult,
-  serializeContract9GuideResult as serializeGuideResult,
-} from "./help/contract9-guide.js";
+  contract10GuideResultToJson as guideResultToJson,
+  getContract10Guide as getGuide,
+  renderContract10GuideResult as renderGuideResult,
+  serializeContract10GuideResult as serializeGuideResult,
+} from "./help/contract10-guide.js";
 export {
   getJsonSchema,
   getJsonSchemaCatalog,
@@ -133,21 +133,58 @@ export type {
   CommandUsageSuggestionKind,
 } from "./command/usage.js";
 export type {
-  Contract9CommandDescriptor as CommandDescriptor,
-  Contract9CommandDescriptor as ProjectedCommandDescriptor,
-  Contract9CommandHelpResult as CommandHelpResult,
-} from "./command/contract9-discovery.js";
+  Contract10CommandDescriptor as CommandDescriptor,
+  Contract10CommandDescriptor as ProjectedCommandDescriptor,
+  Contract10CommandHelpResult as CommandHelpResult,
+} from "./command/contract10-discovery.js";
 export type {
   TargetGovernanceOptionDescriptor as OptionDescriptor,
 } from "./command/target-governance-discovery.js";
 export type {
-  Contract9CommandInvocationValidation as CommandInvocationValidation,
-  Contract9InvalidCommandInvocation as InvalidCommandInvocation,
-  Contract9ValidCommandInvocation as ValidCommandInvocation,
-} from "./command/contract9-usage.js";
+  Contract10CommandInvocationValidation as CommandInvocationValidation,
+  Contract10InvalidCommandInvocation as InvalidCommandInvocation,
+  Contract10ValidCommandInvocation as ValidCommandInvocation,
+} from "./command/contract10-usage.js";
 export type {
-  Contract9GuideResult as GuideResult,
-} from "./help/contract9-guide.js";
+  Contract10GuideResult as GuideResult,
+} from "./help/contract10-guide.js";
+export {
+  beginPlanningPoolReshapeCommit,
+  inspectPlanningPool,
+  observeCurrentPlanningPool,
+  planPlanningWindowMutation,
+  preflightPlanningPoolReshape,
+  preparePlanningPoolReshapeApply,
+  recoverPlanningPoolReshapeCommit,
+  settlePlanningPoolReshapeCommit,
+} from "./application/contract10-planning.js";
+export { observeHistoricalPlanningPool } from "./application/contract10-planning-history.js";
+export { PlanningReshapeTokenRegistry } from "./planning-pool/reshape-token.js";
+export type {
+  PlanningMutationOptions,
+  PlanningPoolReadOperation,
+  PlanningPoolReadQuery,
+  PlanningPoolReadResult,
+  PlanningReshapeApplicationResult,
+} from "./application/contract10-planning.js";
+export type {
+  PlanningObservationRequest,
+  PlanningPoolObservationResult,
+} from "./planning-pool/observation-types.js";
+export type {
+  PlanningPoolHistoricalObservationResult,
+} from "./planning-pool/history-types.js";
+export type {
+  PlanningReshapeRequest,
+  PlanningReshapePreflightResult,
+} from "./planning-pool/reshape-types.js";
+export type {
+  PlanningWindowMutationRequest,
+  PlanningWindowMutationAuditResult,
+} from "./planning-pool/window-types.js";
+export type {
+  PlanningPoolSourceModel as PlanningPoolModelV1,
+} from "./planning-pool/source-types.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,

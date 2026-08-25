@@ -116,7 +116,7 @@ test("CLI environmental work is bound to supplied Node Host ports", async () => 
   }
 });
 
-test("Contract 9 CLI bytes retain direct Application semantics", async () => {
+test("Contract 10 CLI bytes retain direct Application semantics", async () => {
   const file = "docs/examples/minimal.pert";
   const first = runCli("document", "check", file, "--format=json");
   const second = runCli("document", "check", file, "--format=json");
@@ -127,7 +127,7 @@ test("Contract 9 CLI bytes retain direct Application semantics", async () => {
   const wire = JSON.parse(first.stdout);
   const direct = packageRoot.checkDocument(await repositoryText(file));
   assert.equal(wire.schema_version, "Perttool.CheckResult.v6");
-  assert.equal(wire.cli_contract_version, 9);
+  assert.equal(wire.cli_contract_version, 10);
   assert.equal(wire.document_id, direct.documentId);
   assert.equal(wire.grammar_version, direct.grammarVersion);
   assert.deepEqual(wire.summary, {
@@ -145,13 +145,13 @@ test("CLI and Node activate the same milestone acceptance services", () => {
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
   assert.equal(schemas.status, 0, schemas.stderr);
-  assert.equal(JSON.parse(help.stdout).commands.length, 56);
-  assert.equal(JSON.parse(schemas.stdout).schemas.length, 23);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
+  assert.equal(JSON.parse(help.stdout).commands.length, 67);
+  assert.equal(JSON.parse(schemas.stdout).schemas.length, 26);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 67);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeApi[name], name);
   }
@@ -163,7 +163,7 @@ test("CLI composition has no editor or MCP dependency", async () => {
     repositoryText("src/application/cli-facade.ts"),
     repositoryText("package.json"),
   ]);
-  assert.match(source, /createCliApplicationFacade\([\s\S]*createNodeHost\(\),[\s\S]*createHistoricalGraphGitEvidenceHost\(\),[\s\S]*\)/u);
+  assert.match(source, /createCliApplicationFacade\([\s\S]*createNodeHost\(\),[\s\S]*historicalGitEvidenceHost,[\s\S]*\)/u);
   assert.equal(/from "\.\/history\/git-probe\.js"/u.test(source), false);
   assert.equal(/from "\.\/io\/(?:document-file|target-safe-write)\.js"/u.test(source), false);
   assert.equal(/adapters\/(?:lsp|vscode|mcp)|vscode-language|modelcontextprotocol/u.test(source), false);

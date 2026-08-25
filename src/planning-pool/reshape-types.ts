@@ -164,7 +164,7 @@ export interface PlanningReshapeBinding {
 }
 
 export interface PlanningReshapeAuthorityImpact {
-  readonly affectedScopes: readonly ["dag"];
+  readonly affectedScopes: readonly [] | readonly ["dag"];
   readonly requiredOwner: string | null;
   readonly userResponseRequired: boolean;
 }

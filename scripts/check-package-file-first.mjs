@@ -47,7 +47,7 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 9);
+  assert.equal(value.cli_contract_version, 10);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
@@ -104,7 +104,7 @@ function writeMutation(args, options = {}) {
   assert.equal(
     result.schema_version,
     args[0] === "dag" && args[1] === "advance"
-      ? "Perttool.AdvanceResult.v3"
+      ? "Perttool.AdvanceResult.v4"
       : "Perttool.MutationResult.v6",
   );
   assert.deepEqual(result.write, {
@@ -638,7 +638,7 @@ const migration = invokeJson([
 ]);
 assert.equal(
   migration.schema_version,
-  "Perttool.UnitMigrationResult.v4",
+  "Perttool.UnitMigrationResult.v5",
 );
 assert.equal(migration.target_grammar_version, 8);
 
@@ -686,7 +686,7 @@ const migrationPreview = invokeJson([
 ]);
 assert.equal(
   migrationPreview.schema_version,
-  "Perttool.UnitMigrationResult.v4",
+  "Perttool.UnitMigrationResult.v5",
 );
 assert.equal(migrationPreview.changed, true);
 assert.equal(migrationPreview.source_unit, "point");

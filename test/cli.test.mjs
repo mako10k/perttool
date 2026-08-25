@@ -230,7 +230,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 9);
+  assert.equal(json.cli_contract_version, 10);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -599,14 +599,19 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   const jsonResult = run(["dag", "advance", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
-  assert.equal(json.schema_version, "Perttool.AdvanceResult.v3");
+  assert.equal(json.schema_version, "Perttool.AdvanceResult.v4");
   assert.equal(json.operation, "dag.advance");
   assert.equal(json.document_id, "ADVANCE_PARTIAL");
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
   assert.deepEqual(json.advance, {
+    kept_task_ids: ["A_JOIN_WORK", "BRANCH_B", "RELEASE"],
+    kept_gate_ids: [],
+    kept_milestone_ids: ["A_DONE", "JOINED", "NOW", "RELEASED"],
     removed_task_ids: ["BRANCH_A"],
     removed_gate_ids: [],
     removed_milestone_ids: [],
+    state_changed_milestone_ids: ["A_DONE"],
+    retained_satisfied_edges: [{ id: "A_JOIN_WORK", kind: "task", reason: "partial_satisfaction" }],
     removed_work_event_ids: [],
     frontier_before: ["A_DONE", "NOW"],
     frontier_after: ["A_DONE", "NOW"],
@@ -614,6 +619,8 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     ready_after: [],
     removed_assurance_record_ids: [],
     updated_assurance_receipt_ids: [],
+    removed_planning_links: [],
+    archived_work_ids: [],
   });
   assert.match(json.updated_text, /^project ADVANCE_PARTIAL:/);
   assert.match(json.diff, /^--- .*advance-partial-before\.pert/m);
@@ -652,9 +659,14 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   });
   assert.equal(complete.status, 0, complete.stderr);
   assert.deepEqual(JSON.parse(complete.stdout).advance, {
+    kept_task_ids: [],
+    kept_gate_ids: [],
+    kept_milestone_ids: ["DONE"],
     removed_task_ids: ["WORK"],
     removed_gate_ids: ["RELEASE"],
     removed_milestone_ids: ["MID", "NOW"],
+    state_changed_milestone_ids: ["DONE"],
+    retained_satisfied_edges: [],
     removed_work_event_ids: [],
     frontier_before: ["DONE"],
     frontier_after: ["DONE"],
@@ -662,6 +674,8 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     ready_after: [],
     removed_assurance_record_ids: [],
     updated_assurance_receipt_ids: [],
+    removed_planning_links: [],
+    archived_work_ids: [],
   });
 
   const stdin = run(["dag", "advance", "-", "--format=json"], { input: sourceText });

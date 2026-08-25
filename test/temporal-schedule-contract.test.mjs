@@ -212,17 +212,20 @@ test("completed detail work activates Grammar 8 and Contract 9 runtime", async (
 
   assert.equal(packageJson.version, cases.active_runtime_unchanged.tool_version);
   assert.equal(cases.active_runtime_unchanged.commands, 53);
-  assert.equal(COMMAND_REGISTRY.length, 56);
-  assert.equal(activeSchemas.length, 23);
-  assert.equal(Object.keys(packageRoot).length, 129);
-  assert.equal(Object.keys(nodeFacade).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(COMMAND_REGISTRY.length, 67);
+  assert.equal(activeSchemas.length, 26);
+  assert.equal(Object.keys(packageRoot).length, 139);
+  assert.equal(Object.keys(nodeFacade).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   assert.equal(
     COMMAND_REGISTRY.some(({ path: commandPath }) => commandPath[0] === "calendar"),
     true,
   );
   for (const schema of cases.target_result_schemas) {
-    assert.equal(activeSchemas.includes(schema), true, schema);
+    const activeIdentity = schema === "Perttool.UnitMigrationResult.v4"
+      ? "Perttool.UnitMigrationResult.v5"
+      : schema;
+    assert.equal(activeSchemas.includes(activeIdentity), true, activeIdentity);
   }
 });
 

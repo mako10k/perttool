@@ -177,15 +177,15 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   assert.match(lspIsolatedScript, /responseTimeoutMilliseconds = 15_000/u);
 
   assert.deepEqual(manifest.files, ["dist", "schemas", "CHANGELOG.md"]);
-  assert.equal(Object.keys(perttool).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
-  assert.equal(Object.keys(core).length, 45);
+  assert.equal(Object.keys(perttool).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(core).length, 51);
   assert.deepEqual(Object.keys(perttool), Object.keys(nodeApi));
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 23);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
   assert.equal(manifest.files.includes("adapters"), false);
   assert.match(procedure, /PUBLISH is complete from release commit `3aca4f0`/u);
   assert.match(procedure, /^## 7\. Durable acceptance stopping point$/m);

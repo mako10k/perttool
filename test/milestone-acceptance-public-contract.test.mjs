@@ -19,21 +19,21 @@ function run(args, options = {}) {
 }
 
 test("Contract 9 activates one exact public registry and closed schema catalog", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 56);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 23);
-  assert.equal(rootApi.ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v3");
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootApi.ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v4");
   assert.equal(typeof rootApi.planMilestoneAcceptanceMigration, "function");
   assert.equal(typeof rootApi.planCriterionSetReplacement, "function");
   assert.equal(typeof rootApi.planMilestoneAcceptanceAdvance, "function");
-  assert.equal(Object.keys(rootApi).length, 129);
-  assert.equal(Object.keys(nodeApi).length, 129);
+  assert.equal(Object.keys(rootApi).length, 139);
+  assert.equal(Object.keys(nodeApi).length, 139);
 });
 
 test("registry validation preserves the exact three-token acceptance command paths", () => {
   const help = run(["help", "milestone", "acceptance", "replace", "--format", "json"]);
   assert.equal(help.status, 0, help.stderr);
   const result = JSON.parse(help.stdout);
-  assert.equal(result.cli_contract_version, 9);
+  assert.equal(result.cli_contract_version, 10);
   assert.deepEqual(result.commands.map(({ path }) => path), [["milestone", "acceptance", "replace"]]);
 
   const legacyAlias = run(["milestone-acceptance", "show", "-", "--format", "json"], { input: "" });
@@ -46,7 +46,7 @@ test("older grammars remain readable but advance fails before Git history inspec
   assert.equal(checked.status, 0, checked.stderr);
   const checkResult = JSON.parse(checked.stdout);
   assert.equal(checkResult.schema_version, "Perttool.CheckResult.v6");
-  assert.equal(checkResult.cli_contract_version, 9);
+  assert.equal(checkResult.cli_contract_version, 10);
   assert.equal(checkResult.grammar_version, 1);
   assert.equal(checkResult.acceptance, null);
   assert.equal(checkResult.diagnostics.some(({ code }) => code === "PTMAC-102"), false);
@@ -54,7 +54,7 @@ test("older grammars remain readable but advance fails before Git history inspec
   const advanced = run(["dag", "advance", source, "--format", "json"]);
   assert.equal(advanced.status, 1);
   const advanceResult = JSON.parse(advanced.stdout);
-  assert.equal(advanceResult.schema_version, "Perttool.AdvanceResult.v3");
+  assert.equal(advanceResult.schema_version, "Perttool.AdvanceResult.v4");
   assert.equal(advanceResult.diagnostics[0].code, "PTMAC-101");
   assert.equal(advanceResult.history_guard, null);
   assert.equal(advanceResult.acceptance_guard, null);
@@ -88,5 +88,5 @@ test("public acceptance record closes the source and installed boundary only", a
   assert.match(acceptance, /all 37 plans/);
   assert.match(acceptance, /705 files/);
   assert.match(acceptance, /does not authorize either successor, plan advance, release/);
-  assert.match(schemaContract, /Active CLI contract version: 8/);
+  assert.match(schemaContract, /Active CLI contract version: 10/);
 });

@@ -409,7 +409,7 @@ process.exit(result.status ?? 70);
 test("AHS-001 through AHS-003 preview, out, and no-op avoid Git", (t) => {
   const { directory, pathname } = temporaryPlan(t, { repository: false });
   const preview = runJson(["dag", "advance", pathname]);
-  assert.equal(preview.schema_version, "Perttool.AdvanceResult.v3");
+  assert.equal(preview.schema_version, "Perttool.AdvanceResult.v4");
   assert.equal(preview.history_guard.status, "not_applicable");
   assert.equal(preview.history_guard.cause, "preview");
   assert.equal(preview.history_guard.repository_snapshot_id, null);

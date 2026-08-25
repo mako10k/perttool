@@ -6,7 +6,9 @@ resource-constrained schedules, recommends the next task, and previews every
 change before writing it.
 
 The current release is `0.10.5`. It requires Node.js 22 or later and uses
-Grammar 8 and CLI Contract 9.
+Grammar 8 and CLI Contract 9. The unreleased source activates Grammar 9 and
+CLI Contract 10 for the Work-centered Planning Pool; release selection and
+publication remain separate.
 
 ## Install
 

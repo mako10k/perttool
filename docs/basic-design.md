@@ -3884,6 +3884,15 @@ source-bound request composition, candidate reproduction, governance,
 assurance, history, and safe-write sequencing. CLI owns only transport and
 presentation. Editor and MCP mutation remain absent.
 
+The current unreleased source has completed the atomic public-contract step.
+Grammar 9 and CLI Contract 10 are active with 67 commands, 26 active root
+schemas, 139 root exports, 139 reference-identical Node exports, and 51
+portable Core exports. `Perttool.AdvanceResult.v4` and
+`Perttool.UnitMigrationResult.v5` replace their Contract 9 predecessors, and
+the three Planning Pool result identities are public. The final end-to-end
+acceptance task, release selection, publication, remote writes, Issue
+mutation, editor or MCP mutation, and plan advance remain separate.
+
 The implementation order is:
 
 ```text
