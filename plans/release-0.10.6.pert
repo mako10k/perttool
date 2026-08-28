@@ -82,6 +82,7 @@ task RELEASE_0106_CANDIDATE RELEASE_0106_PREPARED -> RELEASE_0106_CANDIDATE_ACCE
   title "Accept one immutable version 0.10.6 candidate"
   description "Select one clean source commit and retained tarball, prove unused GitHub and npm identities and authenticated routes, and accept exact installed Issue 36 behavior and the 0.10.5 rollback pin before publication authorization."
   duration 3p
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -92,6 +93,7 @@ task RELEASE_0106_PUBLISH RELEASE_0106_CANDIDATE_ACCEPTED -> RELEASE_0106_PUBLIS
   title "Publish the authorized version 0.10.6 candidate"
   description "After separate exact-candidate authorization, push the exact commit and annotated tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
   duration 3p
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -101,6 +103,7 @@ task RELEASE_0106_ACCEPTANCE RELEASE_0106_PUBLISHED -> RELEASE_0106_ACCEPTED:
   title "Durably accept version 0.10.6"
   description "Independently read back Git, CI, GitHub, npm, artifact identity, exact and beta installations, all Issue 36 authority cases, and the exact 0.10.5 rollback without implying npm latest movement, Issue closure, plan advance, or 0.11 integration."
   duration 3p
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
