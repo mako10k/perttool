@@ -1,10 +1,14 @@
 import { evaluateGovernanceAuthority, governanceDecisionDiagnostics, normalizeGovernanceRequest } from "../governance/authority.js";
+import { governanceMetadataFromDocument } from "../governance/source.js";
 import type { GovernanceDecisionV1, GovernanceRequestInput } from "../governance/types.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
+import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
+import { validateTargetGrammar6Document } from "../semantic/target-validator.js";
 import { replaceValidatedDocumentFile, type DocumentWriteResult } from "../io/safe-write.js";
 import { evaluateMilestoneAcceptance, type MilestoneAcceptanceModelResultV1 } from "./evaluate.js";
 import {
   MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  milestoneAcceptanceBaseText,
   milestoneCriterionSetCommitment,
   normalizeCallerAssertedUtcZ,
   parseMilestoneAcceptanceSource,
@@ -63,21 +67,25 @@ export interface MilestoneAcceptanceMutationResultV1 {
 const idPattern = /^[A-Za-z][A-Za-z0-9_-]*$/u;
 
 function governanceMetadata(text: string) {
-  const owner = /^  dag_owner ([A-Za-z][A-Za-z0-9_-]*)$/mu.exec(text)?.[1] ?? "user";
-  const delegates = /^  dag_delegates(?: ([A-Za-z][A-Za-z0-9_-]*(?: [A-Za-z][A-Za-z0-9_-]*)*))?$/mu.exec(text)?.[1]?.split(" ") ?? [];
-  return { owner, delegates: new Set(delegates) };
+  const validated = validateTargetGrammar6Document(
+    milestoneAcceptanceBaseText(text),
+    TARGET_GRAMMAR_6_CAPABILITY,
+  ).validatedDocument;
+  return validated === null
+    ? null
+    : governanceMetadataFromDocument(validated.document);
 }
 
 function decision(text: string, digest: `sha256:${string}`, input: GovernanceRequestInput | undefined): { readonly value: GovernanceDecisionV1 | null; readonly diagnostics: readonly string[] } {
   const normalized = normalizeGovernanceRequest(input);
   if (!normalized.ok) return { value: null, diagnostics: Object.freeze(normalized.diagnostics.map(({ code }) => code)) };
   const metadata = governanceMetadata(text);
+  if (metadata === null) {
+    return { value: null, diagnostics: Object.freeze(["PTMAC-103"]) };
+  }
   const value = evaluateGovernanceAuthority({
     originalDigest: digest,
-    effective: {
-      goalOwner: "user", goalDelegates: new Set(),
-      dagOwner: metadata.owner, dagDelegates: metadata.delegates,
-    },
+    effective: metadata.effective,
   }, ["dag"], normalized.request);
   return { value, diagnostics: Object.freeze(governanceDecisionDiagnostics(value).map(({ code }) => code)) };
 }
