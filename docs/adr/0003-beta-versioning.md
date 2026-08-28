@@ -21,7 +21,8 @@
   2026-08-13 (`v0.9.0` Grammar 7 and CLI Contract 8 milestone-acceptance
   target);
   2026-08-18 (`v0.10.0` Grammar 8 and CLI Contract 9 temporal-scheduling
-  target)
+  target);
+  2026-08-28 (explicit off-main compatible-hotfix publication gate)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -135,6 +136,78 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   temporal-authority boundary, while `1.0.0` remains reserved for a future
   stable-series decision. Private LSP, VSIX, and MCP packages remain excluded
   from the public npm artifact.
+
+### Off-main compatible-hotfix publication
+
+#### Context
+
+Issue #36 requires a compatible `0.10.6` correction from exact published
+`v0.10.5`, while `origin/main` already contains separately preserved future
+`0.11.0` planning-pool work. Making the old-version release commit equal to
+`origin/main` would either discard that work or include unreleased `0.11.0`
+changes in the patch artifact. Neither result represents the selected hotfix.
+The user selected an isolated worktree from `v0.10.5` and authorized progress
+through publication, subject to the existing immutable-candidate approval
+boundary.
+
+#### Decision
+
+The default publication route continues to require the release commit, peeled
+annotated tag, and `origin/main` to be identical. A compatible hotfix based on
+an older published tag may instead use the explicit
+`--remote-branch BRANCH --expect-main COMMIT` route when all of these
+conditions hold:
+
+1. the local branch name is the exact validated remote branch name;
+2. the remote branch and peeled annotated release tag both identify `HEAD`;
+3. `origin/main` remains the exact separately approved commit rather than the
+   release commit;
+4. the release candidate records the old-version base, remote branch, expected
+   main commit, and correction-only commit; and
+5. no force push, main rewrite, version-line merge, or future-work inclusion is
+   permitted by this exception.
+
+#### Alternatives
+
+- Rewriting `origin/main` to the hotfix was rejected because it would replace
+  preserved future work.
+- Merging future `0.11.0` work into `0.10.6` was rejected because it would make
+  the patch version and rollback claim false.
+- Publishing manually outside the guarded script was rejected because it would
+  remove the exact remote-ref and dist-tag checks.
+- Deferring Issue #36 until `0.11.0` was rejected because the defect exists in
+  published `0.10.5` and the user selected a compatible patch release.
+
+#### Claim, evidence, and implementation action
+
+- `CLM-ADR3-HOTFIX-001`: an explicit off-main release ref preserves both the
+  old-version candidate and the independently advancing main line.
+  - `EVD-ADR3-HOTFIX-001`: the `0.10.6` worktree descends from peeled
+    `v0.10.5` commit `7379870db2ec000243f02cda6d86af514af7feef`, while
+    `origin/main` is not its ancestor and identifies separately preserved
+    planning-pool work.
+  - `ACT-ADR3-HOTFIX-001`: `scripts/publish-npm.sh` keeps its main-only default
+    and adds the explicit branch plus expected-main equality gate.
+- `CLM-ADR3-HOTFIX-002`: the exception does not broaden npm channel or artifact
+  authority.
+  - `EVD-ADR3-HOTFIX-002`: the existing exact tag, clean worktree, tarball
+    identity, npm identity, unused version, `beta`, and unchanged `latest`
+    checks remain mandatory.
+  - `ACT-ADR3-HOTFIX-002`: candidate review and publication readback must verify
+    the explicit branch, unchanged main, peeled tag, and common artifact bytes.
+
+#### Consequences and follow-up
+
+Hotfix commits may be published without changing the future-work main line,
+but only through a named remote branch and exact expected-main binding. The
+extra branch is a release record, not an alternative default branch. The
+Issue #36 source correction remains a separate commit so it can be applied to
+the preserved `0.11.0` line without importing `0.10.6` version artifacts.
+
+This amendment is accepted for the explicitly selected `0.10.6` hotfix flow.
+The exact candidate, external write manifest, npm `latest` movement, Issue
+mutation, plan advance, and `0.11.0` integration retain their separate
+approval boundaries.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

@@ -4,6 +4,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.6] - 2026-08-28
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #36.
+
+### Fixed
+
+- Make milestone criterion-set and acceptance-receipt mutations consume the
+  canonical validated pre-change DAG governance metadata, so bracketed
+  `dag_delegates` retain their exact delegated authority.
+- Remove the milestone-acceptance-specific governance regular expression while
+  preserving owner authority, fail-closed denial, candidate identity,
+  expected-digest checks, and safe persistence.
+
 ## [0.10.5] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #23.

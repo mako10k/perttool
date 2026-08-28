@@ -50,6 +50,7 @@ task RELEASE_0106_GATE_DESIGN RELEASE_0106_STARTED -> RELEASE_0106_GATE_ACCEPTED
   title "Accept the Issue 36 correction and 0.10.6 release gate"
   description "Reproduce the delegate denial on exact v0.10.5, confirm suffix-free 0.10.6, freeze the canonical pre-change effective-governance boundary, public identity compatibility, rollback, and correction-only commit separation."
   duration 3p
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -60,6 +61,7 @@ task RELEASE_0106_CORRECTION RELEASE_0106_GATE_ACCEPTED -> RELEASE_0106_CORRECTE
   title "Correct milestone-acceptance delegate authority"
   description "Remove the independent regex interpretation and consume canonical validated pre-change effective governance for criterion-set and receipt mutations. Cover empty, one-item, and multiple-item bracketed delegates plus owner, non-delegate, missing-actor, wrong-actor, preview, write, digest, and installed behavior without loosening fail-closed authority."
   duration 5p
+  status done
   priority 100
   requires:
     HOTFIX_ENGINEERS 1
@@ -70,6 +72,7 @@ task RELEASE_0106_PREPARATION RELEASE_0106_CORRECTED -> RELEASE_0106_PREPARED:
   title "Prepare version 0.10.6 source"
   description "Commit the correction independently, align every version-bearing surface to 0.10.6, and pass the complete Node.js 22 repository, static, documentation, self-use, adapter, temporary-link, and isolated-package gates without publishing."
   duration 5p
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1

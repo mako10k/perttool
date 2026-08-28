@@ -76,8 +76,9 @@ criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. Its accepted release commit, annotated tag, GitHub
 prerelease, and npm artifact agree, and npm reports the pre-publication
 baseline `latest=beta=0.10.4` with no `alpha`. Version `0.10.0` is the
-published Grammar 8 and CLI Contract 9 beta. Source is prepared for the
-compatible `0.10.5` Issue #23 assurance-recovery patch. Version
+published Grammar 8 and CLI Contract 9 beta. The compatible `0.10.5` Issue #23
+assurance-recovery patch is published. Source is prepared for the
+compatible `0.10.6` Issue #36 milestone-acceptance delegate patch. Version
 `0.8.1` remains the
 exact Grammar 6 and CLI Contract 7 rollback pin.
 
@@ -710,6 +711,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.2` release plan](plans/release-0.9.2.pert)
 - [`v0.9.3` release plan](plans/release-0.9.3.pert)
 - [`v0.9.4` release plan](plans/release-0.9.4.pert)
+- [`v0.10.6` release plan](plans/release-0.10.6.pert)
+- [`v0.10.6` release procedure](docs/process/0.10.6-release.md)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
@@ -730,10 +733,10 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 Report vulnerabilities privately according to [SECURITY.md](SECURITY.md).
 perttool is released under the [MIT License](LICENSE). See
 [CHANGELOG.md](CHANGELOG.md) for release changes and known limitations.
-The current repository source identifies `0.10.5` and retains Grammar 8,
-CLI Contract 9, 56 commands, and 23 root schemas. It makes the Issue #23
-`replan_and_reseal` recovery executable for newly added unsealed tasks while
-preserving atomic initial enablement. Version `0.10.4` remains the exact
-rollback pin.
+The current repository source identifies `0.10.6` and retains Grammar 8,
+CLI Contract 9, 56 commands, and 23 root schemas. It makes canonical bracketed
+DAG delegates effective for milestone criterion-set and acceptance-receipt
+mutations without weakening fail-closed authority. Version `0.10.5` remains
+the exact rollback pin.
 Migration guidance is in
 [`0.9.4-to-0.10.0-migration.md`](docs/process/0.9.4-to-0.10.0-migration.md).

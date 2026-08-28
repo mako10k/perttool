@@ -23,7 +23,10 @@ On the same day, `v0.1.0-alpha.2` was published to a GitHub prerelease and npm, 
 - The tarball sent to npm must be the same one used for the package check and GitHub Release asset.
 - Always publish a prerelease with the `alpha` dist-tag, and for an existing package preserve `latest` before and after publication.
 - If the registry creates the required `latest` at the same version on the first package publication, record it as a release-record exception without assuming it can be removed. User-facing instructions must explicitly use `@alpha`.
-- Match the version in `package.json`, CLI `--version`, annotated Git tag, `origin/main`, and the tarball manifest.
+- Match the version in `package.json`, CLI `--version`, annotated Git tag, and
+  the tarball manifest. The default route also matches `origin/main`. An
+  accepted older-version hotfix instead matches one explicit remote branch and
+  binds the unchanged `origin/main` commit through the ADR 0003 off-main gate.
 - `bin.perttool` in the package manifest must remain `dist/cli.js` after npm publish normalization.
 - Do not write TOKEN to an argument, tracked `.npmrc`, or log.
 - Publish exactly once after explicit human approval.
@@ -42,7 +45,13 @@ bash scripts/publish-npm.sh --dry-run /absolute/path/to/perttool-VERSION.tgz
 
 ## 4. Release artifact
 
-After meeting the restart conditions for `RELEASE_E2E`, update the version, CHANGELOG, and README in the release commit. Once `npm run check` and `git diff --check` succeed, push the clean release commit to `origin/main` and create an annotated tag at the same commit.
+After meeting the restart conditions for `RELEASE_E2E`, update the version,
+CHANGELOG, and README in the release commit. Once `npm run check` and
+`git diff --check` succeed, push the clean release commit to `origin/main` and
+create an annotated tag at the same commit. For an accepted older-version
+hotfix only, push the clean release commit to its exact named remote branch,
+leave `origin/main` unchanged at the approved commit, and create the annotated
+tag at the release commit.
 
 Generate the tarball exactly once in a temporary directory outside the worktree. The following variable names are examples; do not repurpose system variables.
 
@@ -83,12 +92,27 @@ secdat --dir /home/katsumata-m exec \
   -- bash scripts/publish-npm.sh --publish "$PERTTOOL_RELEASE_TARBALL"
 ```
 
+An accepted off-main hotfix uses the explicit release branch and exact
+preflighted main commit. Both values are part of the candidate authorization:
+
+```sh
+secdat --dir /home/katsumata-m exec \
+  --inject secret:only=NPM_TOKEN \
+  --inject route:prefer=secret \
+  --inject final:require=NPM_TOKEN \
+  -- bash scripts/publish-npm.sh --publish "$PERTTOOL_RELEASE_TARBALL" \
+  --remote-branch codex/hotfix-VERSION --expect-main EXPECTED_MAIN_COMMIT
+```
+
 `--publish` checks the following fail-closed.
 
 1. The tarball is explicit.
 2. The worktree is clean.
 3. The tarball and checkout name/version match.
-4. The local tag, remote annotated tag, and `origin/main` match HEAD.
+4. The local tag and remote annotated tag match HEAD. The default route also
+   requires `origin/main=HEAD`; the explicit off-main route instead requires
+   the validated local and remote release branch to match HEAD and
+   `origin/main` to equal the exact approved commit.
 5. `NPM_TOKEN` exists and `npm whoami` succeeds.
 6. The same version does not exist in the registry.
 7. It bounded-polls propagation-time `E404` after publication and can retrieve the same version from the registry.

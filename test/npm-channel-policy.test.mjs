@@ -40,6 +40,11 @@ test("npm distribution policy maintains beta and latest without alpha", async ()
   assert.match(adr, /Do not\s+publish through or retain an `alpha` dist-tag/);
   assert.match(script, /publish_tag" != "beta"/);
   assert.doesNotMatch(script, /^\s*alpha\)$/m);
+  assert.match(script, /--remote-branch BRANCH --expect-main COMMIT/);
+  assert.match(script, /git check-ref-format --branch/);
+  assert.match(script, /origin\/main changed from the approved off-main baseline/);
+  assert.match(adr, /### Off-main compatible-hotfix publication/);
+  assert.match(adr, /default publication route continues to require/u);
   assert.match(procedure, /Document status: Accepted 1\.0/);
   assert.match(procedure, /Before: `alpha=0\.1\.0-alpha\.2`/);
   assert.match(procedure, /After: `beta=0\.5\.2`, `latest=0\.5\.1`/);
@@ -48,6 +53,8 @@ test("npm distribution policy maintains beta and latest without alpha", async ()
   for (const guidance of [agents, copilot, readme]) {
     assert.match(guidance, /alpha.*(?:retired|exact pin)/is);
   }
+
+  await execFile("bash", ["-n", path.join(root, "scripts", "publish-npm.sh")]);
 });
 
 test("npm publication guard rejects an alpha artifact before publication", async () => {

@@ -5,18 +5,41 @@ set -euo pipefail
 usage() {
   printf 'Usage: bash scripts/publish-npm.sh --dry-run [TARBALL]\n' >&2
   printf '       bash scripts/publish-npm.sh --publish TARBALL\n' >&2
+  printf '       bash scripts/publish-npm.sh --publish TARBALL --remote-branch BRANCH --expect-main COMMIT\n' >&2
 }
 
-if [[ $# -lt 1 || $# -gt 2 ]]; then
+if [[ $# -lt 1 ]]; then
   usage
   exit 2
 fi
 
 mode=$1
-package_spec=${2:-.}
+shift
+package_spec=.
+release_remote_branch=main
+expected_remote_main=""
 case "$mode" in
-  --dry-run) ;;
+  --dry-run)
+    if [[ $# -gt 1 ]]; then
+      usage
+      exit 2
+    fi
+    package_spec=${1:-.}
+    ;;
   --publish)
+    if [[ $# -ne 1 && $# -ne 5 ]]; then
+      usage
+      exit 2
+    fi
+    package_spec=$1
+    if [[ $# -eq 5 ]]; then
+      if [[ $2 != "--remote-branch" || $4 != "--expect-main" ]]; then
+        usage
+        exit 2
+      fi
+      release_remote_branch=$3
+      expected_remote_main=$5
+    fi
     if [[ "$package_spec" == "." ]]; then
       printf '%s requires an explicit release tarball\n' "$mode" >&2
       exit 2
@@ -127,9 +150,37 @@ if [[ "$tag_commit" != "$head_commit" ]]; then
 fi
 
 remote_main=$(git ls-remote origin refs/heads/main | awk 'NR == 1 { print $1 }')
+if [[ "$release_remote_branch" == "main" ]]; then
+  remote_release=$remote_main
+else
+  if ! git check-ref-format --branch "$release_remote_branch" >/dev/null 2>&1; then
+    printf 'invalid release remote branch: %s\n' "$release_remote_branch" >&2
+    exit 1
+  fi
+  if [[ ! "$expected_remote_main" =~ ^[0-9a-f]{40}([0-9a-f]{24})?$ ]]; then
+    printf 'off-main publication requires an exact expected origin/main commit\n' >&2
+    exit 1
+  fi
+  local_branch=$(git symbolic-ref --quiet --short HEAD || true)
+  if [[ "$local_branch" != "$release_remote_branch" ]]; then
+    printf 'local branch does not match the release remote branch: %s != %s\n' \
+      "$local_branch" "$release_remote_branch" >&2
+    exit 1
+  fi
+  remote_release=$(git ls-remote origin "refs/heads/$release_remote_branch" | awk 'NR == 1 { print $1 }')
+fi
 remote_tag=$(git ls-remote origin "refs/tags/$release_tag^{}" | awk 'NR == 1 { print $1 }')
-if [[ "$remote_main" != "$head_commit" ]]; then
+if [[ "$release_remote_branch" == "main" && "$remote_main" != "$head_commit" ]]; then
   printf 'origin/main does not point to the release commit\n' >&2
+  exit 1
+fi
+if [[ "$release_remote_branch" != "main" && "$remote_main" != "$expected_remote_main" ]]; then
+  printf 'origin/main changed from the approved off-main baseline\n' >&2
+  exit 1
+fi
+if [[ "$release_remote_branch" != "main" && "$remote_release" != "$head_commit" ]]; then
+  printf 'the remote release branch %s does not point to the release commit\n' \
+    "$release_remote_branch" >&2
   exit 1
 fi
 if [[ "$remote_tag" != "$head_commit" ]]; then
