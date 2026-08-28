@@ -32,6 +32,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
   for incomplete compound actions, and retain resource-only, direct-action,
   and legacy single-action-argument lookup.
 
+## [0.10.6] - 2026-08-28
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #36.
+
+### Fixed
+
+- Make milestone criterion-set and acceptance-receipt mutations consume the
+  canonical validated pre-change DAG governance metadata, so bracketed
+  `dag_delegates` retain their exact delegated authority.
+- Remove the milestone-acceptance-specific governance regular expression while
+  preserving owner authority, fail-closed denial, candidate identity,
+  expected-digest checks, and safe persistence.
+
 ## [0.10.5] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #23.
@@ -629,7 +642,10 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.3...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.6...HEAD
+[0.10.6]: https://github.com/mako10k/perttool/compare/v0.10.5...v0.10.6
+[0.10.5]: https://github.com/mako10k/perttool/compare/v0.10.4...v0.10.5
+[0.10.4]: https://github.com/mako10k/perttool/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/mako10k/perttool/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/mako10k/perttool/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/mako10k/perttool/compare/v0.10.0...v0.10.1

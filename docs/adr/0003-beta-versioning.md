@@ -1,6 +1,6 @@
 # ADR 0003: `0.x.x` beta versioning and Issue #2 scope
 
-- Status: Accepted
+- Status: Accepted (the base decision and accepted amendments only)
 - Date: 2026-07-23
 - Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
   2026-07-24 (`v0.2.0` Contract 3 release target);
@@ -21,7 +21,13 @@
   2026-08-13 (`v0.9.0` Grammar 7 and CLI Contract 8 milestone-acceptance
   target);
   2026-08-18 (`v0.10.0` Grammar 8 and CLI Contract 9 temporal-scheduling
-  target)
+  target);
+  2026-08-28 (accepted `v0.10.6` off-main compatible-hotfix publication
+  gate)
+- Amendment status: Proposed, non-normative until separately accepted by the
+  owner — 2026-08-28 (`v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
+  target; exact gate candidate pending owner acceptance). The file-level
+  Accepted status does not apply to this amendment while it remains Proposed.
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -135,6 +141,189 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   temporal-authority boundary, while `1.0.0` remains reserved for a future
   stable-series decision. Private LSP, VSIX, and MCP packages remain excluded
   from the public npm artifact.
+
+### Off-main compatible-hotfix publication
+
+#### Context
+
+Issue #36 required a compatible `0.10.6` correction from exact published
+`v0.10.5`, while `origin/main` already contained separately preserved future
+`0.11.0` Planning Pool work. Making the old-version release commit equal to
+`origin/main` would either discard that work or include unreleased `0.11.0`
+changes in the patch artifact. Neither result represented the selected hotfix.
+The user selected an isolated worktree from `v0.10.5` and separately
+authorized the immutable candidate and publication batch.
+
+#### Decision
+
+The default publication route continues to require the release commit, peeled
+annotated tag, and `origin/main` to be identical. A compatible hotfix based on
+an older published tag may instead use the explicit
+`--remote-branch BRANCH --expect-main COMMIT` route when all of these
+conditions hold:
+
+1. the local branch name is the exact validated remote branch name;
+2. the remote branch and peeled annotated release tag both identify `HEAD`;
+3. `origin/main` remains the exact separately approved commit rather than the
+   release commit;
+4. the release candidate records the old-version base, remote branch, expected
+   main commit, and correction-only commit; and
+5. no force push, main rewrite, version-line merge, or future-work inclusion is
+   permitted by this exception.
+
+#### Alternatives
+
+- Rewriting `origin/main` to the hotfix was rejected because it would replace
+  preserved future work.
+- Merging future `0.11.0` work into `0.10.6` was rejected because it would make
+  the patch version and rollback claim false.
+- Publishing manually outside the guarded script was rejected because it would
+  remove the exact remote-ref and distribution-tag checks.
+- Deferring Issue #36 until `0.11.0` was rejected because the defect existed in
+  published `0.10.5` and the user selected a compatible patch release.
+
+#### Claim, evidence, and implementation action
+
+- `CLM-ADR3-HOTFIX-001`: an explicit off-main release ref preserves both the
+  old-version candidate and the independently advancing main line.
+  - `EVD-ADR3-HOTFIX-001`: the `0.10.6` worktree descended from peeled
+    `v0.10.5` commit `7379870db2ec000243f02cda6d86af514af7feef`, while
+    `origin/main` identified separately preserved Planning Pool work.
+  - `ACT-ADR3-HOTFIX-001`: the exact `v0.10.6` publication source kept the
+    script's main-only default and added the explicit branch plus expected-main
+    equality gate.
+- `CLM-ADR3-HOTFIX-002`: the exception did not broaden npm channel or artifact
+  authority.
+  - `EVD-ADR3-HOTFIX-002`: exact tag, clean worktree, tarball identity, npm
+    identity, unused version, `beta`, and unchanged `latest` checks remained
+    mandatory for `v0.10.6`.
+  - `ACT-ADR3-HOTFIX-002`: publication and readback verified the explicit
+    branch, unchanged main, peeled tag, and common artifact bytes.
+
+#### Consequences and follow-up
+
+Hotfix commits may be published without changing the future-work main line,
+but only through a named remote branch and exact expected-main binding. The
+extra branch is a release record, not an alternative default branch. The
+Issue #36 source correction remains a separate commit so it can be applied to
+the preserved `0.11.0` line without importing `0.10.6` version artifacts.
+
+This amendment is accepted for the explicitly selected and durably verified
+`0.10.6` hotfix flow. npm `latest` movement, Issue mutation, plan advance, and
+later release-line integration retain their separate approval boundaries.
+
+### Proposed Planning Pool `0.11.0` target
+
+#### Context
+
+The accepted Planning Pool source changes the public grammar, CLI contract,
+command and schema catalogs, public facades, migration result, and advance
+result together. The published `0.10.6` line contains the compatible Issue #36
+canonical-governance correction, while the preserved `0.11.0` line contains
+future Planning Pool work and must carry that exact source correction without
+importing the old line's package identity or candidate artifacts. Independent
+gate review also found that the initial Contract 10 composition could not
+apply milestone criterion or receipt mutations to a valid Grammar 9 source;
+that correction must be accepted before this release gate can be accepted.
+
+#### Decision candidate
+
+When the exact gate-design candidate is separately accepted by the owner,
+select suffix-free `0.11.0` for the first package that publishes Grammar 9,
+CLI Contract 10, Work, project-owned Event and Activity AoA, bounded Window
+operations, Planning Pool observation and history, guided reshape, and the
+replacement advance and unit-migration results. The public boundary changes
+from 56 to 71 commands, 23 to 29 active root schemas, 129 to 139 root and Node
+exports, and 45 to 51 Core exports.
+
+The release line must contain both the exact Issue #36 source correction from
+published `0.10.6` and the accepted Grammar 9 milestone-acceptance composition
+correction. Grammar 1 through 8 reads remain available. Grammar 8 to 9
+migration is explicit and additive: it changes only the version field and
+owned migration trivia and inserts no Planning Pool declaration. The exact
+published `0.10.6` package is the rollback pin. Private LSP, VSIX, and MCP
+packages remain excluded.
+
+Owner acceptance of this gate selects only the release boundary and procedure.
+It does not authorize source preparation, candidate commitment, push, tag,
+GitHub Release creation, npm publication, distribution-tag movement, Issue
+mutation, or plan advance. Each later mutation remains bound to its named PERT
+task and separate authority.
+
+#### Alternatives
+
+- `0.10.7` is rejected because it would understate the breaking grammar, CLI
+  contract, command, result, schema, migration, and Planning Pool authority
+  boundary.
+- `1.0.0` is rejected because the stable series remains a future decision and
+  this release does not add a stable compatibility promise.
+- Releasing Planning Pool without the Issue #36 forward correction is rejected
+  because it would reintroduce the published governance defect on the new
+  version line.
+- Accepting the gate before the Grammar 9 milestone-acceptance correction is
+  rejected because a valid Contract 10 document would lose an existing
+  Contract 8 mutation capability.
+
+#### Claim, evidence, and implementation action
+
+- `CLM-ADR3-011-001`: suffix-free `0.11.0` is the smallest truthful version for
+  the accepted public boundary.
+  - `EVD-ADR3-011-001`: the accepted integration surface has Grammar 9, CLI
+    Contract 10, 71 commands, 29 root schemas, 139 root and Node exports, and
+    51 Core exports. The direct evidence is
+    [`planning-pool-release-integration-acceptance.md`](../process/planning-pool-release-integration-acceptance.md),
+    bound to accepted basis
+    `sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013`.
+  - `ACT-ADR3-011-001`: bind preparation and candidate checks to those exact
+    identities and the replacement advance and unit-migration results.
+- `CLM-ADR3-011-002`: the release can preserve rollback and forward-correction
+  truth without importing old-line release artifacts.
+  - `EVD-ADR3-011-002`: the Issue #36 correction-only commit and its `0.11.0`
+    integration commit are
+    `56b7142fe4a6dbffa43847d73ba75854a4c696d2` and
+    `eb6e59da5f058229fa5e2603ce86329821b4e45e`. They have stable patch ID
+    `84fe584b8a2895187bcf72df2af289103b49ca88` and identical changed-file
+    bytes, as recorded in
+    [`0.11.0-gate-design.md`](../process/0.11.0-gate-design.md).
+  - `ACT-ADR3-011-002`: require that correction in source preparation, retain
+    exact `0.10.6` as the rollback pin, and reject copied `0.10.6` version or
+    candidate artifacts.
+- `CLM-ADR3-011-003`: Contract 10 must retain milestone-acceptance mutation on
+  Grammar 9 before release-gate acceptance.
+  - `EVD-ADR3-011-003`: the independent gate review reproduced exit 1 with no
+    candidate for a valid Grammar 9 criterion replacement because the outer
+    Planning Pool declarations were not composed through the older
+    milestone-acceptance planner. Subsequent exact-byte review also rejected
+    the single-range Candidate 1.1 and governance-denied Candidate 1.2. The
+    reproductions, causes, corrective edits, complete-gate evidence, and
+    current independent-review status are recorded in
+    [`grammar9-milestone-acceptance-mutation-acceptance.md`](../process/grammar9-milestone-acceptance-mutation-acceptance.md).
+  - `ACT-ADR3-011-003`: complete and independently review
+    `POOL_GRAMMAR9_ACCEPTANCE_MUTATION`, including CLI and installed-package
+    regression, before `POOL_RELEASE_GATE_DESIGN` becomes eligible.
+- `CLM-ADR3-011-004`: accepting this proposal cannot serve as release-write
+  authority.
+  - `EVD-ADR3-011-004`: the release PERT places preparation, candidate,
+    PUBLISH, and durable acceptance after the gate-design milestone. The exact
+    authority source is
+    [`planning-pool-release-readiness.pert`](../../plans/planning-pool-release-readiness.pert),
+    currently at source digest
+    `sha256:f2f8f321e8fc142cadfc62fcd7e4e19bba4eec84417448dabd744b85870f4ec1`:
+    the correction Outcome is missing, assurance requires
+    `restore_assurance_evidence`, and gate start authority is withheld.
+  - `ACT-ADR3-011-004`: request separate authority at each mutation boundary
+    and prohibit external writes during gate design and source preparation.
+
+#### Consequences and follow-up
+
+If this amendment is accepted and the release is later published, the release
+will add the accepted Planning Pool public surface while preserving older
+reads and an exact Contract 9 rollback pin. A Grammar 9 source that uses
+Planning Pool declarations has no automatic downgrade to Grammar 8. Only npm
+`beta` may move during a separately authorized PUBLISH operation; `latest`,
+public VSIX, Issue closure, plan advance, and Issue #24 Goal Coverage and Goal
+Seal remain separate decisions. This amendment remains proposed until its
+exact gate candidate receives owner acceptance.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -272,7 +461,8 @@ GitHub Release, promote `latest`, or close Issue #5.
 
 - Stable compatibility cannot be inferred from `0.x.x` alone. Users must review the CHANGELOG and schema versions.
 - The publication script accepts only the maintained `beta` channel.
-- Do not change the current `0.1.0-alpha.2` package; update it to `0.1.0` only in the release commit after Issue #2 acceptance.
+- The 2026-07-23 beta release changed the then-current `0.1.0-alpha.2` package
+  identity to `0.1.0` only in the release commit after Issue #2 acceptance.
 - Keep historical alpha package versions available by exact pin without an
   active alpha distribution tag.
 - Control the beta transition through Issue #2 and the release gate in the project model, without waiting for external feedback.

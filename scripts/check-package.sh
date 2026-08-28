@@ -317,6 +317,101 @@ node -e '
       ) process.exit(1);
     });
   '
+"$installed_cli" milestone acceptance replace \
+  "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert" \
+  REVIEWED REVIEWED_R2 R2 \
+  --criterion "PACKAGE2:required:test:Installed package replay after Pool preservation" \
+  --actor codex \
+  --format=json |
+  node -e '
+    const fs = require("node:fs");
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      const candidate = result.updated_text ?? "";
+      const source = fs.readFileSync(process.argv[1], "utf8");
+      const planningBlocks = (text) => [...text.matchAll(
+        /^(?:work [A-Za-z][A-Za-z0-9_-]*:|event [A-Za-z][A-Za-z0-9_-]*:|activity [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> [A-Za-z][A-Za-z0-9_-]*:|window [A-Za-z][A-Za-z0-9_-]*:|work_order:)\r?\n(?:^[ \t].*(?:\r?\n|$))*/gmu,
+      )].map(([block]) => block);
+      const applied = [...(result.edits ?? [])].reverse().reduce(
+        (text, edit) => text.slice(0, edit.start_offset) + edit.replacement +
+          text.slice(edit.end_offset), source,
+      );
+      if (
+        result.schema_version !== "Perttool.MutationResult.v6" ||
+        result.cli_contract_version !== 10 ||
+        result.operation !== "milestone-acceptance.replace" ||
+        result.ok !== true ||
+        result.changed !== true ||
+        result.write?.written !== false ||
+        result.edits?.length !== 2 ||
+        applied !== candidate ||
+        JSON.stringify(planningBlocks(candidate)) !==
+          JSON.stringify(planningBlocks(source)) ||
+        !candidate.includes("  version 9") ||
+        !candidate.includes("work W1:") ||
+        !candidate.includes("activity DRAFT_ACTIVITY DRAFT_START -> DRAFT_END:") ||
+        !candidate.includes("window SPRINT:") ||
+        !candidate.includes("work_event BUILD_FINISH:") ||
+        candidate.includes("milestone_criterion_set REVIEWED_R1:") ||
+        candidate.includes("milestone_acceptance_receipt REVIEWED_WAIVED:") ||
+        !candidate.includes("milestone_criterion_set REVIEWED_R2:")
+      ) process.exit(1);
+    });
+  ' "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert"
+
+denied_plan="$package_root/grammar9-denied.pert"
+denied_json="$package_root/grammar9-denied.json"
+cp "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert" "$denied_plan"
+denied_digest=$(node -e '
+  const fs = require("node:fs");
+  const crypto = require("node:crypto");
+  const source = fs.readFileSync(process.argv[1]);
+  process.stdout.write(`sha256:${crypto.createHash("sha256").update(source).digest("hex")}`);
+' "$denied_plan")
+if "$installed_cli" milestone acceptance replace "$denied_plan" \
+  REVIEWED REVIEWED_R2 R2 \
+  --criterion "PACKAGE2:required:test:Denied installed package replay" \
+  --actor wrong --write --expect-digest "$denied_digest" --format=json \
+  >"$denied_json"; then
+  printf 'installed denied milestone replacement unexpectedly succeeded\n' >&2
+  exit 1
+else
+  denied_status=$?
+  if [[ "$denied_status" -ne 1 ]]; then
+    printf 'installed denied milestone replacement returned %s, expected 1\n' \
+      "$denied_status" >&2
+    exit 1
+  fi
+fi
+node -e '
+  const fs = require("node:fs");
+  const source = fs.readFileSync(process.argv[1], "utf8");
+  const original = fs.readFileSync(process.argv[2], "utf8");
+  const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+  const planningBlocks = (text) => [...text.matchAll(
+    /^(?:work [A-Za-z][A-Za-z0-9_-]*:|event [A-Za-z][A-Za-z0-9_-]*:|activity [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> [A-Za-z][A-Za-z0-9_-]*:|window [A-Za-z][A-Za-z0-9_-]*:|work_order:)\r?\n(?:^[ \t].*(?:\r?\n|$))*/gmu,
+  )].map(([block]) => block);
+  const candidate = result.updated_text ?? "";
+  const applied = [...(result.edits ?? [])].reverse().reduce(
+    (text, edit) => text.slice(0, edit.start_offset) + edit.replacement +
+      text.slice(edit.end_offset), original,
+  );
+  if (
+    source !== original ||
+    result.ok !== false ||
+    result.write?.written !== false ||
+    !result.diagnostics?.some(({ code }) => code === "PTGOV-101") ||
+    result.governance?.source_digest !== result.source_digest ||
+    !candidate.includes("  version 9") ||
+    applied !== candidate ||
+    JSON.stringify(planningBlocks(candidate)) !==
+      JSON.stringify(planningBlocks(original))
+  ) process.exit(1);
+' "$denied_plan" \
+  "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert" "$denied_json"
 "$installed_cli" agent help grok workflow --format=json |
   node -e '
     let input = "";

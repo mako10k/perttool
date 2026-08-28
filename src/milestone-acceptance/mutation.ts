@@ -5,6 +5,11 @@ import { sha256DigestUtf8 } from "../model/sha256.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
 import { validateTargetGrammar6Document } from "../semantic/target-validator.js";
 import { replaceValidatedDocumentFile, type DocumentWriteResult } from "../io/safe-write.js";
+import {
+  applyTextEdits,
+  normalizeTextEdits,
+  type TextEdit,
+} from "../mutation/text-edits.js";
 import { evaluateMilestoneAcceptance, type MilestoneAcceptanceModelResultV1 } from "./evaluate.js";
 import {
   MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
@@ -59,6 +64,7 @@ export interface MilestoneAcceptanceMutationResultV1 {
   readonly originalDigest: `sha256:${string}`;
   readonly updatedDigest: `sha256:${string}` | null;
   readonly updatedText: string | null;
+  readonly edits: readonly TextEdit[];
   readonly governance: GovernanceDecisionV1 | null;
   readonly evaluation: MilestoneAcceptanceModelResultV1 | null;
   readonly diagnostics: readonly string[];
@@ -91,22 +97,42 @@ function decision(text: string, digest: `sha256:${string}`, input: GovernanceReq
 }
 
 function failure(operation: MilestoneAcceptanceMutationResultV1["operation"], text: string, diagnostics: readonly string[], governance: GovernanceDecisionV1 | null = null): MilestoneAcceptanceMutationResultV1 {
-  return Object.freeze({ modelVersion: 1, operation, ok: false, changed: false, replayed: false, originalDigest: sha256DigestUtf8(text), updatedDigest: null, updatedText: null, governance, evaluation: null, diagnostics: Object.freeze([...diagnostics]) });
+  return Object.freeze({ modelVersion: 1, operation, ok: false, changed: false, replayed: false, originalDigest: sha256DigestUtf8(text), updatedDigest: null, updatedText: null, edits: Object.freeze([]), governance, evaluation: null, diagnostics: Object.freeze([...diagnostics]) });
 }
 
 function insertAtEnd(text: string, block: string): string {
   return `${text}${text.endsWith("\n") ? "" : "\n"}${text.endsWith("\n\n") ? "" : "\n"}${block}`;
 }
 
-function removeSpans(text: string, spans: readonly { readonly start: { readonly offset: number }; readonly end: { readonly offset: number } }[]): string {
-  let result = text;
-  for (const span of [...spans].sort((a, b) => b.start.offset - a.start.offset)) {
+function removalEdits(text: string, spans: readonly { readonly start: { readonly offset: number }; readonly end: { readonly offset: number } }[]): readonly TextEdit[] {
+  const sorted = spans.map((span): TextEdit => {
     let start = span.start.offset;
-    let end = span.end.offset;
     if (start > 0 && text.slice(Math.max(0, start - 1), start) === "\n" && text.slice(Math.max(0, start - 2), start) === "\n\n") start -= 1;
-    result = result.slice(0, start) + result.slice(end);
+    return Object.freeze({ startOffset: start, endOffset: span.end.offset, replacement: "" });
+  }).sort((left, right) => left.startOffset - right.startOffset || left.endOffset - right.endOffset);
+  const merged: TextEdit[] = [];
+  for (const edit of sorted) {
+    const previous = merged.at(-1);
+    if (previous === undefined || edit.startOffset > previous.endOffset) {
+      merged.push(edit);
+    } else {
+      merged[merged.length - 1] = Object.freeze({
+        startOffset: previous.startOffset,
+        endOffset: Math.max(previous.endOffset, edit.endOffset),
+        replacement: "",
+      });
+    }
   }
-  return result;
+  return normalizeTextEdits(text, merged, "milestone acceptance removal");
+}
+
+function appendEdit(text: string, block: string): TextEdit {
+  const candidate = insertAtEnd(text, block);
+  return Object.freeze({
+    startOffset: text.length,
+    endOffset: text.length,
+    replacement: candidate.slice(text.length),
+  });
 }
 
 function criterionCommitment(input: CriterionReplacementInputV1, criterion: CriterionReplacementInputV1["criteria"][number]): `sha256:${string}` {
@@ -119,15 +145,22 @@ function replacementBlock(input: CriterionReplacementInputV1): string {
   return `milestone_criterion_set ${input.setId}:\n  milestone ${input.milestoneId}\n  revision ${input.revisionId}\n  commitment ${commitment}\n${criteria.map((criterion) => `  criterion ${criterion.criterionId} ${criterion.required ? "required" : "optional"} ${criterion.evidenceKind} ${JSON.stringify(criterion.description)}\n`).join("")}`;
 }
 
-function finalResult(operation: MilestoneAcceptanceMutationResultV1["operation"], text: string, candidate: string, governance: GovernanceDecisionV1, replayed = false): MilestoneAcceptanceMutationResultV1 {
+function finalResult(operation: MilestoneAcceptanceMutationResultV1["operation"], text: string, candidate: string, governance: GovernanceDecisionV1, replayed = false, edits: readonly TextEdit[] = Object.freeze([])): MilestoneAcceptanceMutationResultV1 {
   const parsed = parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
   if (!parsed.ok) return failure(operation, text, parsed.diagnostics.map(({ code }) => code), governance);
+  const normalizedEdits = normalizeTextEdits(text, edits, "milestone acceptance mutation");
+  if (applyTextEdits(text, normalizedEdits) !== candidate) {
+    return failure(operation, text, ["invalid_mutation_edits"], governance);
+  }
+  const effectiveEdits = candidate === text
+    ? Object.freeze([])
+    : Object.freeze(normalizedEdits);
   const milestoneIds = [...candidate.matchAll(/^milestone ([A-Za-z][A-Za-z0-9_-]*):$/gmu)].map((match) => match[1]!);
   const evaluation = evaluateMilestoneAcceptance({ source: parsed, milestoneIds, closureReachedMilestoneIds: new Set() });
   if (!evaluation.ok) return failure(operation, text, evaluation.diagnostics.map(({ code }) => code), governance);
   const diagnostics = governanceDecisionDiagnostics(governance).map(({ code }) => code);
   const denied = diagnostics.includes("PTGOV-101");
-  return Object.freeze({ modelVersion: 1, operation, ok: !denied, changed: candidate !== text, replayed, originalDigest: sha256DigestUtf8(text), updatedDigest: sha256DigestUtf8(candidate), updatedText: candidate, governance, evaluation, diagnostics: Object.freeze(diagnostics) });
+  return Object.freeze({ modelVersion: 1, operation, ok: !denied, changed: candidate !== text, replayed, originalDigest: sha256DigestUtf8(text), updatedDigest: sha256DigestUtf8(candidate), updatedText: candidate, edits: effectiveEdits, governance, evaluation, diagnostics: Object.freeze(diagnostics) });
 }
 
 export function planCriterionSetReplacement(text: string, input: CriterionReplacementInputV1, options: MilestoneAcceptanceMutationOptionsV1 = {}): MilestoneAcceptanceMutationResultV1 {
@@ -140,8 +173,15 @@ export function planCriterionSetReplacement(text: string, input: CriterionReplac
   const ownedSets = parsed.records.filter((record): record is MilestoneCriterionSetSourceV1 => record.kind === "milestone_criterion_set" && record.milestoneId === input.milestoneId);
   const ownedIds = new Set(ownedSets.map(({ id }) => id));
   const owned = parsed.records.filter((record) => ownedIds.has(record.kind === "milestone_acceptance_receipt" ? record.setId : record.id));
-  const candidate = insertAtEnd(removeSpans(text, owned.map(({ span }) => span)), replacementBlock(input));
-  return finalResult("replace", text, candidate, governed.value);
+  const removals = removalEdits(text, owned.map(({ span }) => span));
+  const retained = applyTextEdits(text, removals);
+  const append = appendEdit(retained, replacementBlock(input));
+  const edits = normalizeTextEdits(text, [
+    ...removals,
+    Object.freeze({ ...append, startOffset: text.length, endOffset: text.length }),
+  ], "milestone criterion replacement");
+  const candidate = applyTextEdits(text, edits);
+  return finalResult("replace", text, candidate, governed.value, false, edits);
 }
 
 function receiptBlock(set: MilestoneCriterionSetSourceV1, criterion: MilestoneCriterionSourceV1, input: ReceiptMutationInputV1): string | null {
@@ -176,7 +216,8 @@ export function planAcceptanceReceiptMutation(text: string, input: ReceiptMutati
   }
   const governed = decision(text, sha256DigestUtf8(text), options.governance);
   if (governed.value === null) return failure(input.action, text, governed.diagnostics);
-  return finalResult(input.action, text, insertAtEnd(text, block), governed.value);
+  const edit = appendEdit(text, block);
+  return finalResult(input.action, text, applyTextEdits(text, [edit]), governed.value, false, [edit]);
 }
 
 export function showMilestoneAcceptance(text: string, closureReachedMilestoneIds: readonly string[]): MilestoneAcceptanceModelResultV1 {

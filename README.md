@@ -5,10 +5,11 @@ reviewable text files. It validates plans, calculates precedence and
 resource-constrained schedules, recommends the next task, and previews every
 change before writing it.
 
-The current release is `0.10.5`. It requires Node.js 22 or later and uses
-Grammar 8 and CLI Contract 9. The unreleased source activates Grammar 9 and
-CLI Contract 10 for the Work-centered Planning Pool; release selection and
-publication remain separate.
+The recommended npm `latest` release is `0.10.5`; npm `beta` is the compatible
+`0.10.6` Issue #36 correction. Both require Node.js 22 or later and use Grammar
+8 and CLI Contract 9. The unreleased source activates Grammar 9 and CLI
+Contract 10 for the Work-centered Planning Pool; `0.11.0` gate design,
+preparation, candidate acceptance, and publication remain separate.
 
 ## Install
 
@@ -26,7 +27,7 @@ npx --yes --package=perttool@latest -- perttool --version
 npx --yes --package=perttool@latest -- perttool document check PLAN.pert
 ```
 
-Use an exact version such as `perttool@0.10.5` when reproducibility matters.
+Use an exact version such as `perttool@0.10.6` when reproducibility matters.
 See [CHANGELOG.md](CHANGELOG.md) and the [release records](docs/process/) for
 older releases and rollback pins.
 

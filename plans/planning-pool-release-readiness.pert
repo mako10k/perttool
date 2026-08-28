@@ -216,7 +216,7 @@ task POOL_RELEASE_INTEGRATION_ACCEPTANCE POOL_P2_READY -> POOL_INTEGRATED:
     DOC_REVIEWERS 1
   source "Issues #25-#34"
 
-task POOL_RELEASE_GATE_DESIGN POOL_INTEGRATED -> POOL_RELEASE_GATE_ACCEPTED:
+task POOL_RELEASE_GATE_DESIGN POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_RELEASE_GATE_ACCEPTED:
   title "Accept the next-minor Planning Pool release gate"
   description "Resolve the release boundary under Issue #35, provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
   duration 3p
@@ -290,6 +290,24 @@ gate POOL_P2_HELP_JOIN POOL_COMPOUND_HELP_READY -> POOL_P2_READY:
 gate POOL_P2_ENTITY_JOIN POOL_ENTITY_INSPECTION_READY -> POOL_P2_READY:
   reason "Planning entity inspection accepted"
 
+task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:
+  title "Restore milestone acceptance mutation on Grammar 9"
+  description "Correct the Contract 10 composition so Grammar 9 milestone criterion and receipt mutations preserve Planning Pool declarations, canonical governance, candidate identity, and safe-write guards; add cross-version CLI and installed-package regression before release gate acceptance."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    CLI_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #35 independent release-gate review"
+
+plan_seal POOL_GRAMMAR9_ACCEPTANCE_MUTATION:
+  accepted_contract sha256:e73c5523111361804c78288e958a824eef145ecefc1e26ae12667cfcb63f8025
+  accepted_basis sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
+  accepted_inputs:
+    POOL_RELEASE_INTEGRATION_ACCEPTANCE both sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+
 plan_seal POOL_ADVANCE_EOF_FIX:
   accepted_contract sha256:74704ac0a2fc08ab3e550083ac479d1becae2990e433265617f3b7f23c7ce312
   accepted_basis sha256:0b440c18feb1849408204dac75b17bd5cff44331d21681745ec704257c87406c
@@ -358,24 +376,24 @@ plan_seal POOL_POST_ADVANCE_TEST_FIX:
 
 plan_seal POOL_RELEASE_ACCEPTANCE:
   accepted_contract sha256:1fa86492f20b5c35efcb03ece7644501cd1e2ca9466b34562cf441ad8fa91c51
-  accepted_basis sha256:b0fc7314a0bf9701f6280aabd69ac7f1d17abb2396b4cf688741645c7e31a7a4
+  accepted_basis sha256:7306472068a758c7ecf8779ee65899b1556a3be4d958230882c3ed0ef3a931db
   accepted_inputs:
-    POOL_RELEASE_PUBLISH both sha256:5aca4ffd1ba7182091ef2f765378e03f0ddc3b31eeac8b5d5c954dc189568a27
-  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+    POOL_RELEASE_PUBLISH both sha256:537ef97193764dde827f9ca48890ee46c93347ad1bebc6e949dc8eea0557cd7a
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
 
 plan_seal POOL_RELEASE_CANDIDATE:
   accepted_contract sha256:5a5303fe1d02c85310649b7b99f380b937c69dc1afc670c461ab6f16496bb02c
-  accepted_basis sha256:efe2519b9d805097c2b2888156bbb2762e6264151bedfed29ec2deec2d0636fa
+  accepted_basis sha256:5aece50d46982b09fc9d69100d24d2a4c373e63906c2c10fee753cc586f5a631
   accepted_inputs:
-    POOL_RELEASE_PREPARATION both sha256:aa48b0b4470f3d9ac845ca242456b5c69d7662a3cbcd98905cb83d166bea3ac5
-  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+    POOL_RELEASE_PREPARATION both sha256:1ed6f87265eddb27c1f24d9f43f0b7992a8a71b5c09f7d2cc79bee436adfbc83
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
 
 plan_seal POOL_RELEASE_GATE_DESIGN:
-  accepted_contract sha256:8a8be662a8c5769335430b6f39f9ac059f5953c3ba2e06369ee901db02f12371
-  accepted_basis sha256:5062d1179da656dd7145505b1c05682afae51734de2c8fc8d8052b1eeaaf0b0e
+  accepted_contract sha256:8d497dcead8c42acda4b7906ad5f9b4ee6c1e963d74fe0f474ea0d036aa8756f
+  accepted_basis sha256:56349837814ef34207e455144df815ea4fd7bbca51e60e1d680a006fdfed3241
   accepted_inputs:
-    POOL_RELEASE_INTEGRATION_ACCEPTANCE both sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013
-  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+    POOL_GRAMMAR9_ACCEPTANCE_MUTATION both sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
 
 plan_seal POOL_RELEASE_INTEGRATION_ACCEPTANCE:
   accepted_contract sha256:bf915af7878be9bf516c9139420bf8d2e999beb3df456b07c21758510e7dda57
@@ -387,17 +405,17 @@ plan_seal POOL_RELEASE_INTEGRATION_ACCEPTANCE:
 
 plan_seal POOL_RELEASE_PREPARATION:
   accepted_contract sha256:2c947c3fe8d6d41206d7ede47c5ae52da9f9ae7b1e6ee75b4f23f373eca4d4b1
-  accepted_basis sha256:aa48b0b4470f3d9ac845ca242456b5c69d7662a3cbcd98905cb83d166bea3ac5
+  accepted_basis sha256:1ed6f87265eddb27c1f24d9f43f0b7992a8a71b5c09f7d2cc79bee436adfbc83
   accepted_inputs:
-    POOL_RELEASE_GATE_DESIGN both sha256:5062d1179da656dd7145505b1c05682afae51734de2c8fc8d8052b1eeaaf0b0e
-  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+    POOL_RELEASE_GATE_DESIGN both sha256:56349837814ef34207e455144df815ea4fd7bbca51e60e1d680a006fdfed3241
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
 
 plan_seal POOL_RELEASE_PUBLISH:
   accepted_contract sha256:d3539ebd3ee73472c80c30a578322e040fee92c326422cc0a158879f182df8e9
-  accepted_basis sha256:5aca4ffd1ba7182091ef2f765378e03f0ddc3b31eeac8b5d5c954dc189568a27
+  accepted_basis sha256:537ef97193764dde827f9ca48890ee46c93347ad1bebc6e949dc8eea0557cd7a
   accepted_inputs:
-    POOL_RELEASE_CANDIDATE both sha256:efe2519b9d805097c2b2888156bbb2762e6264151bedfed29ec2deec2d0636fa
-  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+    POOL_RELEASE_CANDIDATE both sha256:5aece50d46982b09fc9d69100d24d2a4c373e63906c2c10fee753cc586f5a631
+  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
 
 plan_seal POOL_REQUEST_SCHEMAS:
   accepted_contract sha256:a9e60c4577edb29eeae623711bdd4f7df9b49a99e459b718e2510f35f207ef69
@@ -653,3 +671,21 @@ work_event EV_POOL_RELEASE_INTEGRATION_ACCEPTANCE_FINISH_001:
   occurred_at 2026-08-27T15:17:08+09:00
   active_time 0.4275h
   effort 0.4275ph
+
+milestone POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:
+  title "Grammar 9 milestone acceptance mutation accepted"
+
+work_event WE-a5e7bbe5b6671c70c4e764aa47b11bad50bd47596c46cbec9f67d019d343e3a6:
+  model 1
+  task POOL_GRAMMAR9_ACCEPTANCE_MUTATION
+  kind start
+  occurred_at 2026-08-28T19:51:10+09:00
+  planned_value 3p
+
+work_event WE-d8c66a1e61ad73f29414ed9771941fb04adcf1a6c848a5845e4eaf14567c2680:
+  model 1
+  task POOL_GRAMMAR9_ACCEPTANCE_MUTATION
+  kind finish
+  occurred_at 2026-08-28T20:11:26+09:00
+  active_time 76/225h
+  effort 152/225ph

@@ -9,7 +9,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 test("README is a current user guide with separate historical and developer routes", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
 
-  assert.match(readme, /The current release is `0\.10\.5`/u);
+  assert.match(readme, /The recommended npm `latest` release is `0\.10\.5`/u);
+  assert.match(readme, /npm `beta` is the compatible\n`0\.10\.6` Issue #36 correction/u);
   assert.match(readme, /npm install --global perttool@latest/u);
   assert.match(readme, /^## Create your first plan$/mu);
   assert.match(readme, /^## Migrate an existing plan$/mu);

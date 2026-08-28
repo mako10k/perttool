@@ -3958,6 +3958,44 @@ Node exports, and 45 Core exports remain unchanged. Runtime implementation,
 release selection, publication, remote writes, Issue mutation, editor or MCP
 mutation, and plan advance remain later boundaries.
 
+### Post-MVP Slice 8A: Planning Pool `v0.11.0` beta minor
+
+The selected `0.11.0` release packages the already accepted Grammar 9 and CLI
+Contract 10 Planning Pool boundary without reopening Work, Window, strict-DAG,
+governance, assurance, acceptance, history, or Goal Coverage semantics. The
+release composition owns version-bearing files, the additive Grammar 8 to 9
+migration and rollback guidance, package inventory, one immutable tarball,
+public-channel identity, and independent installed acceptance.
+
+The target public surface is 71 commands, 29 active root schemas, 139 root and
+reference-identical Node runtime exports, and 51 portable Core runtime
+exports. `Perttool.AdvanceResult.v4` and
+`Perttool.UnitMigrationResult.v5` replace their Contract 9 predecessors.
+Private LSP, VSIX, and MCP workspaces remain excluded from the npm tarball.
+
+Preparation must carry the exact correction-only Issue #36 patch from the
+published `0.10.6` line and retain its release-policy and changelog history.
+It must not copy `0.10.6` package identity, generated version goldens, or
+old-line candidate artifacts into `0.11.0`. The exact `0.10.6` package is the
+rollback pin because it is the latest published Contract 9 beta and includes
+the canonical milestone-acceptance governance correction.
+
+Before the release-gate design can be accepted, the CLI composes milestone
+acceptance mutation through both extension layers: it removes Planning Pool
+declarations to obtain the compatible Grammar 8 document, invokes the existing
+temporal-to-acceptance composition, and then reintegrates both candidates into
+one validated Grammar 9 source. This preserves Planning Pool bytes, criterion
+sets and receipts, canonical governance, the outer source digest, Contract 10
+result projection, and exit-5 optimistic-lock behavior. A failed inner or
+outer validation returns no candidate and performs no write.
+
+The release remains a five-stage serial flow: gate design, source preparation,
+clean candidate acceptance, separately authorized PUBLISH, and durable
+acceptance. PUBLISH may consume only the exact accepted tarball and may move
+only npm `beta`; `latest`, public VSIX publication, Issue closure, plan
+advance, Issue #24 Goal Coverage and Goal Seal, and the separately proposed
+interface-contract-aware affected-test selector remain independent work.
+
 ### Milestone outcome acceptance Contract 8 slice
 
 The selected `MILESTONE-ACCEPT-001` workstream is tracked in

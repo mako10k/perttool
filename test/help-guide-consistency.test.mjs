@@ -125,7 +125,7 @@ test("repository policy and self-use registration include the accepted workstrea
   assert.match(selfUseScript, /plans\/editor-mutations\.pert/);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/);
   assert.match(selfUseScript, /plans\/release-0\.9\.4\.pert/);
-  assert.match(selfUseScript, /45 plans; check, analyze, next/);
+  assert.match(selfUseScript, /46 plans; check, analyze, next/);
   assert.match(selfUseGuide, /all forty-five current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
   assert.match(planIndex, /`editor-mutations\.pert`/);

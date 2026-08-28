@@ -139,6 +139,7 @@ import {
   planAcceptanceReceiptMutation,
   planCriterionSetReplacement,
   showMilestoneAcceptance,
+  type MilestoneAcceptanceMutationResultV1,
 } from "./milestone-acceptance/mutation.js";
 import {
   scanTemporalDeclarationBlocks,
@@ -4318,44 +4319,111 @@ function parseMilestoneAcceptanceCriteria(
   });
 }
 
-function planContract9AcceptanceMutation<T extends {
-  readonly ok: boolean;
-  readonly changed: boolean;
-  readonly originalDigest: `sha256:${string}`;
-  readonly updatedDigest: `sha256:${string}` | null;
-  readonly updatedText: string | null;
-}>(text: string, planner: (baseText: string) => T): T {
+function liftAcceptanceMutationCandidate(
+  text: string,
+  base: string,
+  planned: MilestoneAcceptanceMutationResultV1,
+): MilestoneAcceptanceMutationResultV1 {
+  const originalDigest = sha256DigestUtf8(text);
+  const rebound = planned.governance === null
+    ? planned
+    : Object.freeze({
+        ...planned,
+        governance: Object.freeze({
+          ...planned.governance,
+          sourceDigest: originalDigest,
+        }),
+      }) as MilestoneAcceptanceMutationResultV1;
+  if (planned.updatedText === null) {
+    return Object.freeze({ ...rebound, originalDigest });
+  }
+  const protectedRanges = maskedSourceLineRanges(text, base);
+  let edits: readonly TextEdit[];
+  let candidate: string;
+  try {
+    edits = normalizeTextEdits(base, planned.edits, "milestone acceptance lift");
+    if (
+      protectedRanges === null ||
+      edits.some((edit) => protectedRanges.some((range) =>
+        textEditTouchesRange(edit, range))) ||
+      applyTextEdits(base, edits) !== planned.updatedText
+    ) throw new Error("acceptance edits do not preserve the lowered source");
+    candidate = applyTextEdits(text, edits);
+  } catch {
+    return Object.freeze({ ...rebound, ok: false, changed: false,
+      originalDigest, updatedDigest: null, updatedText: null,
+      edits: Object.freeze([]), diagnostics: Object.freeze([
+        ...rebound.diagnostics, "invalid_lifted_candidate",
+      ]) });
+  }
+  const checked = checkDocument(candidate);
+  if (!checked.ok) return Object.freeze({ ...rebound, ok: false, changed: false,
+    originalDigest, updatedDigest: null, updatedText: null,
+    edits: Object.freeze([]), diagnostics: Object.freeze([
+      ...rebound.diagnostics, "invalid_lifted_candidate",
+    ]) });
+  return Object.freeze({ ...rebound, originalDigest, changed: candidate !== text,
+    updatedDigest: sha256DigestUtf8(candidate), updatedText: candidate,
+    edits: Object.freeze(edits) });
+}
+
+interface SourceOffsetRange {
+  readonly startOffset: number;
+  readonly endOffset: number;
+}
+
+function maskedSourceLineRanges(
+  text: string,
+  base: string,
+): readonly SourceOffsetRange[] | null {
+  if (text.length !== base.length) return null;
+  const ranges: SourceOffsetRange[] = [];
+  let startOffset = 0;
+  while (startOffset < text.length) {
+    const newline = text.indexOf("\n", startOffset);
+    const endOffset = newline < 0 ? text.length : newline + 1;
+    if (text.slice(startOffset, endOffset) !== base.slice(startOffset, endOffset)) {
+      ranges.push(Object.freeze({ startOffset, endOffset }));
+    }
+    startOffset = endOffset;
+  }
+  return Object.freeze(ranges);
+}
+
+function textEditTouchesRange(
+  edit: TextEdit,
+  range: SourceOffsetRange,
+): boolean {
+  return edit.startOffset === edit.endOffset
+    ? edit.startOffset > range.startOffset && edit.startOffset < range.endOffset
+    : edit.startOffset < range.endOffset && edit.endOffset > range.startOffset;
+}
+
+function planContract9AcceptanceMutation(
+  text: string,
+  planner: (baseText: string) => MilestoneAcceptanceMutationResultV1,
+): MilestoneAcceptanceMutationResultV1 {
   if (!/^  version 8$/mu.test(text)) return planner(text);
   const base = temporalScheduleBaseText(
     text,
     scanTemporalDeclarationBlocks(text),
   );
-  const planned = planner(base);
-  const originalDigest = sha256DigestUtf8(text);
-  if (!planned.ok || planned.updatedText === null) {
-    return Object.freeze({ ...planned, originalDigest });
+  return liftAcceptanceMutationCandidate(text, base, planner(base));
+}
+
+function planContract10AcceptanceMutation(
+  text: string,
+  planner: (baseText: string) => MilestoneAcceptanceMutationResultV1,
+): MilestoneAcceptanceMutationResultV1 {
+  if (!/^  version 9$/mu.test(text)) {
+    return planContract9AcceptanceMutation(text, planner);
   }
-  let prefix = 0;
-  while (
-    prefix < base.length &&
-    prefix < planned.updatedText.length &&
-    base[prefix] === planned.updatedText[prefix]
-  ) prefix += 1;
-  let suffix = 0;
-  while (
-    suffix < base.length - prefix &&
-    suffix < planned.updatedText.length - prefix &&
-    base[base.length - 1 - suffix] ===
-      planned.updatedText[planned.updatedText.length - 1 - suffix]
-  ) suffix += 1;
-  const candidate = text.slice(0, prefix) +
-    planned.updatedText.slice(prefix, planned.updatedText.length - suffix) +
-    text.slice(text.length - suffix);
-  const checked = checkDocument(candidate);
-  if (!checked.ok) return Object.freeze({ ...planned, ok: false, changed: false,
-    originalDigest, updatedDigest: null, updatedText: null });
-  return Object.freeze({ ...planned, originalDigest, changed: candidate !== text,
-    updatedDigest: sha256DigestUtf8(candidate), updatedText: candidate });
+  const base = planningPoolBaseText(
+    text,
+    scanPlanningDeclarationBlocks(text),
+  );
+  const planned = planContract9AcceptanceMutation(base, planner);
+  return liftAcceptanceMutationCandidate(text, base, planned);
 }
 
 async function runMilestoneAcceptance(action: string, args: readonly string[]): Promise<number> {
@@ -4368,20 +4436,20 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
   if (action === "show") {
     if (parsed.positionals.length !== 1) throw new UsageError("milestone acceptance show requires exactly one <file>");
     const result = checkDocument(input.text).acceptance ?? showMilestoneAcceptance(input.text, []);
-    if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceResult.v1", cli_contract_version: 8, tool_version: TOOL_VERSION, operation, ok: result.ok, milestones: snakeJson(result.milestones), diagnostics: snakeJson(result.diagnostics) });
+    if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceResult.v1", cli_contract_version: 10, tool_version: TOOL_VERSION, operation, ok: result.ok, milestones: snakeJson(result.milestones), diagnostics: snakeJson(result.diagnostics) });
     else process.stdout.write(`${result.milestones.map(({ milestoneId, closure, acceptance }) => `${milestoneId} closure=${closure} acceptance=${acceptance}`).join("\n")}\n`);
     return result.ok ? 0 : 1;
   }
   if (parsed.positionals.length !== 4) throw new UsageError(`${operation} requires four operands`);
   const request = editingWriteRequest(parsed, sourceOperand);
-  if (request.mode === "out") throw new UsageError(`${operation} does not support --out in Contract 8`);
+  if (request.mode === "out") throw new UsageError(`${operation} does not support --out in Contract 10`);
   const governance = governanceRequest(parsed, request);
   let result;
   if (action === "replace") {
     const criteria = parseMilestoneAcceptanceCriteria(parsed.repeatedValues.get("criterion") ?? []);
-    result = planContract9AcceptanceMutation(input.text, (text) => planCriterionSetReplacement(text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance }));
+    result = planContract10AcceptanceMutation(input.text, (text) => planCriterionSetReplacement(text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance }));
   } else {
-    result = planContract9AcceptanceMutation(input.text, (text) => planAcceptanceReceiptMutation(text, {
+    result = planContract10AcceptanceMutation(input.text, (text) => planAcceptanceReceiptMutation(text, {
       setId: parsed.positionals[1]!, criterionId: parsed.positionals[2]!, receiptId: parsed.positionals[3]!, action: action as "verify" | "fail" | "unavailable" | "revoke" | "waive",
       ...(parsed.values.get("evidence-kind") === undefined ? {} : { evidenceKind: parsed.values.get("evidence-kind") as "test" | "command" | "artifact" | "observation" | "owner" }),
       ...(parsed.values.get("evidence-reference") === undefined ? {} : { evidenceReference: parsed.values.get("evidence-reference")! }),
@@ -4394,12 +4462,16 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
   }
   let written = false;
   if (result.ok && request.mode === "in_place" && result.changed) {
-    await commitCandidate(request, result.updatedText, input.digest);
-    written = true;
+    try {
+      await commitCandidate(request, result.updatedText, input.digest);
+      written = true;
+    } catch (error) {
+      return writeFailureExit(error, operation, format === "json");
+    }
   }
   if (format === "json") writeJson({
     schema_version: "Perttool.MutationResult.v6",
-    cli_contract_version: 8,
+    cli_contract_version: 10,
     tool_version: TOOL_VERSION,
     operation,
     ok: result.ok,
@@ -4418,7 +4490,7 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
     updated_digest: result.updatedDigest,
     updated_text: result.updatedText,
     diff: result.updatedText === null ? null : createUnifiedDiff(input.text, result.updatedText, { originalLabel: sourceOperand, updatedLabel: "candidate" }),
-    edits: result.changed && result.updatedText !== null ? [{ start_offset: 0, end_offset: input.text.length, replacement: result.updatedText }] : [],
+    edits: snakeJson(result.edits),
     write: { mode: request.mode, target: request.target, written },
     governance: result.governance === null ? null : {
       ...snakeJson(result.governance) as Readonly<Record<string, unknown>>,
