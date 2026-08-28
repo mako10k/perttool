@@ -1,0 +1,105 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0106:
+  version 6
+  title "perttool 0.10.6 milestone-acceptance delegate patch release"
+  description "Correct Issue #36 from exact published v0.10.5 commit 7379870 as compatible suffix-free 0.10.6 while preserving Grammar 8, CLI Contract 9, public identities, fail-closed authority, and safe persistence. Keep the correction-only commit distinct from release identity commits so it can be applied independently to the preserved 0.11 workstream. Publication, npm latest movement, Issue mutation, public VSIX publication, release-plan advance, and 0.11 integration remain separately authorized."
+  as_of 2026-08-28
+  duration_unit point
+  finish RELEASE_0106_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_0106_STARTED:
+  title "Version 0.10.6 hotfix started"
+  state reached
+
+milestone RELEASE_0106_GATE_ACCEPTED:
+  title "Version 0.10.6 correction and release gate accepted"
+
+milestone RELEASE_0106_CORRECTED:
+  title "Issue 36 correction accepted"
+
+milestone RELEASE_0106_PREPARED:
+  title "Version 0.10.6 source prepared"
+
+milestone RELEASE_0106_CANDIDATE_ACCEPTED:
+  title "Immutable version 0.10.6 candidate accepted"
+
+milestone RELEASE_0106_PUBLISHED:
+  title "Version 0.10.6 published"
+
+milestone RELEASE_0106_ACCEPTED:
+  title "Version 0.10.6 durably accepted"
+
+resource HOTFIX_ENGINEERS:
+  title "Milestone-acceptance correction capacity"
+  description "Own the canonical governance-source correction and focused regression matrix."
+  capacity 1
+
+resource ACCEPTANCE_REVIEWERS:
+  title "Independent acceptance capacity"
+  description "Own exact-source, authority, installed-package, and rollback review."
+  capacity 1
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  description "Own version surfaces, immutable artifacts, publication, and durable readback."
+  capacity 1
+
+task RELEASE_0106_GATE_DESIGN RELEASE_0106_STARTED -> RELEASE_0106_GATE_ACCEPTED:
+  title "Accept the Issue 36 correction and 0.10.6 release gate"
+  description "Reproduce the delegate denial on exact v0.10.5, confirm suffix-free 0.10.6, freeze the canonical pre-change effective-governance boundary, public identity compatibility, rollback, and correction-only commit separation."
+  duration 3p
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #36"
+
+task RELEASE_0106_CORRECTION RELEASE_0106_GATE_ACCEPTED -> RELEASE_0106_CORRECTED:
+  title "Correct milestone-acceptance delegate authority"
+  description "Remove the independent regex interpretation and consume canonical validated pre-change effective governance for criterion-set and receipt mutations. Cover empty, one-item, and multiple-item bracketed delegates plus owner, non-delegate, missing-actor, wrong-actor, preview, write, digest, and installed behavior without loosening fail-closed authority."
+  duration 5p
+  priority 100
+  requires:
+    HOTFIX_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #36"
+
+task RELEASE_0106_PREPARATION RELEASE_0106_CORRECTED -> RELEASE_0106_PREPARED:
+  title "Prepare version 0.10.6 source"
+  description "Commit the correction independently, align every version-bearing surface to 0.10.6, and pass the complete Node.js 22 repository, static, documentation, self-use, adapter, temporary-link, and isolated-package gates without publishing."
+  duration 5p
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #36"
+
+task RELEASE_0106_CANDIDATE RELEASE_0106_PREPARED -> RELEASE_0106_CANDIDATE_ACCEPTED:
+  title "Accept one immutable version 0.10.6 candidate"
+  description "Select one clean source commit and retained tarball, prove unused GitHub and npm identities and authenticated routes, and accept exact installed Issue 36 behavior and the 0.10.5 rollback pin before publication authorization."
+  duration 3p
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #36"
+
+task RELEASE_0106_PUBLISH RELEASE_0106_CANDIDATE_ACCEPTED -> RELEASE_0106_PUBLISHED:
+  title "Publish the authorized version 0.10.6 candidate"
+  description "After separate exact-candidate authorization, push the exact commit and annotated tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
+  duration 3p
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #36"
+
+task RELEASE_0106_ACCEPTANCE RELEASE_0106_PUBLISHED -> RELEASE_0106_ACCEPTED:
+  title "Durably accept version 0.10.6"
+  description "Independently read back Git, CI, GitHub, npm, artifact identity, exact and beta installations, all Issue 36 authority cases, and the exact 0.10.5 rollback without implying npm latest movement, Issue closure, plan advance, or 0.11 integration."
+  duration 3p
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #36"
