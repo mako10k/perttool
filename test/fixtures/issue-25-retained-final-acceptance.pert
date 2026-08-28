@@ -1,0 +1,75 @@
+project ISSUE_25:
+  version 7
+  title "Retained final acceptance terminal cleanup"
+  duration_unit point
+  finish FINAL
+  dag_owner user
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository issue-25-regression
+  path "plan.pert"
+  object_format sha1
+  head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  blob bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  source_digest sha256:6441eec1fb1d935c801a8081b7369ea1b00cc1d467fa42a4c668eca184991d66
+  candidate_digest sha256:41e286aef2954bd9c417410d2624d51b71f4bacbc79b03d631ee8ed154c5f3c4
+  grandfathered START
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone MID:
+  title "Intermediate"
+
+milestone FINAL:
+  title "Final"
+
+milestone_criterion_set FINAL_R1:
+  milestone FINAL
+  revision R1
+  commitment sha256:ed322f4be7e0beed3ea2f390338d7b6f13494bf2f1d56e34b3b8576632bc41ca
+  criterion FINAL_ACCEPTED required test "Final milestone accepted"
+
+milestone_acceptance_receipt RCPT_FINAL_ACCEPTED:
+  model 1
+  set FINAL_R1
+  set_commitment sha256:ed322f4be7e0beed3ea2f390338d7b6f13494bf2f1d56e34b3b8576632bc41ca
+  criterion FINAL_ACCEPTED
+  criterion_commitment sha256:245a66dfbec060861bc83ae6b5eebcc4cdc241c0e7a3529cfa66c3f0f7f47b69
+  action verify
+  evidence_kind test
+  evidence_reference "node --test issue-25"
+  evidence_revision abc123
+  verifier codex
+  occurred_at 2026-08-26T02:00:00Z
+
+task FIRST START -> MID:
+  title "First"
+  duration 1p
+  status done
+
+task SECOND MID -> FINAL:
+  title "Second"
+  duration 1p
+  status done
+
+milestone_criterion_set MID_R1:
+  milestone MID
+  revision R1
+  commitment sha256:d431648c6dce1f0ceed20053f400f21857de3271d1306382610b9954def4153b
+  criterion MID_ACCEPTED required test "Intermediate milestone accepted"
+
+milestone_acceptance_receipt RCPT_MID_ACCEPTED:
+  model 1
+  set MID_R1
+  set_commitment sha256:d431648c6dce1f0ceed20053f400f21857de3271d1306382610b9954def4153b
+  criterion MID_ACCEPTED
+  criterion_commitment sha256:8c330c87ec17ed7d5f8ebd3bb6fee1aa7ea3235fe6891a5ea2935bb7e0abd053
+  action verify
+  evidence_kind test
+  evidence_reference "node --test issue-25"
+  evidence_revision abc123
+  verifier codex
+  occurred_at 2026-08-26T02:00:00Z

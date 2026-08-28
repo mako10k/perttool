@@ -191,9 +191,27 @@ test("public contract acceptance fixes its historical source boundary", () => {
     path.join(root, "docs", "process", "planning-pool-public-contract-acceptance.md"),
     "utf8",
   );
-  const plan = readFileSync(path.join(root, "plans", "planning-pool.pert"), "utf8");
-  const publicTask = /^task PLANNING_POOL_PUBLIC_CONTRACT[\s\S]*?(?=^task |^plan_seal )/mu.exec(plan)?.[0] ?? "";
-  const finalTask = /^task PLANNING_POOL_ACCEPTANCE[\s\S]*?(?=^task |^plan_seal )/mu.exec(plan)?.[0] ?? "";
+  const acceptedPlan = readFileSync(
+    path.join(
+      root,
+      "test",
+      "fixtures",
+      "planning-pool-pre-advance-accepted.pert",
+    ),
+    "utf8",
+  );
+  const residualPlan = readFileSync(
+    path.join(root, "plans", "planning-pool.pert"),
+    "utf8",
+  );
+  const publicTask =
+    /^task PLANNING_POOL_PUBLIC_CONTRACT[\s\S]*?(?=^task |^plan_seal )/mu.exec(
+      acceptedPlan,
+    )?.[0] ?? "";
+  const finalTask =
+    /^task PLANNING_POOL_ACCEPTANCE[\s\S]*?(?=^task |^plan_seal )/mu.exec(
+      acceptedPlan,
+    )?.[0] ?? "";
 
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /C-POOL-PUBLIC-001 `high`, accepted/u);
@@ -204,4 +222,9 @@ test("public contract acceptance fixes its historical source boundary", () => {
   assert.match(acceptance, /complete 1,296-test repository regression gate/u);
   assert.match(publicTask, /^  status done$/mu);
   assert.match(finalTask, /title "Accept planning pool and bounded Windows end to end"/u);
+  assert.match(
+    residualPlan,
+    /milestone PLANNING_POOL_ACCEPTED:[\s\S]*?state reached/u,
+  );
+  assert.doesNotMatch(residualPlan, /^task /mu);
 });

@@ -291,6 +291,47 @@ language equivalence. Any undisposed incident relation blocks archival.
 
 ## 5. Semantic reshape and guided preflight
 
+### 5.0 Routine intent request builder
+
+`Perttool.PlanningIntentRequest.v1` is the closed, source-bound public input
+for routine Planning Pool intentions. It contains exactly
+`request_schema_version`, `source_digest`, and one `action`. The action is one
+of:
+
+| Action | Exact caller-owned fields |
+| --- | --- |
+| `create_work` | `work_id`, `title`, `description`, `insert_after_work_id` |
+| `update_work` | `work_id`, nullable `title`, nullable `description`; at least one is non-null |
+| `move_work` | `work_id`, nullable `insert_after_work_id` |
+| `set_dependency` | `dependent_work_id`, `prerequisite_work_id`, boolean `present` |
+| `archive_work` | `work_id` |
+| `project` | exact `event_ids` and `activity_ids` |
+| `defer` | exact `task_ids` and `milestone_ids` |
+| `create_window` | `window_id`, `title`, `objective`, nullable bounds, and exact `work_ids` |
+| `set_window_membership` | `window_id`, `work_id`, boolean `selected` |
+| `close_window` | `window_id`, exact `carry_over_work_ids`, and explicit nullable carry-over target |
+
+The builder reads only the bound valid Grammar 9 source. It mechanically
+preserves the complete existing descriptions and incident typed relations
+that the caller did not change, then produces one complete low-level request.
+It does not split natural language, infer meaning, choose Work, infer a
+dependency, infer a projection, choose carry-over, or combine multiple
+intentions. The preflight result exposes the compiled normalized request for
+review.
+
+Work intentions compile to `Perttool.PlanningReshapeRequest.v2` and
+`perttool.planning-reshape-normalization@2`. Version 2 adds the closed
+`work_title_dispositions` array and the `create` dependency disposition while
+retaining every version 1 field and meaning. Version 1 remains accepted and
+byte-stable. Window intentions compile to the unchanged
+`Perttool.WindowMutationRequest.v1`.
+
+The builder is a presentation and request-construction layer only. The
+compiled request still passes through one final candidate, reshape preflight
+hash and token where applicable, governance, plan assurance, canonical
+history proof, expected-digest checking, and atomic safe write. A direct
+`--request` and an `--intent-request` are mutually exclusive.
+
 ### 5.1 Request identities
 
 The typed request is `Perttool.PlanningReshapeRequest.v1`, normalized by
@@ -640,7 +681,7 @@ current source or overrides a current declaration.
 
 ### 9.1 Closed command delta
 
-CLI Contract 10 adds exactly these eleven command paths:
+CLI Contract 10 adds exactly these fifteen command paths:
 
 ```text
 work list
@@ -648,6 +689,10 @@ work show
 work observe
 work reshape preflight
 work reshape apply
+event list
+event show
+activity list
+activity show
 window list
 window show
 window observe
@@ -656,16 +701,34 @@ window set
 window close
 ```
 
-`work list`, `work show`, `window list`, and `window show` take the document
+`work list`, `work show`, `event list`, `event show`, `activity list`,
+`activity show`, `window list`, and `window show` take the document
 and optional identity only. Both observe commands require
-`--request <json-path-or-stdin>`. Both reshape commands require
-`--request`; apply additionally requires `--preflight-hash` and
-`--preflight-token`. Window mutations take document, Window ID, and required
-`--request`. Standard result, diagnostic, governance, preview, write, output,
-and expected-digest groups keep their Contract 9 meanings. A document and JSON
-request cannot both consume stdin.
+`--request <json-path-or-stdin>`. Both reshape commands require exactly one of
+`--request` and `--intent-request`; apply additionally requires
+`--preflight-hash` and `--preflight-token`. Window mutations take document,
+Window ID, and exactly one of `--request` and `--intent-request`. Standard
+result, diagnostic, governance, preview, write, output, and expected-digest
+groups keep their Contract 9 meanings. A document and JSON request cannot both
+consume stdin.
 
-The active catalog moves from 56 to 67 commands. `document migrate` gains
+Default human output is review-oriented while `--format json` remains the
+complete stable machine contract. Work, Event, Activity, and Window lists stay
+compact. Work show projects its description, planning associations, strict links,
+dependencies, Window memberships, and global-order neighbors. Window show
+projects its objective, identity, half-open bounds, and selected Work in
+global order. Event show projects its complete project-owned declaration and
+reverse Work associations. Activity show additionally projects both endpoints,
+all declared plan fields, requirements, timing, and reverse Work associations.
+Neither result creates a per-Work copy; JSON retains the authoritative source
+spans that human detail omits. Current and historical observations render refinement,
+execution, outcome, organization, temporal, and global-execution facts as
+separate sections. Reshape preflight renders source and candidate bindings,
+affected meaning, changes, diagnostics, authority, the opaque token, and the
+next required action. Default human output omits source-span and raw-candidate
+noise; JSON retains the authoritative detailed representation.
+
+The active catalog moves from 56 to 71 commands. `document migrate` gains
 target 9 without adding a command. `dag advance` gains
 `--archive-empty-work` without adding a command. No editor or MCP mutation is
 implied.
@@ -677,6 +740,8 @@ The target reserves:
 ```text
 Perttool.PlanningPoolModel.v1
 Perttool.PlanningReshapeRequest.v1
+Perttool.PlanningReshapeRequest.v2
+Perttool.PlanningIntentRequest.v1
 Perttool.WindowMutationRequest.v1
 Perttool.PlanningObservationRequest.v1
 Perttool.PlanningPoolResult.v1
@@ -694,7 +759,7 @@ public task. These identities and command paths are active together.
 
 `PlanningPoolResult.v1` owns read and observation operations. It contains
 operation/query, source binding, complete/incomplete/unavailable state, Work
-order, typed Work and Window details, membership occurrences, unique
+order, typed Work, Event, Activity, and Window details, membership occurrences, unique
 aggregates, global execution context, evidence basis, and diagnostics.
 
 `PlanningReshapePreflightResult.v1` owns the normalized request, complete audit,
@@ -807,10 +872,31 @@ projectable by inference.
 `dag render`, `dag history`, `project history`, LSP GraphView, historical
 GraphView, and MCP retain strict-DAG or accepted read-only meanings. Planning
 views use the new commands. The current unreleased source activates Grammar 9
-and CLI Contract 10 with 67 commands, 26 active root schemas, 139 root exports,
-139 reference-identical Node exports, and 51 portable Core exports. Package
-version `0.10.5` remains unchanged; release selection and publication are
-separate.
+and CLI Contract 10 with 71 commands, 29 active root schemas, 139 root exports,
+139 reference-identical Node exports, and 51 portable Core exports. The
+original atomic public slice owned 26 result or library roots. Issue #31
+additively publishes the three already-defined low-level request contracts as
+standalone roots without changing request semantics, commands, result
+identities, exports, grammar, or CLI contract. Package version `0.10.5`
+remains unchanged; release selection and publication are separate.
+
+### 13.1 Standalone low-level request discovery
+
+The public schema catalog additionally exposes exactly:
+
+```text
+Perttool.PlanningReshapeRequest.v1
+Perttool.WindowMutationRequest.v1
+Perttool.PlanningObservationRequest.v1
+```
+
+Each Draft 2020-12 root is closed, preserves the existing enum and nested
+closure rules, and reuses the request definition already owned by the active
+result schemas. Each applicable low-level `--request` option identifies its
+schema and the corresponding `perttool schema` command in Contract 10 Help.
+The [documented examples](../examples/planning-pool-requests.md) compile
+against those roots. Intent request identities and the v2 normalized reshape
+shape remain outside Issue #31's exact three-schema scope.
 
 ## 14. Evidence chain and implementation gate
 

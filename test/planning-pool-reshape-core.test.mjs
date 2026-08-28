@@ -427,8 +427,8 @@ test("PPRC-014 and PPRC-015 retain bounded no-op assistance and one-time consump
 });
 
 test("PPRC-016 preserves the public runtime and records no LLM self-review", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(rootApi).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(coreApi).length, 51);

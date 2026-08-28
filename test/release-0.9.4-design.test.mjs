@@ -76,8 +76,8 @@ test("0.9.4 retains Contract 8 while correcting Issue 19", async () => {
   assert.match(planIndex, /All forty-five plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.4\.pert/u);
 
-  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(perttool).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(core).length, 51);

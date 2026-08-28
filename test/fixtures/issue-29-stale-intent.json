@@ -1,0 +1,10 @@
+{
+  "request_schema_version": "Perttool.PlanningIntentRequest.v1",
+  "source_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "action": {
+    "kind": "update_work",
+    "work_id": "POOL::W1",
+    "title": null,
+    "description": "Retain reviewed user-visible outcome"
+  }
+}

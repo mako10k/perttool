@@ -212,8 +212,8 @@ test("completed detail work activates Grammar 8 and Contract 9 runtime", async (
 
   assert.equal(packageJson.version, cases.active_runtime_unchanged.tool_version);
   assert.equal(cases.active_runtime_unchanged.commands, 53);
-  assert.equal(COMMAND_REGISTRY.length, 67);
-  assert.equal(activeSchemas.length, 26);
+  assert.equal(COMMAND_REGISTRY.length, 71);
+  assert.equal(activeSchemas.length, 29);
   assert.equal(Object.keys(packageRoot).length, 139);
   assert.equal(Object.keys(nodeFacade).length, 139);
   assert.equal(Object.keys(core).length, 51);

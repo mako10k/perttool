@@ -184,8 +184,8 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
   assert.equal(manifest.files.includes("adapters"), false);
   assert.match(procedure, /PUBLISH is complete from release commit `3aca4f0`/u);
   assert.match(procedure, /^## 7\. Durable acceptance stopping point$/m);

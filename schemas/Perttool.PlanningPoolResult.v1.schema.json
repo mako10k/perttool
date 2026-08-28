@@ -8,7 +8,7 @@
     "schema_version": { "const": "Perttool.PlanningPoolResult.v1" },
     "cli_contract_version": { "const": 10 },
     "tool_version": { "type": "string" },
-    "operation": { "enum": ["work.list", "work.show", "work.observe", "window.list", "window.show", "window.observe"] },
+    "operation": { "enum": ["work.list", "work.show", "work.observe", "event.list", "event.show", "activity.list", "activity.show", "window.list", "window.show", "window.observe"] },
     "ok": { "type": "boolean" },
     "document_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
     "source": { "type": "string" },
@@ -17,6 +17,8 @@
     "query": { "$ref": "#/$defs/query" },
     "work_order": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
     "works": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/workSource" }, { "$ref": "#/$defs/workObservation" }] } },
+    "events": { "type": "array", "items": { "$ref": "#/$defs/eventSource" } },
+    "activities": { "type": "array", "items": { "$ref": "#/$defs/activitySource" } },
     "windows": { "type": "array", "items": { "$ref": "#/$defs/windowSource" } },
     "observation_capability": { "const": "perttool.planning-observation-core@1" },
     "history_capability": { "const": "perttool.planning-history-core@1" },
@@ -34,10 +36,10 @@
   },
   "oneOf": [
     {
-      "required": ["query", "work_order", "works", "windows"],
+      "required": ["query", "work_order", "works", "events", "activities", "windows"],
       "properties": {
-        "operation": { "enum": ["work.list", "work.show", "window.list", "window.show"] },
-        "query": {}, "work_order": {}, "works": {}, "windows": {}
+        "operation": { "enum": ["work.list", "work.show", "event.list", "event.show", "activity.list", "activity.show", "window.list", "window.show"] },
+        "query": {}, "work_order": {}, "works": {}, "events": {}, "activities": {}, "windows": {}
       }
     },
     {
@@ -89,6 +91,69 @@
         "description": { "oneOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }] },
         "events": { "$ref": "#/$defs/references" }, "activities": { "$ref": "#/$defs/references" },
         "milestone_links": { "$ref": "#/$defs/references" }, "task_links": { "$ref": "#/$defs/references" }, "depends_on": { "$ref": "#/$defs/references" },
+        "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "id_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "title_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      },
+      "additionalProperties": false
+    },
+    "eventSource": {
+      "type": "object",
+      "required": ["kind", "id", "qualified_id", "title", "description", "tags", "source", "span", "id_span", "title_span"],
+      "properties": {
+        "kind": { "const": "event" }, "id": { "type": "string" }, "qualified_id": { "type": "string" }, "title": { "type": "string" },
+        "description": { "oneOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }] },
+        "tags": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "source": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "id_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "title_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      },
+      "additionalProperties": false
+    },
+    "durationSource": {
+      "type": "object", "required": ["source_text", "value", "unit", "span"],
+      "properties": {
+        "source_text": { "type": "string" }, "value": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+        "unit": { "enum": ["day", "hour", "point"] }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      }, "additionalProperties": false
+    },
+    "estimateSource": {
+      "type": "object", "required": ["optimistic", "most_likely", "pessimistic", "span"],
+      "properties": {
+        "optimistic": { "$ref": "#/$defs/durationSource" }, "most_likely": { "$ref": "#/$defs/durationSource" },
+        "pessimistic": { "$ref": "#/$defs/durationSource" }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      }, "additionalProperties": false
+    },
+    "requirementSource": {
+      "type": "object", "required": ["resource_id", "qualified_resource_id", "units", "span"],
+      "properties": {
+        "resource_id": { "type": "string" }, "qualified_resource_id": { "type": "string" },
+        "units": { "type": "integer", "minimum": 1 }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      }, "additionalProperties": false
+    },
+    "instantSource": {
+      "type": "object", "required": ["source_text", "instant_seconds", "offset_minutes", "span"],
+      "properties": {
+        "source_text": { "type": "string" }, "instant_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+        "offset_minutes": { "type": "integer", "minimum": -1439, "maximum": 1439 }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      }, "additionalProperties": false
+    },
+    "whenSource": {
+      "type": "object", "required": ["event", "direction", "value", "span"],
+      "properties": {
+        "event": { "enum": ["start", "finish"] }, "direction": { "enum": ["earliest", "latest"] },
+        "value": { "$ref": "#/$defs/instantSource" }, "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+      }, "additionalProperties": false
+    },
+    "activitySource": {
+      "type": "object",
+      "required": ["kind", "id", "qualified_id", "from", "to", "title", "description", "duration", "estimate", "priority", "requirements", "owner", "tags", "source", "calendar_id", "when", "deadline", "span", "id_span", "title_span"],
+      "properties": {
+        "kind": { "const": "activity" }, "id": { "type": "string" }, "qualified_id": { "type": "string" },
+        "from": { "$ref": "#/$defs/reference" }, "to": { "$ref": "#/$defs/reference" }, "title": { "type": "string" },
+        "description": { "oneOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }] },
+        "duration": { "oneOf": [{ "$ref": "#/$defs/durationSource" }, { "type": "null" }] },
+        "estimate": { "oneOf": [{ "$ref": "#/$defs/estimateSource" }, { "type": "null" }] },
+        "priority": { "type": ["integer", "null"] }, "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirementSource" } },
+        "owner": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "tags": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+        "source": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "calendar_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+        "when": { "type": "array", "items": { "$ref": "#/$defs/whenSource" } }, "deadline": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue" },
         "span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "id_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }, "title_span": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
       },
       "additionalProperties": false

@@ -1,0 +1,15 @@
+EVENT ENTITY_INSPECTION::READY
+Title: Review input is ready
+Description: One project-owned state shared by two Work associations.
+
+IDENTITY
+Document: ENTITY_INSPECTION
+Owner: project
+Kind: Temporary Draft Event
+
+ASSOCIATED WORK
+ENTITY_INSPECTION::FIRST, ENTITY_INSPECTION::SECOND
+
+METADATA
+Tags: draft, shared
+Source: Issue #34

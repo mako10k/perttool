@@ -369,8 +369,8 @@ test("PPWC-014 and PPWC-015 bind candidates and classify canonical history witho
 });
 
 test("PPWC-016 keeps the Window Core private and the public runtime unchanged", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(rootApi).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(coreApi).length, 51);

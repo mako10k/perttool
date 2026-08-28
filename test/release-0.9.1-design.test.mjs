@@ -133,8 +133,8 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
   assert.deepEqual(manifest.files, ["dist", "schemas", "CHANGELOG.md"]);
   assert.equal(manifest.files.includes("adapters"), false);
 });

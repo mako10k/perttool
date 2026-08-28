@@ -220,6 +220,66 @@ and the built-in migration Guide:
 perttool guide editing unit-migration --level detail
 ```
 
+## Start a Planning Pool
+
+The unreleased Grammar 9 source adds Work and bounded planning Windows without
+changing strict Task execution. Migrate a Grammar 8 document first:
+
+```sh
+SOURCE_DIGEST=$(perttool document check PLAN.pert --format json | jq -r .source_digest)
+perttool document migrate PLAN.pert --target-grammar 9 --diff
+perttool document migrate PLAN.pert --target-grammar 9 \
+  --write --expect-digest "$SOURCE_DIGEST"
+```
+
+Routine changes use one closed, source-bound intent request. They still run
+through the same complete reshape preflight and opaque-token binding as a
+low-level request:
+
+```sh
+perttool work reshape preflight PLAN.pert \
+  --intent-request intent.json --format json > preflight.json
+perttool work reshape apply PLAN.pert \
+  --intent-request intent.json \
+  --preflight-hash "$(jq -r .preflight_hash preflight.json)" \
+  --preflight-token "$(jq -r .preflight_token preflight.json)" \
+  --diff
+```
+
+The intent builder never infers meaning, dependencies, projection, deferral,
+or carry-over. Review the compiled `normalized_request` and the final candidate
+before writing. The complete first-Work, first-Window, projection, deferral,
+carry-over, and recovery workflow is in
+[Planning Pool intent workflows](docs/examples/planning-pool-intents.md).
+Low-level integrations can discover and validate the three closed request
+contracts through `perttool schema`; complete valid documents are in
+[Planning Pool request schema examples](docs/examples/planning-pool-requests.md).
+
+Default text output is designed for human review: lists remain compact;
+`work show`, `event show`, `activity show`, and `window show` expose their
+semantic facts; observations split
+refinement, execution, outcome, organization, temporal, and global-execution
+facts, and reshape preflight ends with the required next action. Use
+`--format json` when a script needs the complete stable result contract:
+
+```sh
+perttool work show PLAN.pert WORK_ID
+perttool event show PLAN.pert EVENT_ID
+perttool activity show PLAN.pert ACTIVITY_ID
+perttool window observe PLAN.pert --request observation.json
+perttool work reshape preflight PLAN.pert --intent-request intent.json
+perttool schema Perttool.PlanningReshapeRequest.v1
+```
+
+Planning Pool retention is advisory. Remaining Work does not block
+`project.finish`, and Work or Window observations do not prove Final Milestone
+Goal obligation coverage, goal completion, or Window objective achievement.
+Execution scope changes only through an explicit governed strict-DAG candidate.
+The nontechnical retained-Work example is in
+[Planning Pool intent workflows](docs/examples/planning-pool-intents.md);
+[Issue #24](https://github.com/mako10k/perttool/issues/24) separately owns the
+future Goal Obligation, Goal Coverage, and Goal Seal boundary.
+
 ## Plan assurance
 
 Plan assurance is optional. Initial sealing records reviewed task contracts
@@ -287,9 +347,15 @@ The CLI is the complete current command reference:
 perttool --help
 perttool task set --help
 perttool help dag next
+perttool help work reshape preflight
 perttool guide workflows --level detail
 perttool schema --format json
 ```
+
+Compound command Help accepts the same natural path segments as the command.
+An incomplete prefix such as `perttool help work reshape` fails with
+`PTHLP-003` and lists `apply` and `preflight`; structured callers that already
+pass `reshape preflight` as one action argument remain compatible.
 
 Common commands:
 

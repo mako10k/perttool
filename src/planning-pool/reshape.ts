@@ -9,6 +9,10 @@ import {
 } from "../temporal-schedule/source-lexical.js";
 import { planPlanningPoolSourceMutation } from "./format.js";
 import {
+  compilePlanningIntentRequest,
+  isPlanningIntentRequest,
+} from "./intent.js";
+import {
   PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
   PLANNING_RESHAPE_NORMALIZED_LIMITS,
   normalizePlanningReshapeRequest,
@@ -27,6 +31,7 @@ import type {
   PlanningReshapeCoreCapability,
   PlanningReshapeCreatedWork,
   PlanningReshapeDescriptionRow,
+  PlanningReshapeNormalizationResult,
   PlanningReshapePreflightResult,
   PlanningReshapeRequest,
   PlanningReshapeSemanticElement,
@@ -67,7 +72,7 @@ export const PLANNING_RESHAPE_CORE_LIMITS = PLANNING_RESHAPE_NORMALIZED_LIMITS;
 interface MutableWork {
   readonly id: string;
   readonly qualifiedId: string;
-  readonly title: string;
+  title: string;
   description: string;
   readonly events: Set<string>;
   readonly activities: Set<string>;
@@ -1091,7 +1096,9 @@ function applyProjectionLinks(
 function dependencyFinalPair(
   disposition: PlanningDependencyDisposition,
 ): readonly [string, string] | null {
-  if (disposition.action === "retain") return [disposition.dependent_work_id, disposition.prerequisite_work_id];
+  if (disposition.action === "retain" || disposition.action === "create") {
+    return [disposition.dependent_work_id, disposition.prerequisite_work_id];
+  }
   if (disposition.action === "rebind") return [disposition.final_dependent_work_id!, disposition.final_prerequisite_work_id!];
   return null;
 }
@@ -1133,8 +1140,12 @@ function applyDependencyDisposition(
 ): void {
   const { model, works, relations, diagnostics } = context;
   const originKey = `${disposition.dependent_work_id}|${disposition.prerequisite_work_id}`;
-  if (!relations.dependencies.has(originKey)) diagnostics.push(reshapeDiagnostic(`Dependency origin ${originKey} does not exist`));
-  seen.add(originKey);
+  if (disposition.action === "create") {
+    if (relations.dependencies.has(originKey)) diagnostics.push(reshapeDiagnostic(`Created dependency ${originKey} already exists`));
+  } else {
+    if (!relations.dependencies.has(originKey)) diagnostics.push(reshapeDiagnostic(`Dependency origin ${originKey} does not exist`));
+    seen.add(originKey);
+  }
   for (const owner of disposition.represented_by ?? []) {
     if (!owners.has(owner)) diagnostics.push(reshapeDiagnostic(`Represented dependency owner ${owner} does not exist`));
   }
@@ -1723,6 +1734,13 @@ function buildState(
   const created = createdWorks(request, model, affected, works, diagnostics);
   const removed = removedWorks(request, model, affected, originalIds, diagnostics);
   validateAffectedIdentities(affected, works, diagnostics);
+  for (const disposition of request.work_title_dispositions ?? []) {
+    const id = localId(disposition.work_id, model.documentId, "Work title disposition", diagnostics);
+    const work = id === null ? undefined : works.get(id);
+    if (id !== null && !affected.has(id)) diagnostics.push(reshapeDiagnostic(`Work title disposition ${disposition.work_id} is not affected`));
+    if (work === undefined || removed.has(id ?? "")) diagnostics.push(reshapeDiagnostic(`Work title disposition ${disposition.work_id} is not a final Work`));
+    else work.title = disposition.title;
+  }
   const descriptions = descriptionRows(request, model, affected, works, removed, diagnostics);
   for (const id of removed) works.delete(id);
   const relations = existingRelations(model);
@@ -1827,6 +1845,32 @@ function residualDescriptionWarnings(
   return Object.freeze(warnings);
 }
 
+function normalizedReshapeInput(
+  requestInput: unknown,
+  model: PlanningPoolSourceModel,
+): PlanningReshapeNormalizationResult {
+  if (!isPlanningIntentRequest(requestInput)) {
+    return normalizePlanningReshapeRequest(requestInput);
+  }
+  const compiled = compilePlanningIntentRequest(requestInput, model);
+  if (compiled.ok && compiled.reshapeRequest !== null) {
+    return normalizePlanningReshapeRequest(compiled.reshapeRequest);
+  }
+  return Object.freeze({
+    ok: false,
+    request: null,
+    canonicalUtf8: null,
+    preflightHash: null,
+    diagnostics: Object.freeze([
+      ...compiled.diagnostics,
+      ...(compiled.windowRequest === null ? [] : [reshapeDiagnostic(
+        "Window intent request must use a Window mutation command",
+        "PTPOOL-118",
+      )]),
+    ]),
+  });
+}
+
 export function auditPlanningReshape(
   text: string,
   requestInput: unknown,
@@ -1838,7 +1882,7 @@ export function auditPlanningReshape(
   if (!source.ok || source.model === null) {
     return failedAudit(sourceDigest, source.documentId, source.diagnostics);
   }
-  const normalized = normalizePlanningReshapeRequest(requestInput);
+  const normalized = normalizedReshapeInput(requestInput, source.model);
   if (!normalized.ok || normalized.request === null || normalized.canonicalUtf8 === null || normalized.preflightHash === null) {
     return failedAudit(sourceDigest, source.documentId, normalized.diagnostics);
   }
@@ -1912,7 +1956,7 @@ function bindingFromAudit(audit: PlanningReshapeAuditResult): PlanningReshapeBin
     throw new TypeError("successful planning reshape audit bindings are required");
   }
   return Object.freeze({
-    normalizationContract: PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
+    normalizationContract: audit.normalizedRequest?.normalization_contract ?? PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
     preflightHash: audit.preflightHash,
     sourceDigest: audit.sourceDigest,
     candidateDigest: audit.candidateDigest,

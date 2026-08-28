@@ -140,7 +140,7 @@ test("Contract 8 result identities resolve to one closed bundled catalog", () =>
     .filter(({ commandResult }) => commandResult)
     .map(({ schemaId }) => schemaId);
   assert.deepEqual(commandSchemas, advertised);
-  assert.equal(COMMAND_REGISTRY.length, 67);
+  assert.equal(COMMAND_REGISTRY.length, 71);
   assert.equal(advertised.length, 25);
   assert.deepEqual(
     catalog
@@ -154,10 +154,10 @@ test("Contract 8 result identities resolve to one closed bundled catalog", () =>
     ...catalog.map(({ schemaId }) => `${schemaId}.schema.json`),
   ].sort();
   assert.deepEqual(schemaFiles(), expectedFiles);
-  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 26);
+  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 29);
   assert.equal(
     new Set(catalog.map(({ artifactPath }) => artifactPath)).size,
-    26,
+    29,
   );
 
   for (const entry of catalog) {
@@ -231,7 +231,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   assert.equal(catalog.operation, "schema");
   assert.equal(catalog.ok, true);
   assert.equal(catalog.query.schema_id, null);
-  assert.equal(catalog.schemas.length, 26);
+  assert.equal(catalog.schemas.length, 29);
   assert.equal(catalog.schema, null);
 
   const selected = cliJson([

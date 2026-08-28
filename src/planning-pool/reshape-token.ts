@@ -39,7 +39,8 @@ function frozenBinding(binding: PlanningReshapeBinding): PlanningReshapeBinding 
 
 function validSnapshotIdentity(snapshot: PlanningReshapeTokenSnapshot): boolean {
   return sha256Pattern.test(snapshot.tokenDigest) &&
-    snapshot.binding.normalizationContract === "perttool.planning-reshape-normalization@1" &&
+    ["perttool.planning-reshape-normalization@1", "perttool.planning-reshape-normalization@2"]
+      .includes(snapshot.binding.normalizationContract) &&
     sha256Pattern.test(snapshot.binding.preflightHash) &&
     sha256Pattern.test(snapshot.binding.sourceDigest) &&
     sha256Pattern.test(snapshot.binding.candidateDigest) &&

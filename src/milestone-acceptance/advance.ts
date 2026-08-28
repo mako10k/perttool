@@ -2,6 +2,7 @@ import type { Diagnostic } from "../model/diagnostics.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import { planValidatedAdvance, type AdvanceDocumentValidation, type AdvanceResult } from "../mutation/advance.js";
+import { advanceOwnedTerminalSeparatorStartOffset } from "../mutation/advance-deletion.js";
 import { applyTextEdits, normalizeTextEdits } from "../mutation/text-edits.js";
 import type { MutationOptions } from "../mutation/types.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
@@ -171,6 +172,39 @@ export function coalesceMilestoneAcceptanceDeletionOverlaps<T extends {
   return [...retained, ...merged];
 }
 
+export function prepareMilestoneAcceptanceAdvanceEdits<T extends {
+  readonly startOffset: number;
+  readonly endOffset: number;
+  readonly replacement: string;
+}>(text: string, edits: readonly T[]) {
+  const coalesced = coalesceMilestoneAcceptanceDeletionOverlaps(edits);
+  const deletions = coalesced.filter(({ replacement }) => replacement === "");
+  if (deletions.at(-1)?.endOffset !== text.length) return coalesced;
+
+  let firstTerminalIndex = deletions.length - 1;
+  while (firstTerminalIndex > 0) {
+    const previous = deletions[firstTerminalIndex - 1]!;
+    const current = deletions[firstTerminalIndex]!;
+    if (text.slice(previous.endOffset, current.startOffset).trim() !== "") break;
+    firstTerminalIndex -= 1;
+  }
+
+  const terminal = new Set(deletions.slice(firstTerminalIndex));
+  let previousTerminalEnd: number | undefined;
+  return coalesced.map((edit) => {
+    if (!terminal.has(edit)) return edit;
+    const desiredStart = advanceOwnedTerminalSeparatorStartOffset(
+      text,
+      edit.startOffset,
+    );
+    const startOffset = previousTerminalEnd === undefined
+      ? desiredStart
+      : Math.max(desiredStart, previousTerminalEnd);
+    previousTerminalEnd = edit.endOffset;
+    return { ...edit, startOffset };
+  });
+}
+
 function acceptanceRecordSpans(
   text: string,
   milestoneIds: readonly string[],
@@ -258,7 +292,7 @@ function composeProvisionalBase(
   );
   const edits = normalizeTextEdits(
     text,
-    coalesceMilestoneAcceptanceDeletionOverlaps([
+    prepareMilestoneAcceptanceAdvanceEdits(text, [
       ...protectedBaseEdits,
       ...acceptanceRemovalEdits(
         text,
@@ -306,7 +340,8 @@ export function planMilestoneAcceptanceAdvance(text: string, options: MilestoneA
   const plannedBase = options.provisionalPlanner === undefined
     ? planValidatedAdvance(text, validator, options, {
         extendPlan: acceptanceRemovalExtension(text) as never,
-        prepareEdits: coalesceMilestoneAcceptanceDeletionOverlaps,
+        prepareEdits: (edits) =>
+          prepareMilestoneAcceptanceAdvanceEdits(text, edits),
       })
     : options.provisionalPlanner(milestoneAcceptanceBaseText(text));
   const provisionalBase = composeProvisionalBase(text, plannedBase, options);

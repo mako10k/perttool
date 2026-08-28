@@ -28,13 +28,23 @@ function terminalSeparatorStart(
   return startOffset;
 }
 
+export function advanceOwnedTerminalSeparatorStartOffset(
+  text: string,
+  ordinaryStart: number,
+): number {
+  return terminalSeparatorStart(splitPhysicalLines(text), ordinaryStart);
+}
+
 export function advanceOwnedTerminalSeparatorStart(
   text: string,
   declaration: DeclarationNode<TargetDeclarationKind>,
 ): number {
   const lines = splitPhysicalLines(text);
   const ordinary = deleteDeclarationEdit(declaration, lines);
-  return terminalSeparatorStart(lines, ordinary.startOffset);
+  return advanceOwnedTerminalSeparatorStartOffset(
+    text,
+    ordinary.startOffset,
+  );
 }
 
 /**

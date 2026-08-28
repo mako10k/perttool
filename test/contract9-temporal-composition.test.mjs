@@ -68,6 +68,6 @@ test("Contract 9 catalog is closed at 56 and is the active public boundary", () 
     .map(({ name }) => name), ["time-zone", "tzdb", "calendar", "workday"]);
   assert.deepEqual(projectSet.options.find(({ name }) => name === "clear").enumValues.slice(-4),
     ["time_zone", "tzdb", "calendar", "workday"]);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 67);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 71);
   assert.equal(publicApi.COMMAND_REGISTRY.filter(({ operation }) => operation.startsWith("calendar.")).length, 3);
 });

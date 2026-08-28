@@ -80,6 +80,10 @@ const expectedPaths = [
   "work observe",
   "work reshape preflight",
   "work reshape apply",
+  "event list",
+  "event show",
+  "activity list",
+  "activity show",
   "window list",
   "window show",
   "window observe",
@@ -89,11 +93,13 @@ const expectedPaths = [
 ];
 
 const expectedResources = [
+  ["activity", ["list", "show"]],
   ["agent", ["help"]],
   ["batch", ["apply"]],
   ["calendar", ["add", "remove", "set"]],
   ["dag", ["advance", "analyze", "history", "import", "next", "render"]],
   ["document", ["check", "format", "migrate"]],
+  ["event", ["list", "show"]],
   ["gate", ["add", "remove", "set"]],
   ["milestone", ["acceptance fail", "acceptance replace", "acceptance revoke", "acceptance show", "acceptance unavailable", "acceptance verify", "acceptance waive", "add", "remove", "set"]],
   ["plan-assurance", ["hash", "reseal", "seal", "show"]],

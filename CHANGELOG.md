@@ -9,14 +9,28 @@ This project records its notable changes here. The format is based on [Keep a Ch
 - Activate Grammar 9 and CLI Contract 10 with Work, project-owned Event and
   Activity AoA, bounded Window operations, current and first-parent historical
   observations, and guided reshape preflight/apply.
-- Publish 67 commands, 26 active root schemas, 139 root and Node exports, and
+- Publish 71 commands, 29 active root schemas, 139 root and Node exports, and
   51 portable Core exports, including the three Planning Pool results.
+- Add read-only `event list/show` and `activity list/show` inspection with
+  project-owned detail, reverse Work associations, Activity endpoints, and
+  closed JSON source spans.
 
 ### Changed
 
 - Replace `Perttool.AdvanceResult.v3` with v4 for planning-link cleanup and
   optional empty-Work archival, and replace `Perttool.UnitMigrationResult.v4`
   with v5 for complete Activity unit conversion.
+- Clarify that remaining Planning Pool Work does not block `project.finish`,
+  Work and Window observations do not prove Final Goal coverage or completion,
+  and only an explicit governed strict-DAG candidate changes execution scope;
+  Goal Coverage and Goal Seal remain separate future Issue #24 work.
+
+### Fixed
+
+- Accept natural three-segment Help lookup such as
+  `perttool help work reshape preflight`, report exact available child actions
+  for incomplete compound actions, and retain resource-only, direct-action,
+  and legacy single-action-argument lookup.
 
 ## [0.10.5] - 2026-08-21
 

@@ -3884,16 +3884,57 @@ source-bound request composition, candidate reproduction, governance,
 assurance, history, and safe-write sequencing. CLI owns only transport and
 presentation. Editor and MCP mutation remain absent.
 
-The current unreleased source has completed the atomic public-contract step.
-Grammar 9 and CLI Contract 10 are active with 67 commands, 26 active root
-schemas, 139 root exports, 139 reference-identical Node exports, and 51
-portable Core exports. `Perttool.AdvanceResult.v4` and
+The atomic public-contract step originally activated Grammar 9 and CLI
+Contract 10 with 67 commands and 26 result or library root schemas. The
+additive Issue #31 schema-discovery slice publishes three existing low-level
+request contracts as standalone roots, so the current unreleased catalog has
+29 active root schemas. Issue #34 additively exposes four read-only Event and
+Activity list/show paths, so the current catalog has 71 commands, 139 root
+exports, 139 reference-identical Node exports, and 51 portable Core exports.
+`Perttool.AdvanceResult.v4` and
 `Perttool.UnitMigrationResult.v5` replace their Contract 9 predecessors, and
 the three Planning Pool result identities are public. The
 [final end-to-end acceptance](process/planning-pool-acceptance.md) is complete
 with all forty normative cases traced through the implementation and public
 surfaces. Release selection, publication, remote writes, Issue mutation,
 editor or MCP mutation, and plan advance remain separate.
+
+The additive Issue #30 UI keeps its then-current command, result-schema, and runtime
+export counts unchanged. Existing reshape and Window mutation commands accept
+exactly one of the complete `--request` input or the source-bound
+`--intent-request` builder input. The closed intent builder covers routine
+Work creation and maintenance, order, dependency, archive, projection,
+deferral, and Window creation, membership, and close. It compiles Work actions
+to `PlanningReshapeRequest.v2`, whose only semantic additions are explicit
+Work-title dispositions and dependency creation. The compiled request, not
+natural-language interpretation, remains the input to the existing one-
+candidate preflight, authority, assurance, history, and persistence sequence.
+
+The additive Issue #29 presentation also keeps command, schema, and public
+runtime-export counts unchanged. CLI presentation delegates to one private
+Planning Pool human renderer. Compact list output remains unchanged; show
+views project semantic detail without source spans; current and historical
+observations separate refinement, execution, outcome, organization, temporal,
+and global-execution axes; and reshape preflight projects binding, affected
+meaning, change, diagnostic, authority, token, and next-action sections. The
+same Application results continue to own `--format json`, and golden tests
+bind each human fact to the corresponding JSON fact rather than creating a
+second semantic computation.
+
+Issue #31 does not add a command, result identity, request meaning, or runtime
+export. Each request root reuses the exact closed request definition already
+owned by the Planning Pool result schemas. Contract 10 Help names the precise
+schema on every low-level `--request` option, and the schema command, public
+catalog, tarball, and temporary-link workflow expose the same three IDs.
+
+Issue #32 closes the active Contract 10 compound-command Help asymmetry.
+`help` accepts up to three natural path operands while retaining the prior
+single action string for library and structured-call compatibility. When a
+known action prefix has registered descendants but is not itself a command,
+the lookup fails with `PTHLP-003` and projects the sorted next path segments in
+diagnostic `available_child_actions`; a non-prefix remains an ordinary unknown
+action. This is a read-only discovery correction and changes no command,
+schema, result, runtime-export, or mutation-authority count.
 
 The implementation order is:
 

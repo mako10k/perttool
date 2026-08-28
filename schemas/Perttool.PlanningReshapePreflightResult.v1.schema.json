@@ -256,6 +256,7 @@
         "action": {
           "enum": [
             "retain",
+            "create",
             "rebind",
             "represented",
             "no_longer_required"
@@ -481,10 +482,16 @@
       ],
       "properties": {
         "request_schema_version": {
-          "const": "Perttool.PlanningReshapeRequest.v1"
+          "enum": [
+            "Perttool.PlanningReshapeRequest.v1",
+            "Perttool.PlanningReshapeRequest.v2"
+          ]
         },
         "normalization_contract": {
-          "const": "perttool.planning-reshape-normalization@1"
+          "enum": [
+            "perttool.planning-reshape-normalization@1",
+            "perttool.planning-reshape-normalization@2"
+          ]
         },
         "source_digest": {
           "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
@@ -505,6 +512,26 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/createdWork"
+          }
+        },
+        "work_title_dispositions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "work_id",
+              "title"
+            ],
+            "properties": {
+              "work_id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
           }
         },
         "removed_work_ids": {
@@ -569,7 +596,45 @@
           ]
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "request_schema_version": {
+                "const": "Perttool.PlanningReshapeRequest.v1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "normalization_contract": {
+                "const": "perttool.planning-reshape-normalization@1"
+              },
+              "work_title_dispositions": false
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "request_schema_version": {
+                "const": "Perttool.PlanningReshapeRequest.v2"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "work_title_dispositions"
+            ],
+            "properties": {
+              "normalization_contract": {
+                "const": "perttool.planning-reshape-normalization@2"
+              }
+            }
+          }
+        }
+      ]
     },
     "nullableNormalizedRequest": {
       "oneOf": [

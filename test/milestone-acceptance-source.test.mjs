@@ -98,8 +98,8 @@ test("migration fails closed for dirty, staged, unbound, and raced proof", () =>
 test("source capability remains internal while Contract 8 catalogs are active", async () => {
   const root = await import("../dist/index.js");
   assert.equal("MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY" in root, false);
-  assert.equal(root.COMMAND_REGISTRY.length, 67);
-  assert.equal(root.getJsonSchemaCatalog().length, 26);
+  assert.equal(root.COMMAND_REGISTRY.length, 71);
+  assert.equal(root.getJsonSchemaCatalog().length, 29);
   assert.equal(root.checkDocument(base).grammarVersion, 6);
 });
 

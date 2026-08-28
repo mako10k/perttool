@@ -1,0 +1,73 @@
+project POOL:
+  version 9
+  title "Planning human output"
+  as_of 2026-08-26
+  duration_unit point
+  finish END
+
+work W1:
+  title "Shape reviewed outcome"
+  description "Retain user-visible outcome"
+  events:
+    DRAFT_START
+    DRAFT_END
+  activities:
+    DRAFT_ACTIVITY
+  milestone_links:
+    REVIEWED
+  task_links:
+    BUILD
+  depends_on:
+    W2
+
+work W2:
+  title "Prepare shared input"
+
+event DRAFT_START:
+  title "Draft start"
+
+event DRAFT_END:
+  title "Draft end"
+
+activity DRAFT_ACTIVITY DRAFT_START -> DRAFT_END:
+  title "Draft the outcome"
+  duration 1p
+
+window SPRINT:
+  title "Current sprint"
+  objective "Produce one reviewed user-visible outcome"
+  start 2026-08-25
+  end 2026-09-01
+  works:
+    W1
+
+work_order:
+  W1
+  W2
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone REVIEWED:
+  title "Reviewed"
+
+milestone END:
+  title "End"
+
+task BUILD START -> REVIEWED:
+  title "Build outcome"
+  duration 1p
+  status done
+
+task RELEASE REVIEWED -> END:
+  title "Release outcome"
+  duration 1p
+
+work_event BUILD_FINISH:
+  model 1
+  task BUILD
+  kind finish
+  occurred_at 2026-08-26T10:00:00+09:00
+  active_time 1h
+  effort 1ph

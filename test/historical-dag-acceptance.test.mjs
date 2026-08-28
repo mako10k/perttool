@@ -97,8 +97,8 @@ test("historical component matrices compose without an uncovered semantic axis",
 test("accepted source exposes the additive history surface and read-only CLI", () => {
   assert.equal(Object.keys(perttool).length, 139);
   assert.equal(Object.keys(core).length, 51);
-  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
   assert.deepEqual(
     perttool.COMMAND_REGISTRY.filter(
       ({ path: commandPath }) => commandPath.join(" ") === "dag history",

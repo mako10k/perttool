@@ -151,8 +151,8 @@ import {
 } from "./milestone-acceptance/migration.js";
 import { MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY, milestoneAcceptanceBaseText, parseMilestoneAcceptanceSource } from "./milestone-acceptance/source.js";
 import {
-  coalesceMilestoneAcceptanceDeletionOverlaps,
   planMilestoneAcceptanceAdvance,
+  prepareMilestoneAcceptanceAdvanceEdits,
   preserveMilestoneAcceptanceRecords,
 } from "./milestone-acceptance/advance.js";
 import {
@@ -182,6 +182,16 @@ import {
 } from "./planning-pool/history-guard.js";
 import type { PlanningDestructiveRecord } from "./planning-pool/projection.js";
 import { withPlanningReshapeTokenRegistry } from "./node/planning-token-store.js";
+import {
+  compilePlanningIntentRequest,
+  isPlanningIntentRequest,
+} from "./planning-pool/intent.js";
+import {
+  renderPlanningHistoricalObservationText,
+  renderPlanningObservationText,
+  renderPlanningPoolReadText,
+  renderPlanningReshapePreflightText,
+} from "./planning-pool/human.js";
 
 const historicalGitEvidenceHost = createHistoricalGraphGitEvidenceHost();
 const {
@@ -2762,7 +2772,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
     ? contract7Planned.edits
     : normalizeTextEdits(
         acceptanceInputText,
-        coalesceMilestoneAcceptanceDeletionOverlaps([
+        prepareMilestoneAcceptanceAdvanceEdits(acceptanceInputText, [
           ...preserveMilestoneAcceptanceRecords(
             acceptanceInputText,
             contract7Planned.edits,
@@ -4949,7 +4959,10 @@ async function planningRequestInput(
   parsed: ParsedOptions,
   sourceOperand: string,
 ): Promise<unknown> {
-  const requestSource = requiredOption(parsed, "request");
+  const requestSource = parsed.values.get("request") ?? parsed.values.get("intent-request");
+  if (requestSource === undefined) {
+    throw new UsageError("exactly one of --request or --intent-request is required");
+  }
   if (sourceOperand === "-" && requestSource === "-") {
     throw new UsageError("document and planning request cannot both use stdin");
   }
@@ -5040,19 +5053,28 @@ function emitPlanningResult(
       sourceOperand === "-" ? "<stdin>" : sourceOperand,
       result as unknown as Readonly<Record<string, unknown>>,
     ));
-  } else {
-    process.stdout.write(`${JSON.stringify(snakeJson(result), null, 2)}\n`);
+  } else if (operation === "work.observe" || operation === "window.observe") {
+    const historical = "historyCapability" in result;
+    process.stdout.write(historical
+      ? renderPlanningHistoricalObservationText(operation, result as never)
+      : renderPlanningObservationText(operation, result as never));
+  } else if (operation === "work.reshape.preflight") {
+    process.stdout.write(renderPlanningReshapePreflightText(result as never));
   }
 }
 
 async function runPlanningRead(
-  resource: "work" | "window",
+  resource: "work" | "event" | "activity" | "window",
   action: "list" | "show",
   args: readonly string[],
 ): Promise<number> {
   const operation = `${resource}.${action}` as
     | "work.list"
     | "work.show"
+    | "event.list"
+    | "event.show"
+    | "activity.list"
+    | "activity.show"
     | "window.list"
     | "window.show";
   const parsed = parseCommandOptions(operation, args);
@@ -5066,16 +5088,7 @@ async function runPlanningRead(
   if (format === "json") {
     writeJson(planningResultJson(operation, sourceOperand === "-" ? "<stdin>" : sourceOperand, result as unknown as Readonly<Record<string, unknown>>));
   } else if (result.ok) {
-    if (resource === "work") {
-      const order = new Map(result.workOrder.map((id, index) => [id, index]));
-      for (const work of [...result.works].sort((left, right) => (order.get(left.qualifiedId) ?? 0) - (order.get(right.qualifiedId) ?? 0))) {
-        process.stdout.write(`${work.qualifiedId}\t${work.title}\n`);
-      }
-    } else {
-      for (const window of result.windows) {
-        process.stdout.write(`${window.qualifiedId}\t${window.title}\t${window.objective}\n`);
-      }
-    }
+    process.stdout.write(renderPlanningPoolReadText(result));
   }
   if (format !== "json") {
     for (const diagnostic of result.diagnostics) {
@@ -5366,13 +5379,27 @@ async function runPlanningWindowMutation(
   const sourceOperand = parsed.positionals[0]!;
   const input = await readDocument(sourceOperand);
   const requestInput = await planningRequestInput(parsed, sourceOperand);
-  const request = unknownRecord(requestInput);
+  let effectiveRequest = requestInput;
+  if (isPlanningIntentRequest(requestInput)) {
+    const parsedSource = parsePlanningPoolSource(input.text, PLANNING_POOL_SOURCE_CAPABILITY);
+    if (!parsedSource.ok || parsedSource.model === null) {
+      throw new UsageError("Planning intent request requires a valid Grammar 9 document");
+    }
+    const compiled = compilePlanningIntentRequest(requestInput, parsedSource.model);
+    if (!compiled.ok || compiled.windowRequest === null) {
+      throw new UsageError(compiled.reshapeRequest === null
+        ? compiled.diagnostics.map(({ message }) => message).join("; ") || "Planning intent request is invalid"
+        : "Work intent request must use work reshape preflight/apply");
+    }
+    effectiveRequest = compiled.windowRequest;
+  }
+  const request = unknownRecord(effectiveRequest);
   if (request === null || request["window_id"] !== parsed.positionals[1] &&
       request["window_id"] !== `${/^project ([A-Za-z][A-Za-z0-9_-]*):$/mu.exec(input.text)?.[1] ?? ""}::${parsed.positionals[1]}`) {
     throw new UsageError("Window operand and request window_id must identify the same Window");
   }
   const writeRequest = editingWriteRequest(parsed, sourceOperand);
-  const result = planPlanningWindowMutation(input.text, requestInput, {
+  const result = planPlanningWindowMutation(input.text, effectiveRequest, {
     governance: governanceRequest(parsed, writeRequest),
   });
   const history = await preparePlanningHistory(
@@ -5473,6 +5500,12 @@ async function dispatchCommand(
       return runPlanningReshapePreflight(args);
     case "work.reshape.apply":
       return runPlanningReshapeApply(args);
+    case "event.list":
+    case "event.show":
+      return runPlanningRead("event", descriptor.path[1] as "list" | "show", args);
+    case "activity.list":
+    case "activity.show":
+      return runPlanningRead("activity", descriptor.path[1] as "list" | "show", args);
     case "window.list":
     case "window.show":
       return runPlanningRead("window", descriptor.path[1] as "list" | "show", args);

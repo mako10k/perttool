@@ -181,7 +181,7 @@ test("all twenty historical DAG cases are dependency ordered and closed", async 
 });
 
 test("the later CLI task activates the reserved additive surface", () => {
-  assert.equal(COMMAND_REGISTRY.length, 67);
+  assert.equal(COMMAND_REGISTRY.length, 71);
   assert.equal(
     COMMAND_REGISTRY.some(
       ({ path: commandPath }) =>
@@ -190,7 +190,7 @@ test("the later CLI task activates the reserved additive surface", () => {
     true,
   );
   const catalog = getJsonSchemaCatalog();
-  assert.equal(catalog.length, 26);
+  assert.equal(catalog.length, 29);
   assert.equal(
     catalog.some(({ schemaId }) => schemaId === "Perttool.HistoricalGraphResult.v1"),
     true,

@@ -12,11 +12,11 @@ const run = (...args) => JSON.parse(execFileSync(process.execPath, [cli, ...args
 
 test("Contract 10 is atomic across root, CLI discovery, Guide, and schema inventory", async () => {
   assert.equal(Object.keys(publicApi).length, 139);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 67);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 71);
   assert.equal(publicApi.getCommandDiscovery({ resource: null, action: null }).cliContractVersion, 10);
   assert.equal(publicApi.getGuide(null, "index").cliContractVersion, 10);
   const catalog = publicApi.getJsonSchemaCatalog();
-  assert.equal(catalog.length, 26);
+  assert.equal(catalog.length, 29);
   for (const identity of ["Perttool.ProjectResult.v5", "Perttool.CheckResult.v6", "Perttool.AnalysisResult.v7",
     "Perttool.NextResult.v8", "Perttool.MutationResult.v6", "Perttool.PlanAssuranceResult.v2",
     "Perttool.PlanningPoolResult.v1", "Perttool.PlanningReshapePreflightResult.v1",

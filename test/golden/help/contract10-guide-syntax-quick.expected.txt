@@ -1,0 +1,22 @@
+DSL syntax
+
+Grammar versions 1 through 9 for declaring projects, governance metadata, calendars, resources, planning Work, project-owned Events and Activities, Windows, strict milestones, tasks, gates, explicit task work events, conditional plan-assurance records, and milestone acceptance evidence.
+
+Declarations
+Place exactly one project first. Grammar 1 declares resources, milestones, tasks, and gates; Grammar 5 adds task-owned work_event declarations; Grammar 6 adds task_relation, plan_seal, task_outcome, and assurance_receipt; Grammar 7 adds milestone criterion sets, acceptance receipts, and one migration baseline; Grammar 8 adds calendar declarations and schedule fields; Grammar 9 adds Work, project-owned Event and Activity, Window, and one work_order declaration. See temporal-schedule and planning-pool for the additive Grammar 8 and 9 meanings.
+
+Syntax:
+  project ID:
+  calendar ID:
+  resource ID:
+  work ID:
+  event ID:
+  activity ID FROM -> TO:
+  window ID:
+  work_order:
+  milestone ID:
+  task ID FROM -> TO:
+  gate ID FROM -> TO:
+  work_event ID:
+
+Related: syntax.project, syntax.resource, syntax.milestone, syntax.task, syntax.work-event, syntax.gate, syntax.estimate, syntax.velocity, syntax.temporal, analysis, errors, plan-assurance, temporal-schedule, planning-pool

@@ -1,0 +1,45 @@
+Planning pool
+
+Grammar 9 Work, project-owned Event and Activity AoA, guided reshape, Windows, observations, and Git-owned history.
+
+Meaning owners
+Work owns residual intent. Event and Activity form a Temporary Draft AoA. Milestone and Task remain the strict execution and outcome owners. Projection transfers meaning by same identity; it never creates a second authoritative copy.
+
+Guided reshape
+For routine operations, write one closed Perttool.PlanningIntentRequest.v1 and pass it as --intent-request. perttool deterministically builds the complete audited v2 reshape or Window request without semantic inference. Complex split and merge operations retain --request. Run work reshape preflight, review the compiled normalized request and candidate, then apply the same input with the returned hash and opaque token.
+
+Human review views
+Default text keeps lists compact; expands Work, project-owned Event and Activity, and Window show into semantic sections; separates observation axes; and makes reshape binding, affected meaning, authority, token, diagnostics, and the next action explicit. Event and Activity detail includes reverse Work associations, Activity endpoints, and all declared planning fields without creating per-Work copies. Human detail omits source-span and raw-candidate noise; use --format json for the complete stable machine result and source spans.
+
+Authority and history
+The token is a navigation receipt, not approval. A strict-DAG change still requires candidate-bound governance authority. Canonical Work and Window deletion requires Git recoverability; Temporary Draft Event and Activity deletion does not. Current source keeps only latest facts and Git owns removed history.
+
+Windows
+A Window is an active planning selection with a temporary outcome-oriented objective and optional bounds. It has no completion or objective-achieved state. Close explicitly disposes the objective and carries only enumerated Work.
+
+Final Goal boundary
+Remaining Work is advisory planning retention and does not block project.finish. Work and Window observations do not prove Final Milestone Goal obligation coverage, goal completion, or objective achievement. Projection changes execution scope only through an explicit governed strict-DAG candidate that is separately reviewed and persisted. GitHub Issue #24 (https://github.com/mako10k/perttool/issues/24) separately owns future Goal Obligation, Goal Coverage, and Goal Seal semantics; the current Planning Pool infers and seals none of them.
+
+Final Milestone acceptance with retained Work
+A team may accept the Final Milestone for its strict MVP DAG while retaining Work named Add offline export. Those two facts can coexist. They do not say that export is unnecessary, that a Window objective was achieved, or that the Final Goal is covered or complete. To add export to execution scope, explicitly project it and review the governed strict-DAG candidate.
+
+Syntax:
+  work ID:
+    title STRING
+    description STRING_OR_BLOCK
+  event ID:
+    title STRING
+  activity ID FROM -> TO:
+    title STRING
+  window ID:
+    title STRING
+    objective STRING
+  work_order:
+    ID
+
+Examples:
+  intent-preflight: perttool work reshape preflight plan.pert --intent-request intent.json --format json
+  window-observation: perttool window observe plan.pert --request observation.json
+  entity-inspection: perttool event show plan.pert EVENT && perttool activity show plan.pert ACTIVITY
+
+Related: syntax, editing, plan-assurance, historical-dag, milestone-acceptance

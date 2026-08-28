@@ -38,7 +38,7 @@ test("0.10.1 selects the compatible Issue 22 patch and retains public identities
   assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);
   assert.match(acceptance, /Grammar 7 migration route/u);
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
-  assert.equal(getJsonSchemaCatalog().length, 26);
+  assert.equal(getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(packageRoot).length, 139);
   assert.equal(Object.keys(nodeFacade).length, 139);
   assert.equal(Object.keys(core).length, 51);

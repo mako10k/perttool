@@ -29,8 +29,8 @@ test("Contract 9 retains the Grammar 6 plan-assurance surface", async () => {
     path.join(root, "docs", "examples", "minimal.pert"),
     "utf8",
   );
-  assert.equal(perttool.COMMAND_REGISTRY.length, 67);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 26);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
   assert.equal(perttool.getJsonSchema("Perttool.NextResult.v5"), null);
   assert.equal(perttool.getJsonSchema("Perttool.AdvanceResult.v1"), null);
   assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v2"));

@@ -15,6 +15,7 @@ import type {
   PlanningReshapeSemanticElement,
   PlanningStrictFragment,
   PlanningWindowMembershipDisposition,
+  PlanningWorkTitleDisposition,
 } from "./reshape-types.js";
 import type {
   PlanningCarryOverTarget,
@@ -23,8 +24,12 @@ import type {
 
 export const PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION =
   "Perttool.PlanningReshapeRequest.v1" as const;
+export const PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2 =
+  "Perttool.PlanningReshapeRequest.v2" as const;
 export const PLANNING_RESHAPE_NORMALIZATION_CONTRACT =
   "perttool.planning-reshape-normalization@1" as const;
+export const PLANNING_RESHAPE_NORMALIZATION_CONTRACT_2 =
+  "perttool.planning-reshape-normalization@2" as const;
 export const PLANNING_RESHAPE_REQUEST_UTF8_LIMIT = 8_388_608;
 export const PLANNING_RESHAPE_NORMALIZED_LIMITS = Object.freeze({
   affectedWorks: 2_048,
@@ -147,6 +152,25 @@ function parseCreatedWork(
   return workId === null || title === null || anchor === undefined
     ? null
     : Object.freeze({ work_id: workId, title, insert_after_work_id: anchor });
+}
+
+function parseWorkTitleDisposition(
+  value: unknown,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningWorkTitleDisposition | null {
+  const record = closedRecord(
+    value,
+    ["work_id", "title"],
+    [],
+    "Work title disposition",
+    diagnostics,
+  );
+  if (record === null) return null;
+  const workId = qualifiedId(record["work_id"], "Work title disposition work_id", diagnostics);
+  const title = stringValue(record["title"], "Work title disposition title", diagnostics);
+  return workId === null || title === null
+    ? null
+    : Object.freeze({ work_id: workId, title });
 }
 
 function parseExistingOrigin(
@@ -425,7 +449,7 @@ function parseDependencyDisposition(
   if (record === null) return null;
   const dependent = qualifiedId(record["dependent_work_id"], "dependent Work", diagnostics);
   const prerequisite = qualifiedId(record["prerequisite_work_id"], "prerequisite Work", diagnostics);
-  const action = enumValue(record["action"], ["retain", "rebind", "represented", "no_longer_required"], "dependency action", diagnostics);
+  const action = enumValue(record["action"], ["retain", "create", "rebind", "represented", "no_longer_required"], "dependency action", diagnostics);
   const finalDependent = optionalQualifiedId(record, "final_dependent_work_id", "final dependent Work", diagnostics);
   const finalPrerequisite = optionalQualifiedId(record, "final_prerequisite_work_id", "final prerequisite Work", diagnostics);
   const representedBy = optionalQualifiedIdSet(record, "represented_by", "represented owner", diagnostics);
@@ -589,7 +613,7 @@ function failedNormalization(
   });
 }
 
-const requestFields = Object.freeze([
+const requestFieldsV1 = Object.freeze([
   "request_schema_version",
   "normalization_contract",
   "source_digest",
@@ -608,6 +632,10 @@ const requestFields = Object.freeze([
   "strict_fragment",
   "window_close",
 ]);
+const requestFieldsV2 = Object.freeze([
+  ...requestFieldsV1,
+  "work_title_dispositions",
+]);
 
 function planningRequestRecord(
   input: unknown,
@@ -618,9 +646,14 @@ function planningRequestRecord(
   if (byteLength !== null && byteLength > PLANNING_RESHAPE_REQUEST_UTF8_LIMIT) {
     diagnostics.push(diagnostic(`Planning reshape request exceeds ${PLANNING_RESHAPE_REQUEST_UTF8_LIMIT} UTF-8 bytes`, "PTPOOL-115"));
   }
+  const parsed = parsedInput(input, diagnostics);
+  const version = isRecord(parsed) ? parsed["request_schema_version"] : null;
+  const fields = version === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2
+    ? requestFieldsV2
+    : requestFieldsV1;
   const record = closedRecord(
-    parsedInput(input, diagnostics),
-    requestFields,
+    parsed,
+    fields,
     [],
     "Planning reshape request",
     diagnostics,
@@ -630,10 +663,14 @@ function planningRequestRecord(
 }
 
 interface ParsedRequestFields {
+  readonly version:
+    | typeof PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION
+    | typeof PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2;
   readonly sourceDigest: string;
   readonly intent: PlanningReshapeIntent;
   readonly affected: readonly string[];
   readonly created: readonly PlanningReshapeCreatedWork[];
+  readonly titles: readonly PlanningWorkTitleDisposition[];
   readonly removed: readonly string[];
   readonly elements: readonly PlanningReshapeSemanticElement[];
   readonly entities: readonly PlanningEntityDisposition[];
@@ -775,11 +812,17 @@ function parseRequestFields(
   record: JsonRecord,
   diagnostics: PlanningPoolSourceDiagnostic[],
 ): ParsedRequestFields | null {
+  const version = record["request_schema_version"] === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2
+    ? PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2
+    : PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION;
   const sourceDigest = stringValue(record["source_digest"], "source_digest", diagnostics);
   if (sourceDigest !== null && !digestPattern.test(sourceDigest)) diagnostics.push(diagnostic("source_digest must be a lowercase SHA-256 identity"));
   const intent = enumValue(record["intent"], ["reshape", "project", "defer", "archive", "composite"], "reshape intent", diagnostics) as PlanningReshapeIntent | null;
   const affected = parseStringSet(record["affected_work_ids"], "affected Work", diagnostics);
   const created = parseArray(record["created_works"], "created_works", diagnostics, parseCreatedWork);
+  const titles = version === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2
+    ? parseArray(record["work_title_dispositions"], "work_title_dispositions", diagnostics, parseWorkTitleDisposition)
+    : Object.freeze([] as PlanningWorkTitleDisposition[]);
   const removed = parseStringSet(record["removed_work_ids"], "removed Work", diagnostics);
   const elements = parseArray(record["semantic_elements"], "semantic_elements", diagnostics, parseSemanticElement);
   const entities = parseArray(record["planning_entity_dispositions"], "planning_entity_dispositions", diagnostics, parseEntityDisposition);
@@ -791,9 +834,9 @@ function parseRequestFields(
   const residual = parseArray(record["add_residual_description"], "add_residual_description", diagnostics, parseResidualAction);
   const strictFragment = parseStrictFragment(record["strict_fragment"], diagnostics);
   const windowClose = parseWindowClose(record["window_close"], diagnostics);
-  if (hasNull([sourceDigest, intent, affected, created, removed, elements, entities, associations, links, dependencies, memberships, order, residual])) return null;
+  if (hasNull([sourceDigest, intent, affected, created, titles, removed, elements, entities, associations, links, dependencies, memberships, order, residual])) return null;
   return Object.freeze({
-    sourceDigest: sourceDigest!, intent: intent!, affected: affected!, created: created!,
+    version, sourceDigest: sourceDigest!, intent: intent!, affected: affected!, created: created!, titles: titles!,
     removed: removed!, elements: elements!, entities: entities!, associations: associations!,
     links: links!, dependencies: dependencies!, memberships: memberships!, order: order!, residual: residual!,
     strictFragment, windowClose,
@@ -806,6 +849,7 @@ function validateRequestUniqueness(
 ): void {
   unique(fields.affected, (item) => item, "affected Work", diagnostics);
   unique(fields.created, (item) => item.work_id, "created Work", diagnostics);
+  unique(fields.titles, (item) => item.work_id, "Work title disposition", diagnostics);
   unique(fields.removed, (item) => item, "removed Work", diagnostics);
   unique(fields.elements, (item) => item.element_id, "semantic element", diagnostics);
   unique(fields.entities, (item) => `${item.entity_kind}:${item.entity_id}`, "planning entity disposition", diagnostics);
@@ -829,13 +873,19 @@ function validateRequestUniqueness(
 }
 
 function normalizedRequest(fields: ParsedRequestFields): PlanningReshapeRequest {
+  const version2 = fields.version === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2;
   return Object.freeze({
-    request_schema_version: PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION,
-    normalization_contract: PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
+    request_schema_version: fields.version,
+    normalization_contract: version2
+      ? PLANNING_RESHAPE_NORMALIZATION_CONTRACT_2
+      : PLANNING_RESHAPE_NORMALIZATION_CONTRACT,
     source_digest: fields.sourceDigest,
     intent: fields.intent,
     affected_work_ids: fields.affected,
     created_works: sorted(fields.created, (item) => item.work_id),
+    ...(version2
+      ? { work_title_dispositions: sorted(fields.titles, (item) => item.work_id) }
+      : {}),
     removed_work_ids: fields.removed,
     semantic_elements: fields.elements,
     planning_entity_dispositions: sorted(fields.entities, (item) => `${item.entity_kind}:${item.entity_id}`),
@@ -858,16 +908,30 @@ export function canonicalPlanningReshapeJson(value: unknown): string {
   return canonicalValue(value);
 }
 
-export function normalizePlanningReshapeRequest(
-  input: unknown,
-): PlanningReshapeNormalizationResult {
-  const diagnostics: PlanningPoolSourceDiagnostic[] = [];
-  const record = planningRequestRecord(input, diagnostics);
-  if (record === null) return failedNormalization(diagnostics);
-  if (record["request_schema_version"] !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION) diagnostics.push(diagnostic("Planning reshape request schema identity is unsupported"));
-  if (record["normalization_contract"] !== PLANNING_RESHAPE_NORMALIZATION_CONTRACT) diagnostics.push(diagnostic("Planning reshape normalization identity is unsupported"));
-  const fields = parseRequestFields(record, diagnostics);
-  if (fields === null) return failedNormalization(diagnostics);
+function validateRequestIdentities(
+  record: JsonRecord,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  const version = record["request_schema_version"];
+  if (version !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION && version !== PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2) {
+    diagnostics.push(diagnostic("Planning reshape request schema identity is unsupported"));
+  }
+  const expected = version === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION_2
+    ? PLANNING_RESHAPE_NORMALIZATION_CONTRACT_2
+    : PLANNING_RESHAPE_NORMALIZATION_CONTRACT;
+  if (record["normalization_contract"] !== expected) {
+    diagnostics.push(diagnostic("Planning reshape normalization identity is unsupported"));
+  }
+}
+
+function validateRequestIntent(
+  fields: ParsedRequestFields,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): void {
+  if (fields.version === PLANNING_RESHAPE_REQUEST_SCHEMA_VERSION &&
+      fields.dependencies.some(({ action }) => action === "create")) {
+    diagnostics.push(diagnostic("created dependency requires PlanningReshapeRequest.v2"));
+  }
   if ((fields.intent === "project") !== (fields.strictFragment?.kind === "project")) {
     diagnostics.push(diagnostic("project intent requires exactly one projection strict fragment"));
   }
@@ -883,8 +947,9 @@ export function normalizePlanningReshapeRequest(
   if (fields.windowClose !== null && fields.affected.length === 0) {
     diagnostics.push(diagnostic("window_close requires an audited affected Work set"));
   }
-  validateRequestUniqueness(fields, diagnostics);
-  if (diagnostics.length > 0) return failedNormalization(diagnostics);
+}
+
+function successfulNormalization(fields: ParsedRequestFields): PlanningReshapeNormalizationResult {
   const request = normalizedRequest(fields);
   const canonicalUtf8 = canonicalValue(request);
   return Object.freeze({
@@ -894,4 +959,19 @@ export function normalizePlanningReshapeRequest(
     preflightHash: planningReshapeSha256(canonicalUtf8),
     diagnostics: Object.freeze([]),
   });
+}
+
+export function normalizePlanningReshapeRequest(
+  input: unknown,
+): PlanningReshapeNormalizationResult {
+  const diagnostics: PlanningPoolSourceDiagnostic[] = [];
+  const record = planningRequestRecord(input, diagnostics);
+  if (record === null) return failedNormalization(diagnostics);
+  validateRequestIdentities(record, diagnostics);
+  const fields = parseRequestFields(record, diagnostics);
+  if (fields === null) return failedNormalization(diagnostics);
+  validateRequestIntent(fields, diagnostics);
+  validateRequestUniqueness(fields, diagnostics);
+  if (diagnostics.length > 0) return failedNormalization(diagnostics);
+  return successfulNormalization(fields);
 }

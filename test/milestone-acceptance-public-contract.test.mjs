@@ -19,8 +19,8 @@ function run(args, options = {}) {
 }
 
 test("Contract 9 activates one exact public registry and closed schema catalog", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
   assert.equal(rootApi.ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v4");
   assert.equal(typeof rootApi.planMilestoneAcceptanceMigration, "function");
   assert.equal(typeof rootApi.planCriterionSetReplacement, "function");

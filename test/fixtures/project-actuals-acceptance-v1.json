@@ -201,7 +201,7 @@
     {
       "id": "help",
       "file": "test/guide.test.mjs",
-      "test": "Contract 9 guide preserves every HelpNode topic and adds plan assurance"
+      "test": "Contract 10 guide preserves base topics and adds assurance, temporal, and planning topics"
     },
     {
       "id": "package_root",

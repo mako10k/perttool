@@ -447,8 +447,8 @@ test("PPHC-015 and PPHC-016 are deterministic, no-write, and publicly inactive",
   assert.deepEqual(git.snapshots.map(({ source: bytes }) => Buffer.from(bytes)), inputBytes);
   assert.equal(Object.isFrozen(first), true);
   assert.equal("reconstructPlanningPoolHistory" in rootApi, false);
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(rootApi).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(coreApi).length, 51);

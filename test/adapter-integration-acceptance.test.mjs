@@ -161,8 +161,8 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(Object.keys(packageRoot).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(core).length, 51);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 67);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 71);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 29);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeApi[name], name);

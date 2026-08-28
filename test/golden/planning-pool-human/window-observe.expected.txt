@@ -1,0 +1,57 @@
+WINDOW OBSERVATION
+Document: POOL
+Source digest: sha256:313e05ce73b8ffce8b1c561aa37f38298bfa36f1eb24a9d954a1ee550f93d8e8
+Selection: Window POOL::SPRINT
+Evidence: complete (current)
+Selected Work order: POOL::W1
+
+WORK POOL::W1
+Title: Shape reviewed outcome
+
+REFINEMENT
+Residual description: present
+Events: POOL::DRAFT_START, POOL::DRAFT_END
+Activities: POOL::DRAFT_ACTIVITY
+Milestone links: POOL::REVIEWED
+Task links: POOL::BUILD
+Uncovered dependencies: POOL::W2
+
+EXECUTION
+State: partial
+Activity obligations: POOL::DRAFT_ACTIVITY, POOL::BUILD
+Unprojected activities: POOL::DRAFT_ACTIVITY
+Tasks:
+  POOL::BUILD  status=done actuals=finish_only complete=yes attribution=exclusive
+
+OUTCOME
+Evidence: complete
+Milestones:
+  POOL::REVIEWED  closure=reached acceptance=not_declared evidence_complete=yes attribution=exclusive
+
+ORGANIZATION
+Global order: 1
+Depends on: POOL::W2
+Required by: (none)
+Dependency cycles: (none)
+Windows: POOL::SPRINT
+Trace useful: yes
+Archiveable: no
+Close disposition: not_applicable
+
+TEMPORAL
+Window: POOL::SPRINT
+Bounds: 2026-08-25 .. 2026-09-01
+Observation: 2026-08-26
+Observation source: request
+Position: inside
+Position cause: (none)
+Selected execution: partial
+Overlaps: (none)
+
+GLOBAL EXECUTION
+Evidence: complete
+Recommended Tasks: POOL::RELEASE
+Startable Tasks: POOL::RELEASE
+
+DIAGNOSTICS
+(none)

@@ -180,7 +180,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.schemas?.length !== 26 ||
+          result.schemas?.length !== 29 ||
           result.schema?.$id !==
             "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v4.schema.json" ||
           result.schema?.properties?.history_guard === undefined
@@ -197,7 +197,7 @@ fi
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
           result.cli_contract_version !== 10 ||
-          result.schemas?.length !== 26 ||
+          result.schemas?.length !== 29 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==
@@ -205,6 +205,27 @@ fi
         ) process.exit(1);
       });
     '
+  for request_schema_id in \
+    Perttool.PlanningObservationRequest.v1 \
+    Perttool.PlanningReshapeRequest.v1 \
+    Perttool.WindowMutationRequest.v1
+  do
+    "$linked_cli" schema "$request_schema_id" --format=json |
+      node -e '
+        let input = "";
+        process.stdin.setEncoding("utf8");
+        process.stdin.on("data", (chunk) => { input += chunk; });
+        process.stdin.on("end", () => {
+          const result = JSON.parse(input);
+          const expected = process.argv[1];
+          if (
+            result.schemas?.length !== 29 ||
+            result.schema?.$id !==
+              `https://github.com/mako10k/perttool/schemas/${expected}.schema.json`
+          ) process.exit(1);
+        });
+      ' "$request_schema_id"
+  done
   set +e
   legacy_advance_json=$("$linked_cli" dag advance \
     "$repo_root/docs/examples/advance-partial-before.pert" \

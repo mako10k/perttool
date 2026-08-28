@@ -34,6 +34,10 @@ import type { PlanningWindowMutationAuditResult } from "./window-types.js";
 export type PlanningPoolReadOperation =
   | "work.list"
   | "work.show"
+  | "event.list"
+  | "event.show"
+  | "activity.list"
+  | "activity.show"
   | "window.list"
   | "window.show";
 
@@ -51,6 +55,8 @@ export interface PlanningPoolReadResult {
   readonly query: { readonly id: string | null };
   readonly workOrder: readonly string[];
   readonly works: readonly PlanningPoolSourceModel["works"][number][];
+  readonly events: readonly PlanningPoolSourceModel["events"][number][];
+  readonly activities: readonly PlanningPoolSourceModel["activities"][number][];
   readonly windows: readonly PlanningPoolSourceModel["windows"][number][];
   readonly diagnostics: readonly PlanningPoolSourceDiagnostic[];
 }
@@ -68,34 +74,120 @@ function readDiagnostic(message: string): PlanningPoolSourceDiagnostic {
   });
 }
 
-function readSelection(
+type PlanningPoolReadSelection = {
+  works: PlanningPoolSourceModel["works"][number][];
+  events: PlanningPoolSourceModel["events"][number][];
+  activities: PlanningPoolSourceModel["activities"][number][];
+  windows: PlanningPoolSourceModel["windows"][number][];
+};
+
+type PlanningPoolReadHandler = (
   model: PlanningPoolSourceModel,
   query: PlanningPoolReadQuery,
   diagnostics: PlanningPoolSourceDiagnostic[],
-): Readonly<{
-  works: PlanningPoolSourceModel["works"][number][];
-  windows: PlanningPoolSourceModel["windows"][number][];
-}> {
-  if (query.operation === "work.list") {
-    return { works: [...model.works], windows: [] };
+) => PlanningPoolReadSelection;
+
+function emptyReadSelection(
+  selected: Partial<PlanningPoolReadSelection> = {},
+): PlanningPoolReadSelection {
+  return {
+    works: [],
+    events: [],
+    activities: [],
+    windows: [],
+    ...selected,
+  };
+}
+
+function selectWorkShow(
+  model: PlanningPoolSourceModel,
+  query: PlanningPoolReadQuery,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningPoolReadSelection {
+  const works = model.works.filter(({ qualifiedId }) =>
+    qualifiedId === qualified(model.documentId, query.id ?? ""));
+  if (works.length !== 1) {
+    diagnostics.push(readDiagnostic(`Work ${query.id ?? ""} does not exist`));
   }
-  if (query.operation === "window.list") {
-    return { works: [], windows: [...model.windows] };
+  const workId = works[0]?.qualifiedId;
+  const windows = workId === undefined
+    ? []
+    : model.windows.filter((window) =>
+        window.works.some(({ qualifiedId }) => qualifiedId === workId)
+      );
+  return emptyReadSelection({ works, windows });
+}
+
+function selectEventShow(
+  model: PlanningPoolSourceModel,
+  query: PlanningPoolReadQuery,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningPoolReadSelection {
+  const events = model.events.filter(({ qualifiedId }) =>
+    qualifiedId === qualified(model.documentId, query.id ?? ""));
+  if (events.length !== 1) {
+    diagnostics.push(readDiagnostic(`Event ${query.id ?? ""} does not exist`));
   }
-  if (query.operation === "work.show") {
-    const works = model.works.filter(({ qualifiedId }) =>
-      qualifiedId === qualified(model.documentId, query.id ?? ""));
-    if (works.length !== 1) {
-      diagnostics.push(readDiagnostic(`Work ${query.id ?? ""} does not exist`));
-    }
-    return { works, windows: [] };
+  const eventId = events[0]?.qualifiedId;
+  const works = eventId === undefined
+    ? []
+    : model.works.filter((work) =>
+        work.events.some(({ qualifiedId }) => qualifiedId === eventId)
+      );
+  return emptyReadSelection({ works, events });
+}
+
+function selectActivityShow(
+  model: PlanningPoolSourceModel,
+  query: PlanningPoolReadQuery,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningPoolReadSelection {
+  const activities = model.activities.filter(({ qualifiedId }) =>
+    qualifiedId === qualified(model.documentId, query.id ?? ""));
+  if (activities.length !== 1) {
+    diagnostics.push(readDiagnostic(`Activity ${query.id ?? ""} does not exist`));
   }
+  const activityId = activities[0]?.qualifiedId;
+  const works = activityId === undefined
+    ? []
+    : model.works.filter((work) =>
+        work.activities.some(({ qualifiedId }) => qualifiedId === activityId)
+      );
+  return emptyReadSelection({ works, activities });
+}
+
+function selectWindowShow(
+  model: PlanningPoolSourceModel,
+  query: PlanningPoolReadQuery,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningPoolReadSelection {
   const windows = model.windows.filter(({ qualifiedId }) =>
     qualifiedId === qualified(model.documentId, query.id ?? ""));
   if (windows.length !== 1) {
     diagnostics.push(readDiagnostic(`Window ${query.id ?? ""} does not exist`));
   }
-  return { works: [], windows };
+  return emptyReadSelection({ windows });
+}
+
+const READ_SELECTION_HANDLERS: Readonly<
+  Record<PlanningPoolReadOperation, PlanningPoolReadHandler>
+> = Object.freeze({
+  "work.list": (model) => emptyReadSelection({ works: [...model.works] }),
+  "work.show": selectWorkShow,
+  "event.list": (model) => emptyReadSelection({ events: [...model.events] }),
+  "event.show": selectEventShow,
+  "activity.list": (model) => emptyReadSelection({ activities: [...model.activities] }),
+  "activity.show": selectActivityShow,
+  "window.list": (model) => emptyReadSelection({ windows: [...model.windows] }),
+  "window.show": selectWindowShow,
+});
+
+function readSelection(
+  model: PlanningPoolSourceModel,
+  query: PlanningPoolReadQuery,
+  diagnostics: PlanningPoolSourceDiagnostic[],
+): PlanningPoolReadSelection {
+  return READ_SELECTION_HANDLERS[query.operation](model, query, diagnostics);
 }
 
 export function inspectPlanningPool(
@@ -114,7 +206,7 @@ export function inspectPlanningPool(
     }));
   }
   const selection = parsed.model === null
-    ? { works: [], windows: [] }
+    ? { works: [], events: [], activities: [], windows: [] }
     : readSelection(parsed.model, query, diagnostics);
   return Object.freeze({
     schemaVersion: "Perttool.PlanningPoolResult.v1",
@@ -125,6 +217,8 @@ export function inspectPlanningPool(
     query: Object.freeze({ id: query.id ?? null }),
     workOrder: Object.freeze(parsed.model?.workOrder.map(({ qualifiedId }) => qualifiedId) ?? []),
     works: Object.freeze(selection.works),
+    events: Object.freeze(selection.events),
+    activities: Object.freeze(selection.activities),
     windows: Object.freeze(selection.windows),
     diagnostics: Object.freeze(diagnostics),
   });

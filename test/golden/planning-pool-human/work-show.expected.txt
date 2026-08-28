@@ -1,0 +1,18 @@
+WORK POOL::W1
+Title: Shape reviewed outcome
+Description: Retain user-visible outcome
+
+PLANNING
+Events: POOL::DRAFT_START, POOL::DRAFT_END
+Activities: POOL::DRAFT_ACTIVITY
+
+STRICT LINKS
+Milestones: POOL::REVIEWED
+Tasks: POOL::BUILD
+
+ORGANIZATION
+Global order: 1 of 2
+Previous Work: (none)
+Next Work: POOL::W2
+Depends on: POOL::W2
+Windows: POOL::SPRINT

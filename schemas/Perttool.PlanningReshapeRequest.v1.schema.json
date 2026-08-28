@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanningReshapeRequest.v1.schema.json",
+  "title": "Perttool.PlanningReshapeRequest.v1",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "Perttool.PlanningReshapePreflightResult.v1.schema.json#/$defs/normalizedRequest"
+    }
+  ],
+  "patternProperties": {
+    "^request_schema_version$": {
+      "const": "Perttool.PlanningReshapeRequest.v1"
+    },
+    "^normalization_contract$": {
+      "const": "perttool.planning-reshape-normalization@1"
+    }
+  }
+}

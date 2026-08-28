@@ -108,10 +108,60 @@ const valueOption = (
 ) => planningOption(name, "value", valueType, required, repeatable, description);
 
 const readOptions = Object.freeze(readCommandTemplate.options);
-const mutationSharedOptions = Object.freeze(mutationCommandTemplate.options.filter(
-  ({ name }) => !["title", "duration", "estimate", "priority", "requires", "owner", "tags", "source"].includes(name),
-));
-const requestOption = valueOption("request", "json-path-or-stdin", true);
+const planningMutationSharedOptionNames = Object.freeze([
+  "actor",
+  "accepted-by-owner",
+  "format",
+  "color",
+  "max-diagnostics",
+  "warnings-as-errors",
+  "diff",
+  "write",
+  "out",
+  "expect-digest",
+] as const);
+const planningMutationSharedOptions = Object.freeze(
+  planningMutationSharedOptionNames.map((name) => {
+    const option = mutationCommandTemplate.options.find(
+      (candidate) => candidate.name === name,
+    );
+    if (option === undefined) {
+      throw new Error(
+        `Contract 10 Planning Pool mutation option --${name} is unavailable`,
+      );
+    }
+    return option;
+  }),
+);
+function requestOption(
+  schemaId: "Perttool.PlanningObservationRequest.v1" | "Perttool.PlanningReshapeRequest.v1" | "Perttool.WindowMutationRequest.v1",
+  required: boolean,
+) {
+  return Object.freeze({
+    ...valueOption(
+      "request",
+      "json-path-or-stdin",
+      required,
+      false,
+      `Validate against ${schemaId}; discover it with perttool schema ${schemaId}.`,
+    ),
+    conflicts: required ? Object.freeze([]) : Object.freeze(["intent-request"]),
+  });
+}
+const intentRequestOption = Object.freeze({
+  ...valueOption(
+    "intent-request",
+    "json-path-or-stdin",
+    false,
+    false,
+    "Build the audited low-level request from one explicit routine intent.",
+  ),
+  conflicts: Object.freeze(["request"]),
+});
+const reshapeIntentRequestOption = Object.freeze({
+  ...intentRequestOption,
+  conflicts: Object.freeze(["request", "add-residual-description"]),
+});
 const residualOption = valueOption(
   "add-residual-description",
   "work-id=json-string-or-file",
@@ -130,7 +180,7 @@ function operands(kind: "list" | "show" | "mutation") {
 }
 
 function planningCommand(
-  path: readonly ["work" | "window", string] | readonly ["work", "reshape", "preflight" | "apply"],
+  path: readonly ["work" | "event" | "activity" | "window", string] | readonly ["work", "reshape", "preflight" | "apply"],
   summary: string,
   kind: "read" | "observe" | "preflight" | "mutation",
 ): Contract10CommandDescriptor {
@@ -139,12 +189,28 @@ function planningCommand(
   const show = path.at(-1) === "show";
   const commandOptions = kind === "read"
     ? readOptions
-    : kind === "observe"
-      ? Object.freeze([requestOption, ...readOptions])
+      : kind === "observe"
+      ? Object.freeze([
+          requestOption("Perttool.PlanningObservationRequest.v1", true),
+          ...readOptions,
+        ])
       : kind === "preflight"
-        ? Object.freeze([requestOption, residualOption, ...readOptions])
+        ? Object.freeze([
+            requestOption("Perttool.PlanningReshapeRequest.v1", false),
+            reshapeIntentRequestOption,
+            residualOption,
+            ...readOptions,
+          ])
         : Object.freeze([
-            requestOption,
+            requestOption(
+              operation.startsWith("work.reshape.")
+                ? "Perttool.PlanningReshapeRequest.v1"
+                : "Perttool.WindowMutationRequest.v1",
+              false,
+            ),
+            ...(operation === "work.reshape.apply"
+              ? [reshapeIntentRequestOption]
+              : [intentRequestOption]),
             ...(operation === "work.reshape.apply"
               ? [
                   valueOption("preflight-hash", "sha256-digest", true),
@@ -152,7 +218,7 @@ function planningCommand(
                   residualOption,
                 ]
               : []),
-            ...mutationSharedOptions,
+            ...planningMutationSharedOptions,
           ]);
   const resultSchema = kind === "preflight"
     ? "Perttool.PlanningReshapePreflightResult.v1"
@@ -193,12 +259,16 @@ function exampleInvocation(operation: string): string {
     case "work.list": return "perttool work list plan.pert";
     case "work.show": return "perttool work show plan.pert WORK";
     case "work.observe": return "perttool work observe plan.pert --request observation.json";
-    case "work.reshape.preflight": return "perttool work reshape preflight plan.pert --request reshape.json --format json";
-    case "work.reshape.apply": return "perttool work reshape apply plan.pert --request reshape.json --preflight-hash sha256:DIGEST --preflight-token TOKEN --diff";
+    case "work.reshape.preflight": return "perttool work reshape preflight plan.pert --intent-request intent.json --format json";
+    case "work.reshape.apply": return "perttool work reshape apply plan.pert --intent-request intent.json --preflight-hash sha256:DIGEST --preflight-token TOKEN --diff";
+    case "event.list": return "perttool event list plan.pert";
+    case "event.show": return "perttool event show plan.pert EVENT";
+    case "activity.list": return "perttool activity list plan.pert";
+    case "activity.show": return "perttool activity show plan.pert ACTIVITY";
     case "window.list": return "perttool window list plan.pert";
     case "window.show": return "perttool window show plan.pert SPRINT";
     case "window.observe": return "perttool window observe plan.pert --request observation.json";
-    default: return `perttool ${operation.replaceAll(".", " ")} plan.pert WINDOW --request window.json --diff`;
+    default: return `perttool ${operation.replaceAll(".", " ")} plan.pert WINDOW --intent-request intent.json --diff`;
   }
 }
 
@@ -209,6 +279,10 @@ export const CONTRACT10_COMMAND_REGISTRY: readonly Contract10CommandDescriptor[]
   planningCommand(["work", "observe"], "Observes selected Work across independent planning and strict-execution axes.", "observe"),
   planningCommand(["work", "reshape", "preflight"], "Audits and binds one complete semantic reshape candidate.", "preflight"),
   planningCommand(["work", "reshape", "apply"], "Rebinds and applies an audited semantic reshape candidate.", "mutation"),
+  planningCommand(["event", "list"], "Lists project-owned Planning Events.", "read"),
+  planningCommand(["event", "show"], "Shows one project-owned Planning Event and its associated Work.", "read"),
+  planningCommand(["activity", "list"], "Lists project-owned Planning Activities and their endpoints.", "read"),
+  planningCommand(["activity", "show"], "Shows one project-owned Planning Activity, endpoints, plan, and associated Work.", "read"),
   planningCommand(["window", "list"], "Lists active persisted Windows.", "read"),
   planningCommand(["window", "show"], "Shows one active persisted Window.", "read"),
   planningCommand(["window", "observe"], "Observes one persisted or ad hoc Window.", "observe"),
@@ -225,6 +299,10 @@ const resources: readonly CommandResourceSummary[] = Object.freeze([
   name,
   summary: name === "work"
     ? "Inspects, observes, and reshapes Work."
+    : name === "event"
+      ? "Inspects project-owned Planning Events."
+      : name === "activity"
+        ? "Inspects project-owned Planning Activities."
     : name === "window"
       ? "Inspects, observes, and maintains bounded planning Windows."
       : `${name} commands.`,
@@ -238,13 +316,34 @@ function diagnostic(
   code: "PTHLP-002" | "PTHLP-003",
   message: string,
   query: CommandHelpQuery,
+  data: Readonly<Record<string, unknown>> = {},
 ): Diagnostic {
   return Object.freeze({
     code,
     severity: "error",
     message,
-    data: Object.freeze({ resource: query.resource, action: query.action }),
+    data: Object.freeze({
+      resource: query.resource,
+      action: query.action,
+      ...data,
+    }),
   });
+}
+
+function availableChildActions(
+  resource: string,
+  action: string,
+): readonly string[] {
+  const actionPath = action.split(" ");
+  return Object.freeze([
+    ...new Set(CONTRACT10_COMMAND_REGISTRY
+      .filter(({ path }) =>
+        path[0] === resource &&
+        path.length > actionPath.length + 1 &&
+        actionPath.every((segment, index) => path[index + 1] === segment)
+      )
+      .map(({ path }) => path[actionPath.length + 1]!)),
+  ].sort());
 }
 
 function result(
@@ -285,9 +384,16 @@ export function getContract10CommandDiscovery(query: CommandHelpQuery): Contract
     return result(query, [], [], [diagnostic("PTHLP-002", `unknown command resource: ${query.resource}`, query)]);
   }
   const command = byPath.get(`${query.resource}\0${query.action.replaceAll(" ", "\0")}`);
-  return command === undefined
+  if (command !== undefined) return result(query, [resource], [command], []);
+  const childActions = availableChildActions(query.resource, query.action);
+  return childActions.length === 0
     ? result(query, [], [], [diagnostic("PTHLP-003", `unknown action ${query.action} for command resource ${query.resource}`, query)])
-    : result(query, [resource], [command], []);
+    : result(query, [], [], [diagnostic(
+      "PTHLP-003",
+      `incomplete action ${query.action} for command resource ${query.resource}; available child actions: ${childActions.join(", ")}`,
+      query,
+      { available_child_actions: childActions },
+    )]);
 }
 
 export function contract10CommandHelpResultToJson(value: Contract10CommandHelpResult): Readonly<Record<string, unknown>> {

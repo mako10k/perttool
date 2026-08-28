@@ -23,14 +23,14 @@ function expectedIds(prefix, count) {
 }
 
 test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async () => {
-  const [specification, requirements, design, backlog, grammar, plan] =
+  const [specification, requirements, design, backlog, grammar, acceptedPlan] =
     await Promise.all([
       repositoryText("docs/specs/planning-pool.md"),
       repositoryText("docs/requirements.md"),
       repositoryText("docs/basic-design.md"),
       repositoryText("docs/backlog.md"),
       repositoryText("docs/specs/dsl-grammar.md"),
-      repositoryText("plans/planning-pool.pert"),
+      repositoryText("test/fixtures/planning-pool-pre-advance-accepted.pert"),
     ]);
 
   assert.match(specification, /- Status: Normative 1\.0/u);
@@ -51,8 +51,8 @@ test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async 
   assert.match(specification, /shared Event projects once to one Milestone/u);
   assert.match(specification, /shared Activity projects once to one Task/u);
   assert.match(specification, /no new `planning_owner`/u);
-  assert.match(specification, /active catalog moves from 56 to 67 commands/u);
-  assert.match(specification, /active root catalog therefore moves from 23 to 26/u);
+  assert.match(specification, /active catalog moves from 56 to 71 commands/u);
+  assert.match(specification, /71 commands, 29 active root schemas/u);
   assert.match(specification, /document migrate --target-grammar 9/u);
   assert.match(specification, /--archive-empty-work/u);
 
@@ -64,9 +64,12 @@ test("planning-pool contract fixes one Work-centered Grammar 9 boundary", async 
   assert.match(design, /### Post-MVP Slice 8: Work-centered planning pool and bounded Windows/u);
   assert.match(backlog, /normative Grammar 9 and CLI Contract 10 planning-pool contract\s+accepted/u);
   assert.match(grammar, /Active Grammar 9 owner: \[Work-centered Planning Pool and Window Contract\]/u);
-  assert.match(plan, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
-  assert.match(plan, /task PLANNING_POOL_RESHAPE_CORE/u);
-  assert.doesNotMatch(plan, /task PLANNING_POOL_CONTRACT|task PLANNING_POOL_SOURCE_CORE/u);
+  assert.match(acceptedPlan, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
+  assert.match(acceptedPlan, /task PLANNING_POOL_RESHAPE_CORE/u);
+  assert.doesNotMatch(
+    acceptedPlan,
+    /task PLANNING_POOL_CONTRACT|task PLANNING_POOL_SOURCE_CORE/u,
+  );
 });
 
 test("all forty planning-pool cases are dependency ordered and closed", async () => {
@@ -156,8 +159,8 @@ test("public contract activates the reserved planning runtime atomically", async
   const catalog = rootApi.getJsonSchemaCatalog();
 
   assert.equal(packageJson.version, "0.10.5");
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(catalog.length, 26);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(catalog.length, 29);
   assert.equal(Object.keys(rootApi).length, 139);
   assert.equal(Object.keys(nodeApi).length, 139);
   assert.equal(Object.keys(coreApi).length, 51);
@@ -170,15 +173,17 @@ test("public contract activates the reserved planning runtime atomically", async
   assert.equal("PlanningPoolModel" in rootApi, false);
 });
 
-test("completed final Acceptance awaits its separate assurance outcome", async () => {
+test("accepted pre-Advance lifecycle and canonical residual remain aligned", async () => {
   const [
-    source,
+    acceptedSource,
+    residualSource,
     acceptance,
     windowAcceptance,
     observationAcceptance,
     historyAcceptance,
     selfUse,
   ] = await Promise.all([
+    repositoryText("test/fixtures/planning-pool-pre-advance-accepted.pert"),
     repositoryText("plans/planning-pool.pert"),
     repositoryText("docs/process/planning-pool-contract-acceptance.md"),
     repositoryText("docs/process/planning-pool-window-core-acceptance.md"),
@@ -186,36 +191,55 @@ test("completed final Acceptance awaits its separate assurance outcome", async (
     repositoryText("docs/process/planning-pool-history-core-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
-  const checked = rootApi.checkDocument(source);
-  const metadata = rootApi.getProjectMetadata(source);
-  const analyzed = rootApi.analyzeDocument(source);
-  const next = rootApi.selectNextTasks(source);
+  const checked = rootApi.checkDocument(residualSource);
+  const metadata = rootApi.getProjectMetadata(residualSource);
+  const analyzed = rootApi.analyzeDocument(residualSource);
+  const next = rootApi.selectNextTasks(residualSource);
 
+  assert.equal(Buffer.byteLength(acceptedSource, "utf8"), 24296);
+  assert.equal(
+    `sha256:${createHash("sha256").update(acceptedSource).digest("hex")}`,
+    "sha256:4438758308fbe698d56b7167f92f9611505434714b5d33a98fd7abc8458218d9",
+  );
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
   assert.equal(analyzed.ok, true);
   assert.equal(next.ok, true);
   assert.equal(metadata.project.id, "PLANNING_POOL");
   assert.equal(metadata.grammarVersion, 7);
-  assert.match(source, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
-  assert.match(source, /task PLANNING_POOL_RESHAPE_CORE[\s\S]*?status done/u);
-  assert.match(source, /task PLANNING_POOL_PROJECTION_CORE[\s\S]*?status done/u);
-  assert.match(source, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
-  assert.match(source, /task PLANNING_POOL_OBSERVATION_CORE[\s\S]*?status done/u);
-  assert.match(source, /task PLANNING_POOL_HISTORY_CORE[\s\S]*?status done/u);
-  assert.match(source, /task PLANNING_POOL_PUBLIC_CONTRACT[\s\S]*?status done/u);
-  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
-  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
-  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:[\s\S]*?status conformant/u);
-  assert.match(source, /task_outcome OUTCOME_PLANNING_POOL_PUBLIC_CONTRACT:[\s\S]*?status conformant/u);
+  assert.match(acceptedSource, /milestone PLANNING_POOL_SOURCE_READY:[\s\S]*?state reached/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_RESHAPE_CORE[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_PROJECTION_CORE[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_WINDOW_CORE[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_OBSERVATION_CORE[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_HISTORY_CORE[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task PLANNING_POOL_PUBLIC_CONTRACT[\s\S]*?status done/u);
+  assert.match(acceptedSource, /task_outcome OUTCOME_PLANNING_POOL_WINDOW_CORE:[\s\S]*?status conformant/u);
+  assert.match(acceptedSource, /task_outcome OUTCOME_PLANNING_POOL_OBSERVATION_CORE:[\s\S]*?status conformant/u);
+  assert.match(acceptedSource, /task_outcome OUTCOME_PLANNING_POOL_HISTORY_CORE:[\s\S]*?status conformant/u);
+  assert.match(acceptedSource, /task_outcome OUTCOME_PLANNING_POOL_PUBLIC_CONTRACT:[\s\S]*?status conformant/u);
+  assert.equal((residualSource.match(/^milestone /gmu) ?? []).length, 1);
+  assert.match(
+    residualSource,
+    /milestone PLANNING_POOL_ACCEPTED:[\s\S]*?state reached/u,
+  );
+  assert.match(
+    residualSource,
+    /milestone_criterion_set PLANNING_POOL_ACCEPTANCE_R1:/u,
+  );
+  assert.match(
+    residualSource,
+    /milestone_acceptance_receipt PLANNING_POOL_ACCEPTANCE_EVIDENCE:/u,
+  );
+  assert.doesNotMatch(residualSource, /^task /mu);
+  assert.doesNotMatch(residualSource, /^gate /mu);
   assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
-  assert.deepEqual(next.assurance.requiredActions, [{
-    kind: "restore_assurance_evidence",
-    rootTaskIds: ["PLANNING_POOL_ACCEPTANCE"],
-    affectedTaskIds: ["PLANNING_POOL_ACCEPTANCE"],
-  }]);
+  assert.deepEqual(next.assurance.requiredActions, []);
+  assert.equal(next.acceptance.milestones.length, 1);
+  assert.equal(next.acceptance.milestones[0].milestoneId, "PLANNING_POOL_ACCEPTED");
+  assert.equal(next.acceptance.milestones[0].acceptance, "accepted");
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /`PPC-001` through `PPC-040`/u);

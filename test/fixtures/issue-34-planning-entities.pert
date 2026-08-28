@@ -1,0 +1,67 @@
+project ENTITY_INSPECTION:
+  version 9
+  title "Planning entity inspection"
+  as_of 2026-08-26
+  duration_unit point
+  finish END
+
+resource REVIEWERS:
+  title "Reviewers"
+  capacity 2
+
+work FIRST:
+  title "Shape the shared transition"
+  events:
+    READY
+    ACCEPTED
+  activities:
+    REVIEW
+
+work SECOND:
+  title "Reuse the shared transition"
+  events:
+    READY
+  activities:
+    REVIEW
+
+event READY:
+  title "Review input is ready"
+  description |
+    One project-owned state shared by two Work associations.
+  tags [draft, shared]
+  source "Issue #34"
+
+event ACCEPTED:
+  title "Review is accepted"
+
+activity REVIEW READY -> ACCEPTED:
+  title "Review the shared transition"
+  description "Inspect every project-owned Activity fact."
+  estimate:
+    optimistic 2p
+    most_likely 3p
+    pessimistic 5p
+  priority 80
+  requires:
+    REVIEWERS 2
+  owner "review-team"
+  tags [draft, shared]
+  source "Issue #34"
+  when start earliest 2026-08-27T09:00:00+09:00
+  when finish latest 2026-08-28T18:00:00+09:00
+  deadline 2026-08-29
+
+work_order:
+  FIRST
+  SECOND
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone END:
+  title "End"
+
+task STRICT START -> END:
+  title "Strict execution"
+  duration 1p

@@ -44,7 +44,7 @@ test("PPA-001 through PPA-009 trace every normative Planning Pool case", async (
   }
 });
 
-test("final Planning Pool acceptance keeps the exact public boundary", async () => {
+test("final Planning Pool acceptance preserves its historical boundary and current additive catalog", async () => {
   const trace = JSON.parse(
     await repositoryText("test/fixtures/planning-pool-acceptance-v1.json"),
   );
@@ -58,8 +58,11 @@ test("final Planning Pool acceptance keeps the exact public boundary", async () 
     node_exports: 139,
     core_exports: 51,
   });
-  assert.equal(rootApi.COMMAND_REGISTRY.length, trace.target.commands);
-  assert.equal(catalog.length, trace.target.root_schemas);
+  // The trace is the immutable public-activation boundary. Later accepted
+  // request schemas and Issue #34 inspection commands extend the live catalog
+  // without rewriting that historical evidence.
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(catalog.length, 29);
   assert.equal(Object.keys(rootApi).length, trace.target.root_exports);
   assert.equal(Object.keys(nodeApi).length, trace.target.node_exports);
   assert.equal(Object.keys(coreApi).length, trace.target.core_exports);
@@ -90,14 +93,19 @@ test("Linux VSIX acceptance is isolated from the operator display", async () => 
 });
 
 test("accepted Planning Pool lifecycle and record remain aligned", async () => {
-  const [record, requirements, design, backlog, plan] = await Promise.all([
-    repositoryText("docs/process/planning-pool-acceptance.md"),
-    repositoryText("docs/requirements.md"),
-    repositoryText("docs/basic-design.md"),
-    repositoryText("docs/backlog.md"),
-    repositoryText("plans/planning-pool.pert"),
-  ]);
-  const finalTask = /^task PLANNING_POOL_ACCEPTANCE[\s\S]*?(?=^plan_seal )/mu.exec(plan)?.[0] ?? "";
+  const [record, requirements, design, backlog, acceptedPlan, residualPlan] =
+    await Promise.all([
+      repositoryText("docs/process/planning-pool-acceptance.md"),
+      repositoryText("docs/requirements.md"),
+      repositoryText("docs/basic-design.md"),
+      repositoryText("docs/backlog.md"),
+      repositoryText("test/fixtures/planning-pool-pre-advance-accepted.pert"),
+      repositoryText("plans/planning-pool.pert"),
+    ]);
+  const finalTask =
+    /^task PLANNING_POOL_ACCEPTANCE[\s\S]*?(?=^plan_seal )/mu.exec(
+      acceptedPlan,
+    )?.[0] ?? "";
   assert.match(record, /Document status: Accepted 1\.0/u);
   assert.match(record, /C-POOL-ACCEPT-001 `high`, accepted/u);
   assert.match(record, /A-POOL-ACCEPT-001\*\*, implementation permitted, executed/u);
@@ -107,4 +115,14 @@ test("accepted Planning Pool lifecycle and record remain aligned", async () => {
   assert.match(design, /final end-to-end acceptance[\s\S]*?is complete/u);
   assert.match(backlog, /runtime and\s+end-to-end acceptance complete/u);
   assert.match(finalTask, /^  status done$/mu);
+  assert.equal((residualPlan.match(/^milestone /gmu) ?? []).length, 1);
+  assert.match(
+    residualPlan,
+    /milestone PLANNING_POOL_ACCEPTED:[\s\S]*?state reached/u,
+  );
+  assert.match(
+    residualPlan,
+    /milestone_acceptance_receipt PLANNING_POOL_ACCEPTANCE_EVIDENCE:/u,
+  );
+  assert.doesNotMatch(residualPlan, /^task /mu);
 });

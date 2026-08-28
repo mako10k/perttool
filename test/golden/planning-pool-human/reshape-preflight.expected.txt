@@ -1,0 +1,44 @@
+RESHAPE PREFLIGHT
+Status: ready
+Document: POOL
+Intent: reshape
+
+BINDING
+Source digest: sha256:313e05ce73b8ffce8b1c561aa37f38298bfa36f1eb24a9d954a1ee550f93d8e8
+Candidate digest: sha256:7e7413b65199a077958e7cbe5b188aa70f052f101b81b50905fb69646ab0274b
+Preflight hash: sha256:6f76c28f95e8d8e24e7acdfa1efa5216375cb2ca4e29c078d649cb0e7ccc8c5e
+Normalization: perttool.planning-reshape-normalization@2
+
+AFFECTED MEANING
+Before:
+  POOL::W1: Retain user-visible outcome  elements=INTENT_DESCRIPTION_0001
+After:
+  POOL::W1: Retain reviewed user-visible outcome  elements=INTENT_DESCRIPTION_0001
+
+CHANGES
+Changed: yes
+Text edits: 1
+Affected Work: POOL::W1
+Created Work: (none)
+Removed Work: (none)
+Requested final Work order: (unchanged)
+Planning entities: 3
+Planning associations: 3
+Strict links: 2
+Dependencies: 1
+Window memberships: 1
+
+DIAGNOSTICS
+(none)
+
+AUTHORITY
+Affected scopes: (none)
+Required owner: (none)
+Owner response required: no
+
+TOKEN
+Preflight token: <TOKEN>
+Expires at: <EXPIRES>
+
+NEXT ACTION
+Run work reshape apply with the same request, preflight hash, and token.

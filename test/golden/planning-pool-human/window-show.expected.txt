@@ -1,0 +1,15 @@
+WINDOW POOL::SPRINT
+Title: Current sprint
+Objective: Produce one reviewed user-visible outcome
+
+IDENTITY
+Document: POOL
+Kind: persisted
+
+BOUNDS
+Start: 2026-08-25
+End: 2026-09-01
+Interval: half-open [start, end)
+
+SELECTED WORK
+POOL::W1  global_order=1

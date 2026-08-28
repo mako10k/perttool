@@ -177,7 +177,12 @@ export type {
 export type {
   PlanningReshapeRequest,
   PlanningReshapePreflightResult,
+  PlanningWorkTitleDisposition,
 } from "./planning-pool/reshape-types.js";
+export type {
+  PlanningIntentAction,
+  PlanningIntentRequest,
+} from "./planning-pool/intent-types.js";
 export type {
   PlanningWindowMutationRequest,
   PlanningWindowMutationAuditResult,

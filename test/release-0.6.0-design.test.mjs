@@ -114,6 +114,6 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
   assert.match(mutationSource, /@deprecated Use AdvanceResultV1/);
   assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
   assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v4");
-  assert.equal(COMMAND_REGISTRY.length, 67);
-  assert.equal(getJsonSchemaCatalog().length, 26);
+  assert.equal(COMMAND_REGISTRY.length, 71);
+  assert.equal(getJsonSchemaCatalog().length, 29);
 });

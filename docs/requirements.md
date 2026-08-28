@@ -3728,6 +3728,36 @@ Before implementation, separate the specifications in the following order.
     - [x] Complete the end-to-end acceptance task without selecting a release,
       publishing, mutating an Issue, activating editor or MCP writes, or
       advancing the selected plan.
+    - [x] Add the source-bound `Perttool.PlanningIntentRequest.v1` builder for
+      routine Work and Window operations. Compile Work intentions to the
+      complete audited `Perttool.PlanningReshapeRequest.v2`, retain the v1
+      request path for complex semantic reshape, and preserve the existing
+      preflight, governance, assurance, history, and safe-write sequence.
+      Provide executable onboarding and failure recovery without automatic
+      semantic inference or autonomous projection.
+    - [x] Make default Planning Pool text truthful for human review while
+      retaining complete JSON contracts: compact lists, semantic Work and
+      Window detail, independent observation axes, and reshape binding,
+      affected meaning, authority, token, diagnostics, and next-action facts.
+      Omit source-span noise from default detail views and fix stable human
+      goldens with text/JSON parity.
+    - [x] Publish the three low-level request contracts from Issue #31 as
+      standalone closed Draft 2020-12 roots:
+      `Perttool.PlanningReshapeRequest.v1`,
+      `Perttool.WindowMutationRequest.v1`, and
+      `Perttool.PlanningObservationRequest.v1`. Expose them through schema
+      discovery and installed packages, link each applicable `--request`
+      Help option to its exact identity, and compile the documented examples.
+    - [x] Expose Issue #34's project-owned Planning Event and Activity through
+      read-only `list` and `show` commands. Return complete closed JSON with
+      source spans, render complete human detail without span noise, show
+      reverse Work associations and Activity endpoints, accept local and
+      qualified identity, and add no mutation authority or per-Work copy.
+    - [x] Correct Issue #32's compound Help lookup. Accept natural
+      `<resource> <group> <action>` operands for all nine active compound
+      paths, diagnose an incomplete compound prefix with exact child actions
+      in human text and JSON, and preserve resource-only, direct-action, and
+      legacy single-action-argument behavior without adding authority.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

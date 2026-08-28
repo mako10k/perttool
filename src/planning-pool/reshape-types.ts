@@ -11,6 +11,11 @@ export interface PlanningReshapeCoreCapability {
   readonly normalizationContract: "perttool.planning-reshape-normalization@1";
 }
 
+export interface PlanningWorkTitleDisposition {
+  readonly work_id: string;
+  readonly title: string;
+}
+
 export type PlanningReshapeIntent =
   | "reshape"
   | "project"
@@ -88,7 +93,7 @@ export interface PlanningProjectionLinkDisposition {
 export interface PlanningDependencyDisposition {
   readonly dependent_work_id: string;
   readonly prerequisite_work_id: string;
-  readonly action: "retain" | "rebind" | "represented" | "no_longer_required";
+  readonly action: "retain" | "create" | "rebind" | "represented" | "no_longer_required";
   readonly final_dependent_work_id?: string;
   readonly final_prerequisite_work_id?: string;
   readonly represented_by?: readonly string[];
@@ -123,12 +128,17 @@ export type PlanningStrictFragment =
   | PlanningDeferralStrictFragment;
 
 export interface PlanningReshapeRequest {
-  readonly request_schema_version: "Perttool.PlanningReshapeRequest.v1";
-  readonly normalization_contract: "perttool.planning-reshape-normalization@1";
+  readonly request_schema_version:
+    | "Perttool.PlanningReshapeRequest.v1"
+    | "Perttool.PlanningReshapeRequest.v2";
+  readonly normalization_contract:
+    | "perttool.planning-reshape-normalization@1"
+    | "perttool.planning-reshape-normalization@2";
   readonly source_digest: string;
   readonly intent: PlanningReshapeIntent;
   readonly affected_work_ids: readonly string[];
   readonly created_works: readonly PlanningReshapeCreatedWork[];
+  readonly work_title_dispositions?: readonly PlanningWorkTitleDisposition[];
   readonly removed_work_ids: readonly string[];
   readonly semantic_elements: readonly PlanningReshapeSemanticElement[];
   readonly planning_entity_dispositions: readonly PlanningEntityDisposition[];
@@ -157,7 +167,9 @@ export interface PlanningReshapeDescriptionRow {
 }
 
 export interface PlanningReshapeBinding {
-  readonly normalizationContract: "perttool.planning-reshape-normalization@1";
+  readonly normalizationContract:
+    | "perttool.planning-reshape-normalization@1"
+    | "perttool.planning-reshape-normalization@2";
   readonly preflightHash: string;
   readonly sourceDigest: string;
   readonly candidateDigest: string;

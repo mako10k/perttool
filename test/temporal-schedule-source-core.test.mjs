@@ -381,8 +381,8 @@ test("TSS-014 preserves the historical baseline while Contract 9 is active", asy
   const active = contract.active_runtime_unchanged;
   assert.equal(active.commands, 53);
   assert.equal(Object.keys(publicApi).length, 139);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 67);
-  assert.equal(publicApi.getJsonSchemaCatalog().length, 26);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 71);
+  assert.equal(publicApi.getJsonSchemaCatalog().length, 29);
   assert.equal(publicApi.getGuide(null, "index").cliContractVersion, 10);
   const text = source();
   parse(text);

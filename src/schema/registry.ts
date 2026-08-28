@@ -89,6 +89,11 @@ const commandResultSchemaIds = Object.freeze([
 const publicLibraryResultSchemaIds = Object.freeze([
   "Perttool.OverrideDecision.v1",
 ]);
+const requestSchemaIds = Object.freeze([
+  "Perttool.PlanningObservationRequest.v1",
+  "Perttool.PlanningReshapeRequest.v1",
+  "Perttool.WindowMutationRequest.v1",
+]);
 const commonArtifact = Object.freeze({
   schemaId: "Perttool.Common.v1",
   artifactPath: "schemas/Perttool.Common.v1.schema.json",
@@ -107,6 +112,12 @@ const catalog: readonly JsonSchemaCatalogEntry[] = Object.freeze(
       artifactPath: `schemas/${schemaId}.schema.json`,
       commandResult: false,
       publicLibraryResult: true,
+    })),
+    ...requestSchemaIds.map((schemaId) => ({
+      schemaId,
+      artifactPath: `schemas/${schemaId}.schema.json`,
+      commandResult: false,
+      publicLibraryResult: false,
     })),
   ]
     .sort((left, right) =>

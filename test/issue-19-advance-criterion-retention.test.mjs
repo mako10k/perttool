@@ -35,6 +35,12 @@ import {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(root, "dist", "cli.js");
+const issue25Fixture = path.join(
+  root,
+  "test",
+  "fixtures",
+  "issue-25-retained-final-acceptance.pert",
+);
 
 function run(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
@@ -274,6 +280,98 @@ test("Issue #19 retains criterion sets for every milestone kept by advance", () 
     ),
     false,
   );
+});
+
+test("Issue #25 terminal acceptance suffix owns its separator trivia", (t) => {
+  const source = readFileSync(issue25Fixture, "utf8");
+  const sourceCheck = checkDocument(source);
+  assert.equal(sourceCheck.ok, true, JSON.stringify(sourceCheck.diagnostics));
+  const finalSet = declarationBlock(
+    source,
+    "milestone_criterion_set FINAL_R1:",
+  );
+  const finalReceipt = declarationBlock(
+    source,
+    "milestone_acceptance_receipt RCPT_FINAL_ACCEPTED:",
+  );
+
+  const planned = planMilestoneAcceptanceAdvance(source, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  assert.equal(planned.ok, true, JSON.stringify(planned.diagnostics));
+  assert.deepEqual(planned.provisional.advance.keptMilestoneIds, ["FINAL"]);
+  assert.deepEqual(
+    planned.provisional.advance.removedMilestoneIds,
+    ["MID", "START"],
+  );
+  const candidate = planned.provisional.updatedText;
+  assert.equal(candidate.endsWith("\n"), true);
+  assert.equal(candidate.endsWith("\n\n"), false);
+  assert.equal(
+    declarationBlock(candidate, "milestone_criterion_set FINAL_R1:"),
+    finalSet,
+  );
+  assert.equal(
+    declarationBlock(
+      candidate,
+      "milestone_acceptance_receipt RCPT_FINAL_ACCEPTED:",
+    ),
+    finalReceipt,
+  );
+  assert.doesNotMatch(candidate, /task (?:FIRST|SECOND)|MID_R1|RCPT_MID/u);
+  const candidateCheck = checkDocument(candidate);
+  assert.equal(candidateCheck.ok, true, JSON.stringify(candidateCheck.diagnostics));
+  assert.deepEqual(candidateCheck.diagnostics, []);
+
+  const repeated = planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  assert.equal(repeated.ok, true, JSON.stringify(repeated.diagnostics));
+  assert.equal(repeated.canonical.changed, false);
+  assert.deepEqual(repeated.provisional.edits, []);
+  assert.equal(repeated.provisional.updatedText, candidate);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-issue-25."));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  git(directory, "init", "-q");
+  git(directory, "config", "user.name", "Perttool Test");
+  git(directory, "config", "user.email", "perttool@example.invalid");
+  const pathname = path.join(directory, "plan.pert");
+  writeFileSync(pathname, source, "utf8");
+  git(directory, "add", "plan.pert");
+  git(directory, "commit", "-qm", "record Issue #25 source");
+
+  const preview = runJson(["dag", "advance", pathname]);
+  assert.equal(preview.updated_text, candidate);
+  assert.equal(preview.acceptance_guard.status, "passed");
+  assert.equal(preview.assurance_guard.status, "not_applicable");
+
+  const output = path.join(directory, "candidate.pert");
+  const separate = runJson([
+    "dag",
+    "advance",
+    pathname,
+    "--out",
+    output,
+    "--actor",
+    "user",
+  ]);
+  assert.equal(separate.updated_digest, preview.updated_digest);
+  assert.equal(readFileSync(output, "utf8"), candidate);
+
+  const written = runJson([
+    "dag",
+    "advance",
+    pathname,
+    "--write",
+    "--actor",
+    "user",
+  ]);
+  assert.equal(written.updated_digest, preview.updated_digest);
+  assert.equal(written.updated_text, candidate);
+  assert.equal(written.history_guard.status, "passed");
+  assert.equal(readFileSync(pathname, "utf8"), candidate);
+  assert.equal(git(directory, "diff", "--check", "--", "plan.pert"), "");
 });
 
 test("Issue #19 CLI preview, output, and write share the checked candidate", (t) => {

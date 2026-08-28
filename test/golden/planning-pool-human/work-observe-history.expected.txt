@@ -1,0 +1,34 @@
+WORK OBSERVATION HISTORY
+Document: POOL
+Source digest: sha256:current
+Evidence: incomplete (first_parent)
+
+REFINEMENT
+Historical state: complete
+
+EXECUTION
+Historical state: unknown
+
+OUTCOME
+Historical state: unknown
+
+ORGANIZATION
+Historical state: complete
+
+TEMPORAL
+Historical state: unavailable
+
+GLOBAL EXECUTION
+Current authority: observed
+Snapshots: 2
+Continuity qualified: no
+
+HISTORY
+Endpoint: abc123
+Work occurrences: 1
+Window occurrences: 1
+Relation occurrences: 2
+Gaps: 1
+
+DIAGNOSTICS
+PTPOOL-209 warning: Historical temporal evidence is unavailable.

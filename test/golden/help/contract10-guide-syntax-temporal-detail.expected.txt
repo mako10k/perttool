@@ -1,0 +1,36 @@
+Temporal syntax
+
+Grammar 2 introduces milestone deadline plus task not_before and deadline fields. Grammars 3 through 7 retain those spellings. Grammar 8 replaces not_before with when start earliest and adds calendar schedules, availability, and event bounds; Grammar 9 retains the Grammar 8 temporal syntax and meaning.
+
+Explicit anchor
+Any deadline or not_before requires project.as_of. Date and offset date-time values remain distinct, and perttool never invents a clock or host time zone.
+
+Temporal meaning
+not_before is a release constraint for a new task start. Deadlines are desired completion or reach times, not dependency edges or hard caps. Mixed valid calendar kinds remain source-valid but may make a projection unavailable.
+
+Syntax:
+  project ID:
+    version 2|3|4|5|6|7
+    as_of DATE|OFFSET_DATE_TIME
+  milestone ID:
+    deadline DATE|OFFSET_DATE_TIME
+  task ID FROM -> TO:
+    not_before DATE|OFFSET_DATE_TIME
+    deadline DATE|OFFSET_DATE_TIME
+  project ID:
+    version 8|9
+    time_zone STRING
+    tzdb STRING
+    calendar ID
+    workday DURATION
+  calendar ID:
+    mon 09:00..12:00, 13:00..17:00
+  milestone ID:
+    when reach earliest|latest OFFSET_DATE_TIME
+  task ID FROM -> TO:
+    when start|finish earliest|latest OFFSET_DATE_TIME
+
+Examples:
+  temporal-units: docs/examples/temporal-units.md
+
+Related: syntax.project, syntax.task, syntax.milestone, analysis.temporal, editing, temporal-schedule

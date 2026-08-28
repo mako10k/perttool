@@ -145,10 +145,10 @@ test("CLI and Node activate the same milestone acceptance services", () => {
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
   assert.equal(schemas.status, 0, schemas.stderr);
-  assert.equal(JSON.parse(help.stdout).commands.length, 67);
-  assert.equal(JSON.parse(schemas.stdout).schemas.length, 26);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 67);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 26);
+  assert.equal(JSON.parse(help.stdout).commands.length, 71);
+  assert.equal(JSON.parse(schemas.stdout).schemas.length, 29);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 71);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 29);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   assert.equal(Object.keys(packageRoot).length, 139);
   assert.equal(Object.keys(core).length, 51);

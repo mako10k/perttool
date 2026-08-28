@@ -105,6 +105,6 @@ test("all fourteen core cases are ordered and evaluator remains internally owned
   }
   const root = await import("../dist/index.js");
   assert.equal("evaluateMilestoneAcceptance" in root, false);
-  assert.equal(root.COMMAND_REGISTRY.length, 67);
-  assert.equal(root.getJsonSchemaCatalog().length, 26);
+  assert.equal(root.COMMAND_REGISTRY.length, 71);
+  assert.equal(root.getJsonSchemaCatalog().length, 29);
 });

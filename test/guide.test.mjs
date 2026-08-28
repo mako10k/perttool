@@ -74,7 +74,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 9 guide preserves every HelpNode topic and adds plan assurance", () => {
+test("Contract 10 guide preserves base topics and adds assurance, temporal, and planning topics", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -113,14 +113,28 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   const expectedJson = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract8-guide-index.expected.json",
+      "golden/help/contract10-guide-index.expected.json",
     ),
     "utf8",
   );
   const expectedText = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract8-guide-syntax-quick.expected.txt",
+      "golden/help/contract10-guide-syntax-quick.expected.txt",
+    ),
+    "utf8",
+  );
+  const expectedTemporalText = await readFile(
+    path.join(
+      testDirectory,
+      "golden/help/contract10-guide-syntax-temporal-detail.expected.txt",
+    ),
+    "utf8",
+  );
+  const expectedPlanningPoolText = await readFile(
+    path.join(
+      testDirectory,
+      "golden/help/contract10-guide-planning-pool-detail.expected.txt",
     ),
     "utf8",
   );
@@ -129,6 +143,14 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   assert.equal(
     renderGuideResult(getGuide("syntax", "quick")),
     expectedText,
+  );
+  assert.equal(
+    renderGuideResult(getGuide("syntax.temporal", "detail")),
+    expectedTemporalText,
+  );
+  assert.equal(
+    renderGuideResult(getGuide("planning-pool", "detail")),
+    expectedPlanningPoolText,
   );
 });
 
@@ -163,30 +185,64 @@ test("GuideResult is a domain projection rather than a command contract", () => 
   }
 });
 
-test("active Contract 9 Guide states exact additive identities and authority", async () => {
+test("active Contract 10 Guide states exact additive Grammar 8 and 9 identities and authority", async () => {
   const syntax = getGuide("syntax", "detail");
-  assert.match(syntax.summary, /Grammar versions 1 through 7/);
+  assert.match(syntax.summary, /Grammar versions 1 through 9/);
+  assert.deepEqual(
+    syntax.syntax.filter((line) => /^(calendar|work|event|activity|window|work_order)/u.test(line)),
+    [
+      "calendar ID:",
+      "work ID:",
+      "event ID:",
+      "activity ID FROM -> TO:",
+      "window ID:",
+      "work_order:",
+      "work_event ID:",
+    ],
+  );
+  assert.ok(syntax.related.includes("temporal-schedule"));
+  assert.ok(syntax.related.includes("planning-pool"));
   assert.match(
     getGuide("syntax.project", "detail").sections
       .map(({ body }) => body).join("\n"),
-    /version 6 adds conditional plan-assurance records; and version 7 adds milestone acceptance records/,
+    /version 8 adds calendar schedules[\s\S]*version 9 adds Planning Pool declarations/,
   );
   assert.match(
     getGuide("syntax.duration", "detail").summary,
-    /Grammar 3 through 7/,
+    /Grammar 3 through 9/,
   );
-  assert.match(
-    getGuide("syntax.temporal", "detail").syntax.join("\n"),
-    /version 2\|3\|4\|5\|6\|7/,
-  );
+  const temporalSyntax = getGuide("syntax.temporal", "detail");
+  assert.deepEqual(temporalSyntax.syntax, [
+    "project ID:",
+    "  version 2|3|4|5|6|7",
+    "  as_of DATE|OFFSET_DATE_TIME",
+    "milestone ID:",
+    "  deadline DATE|OFFSET_DATE_TIME",
+    "task ID FROM -> TO:",
+    "  not_before DATE|OFFSET_DATE_TIME",
+    "  deadline DATE|OFFSET_DATE_TIME",
+    "project ID:",
+    "  version 8|9",
+    "  time_zone STRING",
+    "  tzdb STRING",
+    "  calendar ID",
+    "  workday DURATION",
+    "calendar ID:",
+    "  mon 09:00..12:00, 13:00..17:00",
+    "milestone ID:",
+    "  when reach earliest|latest OFFSET_DATE_TIME",
+    "task ID FROM -> TO:",
+    "  when start|finish earliest|latest OFFSET_DATE_TIME",
+  ]);
   assert.match(
     getGuide("syntax.temporal", "detail").summary,
-    /retained through Grammar 7/,
+    /Grammar 9 retains the Grammar 8 temporal syntax and meaning/,
   );
   assert.match(
     getGuide("syntax.work-event", "detail").summary,
-    /Grammars 6 and 7 retain it unchanged/,
+    /Grammars 6 through 9 retain it unchanged/,
   );
+  assert.ok(getGuide("planning-pool", "detail").related.includes("syntax"));
 
   const temporal = getGuide("analysis.temporal", "detail");
   const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
@@ -206,12 +262,12 @@ test("active Contract 9 Guide states exact additive identities and authority", a
   const actualsBody = getGuide("actuals", "detail").sections
     .map(({ body }) => body).join("\n");
   assert.match(actualsBody, /Grammar 5 introduces task-owned work events/);
-  assert.match(actualsBody, /Grammars 6 and 7 retain them unchanged/);
-  assert.match(actualsBody, /Grammar 5 through 7/);
+  assert.match(actualsBody, /Grammars 6 through 9 retain them unchanged/);
+  assert.match(actualsBody, /Grammar 5 through 9/);
 
   const editingBody = getGuide("editing", "detail").sections
     .map(({ body }) => body).join("\n");
-  assert.match(editingBody, /current Contract 9 candidate/);
+  assert.match(editingBody, /current Contract 10 candidate/);
 
   const assurance = getGuide("plan-assurance", "detail");
   assert.equal(assurance.examples.length, 3);

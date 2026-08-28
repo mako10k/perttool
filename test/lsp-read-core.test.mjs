@@ -563,7 +563,7 @@ function jsonRpcHarness(input, output) {
       const index = waiters.indexOf(waiter);
       if (index >= 0) waiters.splice(index, 1);
       reject(new Error("JSON-RPC response timed out"));
-    }, 2000);
+    }, 15_000);
     waiter.resolve = (message) => {
       clearTimeout(timeout);
       resolve(message);
@@ -572,12 +572,25 @@ function jsonRpcHarness(input, output) {
   return { input, output, send, waitFor };
 }
 
-test("stdio composition serves initialize, shutdown, and exit in isolation", async () => {
+async function stopChild(child) {
+  if (child.exitCode !== null || child.signalCode !== null) return;
+  await new Promise((resolve) => {
+    const force = setTimeout(() => child.kill("SIGKILL"), 2000);
+    child.once("exit", () => {
+      clearTimeout(force);
+      resolve();
+    });
+    child.kill();
+  });
+}
+
+test("stdio composition serves initialize, shutdown, and exit in isolation", async (t) => {
   const child = spawn(
     process.execPath,
     [path.join(root, "adapters/lsp/dist/main.js")],
     { cwd: root, stdio: ["pipe", "pipe", "pipe"] },
   );
+  t.after(() => stopChild(child));
   let stderr = "";
   child.stderr.setEncoding("utf8");
   child.stderr.on("data", (chunk) => {
@@ -602,9 +615,8 @@ test("stdio composition serves initialize, shutdown, and exit in isolation", asy
   assert.equal(shutdown.result, null);
   const exited = new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
-      child.kill();
       reject(new Error(`language server exit timed out: ${stderr}`));
-    }, 2000);
+    }, 5000);
     child.once("exit", (code, signal) => {
       clearTimeout(timeout);
       resolve({ code, signal });

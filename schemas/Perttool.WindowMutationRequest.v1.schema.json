@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.WindowMutationRequest.v1.schema.json",
+  "title": "Perttool.WindowMutationRequest.v1",
+  "$ref": "Perttool.PlanningMutationResult.v1.schema.json#/$defs/windowRequest"
+}

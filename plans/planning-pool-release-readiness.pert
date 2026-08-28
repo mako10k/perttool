@@ -1,0 +1,655 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project POOL_RELEASE_READINESS:
+  version 6
+  title "Planning Pool release readiness and next minor"
+  description "Resolve and accept every Planning Pool pre-release review issue under Issue #12, close P0 before P1 and P2, verify human and machine contracts, and prepare and publish the next minor only through separately authorized release gates. Issue #24 Goal Coverage and Goal Seal implementation, npm latest promotion, public VSIX publication, Issue closure, plan advance, and unrelated work remain separate."
+  as_of 2026-08-26
+  duration_unit point
+  finish POOL_RELEASE_ACCEPTED
+  goal_owner user
+  dag_owner user
+  plan_assurance_model 1
+  plan_assurance_hash_model 1
+
+milestone POOL_RELEASE_REVIEW_STARTED:
+  title "Planning Pool release review started"
+  state reached
+
+resource ADVANCE_ENGINEERS:
+  title "Advance correction capacity"
+  description "Own terminal candidate normalization and post-Advance lifecycle tests."
+  capacity 1
+
+resource CLI_ENGINEERS:
+  title "Planning Pool CLI implementation capacity"
+  description "Own Contract 10 discovery, usage, text rendering, and intent-oriented commands."
+  capacity 2
+
+resource DOC_REVIEWERS:
+  title "Human guidance review capacity"
+  description "Own Guide, examples, onboarding, release notes, and nontechnical meaning review."
+  capacity 1
+
+resource SCHEMA_ENGINEERS:
+  title "Request and result schema capacity"
+  description "Own standalone request schemas, catalog identity, and installed validation."
+  capacity 1
+
+resource ACCEPTANCE_REVIEWERS:
+  title "Cross-surface acceptance capacity"
+  description "Own independent exact-source, installed-package, and regression review."
+  capacity 1
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  description "Own version selection, immutable candidate, publication, and durable readback."
+  capacity 1
+
+milestone POOL_ADVANCE_CORRECTED:
+  title "Advance terminal candidate corrected"
+
+milestone POOL_P0_READY:
+  title "All Planning Pool P0 blockers accepted"
+
+milestone POOL_GRAMMAR9_GUIDE_READY:
+  title "Grammar 9 Guide correction accepted"
+
+milestone POOL_HUMAN_TEXT_READY:
+  title "Planning Pool human text UI accepted"
+
+milestone POOL_INTENT_UI_READY:
+  title "Intent-oriented Planning Pool UI accepted"
+
+milestone POOL_REQUEST_SCHEMA_READY:
+  title "Planning Pool request schemas accepted"
+
+milestone POOL_GOAL_BOUNDARY_READY:
+  title "Final Goal non-guarantee guidance accepted"
+
+milestone POOL_P1_READY:
+  title "All Planning Pool P1 corrections accepted"
+
+milestone POOL_COMPOUND_HELP_READY:
+  title "Natural compound Help lookup accepted"
+
+milestone POOL_ENTITY_INSPECTION_READY:
+  title "Planning Event and Activity inspection accepted"
+
+milestone POOL_P2_READY:
+  title "All Planning Pool P2 corrections accepted"
+
+milestone POOL_INTEGRATED:
+  title "Planning Pool release surface integrated and accepted"
+
+milestone POOL_RELEASE_GATE_ACCEPTED:
+  title "Next-minor release gate accepted"
+
+milestone POOL_RELEASE_PREPARED:
+  title "Next-minor release source prepared"
+
+milestone POOL_RELEASE_CANDIDATE_ACCEPTED:
+  title "Immutable next-minor candidate accepted"
+
+milestone POOL_RELEASE_PUBLISHED:
+  title "Next Planning Pool minor published"
+
+milestone POOL_RELEASE_ACCEPTED:
+  title "Next Planning Pool minor durably accepted"
+
+task POOL_ADVANCE_EOF_FIX POOL_RELEASE_REVIEW_STARTED -> POOL_ADVANCE_CORRECTED:
+  title "Correct Advance terminal candidate normalization"
+  description "Resolve Issue #25 with a retained final-milestone evidence fixture, exact terminal-byte ownership, preview/out/write identity, and git diff --check acceptance."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    ADVANCE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #25"
+
+task POOL_POST_ADVANCE_TEST_FIX POOL_ADVANCE_CORRECTED -> POOL_P0_READY:
+  title "Make Planning Pool acceptance tests survive canonical Advance"
+  description "Resolve Issue #28 by separating immutable pre-Advance evidence from the canonical residual plan without restoring removed declarations."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    ADVANCE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #28"
+
+task POOL_WINDOW_OPTION_CONTRACT POOL_RELEASE_REVIEW_STARTED -> POOL_P0_READY:
+  title "Reject inapplicable Planning Pool mutation options"
+  description "Resolve Issue #26 with Planning Pool-specific option groups, exit-2 rejection, exact Help and usage discovery, and candidate noninterference tests."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    CLI_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #26"
+
+task POOL_GRAMMAR9_GUIDE POOL_P0_READY -> POOL_GRAMMAR9_GUIDE_READY:
+  title "Align the active syntax and Planning Pool Guide with Grammar 9"
+  description "Resolve Issue #27 across syntax summaries, additive Grammar 8 and 9 declarations, reciprocal navigation, tests, and goldens."
+  duration 3p
+  status done
+  priority 90
+  requires:
+    DOC_REVIEWERS 1
+  source "Issue #27"
+
+task POOL_HUMAN_TEXT_UI POOL_P0_READY -> POOL_HUMAN_TEXT_READY:
+  title "Implement truthful Planning Pool human text results"
+  description "Resolve Issue #29 for Work and Window show, observation, and reshape preflight with semantic text/JSON parity and stable goldens."
+  duration 8p
+  status done
+  priority 90
+  requires:
+    CLI_ENGINEERS 1
+    DOC_REVIEWERS 1
+  source "Issue #29"
+
+task POOL_INTENT_UI POOL_P0_READY -> POOL_INTENT_UI_READY:
+  title "Add intent-oriented Planning Pool UI and onboarding"
+  description "Resolve Issue #30 with a bounded direct-intent or request-builder contract, executable first-use workflows, and explicit failure recovery."
+  duration 13p
+  status done
+  priority 90
+  requires:
+    CLI_ENGINEERS 1
+    DOC_REVIEWERS 1
+  source "Issue #30"
+
+task POOL_REQUEST_SCHEMAS POOL_P0_READY -> POOL_REQUEST_SCHEMA_READY:
+  title "Publish standalone Planning Pool request schemas"
+  description "Resolve Issue #31 with three closed root schemas, catalog and package exposure, Help linkage, example compilation, and installed validation."
+  duration 5p
+  status done
+  priority 90
+  requires:
+    SCHEMA_ENGINEERS 1
+    CLI_ENGINEERS 1
+  source "Issue #31"
+
+task POOL_GOAL_BOUNDARY_GUIDANCE POOL_P0_READY -> POOL_GOAL_BOUNDARY_READY:
+  title "Explain the Final Goal coverage non-guarantee"
+  description "Resolve Issue #33 without implementing Issue #24 by making advisory Work, strict finish, and future Goal Coverage boundaries explicit to nontechnical users."
+  duration 2p
+  status done
+  priority 90
+  requires:
+    DOC_REVIEWERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #33"
+
+task POOL_COMPOUND_HELP POOL_P1_READY -> POOL_COMPOUND_HELP_READY:
+  title "Accept command-shaped compound Help lookup"
+  description "Resolve Issue #32 for natural path operands, incomplete-action recovery, backward compatibility, and all compound command resources."
+  duration 2p
+  status done
+  priority 50
+  requires:
+    CLI_ENGINEERS 1
+  source "Issue #32"
+
+task POOL_ENTITY_INSPECTION POOL_P1_READY -> POOL_ENTITY_INSPECTION_READY:
+  title "Expose Planning Event and Activity inspection"
+  description "Resolve Issue #34 with read-only current entity detail, reverse Work associations, endpoints, human output, and closed JSON."
+  duration 5p
+  status done
+  priority 50
+  requires:
+    CLI_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #34"
+
+task POOL_RELEASE_INTEGRATION_ACCEPTANCE POOL_P2_READY -> POOL_INTEGRATED:
+  title "Accept the corrected Planning Pool release surface end to end"
+  description "Run the complete supported repository, static, documentation, self-use, adapter, Help, Guide, schema, temporary-link, isolated-package, and nontechnical UI gates."
+  duration 8p
+  status done
+  priority 100
+  requires:
+    ACCEPTANCE_REVIEWERS 1
+    CLI_ENGINEERS 1
+    DOC_REVIEWERS 1
+  source "Issues #25-#34"
+
+task POOL_RELEASE_GATE_DESIGN POOL_INTEGRATED -> POOL_RELEASE_GATE_ACCEPTED:
+  title "Accept the next-minor Planning Pool release gate"
+  description "Resolve the release boundary under Issue #35, provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #35"
+
+task POOL_RELEASE_PREPARATION POOL_RELEASE_GATE_ACCEPTED -> POOL_RELEASE_PREPARED:
+  title "Prepare the next Planning Pool minor"
+  description "Align all version-bearing surfaces and pass the complete local and installed preparation gates without publishing."
+  duration 5p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #35"
+
+task POOL_RELEASE_CANDIDATE POOL_RELEASE_PREPARED -> POOL_RELEASE_CANDIDATE_ACCEPTED:
+  title "Accept one immutable Planning Pool release candidate"
+  description "Select one clean commit and tarball, prove unused external identities and routes, and accept exact installed behavior before publication authorization."
+  duration 5p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #35"
+
+task POOL_RELEASE_PUBLISH POOL_RELEASE_CANDIDATE_ACCEPTED -> POOL_RELEASE_PUBLISHED:
+  title "Publish the authorized Planning Pool minor"
+  description "After separate authorization, push the exact commit and tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #35"
+
+task POOL_RELEASE_ACCEPTANCE POOL_RELEASE_PUBLISHED -> POOL_RELEASE_ACCEPTED:
+  title "Durably accept the published Planning Pool minor"
+  description "Independently read back Git, CI, GitHub, npm, artifact identity, exact and beta installations, all review issues, and rollback without implying latest promotion or Issue closure."
+  duration 5p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #35"
+
+gate POOL_P1_GUIDE_JOIN POOL_GRAMMAR9_GUIDE_READY -> POOL_P1_READY:
+  reason "Grammar 9 Guide correction accepted"
+
+gate POOL_P1_TEXT_JOIN POOL_HUMAN_TEXT_READY -> POOL_P1_READY:
+  reason "Human text UI accepted"
+
+gate POOL_P1_INTENT_JOIN POOL_INTENT_UI_READY -> POOL_P1_READY:
+  reason "Intent-oriented UI accepted"
+
+gate POOL_P1_SCHEMA_JOIN POOL_REQUEST_SCHEMA_READY -> POOL_P1_READY:
+  reason "Request schemas accepted"
+
+gate POOL_P1_GOAL_JOIN POOL_GOAL_BOUNDARY_READY -> POOL_P1_READY:
+  reason "Goal boundary guidance accepted"
+
+gate POOL_P2_HELP_JOIN POOL_COMPOUND_HELP_READY -> POOL_P2_READY:
+  reason "Compound Help correction accepted"
+
+gate POOL_P2_ENTITY_JOIN POOL_ENTITY_INSPECTION_READY -> POOL_P2_READY:
+  reason "Planning entity inspection accepted"
+
+plan_seal POOL_ADVANCE_EOF_FIX:
+  accepted_contract sha256:74704ac0a2fc08ab3e550083ac479d1becae2990e433265617f3b7f23c7ce312
+  accepted_basis sha256:0b440c18feb1849408204dac75b17bd5cff44331d21681745ec704257c87406c
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_COMPOUND_HELP:
+  accepted_contract sha256:448c7d44e08900ae19c9d2c0efcce08bb7a082f5d48657ee4cd0bfd53bbfc535
+  accepted_basis sha256:cce44b0aa0b042d60a41035e39f9cb4c4b3489348c9f4f307f62f402503c1c8d
+  accepted_inputs:
+    POOL_GOAL_BOUNDARY_GUIDANCE both sha256:aa45477a3e11ad4173bc4618e0d1bd446cacbc1d6958645144a00e686a85e46f
+    POOL_GRAMMAR9_GUIDE both sha256:e7ed0d74698be7711ead61630b6bc9dabeb7711ed785ccf25a49e97b60583116
+    POOL_HUMAN_TEXT_UI both sha256:576b4806cdbfdf27de434467914d576c51c078bc3bc3bbeb0da2c3a883c0ac47
+    POOL_INTENT_UI both sha256:5bc7b9c9b764c6b0e5834346c1002cb9c8a1f8a5b48f494d4a8b8c16883b0a45
+    POOL_REQUEST_SCHEMAS both sha256:7cd2a287d702d541269aca73a57682bfcb865872461b14df6959616e3d8d3875
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_ENTITY_INSPECTION:
+  accepted_contract sha256:b1033405e8b00adb31ebb831934ad94193e043b09120e3983ba68afb7e717518
+  accepted_basis sha256:a174c87c56e9fc5726304e4bf8d3efe51bc7008433da4c35488a83ffdb169190
+  accepted_inputs:
+    POOL_GOAL_BOUNDARY_GUIDANCE both sha256:aa45477a3e11ad4173bc4618e0d1bd446cacbc1d6958645144a00e686a85e46f
+    POOL_GRAMMAR9_GUIDE both sha256:e7ed0d74698be7711ead61630b6bc9dabeb7711ed785ccf25a49e97b60583116
+    POOL_HUMAN_TEXT_UI both sha256:576b4806cdbfdf27de434467914d576c51c078bc3bc3bbeb0da2c3a883c0ac47
+    POOL_INTENT_UI both sha256:5bc7b9c9b764c6b0e5834346c1002cb9c8a1f8a5b48f494d4a8b8c16883b0a45
+    POOL_REQUEST_SCHEMAS both sha256:7cd2a287d702d541269aca73a57682bfcb865872461b14df6959616e3d8d3875
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_GOAL_BOUNDARY_GUIDANCE:
+  accepted_contract sha256:beb27a40b821fc91ee5f8469eaa9f8e78a2b3f8dc325b85a31fdcc276c46babc
+  accepted_basis sha256:aa45477a3e11ad4173bc4618e0d1bd446cacbc1d6958645144a00e686a85e46f
+  accepted_inputs:
+    POOL_POST_ADVANCE_TEST_FIX both sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+    POOL_WINDOW_OPTION_CONTRACT both sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_GRAMMAR9_GUIDE:
+  accepted_contract sha256:7612970b9263ff5adcd55a479013b619a1a503b46fe808072b48063c987220d9
+  accepted_basis sha256:e7ed0d74698be7711ead61630b6bc9dabeb7711ed785ccf25a49e97b60583116
+  accepted_inputs:
+    POOL_POST_ADVANCE_TEST_FIX both sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+    POOL_WINDOW_OPTION_CONTRACT both sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_HUMAN_TEXT_UI:
+  accepted_contract sha256:91524840c9f594d1911ae9062d3ff3b6f98aab3c6df10e9d70eecbe5f60f069c
+  accepted_basis sha256:576b4806cdbfdf27de434467914d576c51c078bc3bc3bbeb0da2c3a883c0ac47
+  accepted_inputs:
+    POOL_POST_ADVANCE_TEST_FIX both sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+    POOL_WINDOW_OPTION_CONTRACT both sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_INTENT_UI:
+  accepted_contract sha256:67f167a10e9fef5eb1cfbdc13d8517ee60f968a99dbffbb2b24a3e88c6c6427c
+  accepted_basis sha256:5bc7b9c9b764c6b0e5834346c1002cb9c8a1f8a5b48f494d4a8b8c16883b0a45
+  accepted_inputs:
+    POOL_POST_ADVANCE_TEST_FIX both sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+    POOL_WINDOW_OPTION_CONTRACT both sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_POST_ADVANCE_TEST_FIX:
+  accepted_contract sha256:8feb20898e1cc921ec1d0b3f8ce5be5f85c8de2e1c8d659b027ea4820753436b
+  accepted_basis sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+  accepted_inputs:
+    POOL_ADVANCE_EOF_FIX both sha256:0b440c18feb1849408204dac75b17bd5cff44331d21681745ec704257c87406c
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_ACCEPTANCE:
+  accepted_contract sha256:1fa86492f20b5c35efcb03ece7644501cd1e2ca9466b34562cf441ad8fa91c51
+  accepted_basis sha256:b0fc7314a0bf9701f6280aabd69ac7f1d17abb2396b4cf688741645c7e31a7a4
+  accepted_inputs:
+    POOL_RELEASE_PUBLISH both sha256:5aca4ffd1ba7182091ef2f765378e03f0ddc3b31eeac8b5d5c954dc189568a27
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_CANDIDATE:
+  accepted_contract sha256:5a5303fe1d02c85310649b7b99f380b937c69dc1afc670c461ab6f16496bb02c
+  accepted_basis sha256:efe2519b9d805097c2b2888156bbb2762e6264151bedfed29ec2deec2d0636fa
+  accepted_inputs:
+    POOL_RELEASE_PREPARATION both sha256:aa48b0b4470f3d9ac845ca242456b5c69d7662a3cbcd98905cb83d166bea3ac5
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_GATE_DESIGN:
+  accepted_contract sha256:8a8be662a8c5769335430b6f39f9ac059f5953c3ba2e06369ee901db02f12371
+  accepted_basis sha256:5062d1179da656dd7145505b1c05682afae51734de2c8fc8d8052b1eeaaf0b0e
+  accepted_inputs:
+    POOL_RELEASE_INTEGRATION_ACCEPTANCE both sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_INTEGRATION_ACCEPTANCE:
+  accepted_contract sha256:bf915af7878be9bf516c9139420bf8d2e999beb3df456b07c21758510e7dda57
+  accepted_basis sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013
+  accepted_inputs:
+    POOL_COMPOUND_HELP both sha256:cce44b0aa0b042d60a41035e39f9cb4c4b3489348c9f4f307f62f402503c1c8d
+    POOL_ENTITY_INSPECTION both sha256:a174c87c56e9fc5726304e4bf8d3efe51bc7008433da4c35488a83ffdb169190
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_PREPARATION:
+  accepted_contract sha256:2c947c3fe8d6d41206d7ede47c5ae52da9f9ae7b1e6ee75b4f23f373eca4d4b1
+  accepted_basis sha256:aa48b0b4470f3d9ac845ca242456b5c69d7662a3cbcd98905cb83d166bea3ac5
+  accepted_inputs:
+    POOL_RELEASE_GATE_DESIGN both sha256:5062d1179da656dd7145505b1c05682afae51734de2c8fc8d8052b1eeaaf0b0e
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_RELEASE_PUBLISH:
+  accepted_contract sha256:d3539ebd3ee73472c80c30a578322e040fee92c326422cc0a158879f182df8e9
+  accepted_basis sha256:5aca4ffd1ba7182091ef2f765378e03f0ddc3b31eeac8b5d5c954dc189568a27
+  accepted_inputs:
+    POOL_RELEASE_CANDIDATE both sha256:efe2519b9d805097c2b2888156bbb2762e6264151bedfed29ec2deec2d0636fa
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_REQUEST_SCHEMAS:
+  accepted_contract sha256:a9e60c4577edb29eeae623711bdd4f7df9b49a99e459b718e2510f35f207ef69
+  accepted_basis sha256:7cd2a287d702d541269aca73a57682bfcb865872461b14df6959616e3d8d3875
+  accepted_inputs:
+    POOL_POST_ADVANCE_TEST_FIX both sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+    POOL_WINDOW_OPTION_CONTRACT both sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+plan_seal POOL_WINDOW_OPTION_CONTRACT:
+  accepted_contract sha256:3a07cea15d474481310a9dae6cc567f950139b934bacacdff8efdcf6e6bf15f8
+  accepted_basis sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  reason "User accepted the complete Planning Pool release-readiness baseline after all review findings were issueized and prioritized"
+
+task_outcome OUTCOME_POOL_ADVANCE_EOF_FIX:
+  model 1
+  task POOL_ADVANCE_EOF_FIX
+  against_basis sha256:0b440c18feb1849408204dac75b17bd5cff44331d21681745ec704257c87406c
+  status conformant
+  reason "Accepted Issue #25 terminal-separator correction and focused regression evidence"
+
+task_outcome OUTCOME_POOL_POST_ADVANCE_TEST_FIX:
+  model 1
+  task POOL_POST_ADVANCE_TEST_FIX
+  against_basis sha256:8b12dac0a37f06ca828feba31e0580973954527c21d2349f73d4aedeff4a1e14
+  status conformant
+  reason "Accepted Issue #28 immutable pre-Advance fixture, canonical residual assertions, and complete repository gate"
+
+task_outcome OUTCOME_POOL_WINDOW_OPTION_CONTRACT:
+  model 1
+  task POOL_WINDOW_OPTION_CONTRACT
+  against_basis sha256:cccddb0dfa3e21bfcc1e07aafcedac7c4d97d03df379d8a5ec69ac3be6e586f3
+  status conformant
+  reason "Accepted Issue #26 closed Planning Pool mutation option contract and complete repository gate"
+
+task_outcome OUTCOME_POOL_INTENT_UI:
+  model 1
+  task POOL_INTENT_UI
+  against_basis sha256:5bc7b9c9b764c6b0e5834346c1002cb9c8a1f8a5b48f494d4a8b8c16883b0a45
+  status conformant
+  reason "Accepted Issue #30 intent-oriented Planning Pool UI, failure recovery, and complete repository gate"
+
+task_outcome OUTCOME_POOL_HUMAN_TEXT_UI:
+  model 1
+  task POOL_HUMAN_TEXT_UI
+  against_basis sha256:576b4806cdbfdf27de434467914d576c51c078bc3bc3bbeb0da2c3a883c0ac47
+  status conformant
+  reason "Accepted Issue #29 truthful Planning Pool human text, JSON parity, and repository gates"
+
+task_outcome OUTCOME_POOL_REQUEST_SCHEMAS:
+  model 1
+  task POOL_REQUEST_SCHEMAS
+  against_basis sha256:7cd2a287d702d541269aca73a57682bfcb865872461b14df6959616e3d8d3875
+  status conformant
+  reason "Accepted Issue #31 standalone Planning Pool request schemas, Help linkage, examples, and repository gates"
+
+task_outcome OUTCOME_POOL_GRAMMAR9_GUIDE:
+  model 1
+  task POOL_GRAMMAR9_GUIDE
+  against_basis sha256:e7ed0d74698be7711ead61630b6bc9dabeb7711ed785ccf25a49e97b60583116
+  status conformant
+  reason "Accepted Issue #27 Grammar 9 Guide coverage, independent-review remediation, reciprocal navigation, goldens, and repository gates"
+
+task_outcome OUTCOME_POOL_GOAL_BOUNDARY_GUIDANCE:
+  model 1
+  task POOL_GOAL_BOUNDARY_GUIDANCE
+  against_basis sha256:aa45477a3e11ad4173bc4618e0d1bd446cacbc1d6958645144a00e686a85e46f
+  status conformant
+  reason "Accepted Issue #33 Final Goal non-guarantee guidance, retained-Work example, and repository gates"
+
+task_outcome OUTCOME_POOL_ENTITY_INSPECTION:
+  model 1
+  task POOL_ENTITY_INSPECTION
+  against_basis sha256:a174c87c56e9fc5726304e4bf8d3efe51bc7008433da4c35488a83ffdb169190
+  status conformant
+  reason "Accepted Issue #34 project-owned Event and Activity inspection, reverse associations, and repository gates"
+
+task_outcome OUTCOME_POOL_COMPOUND_HELP:
+  model 1
+  task POOL_COMPOUND_HELP
+  against_basis sha256:cce44b0aa0b042d60a41035e39f9cb4c4b3489348c9f4f307f62f402503c1c8d
+  status conformant
+  reason "Accepted compound command Help and complete nine-path regression"
+
+task_outcome OUTCOME_POOL_RELEASE_INTEGRATION_ACCEPTANCE:
+  model 1
+  task POOL_RELEASE_INTEGRATION_ACCEPTANCE
+  against_basis sha256:6363d1eef9d59d939c4df259616eeca62a9f367550403678b79859c4c5714013
+  status conformant
+  reason "Accepted corrected Planning Pool release surface and complete supported gate"
+
+work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
+  model 1
+  task POOL_ADVANCE_EOF_FIX
+  kind start
+  occurred_at 2026-08-26T11:27:07+09:00
+  planned_value 5p
+
+work_event EV_POOL_ADVANCE_EOF_FIX_FINISH_001:
+  model 1
+  task POOL_ADVANCE_EOF_FIX
+  kind finish
+  occurred_at 2026-08-26T11:44:30+09:00
+  active_time 1043/3600h
+  effort 1043/3600ph
+
+work_event EV_POOL_POST_ADVANCE_TEST_FIX_START_001:
+  model 1
+  task POOL_POST_ADVANCE_TEST_FIX
+  kind start
+  occurred_at 2026-08-26T11:55:14+09:00
+  planned_value 3p
+
+work_event EV_POOL_POST_ADVANCE_TEST_FIX_FINISH_001:
+  model 1
+  task POOL_POST_ADVANCE_TEST_FIX
+  kind finish
+  occurred_at 2026-08-26T12:01:31+09:00
+  active_time 377/3600h
+  effort 377/3600ph
+
+work_event EV_POOL_WINDOW_OPTION_CONTRACT_START_001:
+  model 1
+  task POOL_WINDOW_OPTION_CONTRACT
+  kind start
+  occurred_at 2026-08-26T12:09:12+09:00
+  planned_value 3p
+
+work_event EV_POOL_WINDOW_OPTION_CONTRACT_FINISH_001:
+  model 1
+  task POOL_WINDOW_OPTION_CONTRACT
+  kind finish
+  occurred_at 2026-08-26T12:20:15+09:00
+  active_time 221/1200h
+  effort 221/1200ph
+
+work_event EV_POOL_INTENT_UI_START_001:
+  model 1
+  task POOL_INTENT_UI
+  kind start
+  occurred_at 2026-08-26T13:11:11+09:00
+  planned_value 13p
+
+work_event EV_POOL_INTENT_UI_FINISH_001:
+  model 1
+  task POOL_INTENT_UI
+  kind finish
+  occurred_at 2026-08-26T13:50:12+09:00
+  active_time 2341/3600h
+  effort 2341/3600ph
+
+work_event EV_POOL_HUMAN_TEXT_UI_START_001:
+  model 1
+  task POOL_HUMAN_TEXT_UI
+  kind start
+  occurred_at 2026-08-26T14:38:22+09:00
+  planned_value 8p
+
+work_event EV_POOL_HUMAN_TEXT_UI_FINISH_001:
+  model 1
+  task POOL_HUMAN_TEXT_UI
+  kind finish
+  occurred_at 2026-08-26T15:14:03+09:00
+  active_time 2141/3600h
+  effort 2141/3600ph
+
+work_event EV_POOL_REQUEST_SCHEMAS_START_001:
+  model 1
+  task POOL_REQUEST_SCHEMAS
+  kind start
+  occurred_at 2026-08-26T15:26:51+09:00
+  planned_value 5p
+
+work_event EV_POOL_REQUEST_SCHEMAS_FINISH_001:
+  model 1
+  task POOL_REQUEST_SCHEMAS
+  kind finish
+  occurred_at 2026-08-26T15:55:40+09:00
+  active_time 1729/3600h
+  effort 1729/3600ph
+
+work_event WE-a7405f2c42da9f73583850d93667b415932b1355f67d947ed00aa09cb2c27e13:
+  model 1
+  task POOL_GRAMMAR9_GUIDE
+  kind start
+  occurred_at 2026-08-26T16:16:08+09:00
+  planned_value 3p
+
+work_event EV_POOL_GRAMMAR9_GUIDE_FINISH_001:
+  model 1
+  task POOL_GRAMMAR9_GUIDE
+  kind finish
+  occurred_at 2026-08-26T16:57:25+09:00
+  active_time 2477/3600h
+  effort 2477/3600ph
+
+work_event EV_POOL_GOAL_BOUNDARY_GUIDANCE_START_001:
+  model 1
+  task POOL_GOAL_BOUNDARY_GUIDANCE
+  kind start
+  occurred_at 2026-08-26T17:50:21+09:00
+  planned_value 2p
+
+work_event EV_POOL_GOAL_BOUNDARY_GUIDANCE_FINISH_001:
+  model 1
+  task POOL_GOAL_BOUNDARY_GUIDANCE
+  kind finish
+  occurred_at 2026-08-26T18:03:49+09:00
+  active_time 101/450h
+  effort 101/450ph
+
+work_event EV_POOL_ENTITY_INSPECTION_START_001:
+  model 1
+  task POOL_ENTITY_INSPECTION
+  kind start
+  occurred_at 2026-08-26T18:53:24+09:00
+  planned_value 5p
+
+work_event EV_POOL_ENTITY_INSPECTION_FINISH_001:
+  model 1
+  task POOL_ENTITY_INSPECTION
+  kind finish
+  occurred_at 2026-08-26T19:18:47+09:00
+  active_time 1523/3600h
+  effort 1523/3600ph
+
+work_event EV_POOL_COMPOUND_HELP_START_001:
+  model 1
+  task POOL_COMPOUND_HELP
+  kind start
+  occurred_at 2026-08-26T19:51:04+09:00
+  planned_value 2p
+
+work_event EV_POOL_COMPOUND_HELP_FINISH_001:
+  model 1
+  task POOL_COMPOUND_HELP
+  kind finish
+  occurred_at 2026-08-26T20:10:09+09:00
+  active_time 229/720h
+  effort 229/720ph
+
+work_event EV_POOL_RELEASE_INTEGRATION_ACCEPTANCE_START_001:
+  model 1
+  task POOL_RELEASE_INTEGRATION_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-27T14:51:29+09:00
+  planned_value 8p
+
+work_event EV_POOL_RELEASE_INTEGRATION_ACCEPTANCE_FINISH_001:
+  model 1
+  task POOL_RELEASE_INTEGRATION_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-27T15:17:08+09:00
+  active_time 0.4275h
+  effort 0.4275ph

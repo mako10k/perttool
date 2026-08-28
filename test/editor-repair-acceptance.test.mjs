@@ -566,8 +566,8 @@ test("E0 formatting and current public identities remain unchanged", async () =>
       import("../dist/core/index.js"),
     ]);
   assert.equal(JSON.parse(packageJson).version, "0.10.5");
-  assert.equal(rootIndex.COMMAND_REGISTRY.length, 67);
-  assert.equal(rootIndex.getJsonSchemaCatalog().length, 26);
+  assert.equal(rootIndex.COMMAND_REGISTRY.length, 71);
+  assert.equal(rootIndex.getJsonSchemaCatalog().length, 29);
   assert.equal(Object.keys(rootIndex).length, 139);
   assert.equal(Object.keys(coreIndex).length, 51);
   assert.match(schemaRegistry, /Perttool\.NextResult\.v8/u);

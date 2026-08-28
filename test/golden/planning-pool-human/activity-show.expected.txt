@@ -1,0 +1,34 @@
+ACTIVITY ENTITY_INSPECTION::REVIEW
+Title: Review the shared transition
+Description: Inspect every project-owned Activity fact.
+
+IDENTITY
+Document: ENTITY_INSPECTION
+Owner: project
+Kind: Temporary Draft Activity
+
+ENDPOINTS
+From: ENTITY_INSPECTION::READY
+To: ENTITY_INSPECTION::ACCEPTED
+
+PLAN
+Duration: (none)
+Estimate: 2p / 3p / 5p
+Priority: 80
+Calendar: (none)
+Deadline: 2026-08-29
+
+REQUIREMENTS
+ENTITY_INSPECTION::REVIEWERS 2
+
+TIMING
+start earliest: 2026-08-27T09:00:00+09:00
+finish latest: 2026-08-28T18:00:00+09:00
+
+ASSOCIATED WORK
+ENTITY_INSPECTION::FIRST, ENTITY_INSPECTION::SECOND
+
+METADATA
+Plan owner: review-team
+Tags: draft, shared
+Source: Issue #34
