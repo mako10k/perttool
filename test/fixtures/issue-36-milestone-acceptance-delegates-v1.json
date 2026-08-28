@@ -1,0 +1,23 @@
+{
+  "schema_version": "Perttool.Issue36MilestoneAcceptanceDelegateCases.v1",
+  "cases": [
+    {"id":"I36-001","depends_on":[],"boundary":"exact_v0_10_5_reproduces_empty_effective_delegate_denial"},
+    {"id":"I36-002","depends_on":["I36-001"],"boundary":"absent_delegate_field_uses_canonical_empty_default"},
+    {"id":"I36-003","depends_on":["I36-001"],"boundary":"explicit_empty_bracketed_delegate_list_remains_empty"},
+    {"id":"I36-004","depends_on":["I36-001"],"boundary":"one_item_bracketed_delegate_is_directly_authorized"},
+    {"id":"I36-005","depends_on":["I36-004"],"boundary":"multiple_item_bracketed_delegates_are_canonical_and_sorted"},
+    {"id":"I36-006","depends_on":["I36-004"],"boundary":"criterion_replacement_uses_pre_change_effective_delegates"},
+    {"id":"I36-007","depends_on":["I36-006"],"boundary":"verify_receipt_uses_pre_change_effective_delegates"},
+    {"id":"I36-008","depends_on":["I36-006"],"boundary":"fail_receipt_uses_pre_change_effective_delegates"},
+    {"id":"I36-009","depends_on":["I36-006"],"boundary":"unavailable_receipt_uses_pre_change_effective_delegates"},
+    {"id":"I36-010","depends_on":["I36-007"],"boundary":"revoke_receipt_uses_pre_change_effective_delegates"},
+    {"id":"I36-011","depends_on":["I36-006"],"boundary":"waive_receipt_uses_pre_change_effective_delegates"},
+    {"id":"I36-012","depends_on":["I36-002","I36-003"],"boundary":"owner_retains_direct_authority"},
+    {"id":"I36-013","depends_on":["I36-002","I36-003"],"boundary":"missing_actor_remains_fail_closed"},
+    {"id":"I36-014","depends_on":["I36-002","I36-003"],"boundary":"non_delegate_and_wrong_actor_remain_fail_closed"},
+    {"id":"I36-015","depends_on":["I36-004"],"boundary":"preview_returns_the_unchanged_candidate_and_direct_authority"},
+    {"id":"I36-016","depends_on":["I36-015"],"boundary":"expected_digest_mismatch_prevents_persistence"},
+    {"id":"I36-017","depends_on":["I36-016"],"boundary":"project_show_preview_and_in_place_write_agree"},
+    {"id":"I36-018","depends_on":["I36-005","I36-010","I36-011","I36-017"],"boundary":"isolated_installed_package_replays_the_complete_authority_matrix"}
+  ]
+}
