@@ -126,10 +126,19 @@ test("Contract 10 criterion replacement preserves Planning Pool and governance b
       ...replaceArgs("wrong"), "--write", "--expect-digest",
       preview.source_digest,
     ], 1);
+    assert.equal(deniedPersist.schema_version,
+      "Perttool.MutationResult.v6");
+    assert.equal(deniedPersist.cli_contract_version, 10);
+    assert.equal(deniedPersist.operation, "milestone-acceptance.replace");
     assert.equal(deniedPersist.ok, false);
+    assert.equal(deniedPersist.changed, true);
     assert.equal(deniedPersist.write.written, false);
     assert.equal(deniedPersist.diagnostics[0].code, "PTGOV-101");
     assert.match(deniedPersist.updated_text, /^  version 9$/mu);
+    assert.match(deniedPersist.updated_text,
+      /^milestone_criterion_set REVIEWED_R1:$/mu);
+    assert.match(deniedPersist.updated_text,
+      /^  criterion TEST required test "Review"$/mu);
     assert.equal(planningDeclarations(deniedPersist.updated_text), planning);
     assert.equal(applyJsonEdits(source, deniedPersist.edits),
       deniedPersist.updated_text);

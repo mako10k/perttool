@@ -141,3 +141,22 @@ git diff --check
 Use `secdat exec git push ...` for any later authorized remote Git write. Do
 not infer release or assurance authority from this WIP commit or its remote
 availability.
+
+## 7. 2026-08-31 resumption
+
+Candidate 1.4 remediates all five Candidate 1.3 review findings without
+changing the corrected runtime mechanism. The denied installed-package replay
+now requires the exact Contract 10 mutation identity, two localized edits,
+old criterion-set and receipt removal, the new criterion, unchanged source and
+Planning Pool blocks, and strict validation against the schema catalog shipped
+in that installed package. Compatibility wording now distinguishes preserved
+candidate semantics and schema identity from the corrected edit payload;
+causal analysis classifies the envelope and safe-write defects separately.
+Basic Design and ADR 0003 now keep proposal and accepted lifecycle metadata
+machine-readable and distinct.
+
+The complete Candidate 1.4 gate passed 1,336 tests, the 1,307-file English
+baseline, 374 Markdown and 7 PERT documentation inputs, 46 self-use plans, and
+the 1,019-file installed-package workflow. Frozen changed-file hashes, fresh
+independent exact-byte review, and any PERT criterion, receipt, or Outcome
+remain pending. The authority exclusions in sections 4 and 5 remain unchanged.

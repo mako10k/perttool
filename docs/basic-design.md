@@ -3960,12 +3960,13 @@ mutation, and plan advance remain later boundaries.
 
 ### Post-MVP Slice 8A: Planning Pool `v0.11.0` beta minor
 
-The selected `0.11.0` release packages the already accepted Grammar 9 and CLI
-Contract 10 Planning Pool boundary without reopening Work, Window, strict-DAG,
-governance, assurance, acceptance, history, or Goal Coverage semantics. The
-release composition owns version-bearing files, the additive Grammar 8 to 9
-migration and rollback guidance, package inventory, one immutable tarball,
-public-channel identity, and independent installed acceptance.
+The proposed `0.11.0` release candidate would package the already accepted
+Grammar 9 and CLI Contract 10 Planning Pool boundary without reopening Work,
+Window, strict-DAG, governance, assurance, acceptance, history, or Goal
+Coverage semantics. The release composition would own version-bearing files,
+the additive Grammar 8 to 9 migration and rollback guidance, package
+inventory, one immutable tarball, public-channel identity, and independent
+installed acceptance.
 
 The target public surface is 71 commands, 29 active root schemas, 139 root and
 reference-identical Node runtime exports, and 51 portable Core runtime

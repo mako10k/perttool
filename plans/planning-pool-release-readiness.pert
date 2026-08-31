@@ -507,6 +507,13 @@ task_outcome OUTCOME_POOL_RELEASE_INTEGRATION_ACCEPTANCE:
   status conformant
   reason "Accepted corrected Planning Pool release surface and complete supported gate"
 
+task_outcome OUTCOME_POOL_GRAMMAR9_ACCEPTANCE_MUTATION:
+  model 1
+  task POOL_GRAMMAR9_ACCEPTANCE_MUTATION
+  against_basis sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
+  status conformant
+  reason "Accepted Candidate 1.4 Grammar 9 milestone-acceptance composition, complete gate, and independent exact-byte review"
+
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
   task POOL_ADVANCE_EOF_FIX

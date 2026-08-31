@@ -1,6 +1,7 @@
 # ADR 0003: `0.x.x` beta versioning and Issue #2 scope
 
-- Status: Accepted (the base decision and accepted amendments only)
+- Status: Accepted
+- Accepted scope: Base decision and the amendments listed under `Amended`
 - Date: 2026-07-23
 - Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
   2026-07-24 (`v0.2.0` Contract 3 release target);
@@ -26,8 +27,9 @@
   gate)
 - Amendment status: Proposed, non-normative until separately accepted by the
   owner — 2026-08-28 (`v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
-  target; exact gate candidate pending owner acceptance). The file-level
-  Accepted status does not apply to this amendment while it remains Proposed.
+  target; exact gate candidate pending owner acceptance). The Accepted status
+  applies only to the accepted scope above and does not apply to this amendment
+  while it remains Proposed.
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context

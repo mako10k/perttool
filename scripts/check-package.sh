@@ -117,8 +117,13 @@ fi
 install_prefix="$package_root/prefix"
 npm install --global --prefix "$install_prefix" --ignore-scripts "$tarball" >/dev/null
 installed_cli="$install_prefix/bin/perttool"
+installed_schema_root="$install_prefix/lib/node_modules/$package_name/schemas"
 if [[ ! -x "$installed_cli" ]]; then
   printf 'packed CLI is not executable: %s\n' "$installed_cli" >&2
+  exit 1
+fi
+if [[ ! -d "$installed_schema_root" ]]; then
+  printf 'packed schema directory is missing: %s\n' "$installed_schema_root" >&2
   exit 1
 fi
 
@@ -388,9 +393,23 @@ else
 fi
 node -e '
   const fs = require("node:fs");
+  const path = require("node:path");
+  const Ajv2020 = require("ajv/dist/2020").default;
   const source = fs.readFileSync(process.argv[1], "utf8");
   const original = fs.readFileSync(process.argv[2], "utf8");
   const result = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  for (const name of fs.readdirSync(process.argv[4])) {
+    if (name.endsWith(".schema.json")) {
+      ajv.addSchema(JSON.parse(fs.readFileSync(
+        path.join(process.argv[4], name), "utf8",
+      )));
+    }
+  }
+  const validate = ajv.getSchema(
+    "https://github.com/mako10k/perttool/schemas/" +
+      "Perttool.MutationResult.v6.schema.json",
+  );
   const planningBlocks = (text) => [...text.matchAll(
     /^(?:work [A-Za-z][A-Za-z0-9_-]*:|event [A-Za-z][A-Za-z0-9_-]*:|activity [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> [A-Za-z][A-Za-z0-9_-]*:|window [A-Za-z][A-Za-z0-9_-]*:|work_order:)\r?\n(?:^[ \t].*(?:\r?\n|$))*/gmu,
   )].map(([block]) => block);
@@ -401,17 +420,31 @@ node -e '
   );
   if (
     source !== original ||
+    result.schema_version !== "Perttool.MutationResult.v6" ||
+    result.cli_contract_version !== 10 ||
+    result.operation !== "milestone-acceptance.replace" ||
     result.ok !== false ||
+    result.changed !== true ||
     result.write?.written !== false ||
+    result.edits?.length !== 2 ||
     !result.diagnostics?.some(({ code }) => code === "PTGOV-101") ||
     result.governance?.source_digest !== result.source_digest ||
     !candidate.includes("  version 9") ||
     applied !== candidate ||
     JSON.stringify(planningBlocks(candidate)) !==
-      JSON.stringify(planningBlocks(original))
+      JSON.stringify(planningBlocks(original)) ||
+    candidate.includes("milestone_criterion_set REVIEWED_R1:") ||
+    candidate.includes("milestone_acceptance_receipt REVIEWED_WAIVED:") ||
+    !candidate.includes("milestone_criterion_set REVIEWED_R2:") ||
+    !candidate.includes(
+      "criterion PACKAGE2 required test \"Denied installed package replay\"",
+    ) ||
+    typeof validate !== "function" ||
+    validate(result) !== true
   ) process.exit(1);
 ' "$denied_plan" \
-  "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert" "$denied_json"
+  "$repo_root/test/fixtures/grammar9-acceptance-before-pool.pert" "$denied_json" \
+  "$installed_schema_root"
 "$installed_cli" agent help grok workflow --format=json |
   node -e '
     let input = "";

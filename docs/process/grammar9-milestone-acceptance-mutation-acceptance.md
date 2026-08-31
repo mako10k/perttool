@@ -1,13 +1,13 @@
 # Grammar 9 Milestone-Acceptance Mutation Technical Acceptance
 
-- Date: 2026-08-28
+- Date: 2026-08-31
 - Task: `POOL_GRAMMAR9_ACCEPTANCE_MUTATION`
-- Status: Candidate 1.3 corrective implementation and complete local gate
+- Status: Candidate 1.4 corrective implementation and complete local gate
   passed; independent re-review and PERT assurance outcome pending
 - Source line: `codex/planning-pool-0.11-wip`
 - Release effect: none
 
-## 1. Candidate 1.3 technical boundary
+## 1. Candidate 1.4 technical boundary
 
 The Contract 10 CLI applies every milestone criterion-set and acceptance-
 receipt mutation to valid Grammar 9 documents. It projects the source through
@@ -22,10 +22,13 @@ The outer Grammar 9 source digest is the mutation and governance binding.
 Preview remains non-writing, in-place persistence remains expected-digest and
 validated-candidate guarded, and stale expected digests return the advertised
 exit 5 rather than an internal-error exit. JSON uses the active CLI Contract
-10 envelope. Grammar 7 and 8 behavior and result schema identity remain
-unchanged. A governance-denied persistent request retains its complete outer
-candidate, exact edits, denial diagnostic, and `written=false` independently;
-it never exposes a lowered Grammar 7 candidate.
+10 envelope. Grammar 7 and 8 candidate bytes, mutation authority, semantic
+result, and result schema identity remain compatible. The active Contract 10
+result deliberately exposes exact localized `edits`; this is a result-payload
+behavior correction, not a claim that the entire wire behavior is unchanged.
+A governance-denied persistent request retains its complete outer candidate,
+exact edits, denial diagnostic, and `written=false` independently; it never
+exposes a lowered Grammar 7 candidate.
 
 ## 2. Causal analysis
 
@@ -33,16 +36,18 @@ it never exposes a lowered Grammar 7 candidate.
   `runMilestoneAcceptance` composed candidates only through the prior Contract
   9 temporal layer. A valid Grammar 9 document therefore reached a planner
   whose accepted source boundary ended before Planning Pool declarations.
-- Contributing cause: the route retained hard-coded Contract 8 result and
-  usage text and did not catch safe-write conflicts locally, leaving its outer
-  contract projection inconsistent with the active registry.
+- Coexisting interface defects: the route retained hard-coded Contract 8
+  result and usage text and did not map safe-write conflicts locally. These
+  defects made the route inconsistent with the active registry but did not
+  create the missing Planning Pool composition.
 - Escape cause: Contract 10 tests exercised Planning Pool mutation and older
   milestone-acceptance tests exercised Grammar 7 and 8, but no cross-case
   combined Grammar 9 with criterion/receipt mutation and installed-package
   persistence guards.
 - Corrective action: compose and validate the candidate through both extension
-  layers, rebind governance to the outer source digest, project Contract 10,
-  and map safe-write conflicts through the shared write-failure boundary.
+  layers and rebind governance to the outer source digest.
+- Coexisting interface corrections: project Contract 10 and map safe-write
+  conflicts through the shared write-failure boundary.
 - Recurrence prevention: add a Grammar 9 CLI matrix for replacement, all five
   receipt actions, no-Pool Grammar 9, delegated governance, preview, denial,
   stale digest, safe write, and declaration preservation, plus an isolated
@@ -91,15 +96,16 @@ The second correction candidate retained a third defect:
   blocks to remain byte-identical, and edits to reconstruct the candidate. It
   separately requires a denied persistent request to retain those properties
   while leaving the file unchanged.
-- `TMPDIR=/tmp TEMP=/tmp TMP=/tmp npm run check` passed the exact Candidate 1.3
+- `TMPDIR=/tmp TEMP=/tmp TMP=/tmp npm run check` passed the exact Candidate 1.4
   worktree: static type, duplication, and complexity gates; 1,336 tests;
-  English baseline over 1,306 text files with 3 allowlisted lines; 373 Markdown
+  English baseline over 1,307 text files with 3 allowlisted lines; 374 Markdown
   and 7 PERT documentation inputs; read-only self-use over 46 plans; isolated
   LSP and MCP packages; the VSIX shell, DAG, and supported VS Code 1.101.0 host;
   temporary npm linking; and the 1,019-file isolated public-package workflow.
-  The installed-package replay includes exact edit reconstruction, byte-
-  identical Planning Pool blocks, receipt removal, governance denial, and
-  no-write proof.
+  The denied installed-package replay requires the exact Contract 10 identity,
+  two edits, old criterion-set and receipt removal, the new criterion,
+  unchanged source and Planning Pool blocks, and strict validation against the
+  installed `Perttool.MutationResult.v6` schema.
 - A fresh independent exact-byte review remains required before the PERT
   outcome may be proposed for owner confirmation.
 
