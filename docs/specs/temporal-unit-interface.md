@@ -618,11 +618,16 @@ version 1, Reason Taxonomy version 1.0, and explanation contracts do not use
 deadline or `not_before` facts. Therefore raw
 `recommendation.recommended_task_ids` is preference output, not sufficient
 start authority in NextResult v4. Automation starts only IDs in
-`startable_recommended_task_ids`. An unavailable release relationship fails
-closed into `unavailable_recommended_task_ids`.
+`startable_recommended_task_ids`. That final set contains only raw recommended
+IDs also present in `groups.runnable_now`; a raw recommended ID outside
+`runnable_now` remains typed informational preference output and is
+non-executable in that result. Its task-level `runnable_now=false` and resource
+rejection facts identify the scheduler-selection boundary. An unavailable
+release relationship fails closed into `unavailable_recommended_task_ids`.
 
 For a version 1 document, every structurally ready task is time-eligible and
-`startable_recommended_task_ids` equals the existing recommended set.
+`startable_recommended_task_ids` equals the intersection of the existing
+recommended set and `groups.runnable_now`.
 
 ### 8.5 `Perttool.UnitMigrationResult.v2`
 

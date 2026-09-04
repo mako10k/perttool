@@ -542,12 +542,15 @@ together, normal task selection uses the following as authority.
 1. Select a work package from the macro plan's complete JSON recommendation
 2. Reanalyze the selected work package's detail plan and select a task from its complete JSON recommendation
 3. Start only IDs exposed by `startable_recommended_task_ids`; under normal
-   authority, select only a subset of that set or retain it and add one
-   time-eligible, resource-feasible allowed task
+   authority, require each ID also to be present in `groups.runnable_now`, then
+   select only a subset of that set or retain it and add one time-eligible,
+   resource-feasible allowed task. Treat a raw recommended ID outside
+   `runnable_now` as informational and non-executable in that result
 4. Confirm the decisive step, higher-priority tasks, and comparison, and explain the selection from project facts
 5. Stop automatic selection for an unknown schema/version or authority policy,
-   incomplete trace, `PTREC-*`, an assurance safe stop, future or unavailable
-   temporal eligibility, or withheld assurance eligibility
+   incomplete trace, `PTREC-*`, an assurance safe stop, non-runnable raw
+   recommendation, future or unavailable temporal eligibility, or withheld
+   assurance eligibility
 6. Reanalyze the detail plan after a detail-task start, completion, block, or capacity change; also reanalyze the macro plan if macro work-package status, roll-up duration, or capacity changes
 
 Human instructions to select `deferred` or `discouraged` are distinct from normal recommendations. Until the override-apply gate is met, do not fabricate an applied artifact; AI presents the difference and the not-yet-enabled audit/apply boundary. Provider-specific prompts, skills, agents, and hooks reach the same rules through the Issue #2 guide and do not add provider-specific priority rules.

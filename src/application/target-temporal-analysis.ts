@@ -236,6 +236,16 @@ export interface TargetNextResultV4
   };
 }
 
+export function selectRunnableRecommendedTaskIds(
+  recommendedTaskIds: readonly string[],
+  runnableNowTaskIds: readonly string[],
+): readonly string[] {
+  const runnableNow = new Set(runnableNowTaskIds);
+  return Object.freeze(
+    recommendedTaskIds.filter((taskId) => runnableNow.has(taskId)),
+  );
+}
+
 function declaredCalendar(
   value: TargetCalendarValue,
 ): DeclaredCalendarValue {
@@ -782,9 +792,6 @@ export function selectTargetTemporalTasks(
       .filter(({ timeEligibility }) => timeEligibility.state === state)
       .map(({ taskId }) => taskId);
   const recommended = base.recommendation.recommendedTaskIds;
-  const startable = recommended.filter((id) =>
-    eligibilityById.get(id)?.state === "eligible"
-  );
   const delayed = recommended.filter((id) =>
     eligibilityById.get(id)?.state === "not_yet_eligible"
   );
@@ -793,6 +800,10 @@ export function selectTargetTemporalTasks(
   );
   const runnableNow = base.groups.runnableNow.filter((id) =>
     eligibilityById.get(id)?.state === "eligible"
+  );
+  const startable = selectRunnableRecommendedTaskIds(
+    recommended,
+    runnableNow,
   );
   return Object.freeze({
     ...base,

@@ -316,7 +316,7 @@ task POOL_NEXT_SIGNAL_CONSISTENCY POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POO
   title "Make recommendation and runnable authority coherent"
   description "Resolve Issue #37 by defining one coherent current-start authority across recommendation and capacity selection, explicitly typing any informational non-executable recommendation, preserving ranking meaning and source-plan integrity, and covering JSON, text, schema, and installed-package paths."
   duration 8p
-  status planned
+  status active
   priority 100
   requires:
     CLI_ENGINEERS 1
@@ -751,3 +751,10 @@ gate POOL_RELEASE_BINDING_JOIN POOL_GOVERNANCE_BINDING_READY -> POOL_RELEASE_GAT
 
 gate POOL_RELEASE_NEXT_JOIN POOL_NEXT_SIGNAL_READY -> POOL_RELEASE_GATE_ACCEPTED:
   reason "Recommendation and runnable authority accepted"
+
+work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_START_001:
+  model 1
+  task POOL_NEXT_SIGNAL_CONSISTENCY
+  kind start
+  occurred_at 2026-09-04T10:21:51+09:00
+  planned_value 8p

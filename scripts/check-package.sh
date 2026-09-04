@@ -477,6 +477,33 @@ node -e '
       ) process.exit(1);
     });
   '
+"$installed_cli" dag next \
+  "$repo_root/test/fixtures/recommendation/rec-008-runnable-authority.pert" \
+  --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      const authority = result.temporal?.authority;
+      const critical = result.tasks?.find(({ id }) => id === "CRITICAL");
+      if (
+        result.schema_version !== "Perttool.NextResult.v8" ||
+        JSON.stringify(result.recommendation?.recommended_task_ids) !==
+          JSON.stringify(["CRITICAL"]) ||
+        JSON.stringify(result.groups?.runnable_now) !==
+          JSON.stringify(["HIGH_PRIORITY"]) ||
+        critical?.runnable_now !== false ||
+        JSON.stringify(authority?.raw_recommended_task_ids) !==
+          JSON.stringify(["CRITICAL"]) ||
+        JSON.stringify(authority?.temporal_startable_recommended_task_ids) !==
+          JSON.stringify([]) ||
+        JSON.stringify(authority?.startable_recommended_task_ids) !==
+          JSON.stringify([])
+      ) process.exit(1);
+    });
+  '
 "$installed_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
 node scripts/check-package-file-first.mjs \
   "$installed_cli" \

@@ -1086,7 +1086,8 @@
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "startable_recommended_task_ids": {
-              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray",
+              "description": "Final new-start authority: raw recommended IDs that are also in groups.runnable_now, time-eligible, and assurance-eligible."
             },
             "delayed_recommended_task_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
@@ -1095,10 +1096,12 @@
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "raw_recommended_task_ids": {
-              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray",
+              "description": "Ranking preference output. An ID absent from groups.runnable_now is informational and non-executable in this result."
             },
             "temporal_startable_recommended_task_ids": {
-              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray",
+              "description": "Raw recommended IDs that are also in groups.runnable_now before plan-assurance filtering."
             },
             "assurance_eligible_task_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"

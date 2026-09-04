@@ -379,6 +379,7 @@ test("Issue #15 keeps velocity-free point analysis and Next results point-valued
       velocity: json.velocity,
       velocityForecast: json.velocity_forecast,
       recommendedTaskIds: json.recommendation.recommended_task_ids,
+      runnableTaskIds: json.groups.runnable_now,
       startableTaskIds: json.temporal.authority.startable_recommended_task_ids,
       tasks: json.tasks.map((task) => ({
         id: task.id,
@@ -398,7 +399,8 @@ test("Issue #15 keeps velocity-free point analysis and Next results point-valued
   assert.equal(nextFromFile.velocity, null);
   assert.equal(nextFromFile.velocityForecast, null);
   assert.deepEqual(nextFromFile.recommendedTaskIds, ["GATE_NEAR"]);
-  assert.deepEqual(nextFromFile.startableTaskIds, ["GATE_NEAR"]);
+  assert.deepEqual(nextFromFile.runnableTaskIds, ["GATE_FAR"]);
+  assert.deepEqual(nextFromFile.startableTaskIds, []);
   assert.equal(nextFromFile.tasks.every(({ expected }) => expected.unit === "point"), true);
   assert.equal(nextFromFile.tasks.every(({ forecastExpected }) => forecastExpected === null), true);
 });

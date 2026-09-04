@@ -27,6 +27,10 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ### Fixed
 
+- Compose raw Recommendation version 1 preference with `runnable_now` before
+  granting final new-start authority, retain a non-runnable raw recommendation
+  as typed informational output, and expose the distinction consistently in
+  Core, text, JSON, schema guidance, and installed-package behavior.
 - Accept natural three-segment Help lookup such as
   `perttool help work reshape preflight`, report exact available child actions
   for incomplete compound actions, and retain resource-only, direct-action,

@@ -132,7 +132,7 @@ test("TUE-005 an equal release instant is startable", async () => {
   );
 });
 
-test("Next v4 start authority follows feasible recommendation R rather than scheduler L", () => {
+test("Next v4 start authority requires recommendation R and scheduler L membership", () => {
   const result = next(`project AUTHORITY_SEPARATION:
   version 1
   title "Recommendation and scheduler separation"
@@ -181,7 +181,7 @@ gate PRIORITY_GATE PRIORITY_DONE -> FINISH:
   assert.deepEqual(result.recommendation.recommendedTaskIds, ["DRIVING"]);
   assert.deepEqual(
     result.temporal.authority.startableRecommendedTaskIds,
-    ["DRIVING"],
+    [],
   );
   assert.equal(
     result.tasks.find(({ id }) => id === "DRIVING").runnableNow,

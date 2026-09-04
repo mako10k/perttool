@@ -620,8 +620,10 @@ retains the entire base Analysis v2 result and adds separate temporal
 precedence/resource and deadline views. Next v4 retains Recommendation
 algorithm version 1 and its complete v3 graph, then adds a release gate:
 automation starts only the intersection published as
-`startable_recommended_task_ids`. Deadline facts remain informational for
-ranking.
+`startable_recommended_task_ids`. The intersection also requires current
+`runnable_now` membership; raw recommendations outside that scheduler-selected
+set remain informational and non-executable. Deadline facts remain
+informational for ranking.
 
 `project migrate-unit --to-unit ...` calls a separate pure planner, not
 `project.set` or `batch.apply`. Temporal field mutations can participate in a

@@ -1,0 +1,43 @@
+project REC_008_RUNNABLE_AUTHORITY:
+  version 1
+  title "Recommendation and runnable authority"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource REVIEWER:
+  title "Reviewer"
+  capacity 1
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone CRITICAL_DONE:
+  title "Critical task complete"
+
+milestone HIGH_PRIORITY_DONE:
+  title "High-priority task complete"
+
+milestone FINISH:
+  title "Finish"
+
+task CRITICAL START -> CRITICAL_DONE:
+  title "Driving path"
+  duration 4p
+  priority 90
+  requires:
+    REVIEWER 1
+
+task HIGH_PRIORITY START -> HIGH_PRIORITY_DONE:
+  title "Scheduler-priority path"
+  duration 3p
+  priority 100
+  requires:
+    REVIEWER 1
+
+gate CRITICAL_GATE CRITICAL_DONE -> FINISH:
+  reason "Critical path is required"
+
+gate HIGH_PRIORITY_GATE HIGH_PRIORITY_DONE -> FINISH:
+  reason "High-priority path is required"

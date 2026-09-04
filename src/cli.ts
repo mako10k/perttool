@@ -4131,10 +4131,15 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   const unit = result.durationUnit!;
   const taskById = new Map(result.tasks.map((task) => [task.id, task]));
   const authority = result.temporal!.authority;
+  const runnableNow = new Set(result.groups.runnableNow);
+  const nonRunnableRecommended = authority.rawRecommendedTaskIds.filter(
+    (taskId) => !runnableNow.has(taskId),
+  );
   const lines = [
     "START AUTHORITY",
     `POLICY ${authority.policy}`,
     `STARTABLE RECOMMENDED ${authority.startableRecommendedTaskIds.join(",") || "-"}`,
+    `NON-RUNNABLE RAW RECOMMENDED ${nonRunnableRecommended.join(",") || "-"}`,
     `DELAYED RECOMMENDED ${authority.delayedRecommendedTaskIds.join(",") || "-"}`,
     `UNAVAILABLE RECOMMENDED ${authority.unavailableRecommendedTaskIds.join(",") || "-"}`,
     "DEADLINE FACTS INFORMATIONAL FOR RANKING v1",

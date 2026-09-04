@@ -60,6 +60,7 @@ import {
 import {
   projectTargetNextTemporalTasks,
   projectTargetTemporalSchedule,
+  selectRunnableRecommendedTaskIds,
   type TargetNextTemporalTask,
   type TargetTemporalAnalysis,
   TARGET_TEMPORAL_INTERFACE_IDENTITY,
@@ -193,6 +194,20 @@ function failure(
     diagnosticsTruncated:
       checked.diagnosticsTruncated || limited.truncated,
   });
+}
+
+function runnableActualsTaskIds(
+  tasks: readonly TargetActualsNextTask[],
+  eligibilityById: ReadonlyMap<
+    string,
+    "eligible" | "not_yet_eligible" | "not_applicable" | "unavailable"
+  >,
+): readonly string[] {
+  return Object.freeze(tasks
+    .filter((task) =>
+      task.runnableNow && eligibilityById.get(task.id) === "eligible"
+    )
+    .map(({ id }) => id));
 }
 
 function projectField(
@@ -501,6 +516,11 @@ export function selectTargetActualsTasks(
   const recommendedFor = (
     state: "eligible" | "not_yet_eligible" | "unavailable",
   ) => recommended.filter((id) => eligibilityById.get(id) === state);
+  const runnableNow = runnableActualsTaskIds(tasks, eligibilityById);
+  const startableRecommended = selectRunnableRecommendedTaskIds(
+    recommended,
+    runnableNow,
+  );
   return Object.freeze({
     ...selected,
     schemaVersion: TARGET_ACTUALS_NEXT_RESULT_SCHEMA_VERSION,
@@ -509,13 +529,7 @@ export function selectTargetActualsTasks(
     groups: Object.freeze({
       active: ids("active"),
       ready: ids("ready"),
-      runnableNow: tasks
-        .filter(
-          (task) =>
-            task.runnableNow &&
-            eligibilityById.get(task.id) === "eligible",
-        )
-        .map(({ id }) => id),
+      runnableNow,
       blockedNow: ids("blocked_now"),
       upcoming: ids("upcoming"),
       suspended: ids("suspended"),
@@ -534,8 +548,7 @@ export function selectTargetActualsTasks(
           Object.freeze(temporalIds("not_yet_eligible")),
         timeEligibilityUnavailableTaskIds:
           Object.freeze(temporalIds("unavailable")),
-        startableRecommendedTaskIds:
-          Object.freeze(recommendedFor("eligible")),
+        startableRecommendedTaskIds: startableRecommended,
         delayedRecommendedTaskIds:
           Object.freeze(recommendedFor("not_yet_eligible")),
         unavailableRecommendedTaskIds:

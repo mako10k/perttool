@@ -604,6 +604,11 @@ assurance authority projection. A raw recommended task that is `unsealed`,
 `review_required`, or `unavailable` remains visible as the project's current
 priority but is absent from startable authority.
 
+The composed authority also retains the prior resource-selection boundary.
+`startable_recommended_task_ids` is a subset of `groups.runnable_now`; a raw
+recommended task that the scheduler did not select remains informational and
+non-executable in that result even when its assurance state is eligible.
+
 The result includes at least:
 
 ```text

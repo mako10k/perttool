@@ -187,10 +187,20 @@ function understandsAuthorityContract(result) {
       decision.recommended_set_member === true
     );
   }) &&
-    authority.startable_recommended_task_ids.every(
+    sameMembers(
+      authority.raw_recommended_task_ids,
+      recommendation.recommended_task_ids,
+    ) &&
+    authority.temporal_startable_recommended_task_ids.every(
       (id) =>
         recommendation.recommended_task_ids.includes(id) &&
-        authority.time_eligible_task_ids.includes(id),
+        authority.time_eligible_task_ids.includes(id) &&
+        result.groups.runnable_now.includes(id),
+    ) &&
+    authority.startable_recommended_task_ids.every(
+      (id) =>
+        authority.temporal_startable_recommended_task_ids.includes(id) &&
+        authority.assurance_eligible_task_ids.includes(id),
     ) &&
     authority.delayed_recommended_task_ids.every(
       (id) =>

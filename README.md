@@ -108,8 +108,10 @@ perttool dag next PLAN.pert --format json
 ```
 
 Only `temporal.authority.startable_recommended_task_ids` grants new-start
-authority. Do not treat a raw recommendation or a ready task as equivalent to
-permission to start it.
+authority. Every ID in that set is also in `groups.runnable_now`; a raw
+recommendation outside that group is informational and non-executable in the
+current result. Do not treat a raw recommendation or a ready task as
+equivalent to permission to start it.
 
 Task estimates use Point values by default. A plan can declare a velocity such
 as `20p/10d` to add time forecasts. Point analysis still works when no velocity
