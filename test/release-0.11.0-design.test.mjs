@@ -40,19 +40,21 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 31746);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 32271);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "dc22cb3f3eef3a458fc95cbb6a85c3feeeb054450e27ead38e38ffb84ebc33e5",
+    "8bd113759367c784a83a6feba785bcb2b1de8e1b1489c3cc629d0e41bb156746",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
-  assert.deepEqual(next.groups.active, ["POOL_NEXT_SIGNAL_CONSISTENCY"]);
+  assert.deepEqual(next.groups.active, []);
   assert.deepEqual(next.groups.ready, ["POOL_GOVERNANCE_BINDING_FIX"]);
-  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.groups.runnableNow, ["POOL_GOVERNANCE_BINDING_FIX"]);
   assert.deepEqual(next.groups.suspended, ["POOL_RELEASE_GATE_DESIGN"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["POOL_GOVERNANCE_BINDING_FIX"]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, [
+    "POOL_GOVERNANCE_BINDING_FIX",
+  ]);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.equal(next.temporal.authority.complete, true);
   assert.match(plan, /^task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:$/mu);
@@ -63,6 +65,9 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(plan, /^work_event EV_POOL_RELEASE_GATE_DESIGN_START_001:$/mu);
   assert.match(plan, /^work_event EV_POOL_RELEASE_GATE_DESIGN_SUSPEND_P1_REPLAN_001:$/mu);
   assert.match(plan, /^work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_START_001:$/mu);
+  assert.match(plan, /^work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_FINISH_001:$/mu);
+  assert.match(plan, /^task_outcome OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY:$/mu);
+  assert.match(plan, /task POOL_NEXT_SIGNAL_CONSISTENCY[\s\S]*?^  status done$/mu);
   assert.match(plan, /^task POOL_GOVERNANCE_BINDING_FIX /mu);
   assert.match(plan, /^task POOL_NEXT_SIGNAL_CONSISTENCY /mu);
   assert.match(plan, /^milestone POOL_GOVERNANCE_BINDING_READY:$/mu);

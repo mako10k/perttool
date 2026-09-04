@@ -316,7 +316,7 @@ task POOL_NEXT_SIGNAL_CONSISTENCY POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POO
   title "Make recommendation and runnable authority coherent"
   description "Resolve Issue #37 by defining one coherent current-start authority across recommendation and capacity selection, explicitly typing any informational non-executable recommendation, preserving ranking meaning and source-plan integrity, and covering JSON, text, schema, and installed-package paths."
   duration 8p
-  status active
+  status done
   priority 100
   requires:
     CLI_ENGINEERS 1
@@ -543,6 +543,13 @@ task_outcome OUTCOME_POOL_GRAMMAR9_ACCEPTANCE_MUTATION:
   status conformant
   reason "Accepted Candidate 1.4 Grammar 9 milestone-acceptance composition, complete gate, and independent exact-byte review"
 
+task_outcome OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY:
+  model 1
+  task POOL_NEXT_SIGNAL_CONSISTENCY
+  against_basis sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819
+  status conformant
+  reason "Accepted Issue #37 coherent start-authority composition, complete repository gate, and installed-package replay"
+
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
   task POOL_ADVANCE_EOF_FIX
@@ -758,3 +765,11 @@ work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_START_001:
   kind start
   occurred_at 2026-09-04T10:21:51+09:00
   planned_value 8p
+
+work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_FINISH_001:
+  model 1
+  task POOL_NEXT_SIGNAL_CONSISTENCY
+  kind finish
+  occurred_at 2026-09-04T10:54:41+09:00
+  active_time 197/360h
+  effort 197/180ph

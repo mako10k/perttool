@@ -1,7 +1,8 @@
 # Issue #37 Next Start-Authority Technical Acceptance
 
-- Status: Implementation and local acceptance complete; PERT Outcome and
-  GitHub Issue closure remain separately governed
+- Status: Implementation, local acceptance, PERT task finish, and conformant
+  Outcome accepted; Milestone acceptance and GitHub Issue closure remain
+  separately governed
 - Date: 2026-09-04
 - Issue: #37, `bug: dag next can recommend a task marked not runnable in the same NextResult`
 - PERT task: `POOL_NEXT_SIGNAL_CONSISTENCY`
@@ -91,13 +92,24 @@ applied task-start event and passed in isolation. The subsequent fresh complete
 repository run passed all 1,339 tests after this record and the lifecycle
 expectation were present.
 
+The owner then accepted the semantic behavior described in this record, not
+the candidate digest alone. The task finished at
+`2026-09-04T10:54:41+09:00` with `197/360h` active time and `197/180ph`
+effort. The separately previewed and owner-confirmed
+`OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY` records a conformant result against
+the unchanged accepted basis
+`sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819`.
+The resulting PERT source digest is
+`sha256:8bd113759367c784a83a6feba785bcb2b1de8e1b1489c3cc629d0e41bb156746`.
+
 ## 4. Preserved boundaries
 
 This correction does not change the source plan, recommendation ranking,
 scheduler order, capacity, task priority, Recommendation version, result
 identity, authority-policy identity, command count, active schema count,
 public export count, Grammar 9 or CLI Contract 10 meaning, VSIX/MCP mutation,
-or release scope. It does not finish or accept the PERT task, close Issue #37,
-resume Gate Design, accept the `0.11.0` gate, push a branch, publish a package,
-or move an npm distribution tag. Those remain separate operations and
-authority boundaries.
+or release scope. The accepted task Outcome does not declare or accept a
+criterion set for `POOL_NEXT_SIGNAL_READY`, close Issue #37, resume Gate
+Design, reseal or start Issue #38, accept the `0.11.0` gate, push a branch,
+publish a package, or move an npm distribution tag. Those remain separate
+operations and authority boundaries.
