@@ -218,9 +218,9 @@ task POOL_RELEASE_INTEGRATION_ACCEPTANCE POOL_P2_READY -> POOL_INTEGRATED:
 
 task POOL_RELEASE_GATE_DESIGN POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_RELEASE_GATE_ACCEPTED:
   title "Accept the next-minor Planning Pool release gate"
-  description "Resolve the release boundary under Issue #35, provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
+  description "Resolve the release boundary under Issue #35 only after Issues #37 and #38 are independently accepted; provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
   duration 3p
-  status planned
+  status suspended
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -300,6 +300,35 @@ task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTAN
     CLI_ENGINEERS 1
     ACCEPTANCE_REVIEWERS 1
   source "Issue #35 independent release-gate review"
+
+task POOL_GOVERNANCE_BINDING_FIX POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_GOVERNANCE_BINDING_READY:
+  title "Bind lifted governance decisions to authoritative source bytes"
+  description "Resolve Issue #38 by rebinding every lifted GovernanceDecision.v2 to the authoritative outer source across Grammar 7 through 9 while preserving candidate bytes, authority, safe-write guards, and result identities; cover Core, CLI, and installed-package paths."
+  duration 5p
+  status planned
+  priority 100
+  requires:
+    CLI_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #38"
+
+task POOL_NEXT_SIGNAL_CONSISTENCY POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_NEXT_SIGNAL_READY:
+  title "Make recommendation and runnable authority coherent"
+  description "Resolve Issue #37 by defining one coherent current-start authority across recommendation and capacity selection, explicitly typing any informational non-executable recommendation, preserving ranking meaning and source-plan integrity, and covering JSON, text, schema, and installed-package paths."
+  duration 8p
+  status planned
+  priority 100
+  requires:
+    CLI_ENGINEERS 1
+    ACCEPTANCE_REVIEWERS 1
+  source "Issue #37"
+
+plan_seal POOL_NEXT_SIGNAL_CONSISTENCY:
+  accepted_contract sha256:4bc05bcecfad08a2ba7e932e040add94326b44aef8f8b43bee683639182212d6
+  accepted_basis sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819
+  accepted_inputs:
+    POOL_GRAMMAR9_ACCEPTANCE_MUTATION both sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
+  reason "Independent review accepted the Issue #37 current-start authority correction contract"
 
 plan_seal POOL_GRAMMAR9_ACCEPTANCE_MUTATION:
   accepted_contract sha256:e73c5523111361804c78288e958a824eef145ecefc1e26ae12667cfcb63f8025
@@ -696,3 +725,29 @@ work_event WE-d8c66a1e61ad73f29414ed9771941fb04adcf1a6c848a5845e4eaf14567c2680:
   occurred_at 2026-08-28T20:11:26+09:00
   active_time 76/225h
   effort 152/225ph
+
+work_event EV_POOL_RELEASE_GATE_DESIGN_START_001:
+  model 1
+  task POOL_RELEASE_GATE_DESIGN
+  kind start
+  occurred_at 2026-08-31T14:39:25+09:00
+  planned_value 3p
+
+work_event EV_POOL_RELEASE_GATE_DESIGN_SUSPEND_P1_REPLAN_001:
+  model 1
+  task POOL_RELEASE_GATE_DESIGN
+  kind suspend
+  occurred_at 2026-08-31T16:54:37+09:00
+  reason "Release gate blocked by independently reproduced Issues #37 and #38 pending owner-approved correction replan"
+
+milestone POOL_GOVERNANCE_BINDING_READY:
+  title "Lifted governance source binding accepted"
+
+milestone POOL_NEXT_SIGNAL_READY:
+  title "Next recommendation and runnable authority accepted"
+
+gate POOL_RELEASE_BINDING_JOIN POOL_GOVERNANCE_BINDING_READY -> POOL_RELEASE_GATE_ACCEPTED:
+  reason "Lifted governance source binding accepted"
+
+gate POOL_RELEASE_NEXT_JOIN POOL_NEXT_SIGNAL_READY -> POOL_RELEASE_GATE_ACCEPTED:
+  reason "Recommendation and runnable authority accepted"

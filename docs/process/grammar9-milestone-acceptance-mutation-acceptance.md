@@ -2,8 +2,8 @@
 
 - Date: 2026-08-31
 - Task: `POOL_GRAMMAR9_ACCEPTANCE_MUTATION`
-- Status: Candidate 1.4 corrective implementation and complete local gate
-  passed; independent re-review and PERT assurance outcome pending
+- Status: Candidate 1.4 independently accepted with a conformant PERT
+  assurance outcome
 - Source line: `codex/planning-pool-0.11-wip`
 - Release effect: none
 
@@ -106,12 +106,18 @@ The second correction candidate retained a third defect:
   two edits, old criterion-set and receipt removal, the new criterion,
   unchanged source and Planning Pool blocks, and strict validation against the
   installed `Perttool.MutationResult.v6` schema.
-- A fresh independent exact-byte review remains required before the PERT
-  outcome may be proposed for owner confirmation.
+- A fresh independent exact-byte review verified all nine changed artifacts,
+  the complete-gate evidence, the unchanged PERT precondition, and the absence
+  of P0 through P3 findings. The separately reviewed direct Grammar 6 Outcome
+  candidate was then confirmed by the owner and registered at source digest
+  `sha256:9883fd02a46454ad611b3fb624bfa5a2a6a81d435b31c160962b0c5976f9ba89`.
+  Commit `cca61590bc69869d786bff651491f5b5ea37c5e5` records the exact accepted
+  implementation and Outcome.
 
 ## 4. Exclusions
 
 This correction does not select or prepare a package version, retain a release
 tarball, push a branch, create a tag or GitHub Release, publish npm, move a
-distribution tag, close an Issue, accept the `0.11.0` release gate, register a
-PERT assurance outcome, or advance a plan.
+distribution tag, close an Issue, accept the `0.11.0` release gate, or advance
+a plan. Its conformant PERT Outcome records only this correction boundary and
+does not authorize the later release tasks.

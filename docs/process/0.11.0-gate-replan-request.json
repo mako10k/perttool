@@ -1,0 +1,80 @@
+{
+  "kind": "batch",
+  "mutations": [
+    {
+      "kind": "milestone.add",
+      "id": "POOL_GOVERNANCE_BINDING_READY",
+      "milestone": {
+        "title": "Lifted governance source binding accepted"
+      }
+    },
+    {
+      "kind": "milestone.add",
+      "id": "POOL_NEXT_SIGNAL_READY",
+      "milestone": {
+        "title": "Next recommendation and runnable authority accepted"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "POOL_GOVERNANCE_BINDING_FIX",
+      "from": "POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY",
+      "to": "POOL_GOVERNANCE_BINDING_READY",
+      "task": {
+        "title": "Bind lifted governance decisions to authoritative source bytes",
+        "description": "Resolve Issue #38 by rebinding every lifted GovernanceDecision.v2 to the authoritative outer source across Grammar 7 through 9 while preserving candidate bytes, authority, safe-write guards, and result identities; cover Core, CLI, and installed-package paths.",
+        "duration": "5p",
+        "status": "planned",
+        "priority": 100,
+        "requirements": [
+          { "resourceId": "CLI_ENGINEERS", "units": 1 },
+          { "resourceId": "ACCEPTANCE_REVIEWERS", "units": 1 }
+        ],
+        "source": "Issue #38"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "POOL_NEXT_SIGNAL_CONSISTENCY",
+      "from": "POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY",
+      "to": "POOL_NEXT_SIGNAL_READY",
+      "task": {
+        "title": "Make recommendation and runnable authority coherent",
+        "description": "Resolve Issue #37 by defining one coherent current-start authority across recommendation and capacity selection, explicitly typing any informational non-executable recommendation, preserving ranking meaning and source-plan integrity, and covering JSON, text, schema, and installed-package paths.",
+        "duration": "8p",
+        "status": "planned",
+        "priority": 100,
+        "requirements": [
+          { "resourceId": "CLI_ENGINEERS", "units": 1 },
+          { "resourceId": "ACCEPTANCE_REVIEWERS", "units": 1 }
+        ],
+        "source": "Issue #37"
+      }
+    },
+    {
+      "kind": "gate.add",
+      "id": "POOL_RELEASE_BINDING_JOIN",
+      "from": "POOL_GOVERNANCE_BINDING_READY",
+      "to": "POOL_RELEASE_GATE_ACCEPTED",
+      "gate": {
+        "reason": "Lifted governance source binding accepted"
+      }
+    },
+    {
+      "kind": "gate.add",
+      "id": "POOL_RELEASE_NEXT_JOIN",
+      "from": "POOL_NEXT_SIGNAL_READY",
+      "to": "POOL_RELEASE_GATE_ACCEPTED",
+      "gate": {
+        "reason": "Recommendation and runnable authority accepted"
+      }
+    },
+    {
+      "kind": "task.set",
+      "id": "POOL_RELEASE_GATE_DESIGN",
+      "set": {
+        "description": "Resolve the release boundary under Issue #35 only after Issues #37 and #38 are independently accepted; provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
+      }
+    }
+  ]
+}

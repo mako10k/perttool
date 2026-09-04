@@ -3778,6 +3778,15 @@ Before implementation, separate the specifications in the following order.
       complete candidate, Planning Pool declarations, canonical governance
       binding, active Contract 10 envelope, and exit-5 safe-write conflict
       projection, and cover the correction in CLI and installed-package gates.
+    - [ ] Before gate acceptance, bind every generic Grammar 7 through 9
+      assurance-mutation `Perttool.GovernanceDecision.v2` to the same
+      authoritative outer source digest exposed by the mutation result. Retain
+      exact owner authority and safe-write behavior and add cross-grammar
+      candidate, denial, and persistence regression.
+    - [ ] Resolve Issue #37 so one complete NextResult does not recommend a
+      task that the same result marks non-runnable without an explicit typed
+      non-executable disposition. Do not change plan inputs merely to force the
+      ranking and resource schedule to agree.
     - [ ] Keep private LSP, VSIX, and MCP workspaces outside the npm tarball;
       keep npm `latest`, public VSIX publication, Issue closure, plan advance,
       and Issue #24 Goal Coverage and Goal Seal outside this release.

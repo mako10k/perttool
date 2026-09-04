@@ -3990,6 +3990,17 @@ sets and receipts, canonical governance, the outer source digest, Contract 10
 result projection, and exit-5 optimistic-lock behavior. A failed inner or
 outer validation returns no candidate and performs no write.
 
+The subsequent release-gate audit also blocks acceptance on two inherited
+authority defects. Generic assurance mutation on Grammar 7 through 9 currently
+lifts outer candidate bytes without rebinding the nested governance decision
+from the lowered source digest. Separately, Issue #37 demonstrates a complete
+NextResult that recommends one task while marking only a different task
+runnable. Both are P1 candidate corrections: the former must project one
+authoritative outer source binding, and the latter must reconcile or explicitly
+type the distinction between recommendation and current executability. Neither
+changes the `0.11.0` SemVer choice, but source preparation cannot start until
+their correction or an explicitly owner-accepted bounded deferral.
+
 The release remains a five-stage serial flow: gate design, source preparation,
 clean candidate acceptance, separately authorized PUBLISH, and durable
 acceptance. PUBLISH may consume only the exact accepted tarball and may move

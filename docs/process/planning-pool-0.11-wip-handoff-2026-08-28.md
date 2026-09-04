@@ -158,5 +158,40 @@ machine-readable and distinct.
 The complete Candidate 1.4 gate passed 1,336 tests, the 1,307-file English
 baseline, 374 Markdown and 7 PERT documentation inputs, 46 self-use plans, and
 the 1,019-file installed-package workflow. Frozen changed-file hashes, fresh
-independent exact-byte review, and any PERT criterion, receipt, or Outcome
-remain pending. The authority exclusions in sections 4 and 5 remain unchanged.
+independent exact-byte review, and the separately reviewed owner-confirmed PERT
+Outcome completed at commit `cca61590bc69869d786bff651491f5b5ea37c5e5`.
+The authority exclusions in sections 4 and 5 remain unchanged.
+
+## 8. Candidate 2.0 release-gate audit
+
+`POOL_RELEASE_GATE_DESIGN` started at `2026-08-31T14:39:25+09:00`. Fresh npm,
+Git, and GitHub reads retain `beta=0.10.6`, `latest=0.10.5`, unused `0.11.0`,
+and exact `0.10.6` rollback, so the proposed minor version remains truthful.
+The gate is not ready for acceptance: Candidate 2.0 records two P1 findings.
+Generic Grammar 7 through 9 assurance mutation preserves a nested governance
+decision bound to lowered source bytes, and Issue #37 permits a complete
+NextResult to recommend a task that it marks non-runnable. The exact reviewed
+external mutation pair was applied once: open Issue #38 has the exact reviewed
+body and `bug` plus `priority:P1`, while open Issue #37 gained only those two
+labels. Their readback excluded comments, assignees, milestones, and project
+items. The exact two-step PERT replan was separately authorized, applied once,
+and independently read back at 31,121 bytes with SHA-256
+`6c0592deaa94395325fffc817e855a1732db3d13f0bc5b36c3cb0ecb4fe7b3b5`.
+It leaves both new tasks unsealed and five existing release tasks review-
+required. Reseal, correction implementation, gate finish, Outcome,
+preparation, and every external release write remain pending separate
+authority.
+
+## 9. Issue #37 selected-frontier reseal
+
+The separately reviewed and owner-authorized reseal selected only
+`POOL_NEXT_SIGNAL_CONSISTENCY`. One expected-digest write changed the PERT from
+31,121 bytes and
+`sha256:6c0592deaa94395325fffc817e855a1732db3d13f0bc5b36c3cb0ecb4fe7b3b5`
+to 31,574 bytes and
+`sha256:23ef7711c89afba91733e540e0bd4a91675cbfd6672af2f4c19f4b1bdfe510b7`.
+Readback reports that task as verified and the sole runnable, recommended, and
+startable task. `POOL_GOVERNANCE_BINDING_FIX` remains unsealed. Gate Design is
+still suspended, and Preparation, Candidate, Publish, and Acceptance remain
+review-required. No task start, Outcome, Gate Design resume, commit, push,
+Issue mutation, or release operation followed from the reseal.
