@@ -13,7 +13,7 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("0.11.0 blocked gate replan preserves version and separate publication authority", async () => {
-  const [plan, requirements, adr, design, procedure, gate, issueBody, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse] = await Promise.all([
+  const [plan, requirements, adr, design, procedure, gate, issueBody, bindingContract, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
@@ -21,6 +21,7 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
     readFile(path.join(root, "docs/process/0.11.0-release.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-governance-binding-issue-body.md"), "utf8"),
+    readFile(path.join(root, "docs/process/issue-38-governance-binding-contract-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-candidate.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-reseal-candidate.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-request.json"), "utf8"),
@@ -40,10 +41,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 32271);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 32756);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "8bd113759367c784a83a6feba785bcb2b1de8e1b1489c3cc629d0e41bb156746",
+    "d11c9456a49bf11aee7989e26ba6176d33b8bef358a92d7195002030d74507f4",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
   assert.deepEqual(next.groups.active, []);
@@ -51,10 +52,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.deepEqual(next.groups.runnableNow, ["POOL_GOVERNANCE_BINDING_FIX"]);
   assert.deepEqual(next.groups.suspended, ["POOL_RELEASE_GATE_DESIGN"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, ["POOL_GOVERNANCE_BINDING_FIX"]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, [
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
     "POOL_GOVERNANCE_BINDING_FIX",
   ]);
+  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.equal(next.temporal.authority.complete, true);
   assert.match(plan, /^task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:$/mu);
@@ -76,7 +77,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(plan, /^gate POOL_RELEASE_NEXT_JOIN /mu);
   assert.match(plan, /Issues #37 and #38 are independently accepted/u);
   assert.doesNotMatch(plan, /task_outcome OUTCOME_POOL_RELEASE_GATE_DESIGN:/u);
-  assert.doesNotMatch(plan, /^plan_seal POOL_GOVERNANCE_BINDING_FIX:$/mu);
+  assert.match(
+    plan,
+    /^plan_seal POOL_GOVERNANCE_BINDING_FIX:\n  accepted_contract sha256:8d28314e3f599e5890505822b1e95a100518d13d1dc9f17d997bd587c839b56f\n  accepted_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7/mu,
+  );
   assert.match(
     plan,
     /^plan_seal POOL_NEXT_SIGNAL_CONSISTENCY:\n  accepted_contract sha256:4bc05bcecfad08a2ba7e932e040add94326b44aef8f8b43bee683639182212d6\n  accepted_basis sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819/mu,
@@ -122,6 +126,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(issueBody, /source_digest == original_digest == governance\.source_digest/u);
   assert.match(issueBody, /persistence still checks the outer/u);
   assert.match(issueBody, /^P1\./mu);
+  assert.match(bindingContract, /The accepted contract was established before implementation/u);
+  assert.match(bindingContract, /source_digest = original_digest = governance\.source_digest/u);
+  assert.match(bindingContract, /The previously rejected reason-only bulk candidate was not reused/u);
+  assert.match(bindingContract, /does\s+not start or finish that task/u);
   assert.equal(Buffer.byteLength(replanRequestText, "utf8"), 2972);
   assert.equal(
     createHash("sha256").update(replanRequestText, "utf8").digest("hex"),

@@ -323,6 +323,13 @@ task POOL_NEXT_SIGNAL_CONSISTENCY POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POO
     ACCEPTANCE_REVIEWERS 1
   source "Issue #37"
 
+plan_seal POOL_GOVERNANCE_BINDING_FIX:
+  accepted_contract sha256:8d28314e3f599e5890505822b1e95a100518d13d1dc9f17d997bd587c839b56f
+  accepted_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7
+  accepted_inputs:
+    POOL_GRAMMAR9_ACCEPTANCE_MUTATION both sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
+  reason "Issue #38 pre-implementation reproduction and acceptance criteria define authoritative outer-source governance binding"
+
 plan_seal POOL_NEXT_SIGNAL_CONSISTENCY:
   accepted_contract sha256:4bc05bcecfad08a2ba7e932e040add94326b44aef8f8b43bee683639182212d6
   accepted_basis sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819
