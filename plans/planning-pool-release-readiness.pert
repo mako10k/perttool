@@ -450,10 +450,10 @@ plan_seal POOL_RELEASE_PREPARATION:
 
 plan_seal POOL_RELEASE_PUBLISH:
   accepted_contract sha256:d3539ebd3ee73472c80c30a578322e040fee92c326422cc0a158879f182df8e9
-  accepted_basis sha256:537ef97193764dde827f9ca48890ee46c93347ad1bebc6e949dc8eea0557cd7a
+  accepted_basis sha256:140ff8d4fe78a697ba34da6fe82d279838344fdb8a1346a17b416d0482e905e5
   accepted_inputs:
-    POOL_RELEASE_CANDIDATE both sha256:5aece50d46982b09fc9d69100d24d2a4c373e63906c2c10fee753cc586f5a631
-  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+    POOL_RELEASE_CANDIDATE both sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029
+  reason "Accepted PUBLISH basis after conformant 0.11.0 Immutable Candidate 1.0 from source commit 6ad44db8aa833e5f7fbdc49adfef39419151984a and artifact sha256:fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4"
 
 plan_seal POOL_REQUEST_SCHEMAS:
   accepted_contract sha256:a9e60c4577edb29eeae623711bdd4f7df9b49a99e459b718e2510f35f207ef69
