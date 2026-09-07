@@ -11,6 +11,7 @@ import {
 import {
   finalizeLiftedCandidate,
 } from "./contract9-candidate.js";
+import { rebindLiftedCandidateSource } from "./contract8-milestone-acceptance.js";
 
 export interface Contract10CandidateShape {
   readonly schemaVersion: string | undefined;
@@ -73,7 +74,7 @@ export function liftContract10Candidate<T extends Contract10CandidateShape>(
   const planned = planner(base);
   const originalDigest = sha256DigestUtf8(text);
   if (!planned.ok || planned.updatedText === null || planned.updatedDigest === null) {
-    return identity(Object.freeze({ ...planned, originalDigest }));
+    return identity(rebindLiftedCandidateSource(planned, originalDigest));
   }
   const candidateText = applyTextEdits(text, planned.edits);
   const checked = parsePlanningPoolSource(

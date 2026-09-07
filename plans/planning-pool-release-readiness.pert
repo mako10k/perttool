@@ -305,7 +305,7 @@ task POOL_GOVERNANCE_BINDING_FIX POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL
   title "Bind lifted governance decisions to authoritative source bytes"
   description "Resolve Issue #38 by rebinding every lifted GovernanceDecision.v2 to the authoritative outer source across Grammar 7 through 9 while preserving candidate bytes, authority, safe-write guards, and result identities; cover Core, CLI, and installed-package paths."
   duration 5p
-  status planned
+  status done
   priority 100
   requires:
     CLI_ENGINEERS 1
@@ -780,3 +780,18 @@ work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_FINISH_001:
   occurred_at 2026-09-04T10:54:41+09:00
   active_time 197/360h
   effort 197/180ph
+
+work_event WE-26ef416bb9b80c97de8769bf00e011a25684c09ab13a12a7a81c2541140c160e:
+  model 1
+  task POOL_GOVERNANCE_BINDING_FIX
+  kind start
+  occurred_at 2026-09-07T15:25:52+09:00
+  planned_value 5p
+
+work_event WE-95d0cc29dea5f4191faaae707b0f8cff442643564c57a894eb5bce2ce2242363:
+  model 1
+  task POOL_GOVERNANCE_BINDING_FIX
+  kind finish
+  occurred_at 2026-09-07T15:54:26+09:00
+  active_time 857/1800h
+  effort 857/900ph

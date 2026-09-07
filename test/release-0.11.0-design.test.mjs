@@ -41,20 +41,18 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 32756);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 33174);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "d11c9456a49bf11aee7989e26ba6176d33b8bef358a92d7195002030d74507f4",
+    "926336a4d9f9f1aef7c4b65299b9f2abe1d7d9329a9ea59ad4af7cd1e8afcc4f",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["POOL_GOVERNANCE_BINDING_FIX"]);
-  assert.deepEqual(next.groups.runnableNow, ["POOL_GOVERNANCE_BINDING_FIX"]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(next.groups.suspended, ["POOL_RELEASE_GATE_DESIGN"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["POOL_GOVERNANCE_BINDING_FIX"]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "POOL_GOVERNANCE_BINDING_FIX",
-  ]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.equal(next.temporal.authority.complete, true);
@@ -67,9 +65,12 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(plan, /^work_event EV_POOL_RELEASE_GATE_DESIGN_SUSPEND_P1_REPLAN_001:$/mu);
   assert.match(plan, /^work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_START_001:$/mu);
   assert.match(plan, /^work_event EV_POOL_NEXT_SIGNAL_CONSISTENCY_FINISH_001:$/mu);
+  assert.match(plan, /^work_event WE-26ef416bb9b80c97de8769bf00e011a25684c09ab13a12a7a81c2541140c160e:$/mu);
+  assert.match(plan, /^work_event WE-95d0cc29dea5f4191faaae707b0f8cff442643564c57a894eb5bce2ce2242363:$/mu);
   assert.match(plan, /^task_outcome OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY:$/mu);
   assert.match(plan, /task POOL_NEXT_SIGNAL_CONSISTENCY[\s\S]*?^  status done$/mu);
   assert.match(plan, /^task POOL_GOVERNANCE_BINDING_FIX /mu);
+  assert.match(plan, /task POOL_GOVERNANCE_BINDING_FIX[\s\S]*?^  status done$/mu);
   assert.match(plan, /^task POOL_NEXT_SIGNAL_CONSISTENCY /mu);
   assert.match(plan, /^milestone POOL_GOVERNANCE_BINDING_READY:$/mu);
   assert.match(plan, /^milestone POOL_NEXT_SIGNAL_READY:$/mu);
@@ -147,14 +148,25 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
     ["task.set", "POOL_RELEASE_GATE_DESIGN"],
   ]);
   assert.deepEqual(next.assurance.replanRequiredTaskIds, [
-    "POOL_RELEASE_ACCEPTANCE",
-    "POOL_RELEASE_CANDIDATE",
     "POOL_RELEASE_GATE_DESIGN",
-    "POOL_RELEASE_PREPARATION",
-    "POOL_RELEASE_PUBLISH",
   ]);
-  assert.equal(next.assurance.requiredActions.length, 1);
+  assert.equal(next.assurance.requiredActions.length, 2);
   assert.equal(next.assurance.requiredActions[0].kind, "replan_and_reseal");
+  assert.deepEqual(next.assurance.requiredActions[1], {
+    kind: "restore_assurance_evidence",
+    rootTaskIds: [
+      "POOL_GOVERNANCE_BINDING_FIX",
+      "POOL_RELEASE_GATE_DESIGN",
+      "POOL_RELEASE_PREPARATION",
+    ],
+    affectedTaskIds: [
+      "POOL_GOVERNANCE_BINDING_FIX",
+      "POOL_RELEASE_ACCEPTANCE",
+      "POOL_RELEASE_CANDIDATE",
+      "POOL_RELEASE_PREPARATION",
+      "POOL_RELEASE_PUBLISH",
+    ],
+  });
   assert.match(replanDocument, /Status: Candidate 1\.0 applied exactly and independently read back; the\n  selected-frontier reseal completed separately/u);
   assert.match(replanDocument, /An earlier preview[\s\S]*?failed with `PTDAG-207`/u);
   assert.match(replanDocument, /does not silently reuse the old accepted bases/u);

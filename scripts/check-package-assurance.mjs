@@ -26,6 +26,7 @@ for (const value of [installedCli, workspace, retainedPlan]) {
 mkdirSync(workspace);
 const sealedPlan = path.join(workspace, "sealed.pert");
 const migrationPlan = path.join(workspace, "migration.pert");
+const liftedPlan = path.join(workspace, "lifted-grammar9.pert");
 
 function invoke(args, expectedStatus = 0) {
   const result = spawnSync(installedCli, args, {
@@ -144,6 +145,54 @@ const work = shown.assurance?.task_results?.find(({ task_id: taskId }) =>
 );
 assert.ok(work);
 assert.equal(work.status, "verified");
+
+writeFileSync(
+  liftedPlan,
+  [
+    "project INSTALLED_BINDING:",
+    "  version 9",
+    '  title "Installed governance binding"',
+    "  as_of 2026-09-07T09:00:00+09:00",
+    "  duration_unit hour",
+    "  finish END",
+    "  dag_owner user",
+    "  dag_delegates [codex]",
+    '  time_zone "Asia/Tokyo"',
+    '  tzdb "2026c"',
+    "  calendar STANDARD",
+    "",
+    "calendar STANDARD:",
+    "  mon 09:00..17:00",
+    "",
+    "milestone START:",
+    '  title "Start"',
+    "  state reached",
+    "",
+    "milestone END:",
+    '  title "End"',
+    "",
+    "task WORK START -> END:",
+    '  title "Work"',
+    "  duration 1h",
+    "  status done",
+    "",
+  ].join("\n"),
+  "utf8",
+);
+const lifted = invokeJson([
+  "plan-assurance",
+  "seal",
+  liftedPlan,
+  "--reason",
+  "Installed Grammar 9 governance binding",
+  "--actor",
+  "codex",
+]);
+assert.equal(lifted.schema_version, "Perttool.MutationResult.v6");
+assert.equal(lifted.changed, true);
+assert.equal(lifted.write?.written, false);
+assert.equal(lifted.governance?.source_digest, lifted.source_digest);
+assert.match(lifted.updated_text, /  version 9\n/u);
 
 const hash = invoke([
   "plan-assurance",

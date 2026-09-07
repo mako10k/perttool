@@ -3,6 +3,7 @@ import { sha256DigestUtf8 } from "../model/sha256.js";
 import { applyTextEdits, type TextEdit } from "../mutation/text-edits.js";
 import { scanTemporalDeclarationBlocks, temporalScheduleBaseText } from "../temporal-schedule/source-lexical.js";
 import { parseTemporalScheduleSource, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY } from "../temporal-schedule/source.js";
+import { rebindLiftedCandidateSource } from "./contract8-milestone-acceptance.js";
 
 export interface Contract9CandidateShape {
   readonly schemaVersion: string | undefined;
@@ -28,11 +29,11 @@ export function failedLiftedCandidate<T extends Contract9CandidateShape>(
   diagnostics: T["diagnostics"],
   diagnosticsTruncated: boolean,
 ): T {
+  const rebound = rebindLiftedCandidateSource(planned, originalDigest);
   return Object.freeze({
-    ...planned,
+    ...rebound,
     ok: false,
     changed: false,
-    originalDigest,
     updatedDigest: null,
     updatedText: null,
     diff: null,
@@ -49,9 +50,9 @@ export function successfulLiftedCandidate<T extends Contract9CandidateShape>(
   originalDigest: string,
   options: Contract9CandidateOptions,
 ): T {
+  const rebound = rebindLiftedCandidateSource(planned, originalDigest);
   return Object.freeze({
-    ...planned,
-    originalDigest,
+    ...rebound,
     changed: candidateText !== text,
     updatedDigest: sha256DigestUtf8(candidateText),
     updatedText: candidateText,
@@ -123,7 +124,7 @@ export function liftContract9Candidate<T extends Contract9CandidateShape>(
   const planned = planner(base);
   const originalDigest = sha256DigestUtf8(text);
   if (!planned.ok || planned.updatedText === null || planned.updatedDigest === null) {
-    return identity(Object.freeze({ ...planned, originalDigest }));
+    return identity(rebindLiftedCandidateSource(planned, originalDigest));
   }
   const candidateText = applyTextEdits(text, planned.edits);
   const checked = parseTemporalScheduleSource(candidateText, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY);

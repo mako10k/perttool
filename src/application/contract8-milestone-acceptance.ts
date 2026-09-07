@@ -73,6 +73,39 @@ export type MutationResultV5 = Contract8LiftedCandidate<MutationResultV4>;
 export type LifecycleResultV5 = Contract8LiftedCandidate<LifecycleResultV4>;
 export type AdvanceResultV3 = Contract8LiftedCandidate<AdvanceResultV2>;
 
+interface GovernanceSourceBinding {
+  readonly sourceDigest: string;
+}
+
+interface MaybeGovernedResult {
+  readonly governance?: GovernanceSourceBinding | null;
+}
+
+interface LiftedCandidateSourceBinding {
+  readonly originalDigest: string;
+}
+
+export function rebindLiftedCandidateSource<
+  T extends LiftedCandidateSourceBinding,
+>(
+  value: T,
+  sourceDigest: string,
+): T {
+  const governance = (value as MaybeGovernedResult).governance;
+  return Object.freeze({
+    ...value,
+    originalDigest: sourceDigest,
+    ...(governance === undefined || governance === null
+      ? {}
+      : {
+          governance: Object.freeze({
+            ...governance,
+            sourceDigest,
+          }),
+        }),
+  }) as T;
+}
+
 function contract8CandidateIdentity<T>(value: T): Contract8LiftedCandidate<T> {
   if (typeof value !== "object" || value === null || !("schemaVersion" in value)) {
     return value as Contract8LiftedCandidate<T>;
@@ -100,18 +133,16 @@ export function liftMilestoneAcceptanceCandidate<T extends {
   if (source.grammarVersion !== 7) return contract8CandidateIdentity(planner(text));
   if (!source.ok) return contract8CandidateIdentity(planner(text));
   const planned = planner(milestoneAcceptanceBaseText(text));
+  const originalDigest = sha256DigestUtf8(text);
+  const rebound = rebindLiftedCandidateSource(planned, originalDigest);
   if (planned.updatedText === null) {
-    return contract8CandidateIdentity(Object.freeze({
-      ...planned,
-      originalDigest: sha256DigestUtf8(text),
-    }));
+    return contract8CandidateIdentity(rebound);
   }
   const updatedText = applyTextEdits(text, planned.edits);
   const checked = parseMilestoneAcceptanceSource(updatedText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
   if (!checked.ok) throw new Error("Contract 8 mutation lost milestone acceptance source validity");
   return contract8CandidateIdentity(Object.freeze({
-    ...planned,
-    originalDigest: sha256DigestUtf8(text),
+    ...rebound,
     updatedDigest: sha256DigestUtf8(updatedText),
     updatedText,
     diff: createUnifiedDiff(text, updatedText, {
