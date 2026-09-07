@@ -241,7 +241,7 @@ task POOL_RELEASE_CANDIDATE POOL_RELEASE_PREPARED -> POOL_RELEASE_CANDIDATE_ACCE
   title "Accept one immutable Planning Pool release candidate"
   description "Select one clean commit and tarball, prove unused external identities and routes, and accept exact installed behavior before publication authorization."
   duration 5p
-  status active
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -580,6 +580,13 @@ task_outcome OUTCOME_POOL_RELEASE_PREPARATION:
   status conformant
   reason "Accepted 0.11.0 Source Preparation Candidate 1.0 and complete local and installed-package gates"
 
+task_outcome OUTCOME_POOL_RELEASE_CANDIDATE:
+  model 1
+  task POOL_RELEASE_CANDIDATE
+  against_basis sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029
+  status conformant
+  reason "Accepted 0.11.0 Planning Pool Immutable Candidate 1.0 from commit 6ad44db8aa833e5f7fbdc49adfef39419151984a and tarball sha256:fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4"
+
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
   task POOL_ADVANCE_EOF_FIX
@@ -854,3 +861,11 @@ work_event WE-1be9d73935180a33e985f66b7d622860d9e8befeb8b9474dc9c3947af7ad7524:
   kind start
   occurred_at 2026-09-07T18:10:08+09:00
   planned_value 5p
+
+work_event WE-25faa3fa63108492c5a45f38e992cc21b90990716e0cc5108bd1be8afaf7d1a6:
+  model 1
+  task POOL_RELEASE_CANDIDATE
+  kind finish
+  occurred_at 2026-09-07T18:43:45+09:00
+  active_time 2017/3600h
+  effort 2017/3600ph

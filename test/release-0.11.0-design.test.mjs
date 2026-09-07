@@ -12,14 +12,15 @@ import {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("0.11.0 Candidate starts from accepted Preparation and aligned source identity", async () => {
-  const [plan, requirements, adr, design, procedure, preparation, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
+test("0.11.0 Candidate is owner accepted while PUBLISH remains assurance-withheld", async () => {
+  const [plan, requirements, adr, design, procedure, preparation, candidate, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
     readFile(path.join(root, "docs/basic-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-release.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-preparation.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.0-candidate.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-design-independent-review.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-governance-binding-issue-body.md"), "utf8"),
@@ -50,19 +51,19 @@ test("0.11.0 Candidate starts from accepted Preparation and aligned source ident
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 35225);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 35840);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "379a9419ee9c6e2b208695a17c4b30b7b0a5d21e54c5313deb934e720ed773b0",
+    "95d98b2d6ef1c99da2d1831c805484e5a154f3c468c6944bd5af7486477932bd",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
-  assert.deepEqual(next.groups.active, ["POOL_RELEASE_CANDIDATE"]);
-  assert.deepEqual(next.groups.ready, []);
-  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.groups.active, []);
+  assert.deepEqual(next.groups.ready, ["POOL_RELEASE_PUBLISH"]);
+  assert.deepEqual(next.groups.runnableNow, ["POOL_RELEASE_PUBLISH"]);
   assert.deepEqual(next.groups.suspended, []);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["POOL_RELEASE_PUBLISH"]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, ["POOL_RELEASE_PUBLISH"]);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.equal(next.temporal.authority.complete, true);
   const manifest = JSON.parse(manifestText);
@@ -124,6 +125,15 @@ test("0.11.0 Candidate starts from accepted Preparation and aligned source ident
     plan,
     /^work_event WE-1be9d73935180a33e985f66b7d622860d9e8befeb8b9474dc9c3947af7ad7524:\n  model 1\n  task POOL_RELEASE_CANDIDATE\n  kind start\n  occurred_at 2026-09-07T18:10:08\+09:00$/mu,
   );
+  assert.match(plan, /task POOL_RELEASE_CANDIDATE[\s\S]*?^  status done$/mu);
+  assert.match(
+    plan,
+    /^work_event WE-25faa3fa63108492c5a45f38e992cc21b90990716e0cc5108bd1be8afaf7d1a6:\n  model 1\n  task POOL_RELEASE_CANDIDATE\n  kind finish\n  occurred_at 2026-09-07T18:43:45\+09:00\n  active_time 2017\/3600h\n  effort 2017\/3600ph$/mu,
+  );
+  assert.match(
+    plan,
+    /^task_outcome OUTCOME_POOL_RELEASE_CANDIDATE:\n  model 1\n  task POOL_RELEASE_CANDIDATE\n  against_basis sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029\n  status conformant\n  reason "Accepted 0\.11\.0 Planning Pool Immutable Candidate 1\.0 from commit 6ad44db8aa833e5f7fbdc49adfef39419151984a and tarball sha256:fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4"$/mu,
+  );
   assert.match(
     plan,
     /^plan_seal POOL_GOVERNANCE_BINDING_FIX:\n  accepted_contract sha256:8d28314e3f599e5890505822b1e95a100518d13d1dc9f17d997bd587c839b56f\n  accepted_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7/mu,
@@ -157,7 +167,7 @@ test("0.11.0 Candidate starts from accepted Preparation and aligned source ident
   assert.match(adr, /^### Off-main compatible-hotfix publication$/mu);
   assert.match(adr, /^### Accepted Planning Pool `0\.11\.0` target$/mu);
   assert.match(design, /^### Post-MVP Slice 8A: Planning Pool `v0\.11\.0` beta minor$/mu);
-  assert.match(procedure, /- Status: Source Preparation 1\.0 accepted with conformant Outcome; Candidate is\n  selected-resealed and active/u);
+  assert.match(procedure, /- Status: Immutable Candidate 1\.0 is owner accepted with conformant Outcome;\n  PUBLISH remains assurance-withheld/u);
   assert.match(procedure, /`POOL_GRAMMAR9_ACCEPTANCE_MUTATION` restores criterion and receipt mutation/u);
   assert.match(procedure, /PUBLISH requires a later authorization naming that exact candidate/u);
   assert.match(procedure, /Exact `perttool@0\.10\.6` is the rollback pin/u);
@@ -167,6 +177,19 @@ test("0.11.0 Candidate starts from accepted Preparation and aligned source ident
   assert.match(preparation, /1,019-file isolated public-package workflow/u);
   assert.match(preparation, /complete with conformant Outcome/u);
   assert.match(preparation, /Only the separately resealed `POOL_RELEASE_CANDIDATE` then became startable/u);
+  assert.match(candidate, /- Document status: Accepted 1\.0/u);
+  assert.match(candidate, /complete with conformant Outcome/u);
+  assert.match(candidate, /Candidate source commit: `6ad44db8aa833e5f7fbdc49adfef39419151984a`/u);
+  assert.match(candidate, /Candidate source tree: `8a469730aa017f289a94865b838ff127a61eaa88`/u);
+  assert.match(candidate, /files: 1,019/u);
+  assert.match(candidate, /packed bytes: 3,273,360/u);
+  assert.match(candidate, /unpacked bytes: 11,362,352/u);
+  assert.match(candidate, /`fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4`/u);
+  assert.match(candidate, /retained mode: `0444`/u);
+  assert.match(candidate, /finished at\n`2026-09-07T18:43:45\+09:00` with 2,017 seconds/u);
+  assert.match(candidate, /`sha256:95d98b2d6ef1c99da2d1831c805484e5a154f3c468c6944bd5af7486477932bd`/u);
+  assert.match(candidate, /npm reported `beta=0\.10\.6`, `latest=0\.10\.5`, and no `alpha` tag/u);
+  assert.match(candidate, /`POOL_RELEASE_PUBLISH` remains a separate boundary/u);
   assert.match(gate, /- Document status: Candidate 3\.0 independently reviewed, owner accepted, and\n  registered as the conformant completed Gate Design Outcome/u);
   assert.match(gateReview, /- Verdict: `PASS`/u);
   assert.match(gateReview, /- Findings: zero P0, P1, P2, or P3 findings/u);
