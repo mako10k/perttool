@@ -103,11 +103,11 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.10.5");
-  assert.equal(lockfile.version, "0.10.5");
-  assert.equal(lockfile.packages[""].version, "0.10.5");
+  assert.equal(manifest.version, "0.11.0");
+  assert.equal(lockfile.version, "0.11.0");
+  assert.equal(lockfile.packages[""].version, "0.11.0");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.10\.5"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.11\.0"/);
   assert.match(changelog, /^## \[0\.5\.4\] - 2026-07-30$/m);
   assert.equal(COMMAND_REGISTRY.length, 71);
   assert.equal(getJsonSchemaCatalog().length, 29);

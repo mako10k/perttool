@@ -24,13 +24,9 @@
   2026-08-18 (`v0.10.0` Grammar 8 and CLI Contract 9 temporal-scheduling
   target);
   2026-08-28 (accepted `v0.10.6` off-main compatible-hotfix publication
-  gate)
-- Amendment status: Proposed, non-normative until separately accepted by the
-  owner — 2026-08-31 (`v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
-  target; both P1 correction Outcomes are accepted, while Candidate 2.0 still
-  awaits Gate Design replan and owner acceptance). The
-  Accepted status applies only to the accepted scope above and does not apply
-  to this amendment while it remains Proposed.
+  gate);
+  2026-09-07 (accepted `v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
+  Gate Design Candidate 3.0)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -215,7 +211,7 @@ This amendment is accepted for the explicitly selected and durably verified
 `0.10.6` hotfix flow. npm `latest` movement, Issue mutation, plan advance, and
 later release-line integration retain their separate approval boundaries.
 
-### Proposed Planning Pool `0.11.0` target
+### Accepted Planning Pool `0.11.0` target
 
 #### Context
 
@@ -231,13 +227,15 @@ that correction is independently accepted. The later gate audit found two
 additional inherited authority defects: generic Grammar 7 through 9 assurance
 mutation preserves a lowered nested governance source digest, and Issue #37
 permits a complete NextResult to recommend a task that the same result marks
-non-runnable. Neither changes the truthful SemVer direction, but both block
-gate acceptance at proposed priority P1.
+non-runnable. Neither changes the truthful SemVer direction. Both were P1 gate
+blockers and now have independently accepted conformant correction Outcomes.
+The corrected Candidate 3.0 passed exact-byte independent review with no P0
+through P3 findings and was accepted by the owner on 2026-09-07.
 
-#### Decision candidate
+#### Decision
 
-When the exact gate-design candidate is separately accepted by the owner,
-select suffix-free `0.11.0` for the first package that publishes Grammar 9,
+The owner accepts exact reviewed Gate Design Candidate 3.0 and selects
+suffix-free `0.11.0` for the first package that publishes Grammar 9,
 CLI Contract 10, Work, project-owned Event and Activity AoA, bounded Window
 operations, Planning Pool observation and history, guided reshape, and the
 replacement advance and unit-migration results. The public boundary changes
@@ -255,9 +253,11 @@ packages remain excluded.
 Before this gate may become Accepted, generic assurance mutations over Grammar
 7 through 9 must expose one authoritative outer governance source binding, and
 Issue #37 must no longer expose contradictory recommended and runnable start
-signals without an explicit typed distinction. Candidate 2.0 proposes both as
-P1 release inputs. GitHub Issue creation or labeling and the corresponding PERT
-DAG replan remain separately owner-gated.
+signals without an explicit typed distinction. The independently accepted
+Issue #38 and #37 correction Outcomes satisfy those two inputs. The exact-byte
+independent review and owner acceptance satisfy the Gate Design decision input.
+GitHub Issue state and later PERT lifecycle operations remain separately
+owner-gated.
 
 Owner acceptance of this gate selects only the release boundary and procedure.
 It does not authorize source preparation, candidate commitment, push, tag,
@@ -321,16 +321,17 @@ task and separate authority.
   - `ACT-ADR3-011-003`: complete and independently review
     `POOL_GRAMMAR9_ACCEPTANCE_MUTATION`, including CLI and installed-package
     regression, before `POOL_RELEASE_GATE_DESIGN` becomes eligible.
-- `CLM-ADR3-011-004`: accepting this proposal cannot serve as release-write
+- `CLM-ADR3-011-004`: accepting this gate cannot serve as release-write
   authority.
   - `EVD-ADR3-011-004`: the release PERT places preparation, candidate,
     PUBLISH, and durable acceptance after the gate-design milestone. The exact
     authority source is
     [`planning-pool-release-readiness.pert`](../../plans/planning-pool-release-readiness.pert),
     currently at source digest
-    `sha256:80aea315154da1aa810a8366f21b3fa5150ed105641e23050fa372a7d80fd59d`:
-    the correction Outcome is verified and the gate-design task is active,
-    while preparation and every external mutation remain precedence-blocked.
+    `sha256:1d1862bb053912097656b1d493108652711fde26e586846688b7a8faca100c52`:
+    all three correction Outcomes and Gate Design are conformant and verified.
+    Preparation is structurally ready but assurance-withheld by its retained
+    `replan_and_reseal` action, and every external mutation remains blocked.
   - `ACT-ADR3-011-004`: request separate authority at each mutation boundary
     and prohibit external writes during gate design and source preparation.
 - `CLM-ADR3-011-005`: gate acceptance requires one authoritative outer source
@@ -339,21 +340,22 @@ task and separate authority.
   - `EVD-ADR3-011-005`: the exact read-only Grammar 7 replay and Issue #37 are
     recorded in [`0.11.0-gate-design.md`](../process/0.11.0-gate-design.md) as
     `E-011-BINDING-001` and `E-011-NEXT-001`.
-  - `ACT-ADR3-011-005`: issueize and replan both P1 corrections under separate
-    owner authority, then require exact correction evidence and a fresh
-    independent gate review.
+  - `ACT-ADR3-011-005`: both P1 corrections were issueized, replanned,
+    corrected, and independently accepted under separate owner authority. The
+    resealed Candidate 3.0 then passed exact-byte independent review with no P0
+    through P3 findings and was accepted by the owner.
 
 #### Consequences and follow-up
 
-If this amendment is accepted and the release is later published, the release
-will add the accepted Planning Pool public surface while preserving older
-reads and an exact Contract 9 rollback pin. A Grammar 9 source that uses
+This accepted amendment selects a release that, if later published, will add
+the accepted Planning Pool public surface while preserving older reads and an
+exact Contract 9 rollback pin. A Grammar 9 source that uses
 Planning Pool declarations has no automatic downgrade to Grammar 8. Only npm
 `beta` may move during a separately authorized PUBLISH operation; `latest`,
 public VSIX, Issue closure, plan advance, and Issue #24 Goal Coverage and Goal
-Seal remain separate decisions. This amendment remains proposed until both P1
-findings are dispositioned, the exact corrected gate receives independent
-review, and the owner accepts that candidate.
+Seal remain separate decisions. Gate Design task finish and its conformant
+Outcome were separately authorized and completed after amendment acceptance;
+Preparation reseal and start remain separate PERT lifecycle decisions.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

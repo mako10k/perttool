@@ -220,7 +220,7 @@ task POOL_RELEASE_GATE_DESIGN POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_RE
   title "Accept the next-minor Planning Pool release gate"
   description "Resolve the release boundary under Issue #35 only after Issues #37 and #38 are independently accepted; provisionally select 0.11.0, freeze compatibility and rollback expectations, and retain publication as separately authorized."
   duration 3p
-  status suspended
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -231,7 +231,7 @@ task POOL_RELEASE_PREPARATION POOL_RELEASE_GATE_ACCEPTED -> POOL_RELEASE_PREPARE
   title "Prepare the next Planning Pool minor"
   description "Align all version-bearing surfaces and pass the complete local and installed preparation gates without publishing."
   duration 5p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -241,7 +241,7 @@ task POOL_RELEASE_CANDIDATE POOL_RELEASE_PREPARED -> POOL_RELEASE_CANDIDATE_ACCE
   title "Accept one immutable Planning Pool release candidate"
   description "Select one clean commit and tarball, prove unused external identities and routes, and accept exact installed behavior before publication authorization."
   duration 5p
-  status planned
+  status active
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -419,17 +419,17 @@ plan_seal POOL_RELEASE_ACCEPTANCE:
 
 plan_seal POOL_RELEASE_CANDIDATE:
   accepted_contract sha256:5a5303fe1d02c85310649b7b99f380b937c69dc1afc670c461ab6f16496bb02c
-  accepted_basis sha256:5aece50d46982b09fc9d69100d24d2a4c373e63906c2c10fee753cc586f5a631
+  accepted_basis sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029
   accepted_inputs:
-    POOL_RELEASE_PREPARATION both sha256:1ed6f87265eddb27c1f24d9f43f0b7992a8a71b5c09f7d2cc79bee436adfbc83
-  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+    POOL_RELEASE_PREPARATION both sha256:f0636f232c12b847f67aeb4f5dbfc8540492acf8b2737eea93cd5b21bf75f04b
+  reason "Accepted Candidate basis after conformant 0.11.0 Source Preparation Candidate 1.0"
 
 plan_seal POOL_RELEASE_GATE_DESIGN:
-  accepted_contract sha256:8d497dcead8c42acda4b7906ad5f9b4ee6c1e963d74fe0f474ea0d036aa8756f
-  accepted_basis sha256:56349837814ef34207e455144df815ea4fd7bbca51e60e1d680a006fdfed3241
+  accepted_contract sha256:6e67b379ee4cbbefa16ae331ea5bb727dc826aaec9735c430d828a4df4e234db
+  accepted_basis sha256:67501d4e662d6274c5ab3b4b9caba9c13b74e2e369ecbefbc18f51a8e5a0cebe
   accepted_inputs:
     POOL_GRAMMAR9_ACCEPTANCE_MUTATION both sha256:3a5914b2254ccc78e94b56d0d54a87dd0ed35b2925369b5f26c326d70eaa2e84
-  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+  reason "Accepted replanned Gate Design contract after independent acceptance of Issues #37 and #38"
 
 plan_seal POOL_RELEASE_INTEGRATION_ACCEPTANCE:
   accepted_contract sha256:bf915af7878be9bf516c9139420bf8d2e999beb3df456b07c21758510e7dda57
@@ -441,10 +441,12 @@ plan_seal POOL_RELEASE_INTEGRATION_ACCEPTANCE:
 
 plan_seal POOL_RELEASE_PREPARATION:
   accepted_contract sha256:2c947c3fe8d6d41206d7ede47c5ae52da9f9ae7b1e6ee75b4f23f373eca4d4b1
-  accepted_basis sha256:1ed6f87265eddb27c1f24d9f43f0b7992a8a71b5c09f7d2cc79bee436adfbc83
+  accepted_basis sha256:f0636f232c12b847f67aeb4f5dbfc8540492acf8b2737eea93cd5b21bf75f04b
   accepted_inputs:
-    POOL_RELEASE_GATE_DESIGN both sha256:56349837814ef34207e455144df815ea4fd7bbca51e60e1d680a006fdfed3241
-  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+    POOL_GOVERNANCE_BINDING_FIX both sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7
+    POOL_NEXT_SIGNAL_CONSISTENCY both sha256:8f880210a2a04a8b6c65bd3e2f9dfc1e13e91db0fd8220872da1fffe248c1819
+    POOL_RELEASE_GATE_DESIGN both sha256:67501d4e662d6274c5ab3b4b9caba9c13b74e2e369ecbefbc18f51a8e5a0cebe
+  reason "Accepted Preparation basis after conformant Gate Design Candidate 3.0 and independently accepted Issues #37 and #38"
 
 plan_seal POOL_RELEASE_PUBLISH:
   accepted_contract sha256:d3539ebd3ee73472c80c30a578322e040fee92c326422cc0a158879f182df8e9
@@ -563,6 +565,20 @@ task_outcome OUTCOME_POOL_GOVERNANCE_BINDING_FIX:
   against_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7
   status conformant
   reason "Accepted authoritative outer-source governance binding across Grammar 7 through 9"
+
+task_outcome OUTCOME_POOL_RELEASE_GATE_DESIGN:
+  model 1
+  task POOL_RELEASE_GATE_DESIGN
+  against_basis sha256:67501d4e662d6274c5ab3b4b9caba9c13b74e2e369ecbefbc18f51a8e5a0cebe
+  status conformant
+  reason "Accepted Planning Pool 0.11.0 Gate Design Candidate 3.0, complete gate, and independent exact-byte review"
+
+task_outcome OUTCOME_POOL_RELEASE_PREPARATION:
+  model 1
+  task POOL_RELEASE_PREPARATION
+  against_basis sha256:f0636f232c12b847f67aeb4f5dbfc8540492acf8b2737eea93cd5b21bf75f04b
+  status conformant
+  reason "Accepted 0.11.0 Source Preparation Candidate 1.0 and complete local and installed-package gates"
 
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
@@ -802,3 +818,39 @@ work_event WE-95d0cc29dea5f4191faaae707b0f8cff442643564c57a894eb5bce2ce2242363:
   occurred_at 2026-09-07T15:54:26+09:00
   active_time 857/1800h
   effort 857/900ph
+
+work_event WE-8daaa5c3aa9b79169d1afd805ad828629da6af3c3ac65e6c709735dc08700452:
+  model 1
+  task POOL_RELEASE_GATE_DESIGN
+  kind resume
+  occurred_at 2026-09-07T16:18:24+09:00
+
+work_event WE-5d6811b35e0b11e90b5ac366ecb0c0490eed605343bba379d8fc912acb7740b8:
+  model 1
+  task POOL_RELEASE_GATE_DESIGN
+  kind finish
+  occurred_at 2026-09-07T17:25:35+09:00
+  active_time 12143/3600h
+  effort 12143/1800ph
+
+work_event WE-cb1e80b08036598dde1feeeb8bd28fbbacb26b27333b38c756108b99d5f9df69:
+  model 1
+  task POOL_RELEASE_PREPARATION
+  kind start
+  occurred_at 2026-09-07T17:36:09+09:00
+  planned_value 5p
+
+work_event WE-c927fda87e832076728fa97068e98a4317a99ecddfbef5308d7a9ba883e01891:
+  model 1
+  task POOL_RELEASE_PREPARATION
+  kind finish
+  occurred_at 2026-09-07T18:07:56+09:00
+  active_time 1907/3600h
+  effort 1907/3600ph
+
+work_event WE-1be9d73935180a33e985f66b7d622860d9e8befeb8b9474dc9c3947af7ad7524:
+  model 1
+  task POOL_RELEASE_CANDIDATE
+  kind start
+  occurred_at 2026-09-07T18:10:08+09:00
+  planned_value 5p

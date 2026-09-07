@@ -14,9 +14,10 @@ test("README is a current user guide with separate historical and developer rout
   assert.match(readme, /npm install --global perttool@latest/u);
   assert.match(readme, /^## Create your first plan$/mu);
   assert.match(readme, /^## Migrate an existing plan$/mu);
-  assert.match(readme, /document migrate PLAN\.pert --target-grammar 8 --diff/u);
+  assert.match(readme, /document migrate PLAN\.pert --target-grammar 9 --diff/u);
   assert.match(readme, /Automatic migration is not required/u);
-  assert.match(readme, /version 8[\s\S]*finish DONE/u);
+  assert.match(readme, /version 9[\s\S]*finish DONE/u);
+  assert.match(readme, /there is no automatic Grammar 9 to 8\n+downgrade/u);
   assert.match(readme, /Current changelog and older versions/u);
   assert.match(readme, /Developer guide/u);
 
