@@ -3962,10 +3962,10 @@ mutation, and plan advance remain later boundaries.
 
 ### Post-MVP Slice 8A: Planning Pool `v0.11.0` beta minor
 
-The proposed `0.11.0` release candidate would package the already accepted
-Grammar 9 and CLI Contract 10 Planning Pool boundary without reopening Work,
+The released `0.11.0` package contains the accepted Grammar 9 and CLI Contract
+10 Planning Pool boundary without reopening Work,
 Window, strict-DAG, governance, assurance, acceptance, history, or Goal
-Coverage semantics. The release composition would own version-bearing files,
+Coverage semantics. The release composition owned version-bearing files,
 the additive Grammar 8 to 9 migration and rollback guidance, package
 inventory, one immutable tarball, public-channel identity, and independent
 installed acceptance.
@@ -3976,9 +3976,9 @@ exports. `Perttool.AdvanceResult.v4` and
 `Perttool.UnitMigrationResult.v5` replace their Contract 9 predecessors.
 Private LSP, VSIX, and MCP workspaces remain excluded from the npm tarball.
 
-Preparation must carry the exact correction-only Issue #36 patch from the
+Preparation carried the exact correction-only Issue #36 patch from the
 published `0.10.6` line and retain its release-policy and changelog history.
-It must not copy `0.10.6` package identity, generated version goldens, or
+It did not copy `0.10.6` package identity, generated version goldens, or
 old-line candidate artifacts into `0.11.0`. The exact `0.10.6` package is the
 rollback pin because it is the latest published Contract 9 beta and includes
 the canonical milestone-acceptance governance correction.
@@ -3992,23 +3992,24 @@ sets and receipts, canonical governance, the outer source digest, Contract 10
 result projection, and exit-5 optimistic-lock behavior. A failed inner or
 outer validation returns no candidate and performs no write.
 
-The subsequent release-gate audit also blocks acceptance on two inherited
-authority defects. Generic assurance mutation on Grammar 7 through 9 currently
-lifts outer candidate bytes without rebinding the nested governance decision
-from the lowered source digest. Separately, Issue #37 demonstrates a complete
-NextResult that recommends one task while marking only a different task
-runnable. Both are P1 candidate corrections: the former must project one
-authoritative outer source binding, and the latter must reconcile or explicitly
-type the distinction between recommendation and current executability. Neither
-changes the `0.11.0` SemVer choice, but source preparation cannot start until
-their correction or an explicitly owner-accepted bounded deferral.
+The subsequent release-gate audit blocked acceptance on two inherited
+authority defects. Generic assurance mutation on Grammar 7 through 9 lifted
+outer candidate bytes without rebinding the nested governance decision from
+the lowered source digest. Separately, Issue #37 demonstrated a complete
+NextResult that recommended one task while marking only a different task
+runnable. Both were P1 candidate corrections: the former now projects one
+authoritative outer source binding, and the latter now separates raw ranking
+from executable recommendation before start-authority composition. Both were
+independently accepted before source preparation without changing the
+`0.11.0` SemVer choice.
 
-The release remains a five-stage serial flow: gate design, source preparation,
-clean candidate acceptance, separately authorized PUBLISH, and durable
-acceptance. PUBLISH may consume only the exact accepted tarball and may move
-only npm `beta`; `latest`, public VSIX publication, Issue closure, plan
-advance, Issue #24 Goal Coverage and Goal Seal, and the separately proposed
-interface-contract-aware affected-test selector remain independent work.
+The release completed its five-stage serial flow: gate design, source
+preparation, clean candidate acceptance, separately authorized PUBLISH, and
+durable acceptance. PUBLISH consumed only the exact accepted tarball and moved
+only npm `beta` to `0.11.0`; `latest=0.10.5`, public VSIX publication, Issue
+closure, plan advance, Issue #24 Goal Coverage and Goal Seal, and the
+separately proposed interface-contract-aware affected-test selector remain
+independent work.
 
 ### Milestone outcome acceptance Contract 8 slice
 

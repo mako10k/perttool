@@ -12,8 +12,8 @@ import {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("0.11.0 PUBLISH is active but no external publication is authorized", async () => {
-  const [plan, requirements, adr, design, procedure, preparation, candidate, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
+test("0.11.0 publication and durable acceptance retain their exact boundaries", async () => {
+  const [plan, requirements, adr, design, procedure, preparation, candidate, publication, acceptance, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
@@ -21,6 +21,8 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
     readFile(path.join(root, "docs/process/0.11.0-release.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-preparation.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-candidate.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.0-publish.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.0-release-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-design-independent-review.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-governance-binding-issue-body.md"), "utf8"),
@@ -51,13 +53,13 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 36120);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 37304);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "b9801bacd32ac8a8fe949c8daa800dce317454563abd19e7b1a6313bfaff3f32",
+    "e7cbb956bc2d1959513e4149a700d8d0f964bd37ed285e331d20d5db3652fcfe",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
-  assert.deepEqual(next.groups.active, ["POOL_RELEASE_PUBLISH"]);
+  assert.deepEqual(next.groups.active, []);
   assert.deepEqual(next.groups.ready, []);
   assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(next.groups.suspended, []);
@@ -162,8 +164,24 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
     plan,
     /^work_event WE-03901625df271d4e3642e4673e030cd2daf4cde0a37f8bf1a1842a1c7f5f2d8b:\n  model 1\n  task POOL_RELEASE_PUBLISH\n  kind start\n  occurred_at 2026-09-07T19:14:17\+09:00\n  planned_value 3p$/mu,
   );
+  assert.match(
+    plan,
+    /^work_event WE-0b198fc9891e331f1a1173199a206c338c6787afb365dcdf1195cb1d5157838f:\n  model 1\n  task POOL_RELEASE_PUBLISH\n  kind finish\n  occurred_at 2026-09-07T20:53:48\+09:00\n  active_time 5971\/3600h\n  effort 5971\/3600ph$/mu,
+  );
+  assert.match(
+    plan,
+    /^task_outcome OUTCOME_POOL_RELEASE_PUBLISH:\n  model 1\n  task POOL_RELEASE_PUBLISH\n  against_basis sha256:140ff8d4fe78a697ba34da6fe82d279838344fdb8a1346a17b416d0482e905e5\n  status conformant\n  reason "Accepted exact 0\.11\.0 Git, CI, GitHub prerelease, and byte-identical npm beta publication"$/mu,
+  );
+  assert.match(
+    plan,
+    /^work_event WE-d2a84b4504673e215dc69abafd35113db2863a434cf70c68ddaf490bf318011a:\n  model 1\n  task POOL_RELEASE_ACCEPTANCE\n  kind finish\n  occurred_at 2026-09-07T21:05:13\+09:00\n  active_time 541\/3600h\n  effort 541\/3600ph$/mu,
+  );
+  assert.match(
+    plan,
+    /^task_outcome OUTCOME_POOL_RELEASE_ACCEPTANCE:\n  model 1\n  task POOL_RELEASE_ACCEPTANCE\n  against_basis sha256:d83336157613f30948f60895905f2cff2df4e46c06050c07f10098b776f3a60c\n  status conformant\n  reason "Accepted durable 0\.11\.0 public identity, installed Contract 10, review corrections, and exact 0\.10\.6 rollback"$/mu,
+  );
 
-  assert.match(requirements, /^26\. \[ \] Release the accepted Planning Pool boundary as suffix-free beta$/mu);
+  assert.match(requirements, /^26\. \[x\] Release the accepted Planning Pool boundary as suffix-free beta$/mu);
   assert.match(requirements, /exact `0\.10\.6` rollback behavior/u);
   assert.match(requirements, /restore milestone criterion-set and receipt\n      mutation for valid Grammar 9 documents/u);
   assert.match(requirements, /bind every generic Grammar 7 through 9\n      assurance-mutation/u);
@@ -175,10 +193,12 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
   assert.match(adr, /^### Off-main compatible-hotfix publication$/mu);
   assert.match(adr, /^### Accepted Planning Pool `0\.11\.0` target$/mu);
   assert.match(design, /^### Post-MVP Slice 8A: Planning Pool `v0\.11\.0` beta minor$/mu);
-  assert.match(procedure, /- Status: Immutable Candidate 1\.0 is owner accepted; PUBLISH is active but no\n  external publication mutation is authorized/u);
+  assert.match(procedure, /- Status: Released and durably accepted as npm `beta=0\.11\.0`; npm\n  `latest=0\.10\.5` remains unchanged/u);
   assert.match(procedure, /`POOL_GRAMMAR9_ACCEPTANCE_MUTATION` restores criterion and receipt mutation/u);
   assert.match(procedure, /PUBLISH requires a later authorization naming that exact candidate/u);
   assert.match(procedure, /Exact `perttool@0\.10\.6` is the rollback pin/u);
+  assert.match(procedure, /GitHub prerelease `384029996`/u);
+  assert.match(procedure, /All nineteen release-readiness tasks are complete/u);
   assert.match(preparation, /- Document status: Accepted 1\.0/u);
   assert.match(preparation, /1,341 Node\.js tests/u);
   assert.match(preparation, /supported VS Code 1\.101\.0 trusted and untrusted host, replacement, and\n  uninstall gate under Xvfb/u);
@@ -202,6 +222,14 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
   assert.match(candidate, /`sha256:b9801bacd32ac8a8fe949c8daa800dce317454563abd19e7b1a6313bfaff3f32`/u);
   assert.match(candidate, /npm reported `beta=0\.10\.6`, `latest=0\.10\.5`, and no `alpha` tag/u);
   assert.match(candidate, /`POOL_RELEASE_PUBLISH` remains a separate boundary/u);
+  assert.match(publication, /- Document status: Accepted 1\.0/u);
+  assert.match(publication, /Annotated tag object:\n  `51e35070ce0ad288d19f0ac6597653d3133b82aa`/u);
+  assert.match(publication, /CI run `34113325516`, attempt 2/u);
+  assert.match(publication, /`beta=0\.11\.0`, `latest=0\.10\.5`, and no\n`alpha`/u);
+  assert.match(acceptance, /- Document status: Accepted 1\.0/u);
+  assert.match(acceptance, /Completed plan source digest:\n  `sha256:e7cbb956bc2d1959513e4149a700d8d0f964bd37ed285e331d20d5db3652fcfe`/u);
+  assert.match(acceptance, /The acceptance task finished at `2026-09-07T21:05:13\+09:00`/u);
+  assert.match(acceptance, /Issues #35, #36, #37, and #38 remain open/u);
   assert.match(gate, /- Document status: Candidate 3\.0 independently reviewed, owner accepted, and\n  registered as the conformant completed Gate Design Outcome/u);
   assert.match(gateReview, /- Verdict: `PASS`/u);
   assert.match(gateReview, /- Findings: zero P0, P1, P2, or P3 findings/u);
@@ -262,20 +290,13 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
     ["gate.add", "POOL_RELEASE_NEXT_JOIN"],
     ["task.set", "POOL_RELEASE_GATE_DESIGN"],
   ]);
-  assert.deepEqual(next.assurance.replanRequiredTaskIds, [
-    "POOL_RELEASE_ACCEPTANCE",
-  ]);
-  assert.equal(next.assurance.requiredActions.length, 1);
-  assert.equal(next.assurance.requiredActions[0].kind, "replan_and_reseal");
-  assert.deepEqual(next.assurance.requiredActions[0], {
-    kind: "replan_and_reseal",
-    rootTaskIds: [
-      "POOL_RELEASE_PUBLISH",
-    ],
-    affectedTaskIds: [
-      "POOL_RELEASE_ACCEPTANCE",
-    ],
-  });
+  assert.deepEqual(next.assurance.replanRequiredTaskIds, []);
+  assert.equal(next.assurance.coverage, "complete");
+  assert.deepEqual(
+    next.assurance.taskResults.filter(({ status }) => status !== "verified"),
+    [],
+  );
+  assert.deepEqual(next.assurance.requiredActions, []);
   assert.match(replanDocument, /Status: Candidate 1\.0 applied exactly and independently read back; the\n  selected-frontier reseal completed separately/u);
   assert.match(replanDocument, /An earlier preview[\s\S]*?failed with `PTDAG-207`/u);
   assert.match(replanDocument, /does not silently reuse the old accepted bases/u);
@@ -302,8 +323,8 @@ test("0.11.0 PUBLISH is active but no external publication is authorized", async
   assert.match(planningContract, /changes only the version field and owned\nmigration trivia/u);
   assert.match(changelog, /^## \[0\.10\.6\] - 2026-08-28$/mu);
   assert.match(changelog, /^## \[0\.11\.0\] - 2026-09-07$/mu);
-  assert.match(readme, /npm `beta` is the compatible\n`0\.10\.6` Issue #36 correction/u);
-  assert.match(readme, /repository source is prepared as `0\.11\.0`/u);
+  assert.match(readme, /npm `beta` is `0\.11\.0` with\nGrammar 9 and CLI Contract 10/u);
+  assert.match(readme, /Exact `0\.10\.6` remains the compatible Grammar 8/u);
   assert.match(selfUse, /plans\/planning-pool-release-readiness\.pert/u);
   assert.match(selfUse, /read-only self-use checks passed \(46 plans/u);
 });

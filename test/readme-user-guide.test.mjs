@@ -10,7 +10,8 @@ test("README is a current user guide with separate historical and developer rout
   const readme = await readFile(path.join(root, "README.md"), "utf8");
 
   assert.match(readme, /The recommended npm `latest` release is `0\.10\.5`/u);
-  assert.match(readme, /npm `beta` is the compatible\n`0\.10\.6` Issue #36 correction/u);
+  assert.match(readme, /npm `beta` is `0\.11\.0` with\nGrammar 9 and CLI Contract 10/u);
+  assert.match(readme, /Exact `0\.10\.6` remains the compatible Grammar 8/u);
   assert.match(readme, /npm install --global perttool@latest/u);
   assert.match(readme, /^## Create your first plan$/mu);
   assert.match(readme, /^## Migrate an existing plan$/mu);

@@ -5,11 +5,10 @@ reviewable text files. It validates plans, calculates precedence and
 resource-constrained schedules, recommends the next task, and previews every
 change before writing it.
 
-The recommended npm `latest` release is `0.10.5`; npm `beta` is the compatible
-`0.10.6` Issue #36 correction. Both require Node.js 22 or later and use Grammar
-8 and CLI Contract 9. The repository source is prepared as `0.11.0` with
-Grammar 9 and CLI Contract 10 for the Work-centered Planning Pool; candidate
-acceptance and publication remain separate.
+The recommended npm `latest` release is `0.10.5`; npm `beta` is `0.11.0` with
+Grammar 9 and CLI Contract 10 for the Work-centered Planning Pool. Both require
+Node.js 22 or later. Exact `0.10.6` remains the compatible Grammar 8 and CLI
+Contract 9 rollback pin that includes the Issue #36 correction.
 
 ## Install
 
@@ -225,8 +224,8 @@ perttool guide editing unit-migration --level detail
 
 ## Start a Planning Pool
 
-The prepared `0.11.0` Grammar 9 source adds Work and bounded planning Windows
-without changing strict Task execution. Migrate a Grammar 8 document first:
+The `0.11.0` Grammar 9 release adds Work and bounded planning Windows without
+changing strict Task execution. Migrate a Grammar 8 document first:
 
 ```sh
 SOURCE_DIGEST=$(perttool document check PLAN.pert --format json | jq -r .source_digest)

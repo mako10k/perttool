@@ -3758,49 +3758,49 @@ Before implementation, separate the specifications in the following order.
       paths, diagnose an incomplete compound prefix with exact child actions
       in human text and JSON, and preserve resource-only, direct-action, and
       legacy single-action-argument behavior without adding authority.
-26. [ ] Release the accepted Planning Pool boundary as suffix-free beta
+26. [x] Release the accepted Planning Pool boundary as suffix-free beta
     `0.11.0` under
     [`plans/planning-pool-release-readiness.pert`](../plans/planning-pool-release-readiness.pert).
-    - [ ] Select Grammar 9, CLI Contract 10, 71 commands, 29 active root
+    - [x] Select Grammar 9, CLI Contract 10, 71 commands, 29 active root
       schemas, 139 root and Node exports, 51 Core exports,
       `Perttool.AdvanceResult.v4`, and `Perttool.UnitMigrationResult.v5` as
       one public compatibility boundary.
-    - [ ] Retain Grammar 1 through 8 reads and require explicit
+    - [x] Retain Grammar 1 through 8 reads and require explicit
       `document migrate --target-grammar 9` before Planning Pool mutation.
       Migration from valid Grammar 8 changes only the version field and owned
       migration trivia and inserts no Planning Pool declaration.
-    - [ ] Carry the exact Issue #36 source correction from published `0.10.6`
+    - [x] Carry the exact Issue #36 source correction from published `0.10.6`
       into the release line and preserve its accepted public history without
       importing `0.10.6` version-bearing candidate artifacts.
-    - [ ] Before gate acceptance, restore milestone criterion-set and receipt
+    - [x] Before gate acceptance, restore milestone criterion-set and receipt
       mutation for valid Grammar 9 documents by composing the prior temporal
       and acceptance layers through Planning Pool declarations. Preserve the
       complete candidate, Planning Pool declarations, canonical governance
       binding, active Contract 10 envelope, and exit-5 safe-write conflict
       projection, and cover the correction in CLI and installed-package gates.
-    - [ ] Before gate acceptance, bind every generic Grammar 7 through 9
+    - [x] Before gate acceptance, bind every generic Grammar 7 through 9
       assurance-mutation `Perttool.GovernanceDecision.v2` to the same
       authoritative outer source digest exposed by the mutation result. Retain
       exact owner authority and safe-write behavior and add cross-grammar
       candidate, denial, and persistence regression.
-    - [ ] Resolve Issue #37 so one complete NextResult does not recommend a
+    - [x] Resolve Issue #37 so one complete NextResult does not recommend a
       task that the same result marks non-runnable without an explicit typed
       non-executable disposition. Do not change plan inputs merely to force the
       ranking and resource schedule to agree.
-    - [ ] Keep private LSP, VSIX, and MCP workspaces outside the npm tarball;
+    - [x] Keep private LSP, VSIX, and MCP workspaces outside the npm tarball;
       keep npm `latest`, public VSIX publication, Issue closure, plan advance,
       and Issue #24 Goal Coverage and Goal Seal outside this release.
-    - [ ] Align every version-bearing source and documentation surface and
+    - [x] Align every version-bearing source and documentation surface and
       pass the complete Node.js 22, adapter, supported-host, temporary-link,
       self-use, and installed-package gates without publishing.
-    - [ ] Accept one clean committed source and one immutable tarball only
+    - [x] Accept one clean committed source and one immutable tarball only
       after unused-version, tag, GitHub Release, distribution-tag, and
       authenticated-route preflight.
-    - [ ] Publish only after separate authorization of that exact candidate;
+    - [x] Publish only after separate authorization of that exact candidate;
       push and verify the release commit and annotated tag, require Node.js 22
       and 24 CI, create one GitHub prerelease, and publish the byte-identical
       tarball once to npm `beta` while leaving `latest` unchanged.
-    - [ ] Independently verify durable public identity, installed Contract 10
+    - [x] Independently verify durable public identity, installed Contract 10
       behavior, every accepted Planning Pool review correction, the Issue #36
       authority correction, and exact `0.10.6` rollback behavior.
 

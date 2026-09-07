@@ -252,7 +252,7 @@ task POOL_RELEASE_PUBLISH POOL_RELEASE_CANDIDATE_ACCEPTED -> POOL_RELEASE_PUBLIS
   title "Publish the authorized Planning Pool minor"
   description "After separate authorization, push the exact commit and tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -262,7 +262,7 @@ task POOL_RELEASE_ACCEPTANCE POOL_RELEASE_PUBLISHED -> POOL_RELEASE_ACCEPTED:
   title "Durably accept the published Planning Pool minor"
   description "Independently read back Git, CI, GitHub, npm, artifact identity, exact and beta installations, all review issues, and rollback without implying latest promotion or Issue closure."
   duration 5p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -412,10 +412,10 @@ plan_seal POOL_POST_ADVANCE_TEST_FIX:
 
 plan_seal POOL_RELEASE_ACCEPTANCE:
   accepted_contract sha256:1fa86492f20b5c35efcb03ece7644501cd1e2ca9466b34562cf441ad8fa91c51
-  accepted_basis sha256:7306472068a758c7ecf8779ee65899b1556a3be4d958230882c3ed0ef3a931db
+  accepted_basis sha256:d83336157613f30948f60895905f2cff2df4e46c06050c07f10098b776f3a60c
   accepted_inputs:
-    POOL_RELEASE_PUBLISH both sha256:537ef97193764dde827f9ca48890ee46c93347ad1bebc6e949dc8eea0557cd7a
-  reason "Independent release-gate review added the Grammar 9 milestone acceptance composition correction before 0.11.0 gate acceptance"
+    POOL_RELEASE_PUBLISH both sha256:140ff8d4fe78a697ba34da6fe82d279838344fdb8a1346a17b416d0482e905e5
+  reason "Accepted durable acceptance basis after conformant 0.11.0 PUBLISH outcome"
 
 plan_seal POOL_RELEASE_CANDIDATE:
   accepted_contract sha256:5a5303fe1d02c85310649b7b99f380b937c69dc1afc670c461ab6f16496bb02c
@@ -586,6 +586,20 @@ task_outcome OUTCOME_POOL_RELEASE_CANDIDATE:
   against_basis sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029
   status conformant
   reason "Accepted 0.11.0 Planning Pool Immutable Candidate 1.0 from commit 6ad44db8aa833e5f7fbdc49adfef39419151984a and tarball sha256:fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4"
+
+task_outcome OUTCOME_POOL_RELEASE_PUBLISH:
+  model 1
+  task POOL_RELEASE_PUBLISH
+  against_basis sha256:140ff8d4fe78a697ba34da6fe82d279838344fdb8a1346a17b416d0482e905e5
+  status conformant
+  reason "Accepted exact 0.11.0 Git, CI, GitHub prerelease, and byte-identical npm beta publication"
+
+task_outcome OUTCOME_POOL_RELEASE_ACCEPTANCE:
+  model 1
+  task POOL_RELEASE_ACCEPTANCE
+  against_basis sha256:d83336157613f30948f60895905f2cff2df4e46c06050c07f10098b776f3a60c
+  status conformant
+  reason "Accepted durable 0.11.0 public identity, installed Contract 10, review corrections, and exact 0.10.6 rollback"
 
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
@@ -876,3 +890,26 @@ work_event WE-03901625df271d4e3642e4673e030cd2daf4cde0a37f8bf1a1842a1c7f5f2d8b:
   kind start
   occurred_at 2026-09-07T19:14:17+09:00
   planned_value 3p
+
+work_event WE-0b198fc9891e331f1a1173199a206c338c6787afb365dcdf1195cb1d5157838f:
+  model 1
+  task POOL_RELEASE_PUBLISH
+  kind finish
+  occurred_at 2026-09-07T20:53:48+09:00
+  active_time 5971/3600h
+  effort 5971/3600ph
+
+work_event WE-722be1bb41855bfec72ca81b7f4bda61ee485b2c05515bbad53c1fa06355bad0:
+  model 1
+  task POOL_RELEASE_ACCEPTANCE
+  kind start
+  occurred_at 2026-09-07T20:56:12+09:00
+  planned_value 5p
+
+work_event WE-d2a84b4504673e215dc69abafd35113db2863a434cf70c68ddaf490bf318011a:
+  model 1
+  task POOL_RELEASE_ACCEPTANCE
+  kind finish
+  occurred_at 2026-09-07T21:05:13+09:00
+  active_time 541/3600h
+  effort 541/3600ph
