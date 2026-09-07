@@ -252,7 +252,7 @@ task POOL_RELEASE_PUBLISH POOL_RELEASE_CANDIDATE_ACCEPTED -> POOL_RELEASE_PUBLIS
   title "Publish the authorized Planning Pool minor"
   description "After separate authorization, push the exact commit and tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
   duration 3p
-  status planned
+  status active
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -869,3 +869,10 @@ work_event WE-25faa3fa63108492c5a45f38e992cc21b90990716e0cc5108bd1be8afaf7d1a6:
   occurred_at 2026-09-07T18:43:45+09:00
   active_time 2017/3600h
   effort 2017/3600ph
+
+work_event WE-03901625df271d4e3642e4673e030cd2daf4cde0a37f8bf1a1842a1c7f5f2d8b:
+  model 1
+  task POOL_RELEASE_PUBLISH
+  kind start
+  occurred_at 2026-09-07T19:14:17+09:00
+  planned_value 3p

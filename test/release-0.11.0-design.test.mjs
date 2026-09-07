@@ -12,7 +12,7 @@ import {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("0.11.0 PUBLISH is causally resealed but not started or published", async () => {
+test("0.11.0 PUBLISH is active but no external publication is authorized", async () => {
   const [plan, requirements, adr, design, procedure, preparation, candidate, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
@@ -51,18 +51,18 @@ test("0.11.0 PUBLISH is causally resealed but not started or published", async (
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 35930);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 36120);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "98d9810574ac77ad84bb44c0dca435288bcf4d72fef2c7425b134d377af49ed1",
+    "b9801bacd32ac8a8fe949c8daa800dce317454563abd19e7b1a6313bfaff3f32",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
-  assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["POOL_RELEASE_PUBLISH"]);
-  assert.deepEqual(next.groups.runnableNow, ["POOL_RELEASE_PUBLISH"]);
+  assert.deepEqual(next.groups.active, ["POOL_RELEASE_PUBLISH"]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(next.groups.suspended, []);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["POOL_RELEASE_PUBLISH"]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, ["POOL_RELEASE_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceWithheldRecommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
   assert.equal(next.temporal.authority.complete, true);
@@ -158,6 +158,10 @@ test("0.11.0 PUBLISH is causally resealed but not started or published", async (
     plan,
     /^plan_seal POOL_RELEASE_PUBLISH:\n  accepted_contract sha256:d3539ebd3ee73472c80c30a578322e040fee92c326422cc0a158879f182df8e9\n  accepted_basis sha256:140ff8d4fe78a697ba34da6fe82d279838344fdb8a1346a17b416d0482e905e5\n  accepted_inputs:\n    POOL_RELEASE_CANDIDATE both sha256:c3200795a64a2e6172ee0a3a75b50522836441f3cdaf263601855ebdb7f56029\n  reason "Accepted PUBLISH basis after conformant 0\.11\.0 Immutable Candidate 1\.0 from source commit 6ad44db8aa833e5f7fbdc49adfef39419151984a and artifact sha256:fa43e222fa6a53c0a5287a1cca7700b7808179513743db0a9a5790c2192fecf4"$/mu,
   );
+  assert.match(
+    plan,
+    /^work_event WE-03901625df271d4e3642e4673e030cd2daf4cde0a37f8bf1a1842a1c7f5f2d8b:\n  model 1\n  task POOL_RELEASE_PUBLISH\n  kind start\n  occurred_at 2026-09-07T19:14:17\+09:00\n  planned_value 3p$/mu,
+  );
 
   assert.match(requirements, /^26\. \[ \] Release the accepted Planning Pool boundary as suffix-free beta$/mu);
   assert.match(requirements, /exact `0\.10\.6` rollback behavior/u);
@@ -171,7 +175,7 @@ test("0.11.0 PUBLISH is causally resealed but not started or published", async (
   assert.match(adr, /^### Off-main compatible-hotfix publication$/mu);
   assert.match(adr, /^### Accepted Planning Pool `0\.11\.0` target$/mu);
   assert.match(design, /^### Post-MVP Slice 8A: Planning Pool `v0\.11\.0` beta minor$/mu);
-  assert.match(procedure, /- Status: Immutable Candidate 1\.0 is owner accepted; PUBLISH is causally\n  resealed and startable but not started/u);
+  assert.match(procedure, /- Status: Immutable Candidate 1\.0 is owner accepted; PUBLISH is active but no\n  external publication mutation is authorized/u);
   assert.match(procedure, /`POOL_GRAMMAR9_ACCEPTANCE_MUTATION` restores criterion and receipt mutation/u);
   assert.match(procedure, /PUBLISH requires a later authorization naming that exact candidate/u);
   assert.match(procedure, /Exact `perttool@0\.10\.6` is the rollback pin/u);
@@ -194,6 +198,8 @@ test("0.11.0 PUBLISH is causally resealed but not started or published", async (
   assert.match(candidate, /`sha256:95d98b2d6ef1c99da2d1831c805484e5a154f3c468c6944bd5af7486477932bd`/u);
   assert.match(candidate, /causal selected reseal for\n`POOL_RELEASE_PUBLISH`/u);
   assert.match(candidate, /`sha256:98d9810574ac77ad84bb44c0dca435288bcf4d72fef2c7425b134d377af49ed1`/u);
+  assert.match(candidate, /`POOL_RELEASE_PUBLISH` became active at `2026-09-07T19:14:17\+09:00`/u);
+  assert.match(candidate, /`sha256:b9801bacd32ac8a8fe949c8daa800dce317454563abd19e7b1a6313bfaff3f32`/u);
   assert.match(candidate, /npm reported `beta=0\.10\.6`, `latest=0\.10\.5`, and no `alpha` tag/u);
   assert.match(candidate, /`POOL_RELEASE_PUBLISH` remains a separate boundary/u);
   assert.match(gate, /- Document status: Candidate 3\.0 independently reviewed, owner accepted, and\n  registered as the conformant completed Gate Design Outcome/u);
