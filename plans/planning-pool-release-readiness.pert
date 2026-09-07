@@ -557,6 +557,13 @@ task_outcome OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY:
   status conformant
   reason "Accepted Issue #37 coherent start-authority composition, complete repository gate, and installed-package replay"
 
+task_outcome OUTCOME_POOL_GOVERNANCE_BINDING_FIX:
+  model 1
+  task POOL_GOVERNANCE_BINDING_FIX
+  against_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7
+  status conformant
+  reason "Accepted authoritative outer-source governance binding across Grammar 7 through 9"
+
 work_event EV_POOL_ADVANCE_EOF_FIX_START_001:
   model 1
   task POOL_ADVANCE_EOF_FIX

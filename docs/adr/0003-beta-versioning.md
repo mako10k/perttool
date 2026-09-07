@@ -27,7 +27,8 @@
   gate)
 - Amendment status: Proposed, non-normative until separately accepted by the
   owner — 2026-08-31 (`v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
-  target; Candidate 2.0 blocked pending P1 remediation and owner replan). The
+  target; both P1 correction Outcomes are accepted, while Candidate 2.0 still
+  awaits Gate Design replan and owner acceptance). The
   Accepted status applies only to the accepted scope above and does not apply
   to this amendment while it remains Proposed.
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate

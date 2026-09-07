@@ -1,7 +1,7 @@
 # Issue #38 Governance Source-Binding Technical Acceptance
 
-- Status: Implementation, local technical acceptance, and PERT task finish
-  complete; conformant Outcome remains separately governed
+- Status: Implementation, local technical acceptance, PERT task finish, and
+  owner-confirmed conformant Outcome complete
 - Date: 2026-09-07
 - Issue: #38, `bug: lifted assurance mutations report governance bound to
   lowered source bytes`
@@ -84,8 +84,26 @@ work event
 `WE-95d0cc29dea5f4191faaae707b0f8cff442643564c57a894eb5bce2ce2242363`
 and produced plan source digest
 `sha256:926336a4d9f9f1aef7c4b65299b9f2abe1d7d9329a9ea59ad4af7cd1e8afcc4f`.
-The task is deliberately assurance-unavailable with direct cause
-`outcome_missing`; no conformant Outcome was inferred from local verification.
+At that point the task was deliberately assurance-unavailable with direct
+cause `outcome_missing`; no conformant Outcome was inferred from local
+verification.
+
+The owner subsequently accepted the exact semantic result described in this
+record. One candidate-bound write added
+`OUTCOME_POOL_GOVERNANCE_BINDING_FIX` with status `conformant`, reason
+`Accepted authoritative outer-source governance binding across Grammar 7
+through 9`, and `against_basis`
+`sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7`.
+The write was bound to the preceding source digest and affected only the
+`plan_assurance` scope. Readback at plan source digest
+`sha256:b44b07766020111f27a0bb0afc4825bc035bcde1dee018293071424a82fafe77`
+reports the task `verified` and `conformant`, with equal accepted, computed,
+and exported basis and no direct or inherited cause.
+
+This acceptance does not make a release task ready or runnable. Gate Design
+remains suspended, no task is recommended or startable, and the release tasks
+retain a separate `replan_and_reseal` required action rooted at
+`POOL_RELEASE_GATE_DESIGN` and `POOL_RELEASE_PREPARATION`.
 
 The first complete repository test run passed 1,339 of 1,341 tests. Its two
 failures detected an unnecessary additional Application source module and the
@@ -102,6 +120,6 @@ This correction does not change governance ownership, scope classification,
 write authorization, caller-assertion lifetime, candidate construction,
 safe-write or stale-source behavior, Grammar 7 through 9 meaning, CLI Contract
 10, public counts, VSIX or MCP mutation, release selection, backport, npm
-publication, distribution tags, or GitHub Issue state. Conformant Outcome
-acceptance, milestone criteria and receipt, Gate Design resumption,
-push, release, and Issue closure remain separate operations.
+publication, distribution tags, or GitHub Issue state. Milestone criteria and
+receipt, Gate Design reseal or resumption, push, release, and Issue closure
+remain separate operations.

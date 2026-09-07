@@ -13,7 +13,7 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("0.11.0 blocked gate replan preserves version and separate publication authority", async () => {
-  const [plan, requirements, adr, design, procedure, gate, issueBody, bindingContract, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse] = await Promise.all([
+  const [plan, requirements, adr, design, procedure, gate, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
@@ -22,6 +22,7 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
     readFile(path.join(root, "docs/process/0.11.0-gate-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-governance-binding-issue-body.md"), "utf8"),
     readFile(path.join(root, "docs/process/issue-38-governance-binding-contract-acceptance.md"), "utf8"),
+    readFile(path.join(root, "docs/process/issue-38-governance-binding-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-candidate.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-reseal-candidate.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.0-gate-replan-request.json"), "utf8"),
@@ -41,10 +42,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.equal(metadata.grammarVersion, 6);
   assert.equal(metadata.project.id, "POOL_RELEASE_READINESS");
   assert.equal(metadata.project.finish, "POOL_RELEASE_ACCEPTED");
-  assert.equal(Buffer.byteLength(plan, "utf8"), 33174);
+  assert.equal(Buffer.byteLength(plan, "utf8"), 33471);
   assert.equal(
     createHash("sha256").update(plan, "utf8").digest("hex"),
-    "926336a4d9f9f1aef7c4b65299b9f2abe1d7d9329a9ea59ad4af7cd1e8afcc4f",
+    "b44b07766020111f27a0bb0afc4825bc035bcde1dee018293071424a82fafe77",
   );
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 19);
   assert.deepEqual(next.groups.active, []);
@@ -68,6 +69,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(plan, /^work_event WE-26ef416bb9b80c97de8769bf00e011a25684c09ab13a12a7a81c2541140c160e:$/mu);
   assert.match(plan, /^work_event WE-95d0cc29dea5f4191faaae707b0f8cff442643564c57a894eb5bce2ce2242363:$/mu);
   assert.match(plan, /^task_outcome OUTCOME_POOL_NEXT_SIGNAL_CONSISTENCY:$/mu);
+  assert.match(
+    plan,
+    /^task_outcome OUTCOME_POOL_GOVERNANCE_BINDING_FIX:\n  model 1\n  task POOL_GOVERNANCE_BINDING_FIX\n  against_basis sha256:95a77c4e1ce8cf8272a2cecfa32f4e1602663e7c7a93e499d3210c97ad8ad9f7\n  status conformant\n  reason "Accepted authoritative outer-source governance binding across Grammar 7 through 9"$/mu,
+  );
   assert.match(plan, /task POOL_NEXT_SIGNAL_CONSISTENCY[\s\S]*?^  status done$/mu);
   assert.match(plan, /^task POOL_GOVERNANCE_BINDING_FIX /mu);
   assert.match(plan, /task POOL_GOVERNANCE_BINDING_FIX[\s\S]*?^  status done$/mu);
@@ -93,24 +98,26 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(requirements, /bind every generic Grammar 7 through 9\n      assurance-mutation/u);
   assert.match(requirements, /Resolve Issue #37 so one complete NextResult/u);
   assert.match(adr, /- Amendment status: Proposed, non-normative until separately accepted by the\n  owner — 2026-08-31 \(`v0\.11\.0` Grammar 9 and CLI Contract 10/u);
+  assert.match(adr, /both P1 correction Outcomes are accepted, while Candidate 2\.0 still\n  awaits Gate Design replan and owner acceptance/u);
   assert.match(adr, /^- Status: Accepted$/mu);
   assert.match(adr,
     /^- Accepted scope: Base decision and the amendments listed under `Amended`$/mu);
   assert.match(adr, /^### Off-main compatible-hotfix publication$/mu);
   assert.match(adr, /^### Proposed Planning Pool `0\.11\.0` target$/mu);
   assert.match(design, /^### Post-MVP Slice 8A: Planning Pool `v0\.11\.0` beta minor$/mu);
-  assert.match(procedure, /- Status: Gate design Candidate 2\.0; blocked pending P1 remediation;\n  Issue #37 frontier resealed and Issue #38 unsealed/u);
+  assert.match(procedure, /- Status: Gate design Candidate 2\.0; both P1 correction Outcomes accepted;\n  Gate Design remains suspended pending replan, reseal, and resumption/u);
   assert.match(procedure, /`POOL_GRAMMAR9_ACCEPTANCE_MUTATION` restores criterion and receipt mutation/u);
   assert.match(procedure, /PUBLISH requires a later authorization naming that exact candidate/u);
   assert.match(procedure, /Exact `perttool@0\.10\.6` is the rollback pin/u);
-  assert.match(gate, /- Document status: Candidate 2\.0; blocked pending P1 remediation; Issue #37\n  frontier resealed and Issue #38 unsealed/u);
+  assert.match(gate, /- Document status: Candidate 2\.0; both P1 correction Outcomes accepted; Gate\n  Design remains suspended pending replan, reseal, and resumption/u);
   assert.match(gate, /\| Commands \| 56 \| 71 \|/u);
   assert.match(gate, /stable patch ID `84fe584b8a2895187bcf72df2af289103b49ca88`/u);
   assert.match(gate, /at Candidate 2\.0 evidence capture, the source\n  digest was\n  `sha256:80aea315154da1aa810a8366f21b3fa5150ed105641e23050fa372a7d80fd59d`/u);
   assert.match(gate, /separately authorized P1 replan suspended Gate Design and produced source\n  digest\n  `sha256:6c0592deaa94395325fffc817e855a1732db3d13f0bc5b36c3cb0ecb4fe7b3b5`/u);
-  assert.match(gate, /selected Issue #37 frontier reseal then produced the\n  current digest\n  `sha256:23ef7711c89afba91733e540e0bd4a91675cbfd6672af2f4c19f4b1bdfe510b7`/u);
-  assert.match(gate, /`F-011-BINDING-001 P1`/u);
-  assert.match(gate, /`F-011-NEXT-001 P1`/u);
+  assert.match(gate, /selected Issue #37 frontier reseal then produced\n  digest\n  `sha256:23ef7711c89afba91733e540e0bd4a91675cbfd6672af2f4c19f4b1bdfe510b7`/u);
+  assert.match(gate, /current plan digest is\n  `sha256:b44b07766020111f27a0bb0afc4825bc035bcde1dee018293071424a82fafe77`/u);
+  assert.match(gate, /`F-011-BINDING-001 P1 resolved locally`/u);
+  assert.match(gate, /`F-011-NEXT-001 P1 resolved locally`/u);
   assert.match(gate, /bug: lifted assurance mutations report governance bound to lowered source bytes/u);
   assert.match(gate, /5,045 UTF-8 bytes, SHA-256\n  `8e372de505defea91735ebf666335159141e3b5fa0077b95653c43f79515d7d9`/u);
   assert.match(gate, /labels added at creation: `bug`, `priority:P1`/u);
@@ -131,6 +138,10 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
   assert.match(bindingContract, /source_digest = original_digest = governance\.source_digest/u);
   assert.match(bindingContract, /The previously rejected reason-only bulk candidate was not reused/u);
   assert.match(bindingContract, /does\s+not start or finish that task/u);
+  assert.match(bindingAcceptance, /owner-confirmed conformant Outcome complete/u);
+  assert.match(bindingAcceptance, /The owner subsequently accepted the exact semantic result/u);
+  assert.match(bindingAcceptance, /plan source digest\n`sha256:b44b07766020111f27a0bb0afc4825bc035bcde1dee018293071424a82fafe77`/u);
+  assert.match(bindingAcceptance, /Gate Design\nremains suspended, no task is recommended or startable/u);
   assert.equal(Buffer.byteLength(replanRequestText, "utf8"), 2972);
   assert.equal(
     createHash("sha256").update(replanRequestText, "utf8").digest("hex"),
@@ -148,21 +159,24 @@ test("0.11.0 blocked gate replan preserves version and separate publication auth
     ["task.set", "POOL_RELEASE_GATE_DESIGN"],
   ]);
   assert.deepEqual(next.assurance.replanRequiredTaskIds, [
+    "POOL_RELEASE_ACCEPTANCE",
+    "POOL_RELEASE_CANDIDATE",
     "POOL_RELEASE_GATE_DESIGN",
+    "POOL_RELEASE_PREPARATION",
+    "POOL_RELEASE_PUBLISH",
   ]);
-  assert.equal(next.assurance.requiredActions.length, 2);
+  assert.equal(next.assurance.requiredActions.length, 1);
   assert.equal(next.assurance.requiredActions[0].kind, "replan_and_reseal");
-  assert.deepEqual(next.assurance.requiredActions[1], {
-    kind: "restore_assurance_evidence",
+  assert.deepEqual(next.assurance.requiredActions[0], {
+    kind: "replan_and_reseal",
     rootTaskIds: [
-      "POOL_GOVERNANCE_BINDING_FIX",
       "POOL_RELEASE_GATE_DESIGN",
       "POOL_RELEASE_PREPARATION",
     ],
     affectedTaskIds: [
-      "POOL_GOVERNANCE_BINDING_FIX",
       "POOL_RELEASE_ACCEPTANCE",
       "POOL_RELEASE_CANDIDATE",
+      "POOL_RELEASE_GATE_DESIGN",
       "POOL_RELEASE_PREPARATION",
       "POOL_RELEASE_PUBLISH",
     ],
