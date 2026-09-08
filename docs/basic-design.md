@@ -4011,6 +4011,27 @@ closure, plan advance, Issue #24 Goal Coverage and Goal Seal, and the
 separately proposed interface-contract-aware affected-test selector remain
 independent work.
 
+### Post-MVP Slice 8B: compatible `v0.11.1` host-gate patch
+
+The `0.11.1` patch retains the complete Grammar 9 and CLI Contract 10 public
+surface from `0.11.0`. It changes no command, option, result, schema, export,
+Planning Pool meaning, governance rule, or persistence boundary. Exact
+`perttool@0.11.0` is the rollback pin.
+
+The repository-supported VSIX host gate owns one install or uninstall process
+and then reads the profile-local `extensions.json` written by that completed
+command. It does not start a second VS Code extension-list process for
+readback. The parser requires the expected profile registry shape and exact
+extension identity, while the existing process-tree timeout, Xvfb, trusted and
+untrusted activation, replacement, uninstall, and clean-profile checks remain
+in force. This removes perttool's causal dependence on the observed hanging
+boundary without claiming an unproved upstream VS Code internal cause.
+
+The patch follows an independent five-stage plan: compatibility self-review,
+source preparation, immutable candidate acceptance, candidate-bound
+publication, and durable acceptance. npm `latest`, public VSIX publication,
+Issue mutation, and plan advance remain separate.
+
 ### Milestone outcome acceptance Contract 8 slice
 
 The selected `MILESTONE-ACCEPT-001` workstream is tracked in

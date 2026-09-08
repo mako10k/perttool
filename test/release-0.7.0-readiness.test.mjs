@@ -98,8 +98,8 @@ test("0.7.0 readiness remains historical after durable acceptance", async () => 
   assert.equal(typeof planAssuranceMutation, "function");
 
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.11.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.11\.0"/);
+  assert.equal(manifest.version, "0.11.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/);
   assert.match(
     releasePlan,
     /^task RELEASE_070_CONTRACT_7_READINESS[\s\S]*?^  status done$/m,
@@ -178,11 +178,11 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.11.0");
-  assert.equal(lockfile.version, "0.11.0");
-  assert.equal(lockfile.packages[""].version, "0.11.0");
+  assert.equal(manifest.version, "0.11.1");
+  assert.equal(lockfile.version, "0.11.1");
+  assert.equal(lockfile.packages[""].version, "0.11.1");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.11\.0"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/);
   for (const guidance of [agents, copilot, selfUse, aiDevelopment]) {
     assert.match(guidance, /docs\/process\/0\.7\.0-preparation\.md/);
     assert.match(guidance, /RELEASE_070_CANDIDATE/);

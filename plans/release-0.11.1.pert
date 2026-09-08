@@ -1,0 +1,118 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0111:
+  version 6
+  title "perttool 0.11.1 VSIX host reliability patch release"
+  description "Release the accepted CI and VSIX host harness reliability correction as suffix-free 0.11.1 while preserving Grammar 9, CLI Contract 10, public identities, beta channel, and immutable 0.11.0 history. npm latest, public VSIX publication, Issue mutation, plan advance, and unrelated work remain separate."
+  as_of 2026-09-08
+  duration_unit point
+  finish RELEASE_0111_ACCEPTED
+
+milestone RELEASE_0111_STARTED:
+  title "Version 0.11.1 release started"
+  state reached
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  capacity 1
+
+milestone RELEASE_0111_REVIEWED:
+  title "Version 0.11.1 compatibility boundary reviewed"
+
+milestone RELEASE_0111_PREPARED:
+  title "Version 0.11.1 source prepared"
+
+milestone RELEASE_0111_CANDIDATE_ACCEPTED:
+  title "Version 0.11.1 immutable candidate accepted"
+
+milestone RELEASE_0111_PUBLISHED:
+  title "Version 0.11.1 published"
+
+milestone RELEASE_0111_ACCEPTED:
+  title "Version 0.11.1 durably accepted"
+
+task RELEASE_0111_SELF_REVIEW RELEASE_0111_STARTED -> RELEASE_0111_REVIEWED:
+  title "Review the compatible 0.11.1 boundary"
+  description "Confirm that the integrated VSIX host reliability correction changes no Grammar 9, CLI Contract 10, public command, schema, export, or runtime meaning and that 0.11.1 is the smallest truthful immutable release version."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Commit 5197da8148645248ae3c4acfd6e919d00afbab8a"
+
+task RELEASE_0111_PREPARATION RELEASE_0111_REVIEWED -> RELEASE_0111_PREPARED:
+  title "Prepare version 0.11.1 source"
+  description "Align version-bearing source, release records, plans, tests, and goldens, then pass the complete local and installed-package gates without publishing."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "0.11.1 patch release procedure"
+
+task RELEASE_0111_CANDIDATE RELEASE_0111_PREPARED -> RELEASE_0111_CANDIDATE_ACCEPTED:
+  title "Accept one immutable 0.11.1 candidate"
+  description "Freeze one clean release commit and tarball, prove unused external identities and protected routes, and verify exact installed behavior before candidate-bound publication confirmation."
+  duration 3p
+  status active
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "0.11.1 patch release procedure"
+
+task RELEASE_0111_PUBLISH RELEASE_0111_CANDIDATE_ACCEPTED -> RELEASE_0111_PUBLISHED:
+  title "Publish version 0.11.1"
+  description "After exact candidate-bound confirmation, push the release commit and annotated tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "0.11.1 patch release procedure"
+
+task RELEASE_0111_ACCEPTANCE RELEASE_0111_PUBLISHED -> RELEASE_0111_ACCEPTED:
+  title "Durably accept version 0.11.1"
+  description "Independently read back Git, CI, GitHub, npm, common artifact identity, exact and beta installations, correction behavior, and 0.11.0 rollback while leaving latest unchanged."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "0.11.1 patch release procedure"
+
+work_event EV_RELEASE_0111_SELF_REVIEW_START_001:
+  model 1
+  task RELEASE_0111_SELF_REVIEW
+  kind start
+  occurred_at 2026-09-08T14:54:12+09:00
+  planned_value 2p
+
+work_event EV_RELEASE_0111_SELF_REVIEW_FINISH_001:
+  model 1
+  task RELEASE_0111_SELF_REVIEW
+  kind finish
+  occurred_at 2026-09-08T15:04:47+09:00
+  active_time 127/720h
+  effort 127/720ph
+
+work_event EV_RELEASE_0111_PREPARATION_START_001:
+  model 1
+  task RELEASE_0111_PREPARATION
+  kind start
+  occurred_at 2026-09-08T15:05:34+09:00
+  planned_value 5p
+
+work_event EV_RELEASE_0111_PREPARATION_FINISH_001:
+  model 1
+  task RELEASE_0111_PREPARATION
+  kind finish
+  occurred_at 2026-09-08T15:46:00+09:00
+  active_time 1213/1800h
+  effort 1213/1800ph
+
+work_event EV_RELEASE_0111_CANDIDATE_START_001:
+  model 1
+  task RELEASE_0111_CANDIDATE
+  kind start
+  occurred_at 2026-09-08T15:46:30+09:00
+  planned_value 3p

@@ -4,6 +4,22 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-09-08
+
+Compatible Grammar 9 and CLI Contract 10 patch. Public commands, schemas,
+exports, result identities, governance, persistence, and Planning Pool
+semantics remain unchanged.
+
+### Fixed
+
+- Remove the second external VS Code extension-inventory process from the
+  supported-host gate. After install and uninstall, validate the exact
+  profile-local `extensions.json` written by the completed owning command,
+  while retaining Xvfb execution, process-tree timeouts, replacement,
+  uninstall, and clean-profile checks.
+- Correct the `0.11.0` release evidence to distinguish the observed host
+  timeout from the unproved upstream VS Code internal cause.
+
 ## [0.11.0] - 2026-09-07
 
 ### Added
@@ -648,7 +664,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/mako10k/perttool/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/mako10k/perttool/compare/v0.10.6...v0.11.0
 [0.10.6]: https://github.com/mako10k/perttool/compare/v0.10.5...v0.10.6
 [0.10.5]: https://github.com/mako10k/perttool/compare/v0.10.4...v0.10.5

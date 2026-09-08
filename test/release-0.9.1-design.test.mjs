@@ -115,15 +115,15 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.11.0");
-  assert.equal(lockfile.version, "0.11.0");
-  assert.equal(lockfile.packages[""].version, "0.11.0");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.11.0");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.11.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.11\.0"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.11\.0"/u);
+  assert.equal(manifest.version, "0.11.1");
+  assert.equal(lockfile.version, "0.11.1");
+  assert.equal(lockfile.packages[""].version, "0.11.1");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.11.1");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.11.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.11\.1"/u);
   assert.match(changelog, /^## \[0\.9\.1\] - 2026-08-13$/m);
-  assert.match(planIndex, /All forty-five plans pass/u);
+  assert.match(planIndex, /All forty-seven plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.1\.pert/u);
 
   assert.equal(Object.keys(perttool).length, 139);

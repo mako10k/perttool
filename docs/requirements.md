@@ -3804,6 +3804,30 @@ Before implementation, separate the specifications in the following order.
       behavior, every accepted Planning Pool review correction, the Issue #36
       authority correction, and exact `0.10.6` rollback behavior.
 
+27. [ ] Release the accepted VSIX host reliability correction as compatible
+    suffix-free beta `0.11.1` under
+    [`plans/release-0.11.1.pert`](../plans/release-0.11.1.pert).
+    - [x] Confirm that the correction removes the second external VS Code
+      extension-inventory process from the supported-host gate while retaining
+      process ownership, bounded termination, Xvfb execution, registry
+      validation, replacement, uninstall, and clean-profile checks.
+    - [x] Retain Grammar 9, CLI Contract 10, 71 commands, 29 active root
+      schemas, 139 root and Node exports, 51 Core exports, result identities,
+      governance, persistence, and Planning Pool semantics.
+    - [x] Align package, lockfile, CLI, adapters, CHANGELOG, README, tests,
+      goldens, self-use, release records, and current guidance to `0.11.1`,
+      then pass the complete Node.js 22 repository and installed-package gate.
+    - [ ] Accept one clean release commit and immutable tarball after proving
+      that the Git tag, GitHub Release, and npm version are unused and the
+      protected GitHub and npm routes are available.
+    - [ ] Publish only after confirmation bound to that exact candidate; push
+      and verify the release commit and annotated tag, require Node.js 22 and
+      24 CI, create one GitHub prerelease, and publish the byte-identical
+      tarball once to npm `beta` while leaving `latest=0.10.5` unchanged.
+    - [ ] Independently verify durable public identity, exact and beta
+      installations, corrected supported-host behavior, unchanged Contract 10
+      surface, and exact `0.11.0` rollback behavior.
+
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
 Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and the former `mutation apply` path through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. The Contract 3 cutover now exposes direct gate commands and `batch apply` through that shared path. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.

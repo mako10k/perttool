@@ -26,7 +26,9 @@
   2026-08-28 (accepted `v0.10.6` off-main compatible-hotfix publication
   gate);
   2026-09-07 (accepted `v0.11.0` Grammar 9 and CLI Contract 10 Planning Pool
-  Gate Design Candidate 3.0)
+  Gate Design Candidate 3.0);
+  2026-09-08 (accepted compatible `v0.11.1` VSIX host reliability patch
+  target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -356,6 +358,63 @@ public VSIX, Issue closure, plan advance, and Issue #24 Goal Coverage and Goal
 Seal remain separate decisions. Gate Design task finish and its conformant
 Outcome were separately authorized and completed after amendment acceptance;
 Preparation reseal and start remain separate PERT lifecycle decisions.
+
+### Accepted compatible `0.11.1` VSIX host reliability patch
+
+#### Context
+
+The immutable `0.11.0` package is durably accepted, but its first hosted
+release check exposed a recurring repository-gate dependency on a second VS
+Code extension-inventory process. The supported-host harness already owned the
+install or uninstall process and its profile directory. It nevertheless
+started another `code --list-extensions --show-versions` process solely to
+read back the registry. The second process could remain alive after producing
+no decisive failure evidence. The accepted correction instead parses the
+CLI-written profile-local `extensions.json` after the owning command exits.
+
+#### Decision
+
+Select suffix-free `0.11.1` for the compatible correction. Retain Grammar 9,
+CLI Contract 10, 71 commands, 29 active root schemas, 139 root and Node
+exports, 51 Core exports, all result identities, and all public runtime
+meanings. Publish only through the existing beta candidate and exact-artifact
+gates. Exact `perttool@0.11.0` is the rollback pin.
+
+#### Alternatives
+
+- Reusing `0.11.0` is rejected because published npm and annotated-tag
+  identities are immutable.
+- Selecting `0.12.0` is rejected because no public grammar, CLI, schema,
+  export, or runtime meaning changes.
+- Leaving the correction only on `main` is rejected by the owner's explicit
+  release decision because it would not create a durable post-correction
+  distribution identity.
+
+#### Claim, evidence, and implementation action
+
+- `CLM-ADR3-0111-001`: `0.11.1` is a compatible patch, not a new public
+  contract boundary.
+  - `EVD-ADR3-0111-001`: the diff from peeled `v0.11.0` through correction
+    commit `5197da8148645248ae3c4acfd6e919d00afbab8a` changes the repository
+    VSIX harness, tests, and evidence records without changing public runtime
+    source or schemas. Node.js 22 and 24 passed GitHub Actions run
+    `34190654050` at that commit.
+  - `ACT-ADR3-0111-001`: keep every public identity count and semantic
+    contract unchanged while aligning only the patch version and release
+    records.
+- `CLM-ADR3-0111-002`: a new immutable candidate is required even though the
+  public runtime semantics are unchanged.
+  - `EVD-ADR3-0111-002`: npm reports published `0.11.0` and no `0.11.1`; fresh
+    GitHub reads found no `v0.11.1` tag or Release.
+  - `ACT-ADR3-0111-002`: retain one exact `0.11.1` tarball, obtain
+    candidate-bound publication confirmation, and publish that byte-identical
+    artifact once to npm `beta`.
+
+#### Consequences and follow-up
+
+The release creates a new source and package identity for the corrected gate
+without claiming a consumer-facing feature change. npm `latest`, public VSIX
+publication, Issue mutation, and plan advance remain separate decisions.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
