@@ -249,9 +249,9 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.match(plansReadme, /planning-pool-release-readiness\.pert/u);
   assert.match(plansReadme, /completed nineteen-task review and `0\.11\.0` beta release-readiness plan/u);
   assert.match(plansReadme, /release-0\.10\.0\.pert[\s\S]*?all six tasks are done/u);
-  assert.match(agents, /releases through `v0\.11\.0`/u);
+  assert.match(agents, /releases through `v0\.11\.1`/u);
   assert.match(agents, /all forty-seven self-use plans/u);
-  assert.match(copilot, /current published beta is `perttool@0\.11\.0`/u);
+  assert.match(copilot, /current published beta is `perttool@0\.11\.1`/u);
   assert.match(copilot, /planning-pool-release-readiness\.pert/u);
   assert.match(gate, /- Document status: Candidate 3\.0 independently reviewed, owner accepted, and\n  registered as the conformant completed Gate Design Outcome/u);
   assert.match(gateReview, /- Verdict: `PASS`/u);

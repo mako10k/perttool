@@ -54,7 +54,7 @@ task RELEASE_0111_CANDIDATE RELEASE_0111_PREPARED -> RELEASE_0111_CANDIDATE_ACCE
   title "Accept one immutable 0.11.1 candidate"
   description "Freeze one clean release commit and tarball, prove unused external identities and protected routes, and verify exact installed behavior before candidate-bound publication confirmation."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -64,7 +64,7 @@ task RELEASE_0111_PUBLISH RELEASE_0111_CANDIDATE_ACCEPTED -> RELEASE_0111_PUBLIS
   title "Publish version 0.11.1"
   description "After exact candidate-bound confirmation, push the release commit and annotated tag, require hosted CI, create the GitHub prerelease, and publish the byte-identical tarball once to npm beta."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -74,7 +74,7 @@ task RELEASE_0111_ACCEPTANCE RELEASE_0111_PUBLISHED -> RELEASE_0111_ACCEPTED:
   title "Durably accept version 0.11.1"
   description "Independently read back Git, CI, GitHub, npm, common artifact identity, exact and beta installations, correction behavior, and 0.11.0 rollback while leaving latest unchanged."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -116,3 +116,41 @@ work_event EV_RELEASE_0111_CANDIDATE_START_001:
   kind start
   occurred_at 2026-09-08T15:46:30+09:00
   planned_value 3p
+
+work_event EV_RELEASE_0111_CANDIDATE_FINISH_001:
+  model 1
+  task RELEASE_0111_CANDIDATE
+  kind finish
+  occurred_at 2026-09-08T17:02:54+09:00
+  active_time 191/150h
+  effort 191/150ph
+
+work_event EV_RELEASE_0111_PUBLISH_START_001:
+  model 1
+  task RELEASE_0111_PUBLISH
+  kind start
+  occurred_at 2026-09-08T17:02:54+09:00
+  planned_value 3p
+
+work_event EV_RELEASE_0111_PUBLISH_FINISH_001:
+  model 1
+  task RELEASE_0111_PUBLISH
+  kind finish
+  occurred_at 2026-09-08T17:11:35+09:00
+  active_time 521/3600h
+  effort 521/3600ph
+
+work_event EV_RELEASE_0111_ACCEPTANCE_START_001:
+  model 1
+  task RELEASE_0111_ACCEPTANCE
+  kind start
+  occurred_at 2026-09-08T17:11:35+09:00
+  planned_value 3p
+
+work_event EV_RELEASE_0111_ACCEPTANCE_FINISH_001:
+  model 1
+  task RELEASE_0111_ACCEPTANCE
+  kind finish
+  occurred_at 2026-09-08T17:17:54+09:00
+  active_time 379/3600h
+  effort 379/3600ph

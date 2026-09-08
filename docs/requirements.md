@@ -3804,7 +3804,7 @@ Before implementation, separate the specifications in the following order.
       behavior, every accepted Planning Pool review correction, the Issue #36
       authority correction, and exact `0.10.6` rollback behavior.
 
-27. [ ] Release the accepted VSIX host reliability correction as compatible
+27. [x] Release the accepted VSIX host reliability correction as compatible
     suffix-free beta `0.11.1` under
     [`plans/release-0.11.1.pert`](../plans/release-0.11.1.pert).
     - [x] Confirm that the correction removes the second external VS Code
@@ -3817,14 +3817,14 @@ Before implementation, separate the specifications in the following order.
     - [x] Align package, lockfile, CLI, adapters, CHANGELOG, README, tests,
       goldens, self-use, release records, and current guidance to `0.11.1`,
       then pass the complete Node.js 22 repository and installed-package gate.
-    - [ ] Accept one clean release commit and immutable tarball after proving
+    - [x] Accept one clean release commit and immutable tarball after proving
       that the Git tag, GitHub Release, and npm version are unused and the
       protected GitHub and npm routes are available.
-    - [ ] Publish only after confirmation bound to that exact candidate; push
+    - [x] Publish only after confirmation bound to that exact candidate; push
       and verify the release commit and annotated tag, require Node.js 22 and
       24 CI, create one GitHub prerelease, and publish the byte-identical
       tarball once to npm `beta` while leaving `latest=0.10.5` unchanged.
-    - [ ] Independently verify durable public identity, exact and beta
+    - [x] Independently verify durable public identity, exact and beta
       installations, corrected supported-host behavior, unchanged Contract 10
       surface, and exact `0.11.0` rollback behavior.
 

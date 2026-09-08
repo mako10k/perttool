@@ -14,10 +14,9 @@ Plans are separated by level of detail.
   publication and durable acceptance are complete and retained before advance,
   while npm `latest`, public VSIX publication, Issue mutation, and both plan
   advances remain separate
-- [release-0.11.1.pert](release-0.11.1.pert): active compatible Grammar 9 and
-  CLI Contract 10 VSIX host reliability patch plan; self-review is complete and
-  source preparation is accepted, while immutable candidate acceptance is active;
-  candidate-bound publication, durable acceptance, npm `latest`, public VSIX publication,
+- [release-0.11.1.pert](release-0.11.1.pert): completed compatible Grammar 9
+  and CLI Contract 10 VSIX host reliability patch plan; all five tasks are done
+  and retained before advance, while npm `latest`, public VSIX publication,
   Issue mutation, and plan advance remain separate
 - [release-0.10.0.pert](release-0.10.0.pert): completed six-stage Grammar 8 and
   CLI Contract 9 temporal-scheduling beta release plan; all six tasks are done

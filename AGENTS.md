@@ -15,14 +15,18 @@ User communication is independent from the repository baseline. Unless the user 
 
 perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
 Guidance Registry v1 from Issue #2 and has durably accepted suffix-free beta
-releases through `v0.11.0`. npm reports `beta=0.11.0`, `latest=0.10.5`, and no
-`alpha`. Version `0.11.0` is the first public Grammar 9 and CLI Contract 10
-Planning Pool release. Its release commit and peeled tag target `6ad44db`; the
-retained, GitHub, and npm tarballs agree at SHA-256 `fa43e222...2fecf4`.
-Manual CI run `34113325516` passed Node.js 22 in attempt 1; its Node.js 24 job
-timed out only in the external VS Code extension-inventory probe and passed as
-the unchanged failed-job rerun in attempt 2. Main run `34115992442` then passed
-both Node.js versions. Exact `0.10.6` remains the rollback pin.
+releases through `v0.11.1`. npm reports `beta=0.11.1`, `latest=0.10.5`, and no
+`alpha`. Version `0.11.1` is the compatible Grammar 9 and CLI Contract 10 VSIX
+host-gate reliability patch. Its release commit and peeled tag target
+`d51fcbba85b01ed60cc3edc047eecccb677a5427`; annotated tag object
+`e027789d25e1abc06665d7c35ea886fb36c1e534`, successful Node.js 22/24 CI run
+`34202430536`, GitHub prerelease, npm registry, and retained tarball agree at
+SHA-256 `e8ff0846...2f72`. The patch removes perttool's second external VS Code
+extension-inventory process while retaining Xvfb, process-tree timeout,
+replacement, uninstall, and clean-profile coverage. Exact `0.11.0` remains the
+rollback pin and the first public Grammar 9 and CLI Contract 10 Planning Pool
+release. Its corrected initial CI evidence remains in
+`docs/process/0.11.0-ci-documentation-correction.md`.
 Version `0.6.0` retains Grammar 5 and CLI Contract 6 while adding repository
 history protection, `Perttool.AdvanceResult.v1`, and the narrow
 `--force-history-loss` boundary to `dag advance`. Version `0.5.5` retains

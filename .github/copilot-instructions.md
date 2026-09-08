@@ -5,17 +5,17 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.11.0`; npm reports
-  `beta=0.11.0`, `latest=0.10.5`, and no `alpha`. It is the first public
-  Grammar 9 and CLI Contract 10 Planning Pool release, with 71 commands, 29
+- The current published beta is `perttool@0.11.1`; npm reports
+  `beta=0.11.1`, `latest=0.10.5`, and no `alpha`. It is a compatible Grammar 9
+  and CLI Contract 10 VSIX host-gate reliability patch, with 71 commands, 29
   active root schemas, 139 root and reference-identical Node exports, 51 Core
-  exports, and `Perttool.NextResult.v8`. Release commit and peeled `v0.11.0`
-  target `6ad44db`; retained, GitHub, and npm tarballs agree at SHA-256
-  `fa43e222...2fecf4`. Manual CI run `34113325516` passed Node.js 22 in
-  attempt 1; Node.js 24 timed out only in the external VS Code extension-
-  inventory probe and passed as the unchanged failed-job rerun in attempt 2.
-  Main run `34115992442` then passed both Node.js versions. Exact `0.10.6`
-  remains the rollback pin.
+  exports, and `Perttool.NextResult.v8`. Release commit and peeled `v0.11.1`
+  target `d51fcbba85b01ed60cc3edc047eecccb677a5427`; tag object `e027789`, CI run
+  `34202430536`, retained, GitHub, and npm tarballs agree at SHA-256
+  `e8ff0846...2f72`. The patch removes the second external VS Code extension-
+  inventory process while retaining Xvfb and the supported-host coverage.
+  Exact `0.11.0` remains the rollback pin and the first public Planning Pool
+  release.
 - The completed `plans/planning-pool.pert` was canonically advanced and retains
   only its accepted reached milestone. All nineteen tasks in
   `plans/planning-pool-release-readiness.pert` are complete and retained before

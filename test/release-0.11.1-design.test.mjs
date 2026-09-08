@@ -7,12 +7,16 @@ import { checkDocument } from "../dist/index.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("0.11.1 is a compatible candidate-bound VSIX host reliability patch", async () => {
-  const [plan, procedure, review, requirements, adr, design, manifestText,
-    lockText, versionSource, lspText, mcpText, hostScript] = await Promise.all([
+test("0.11.1 is a durably accepted compatible VSIX host reliability patch", async () => {
+  const [plan, procedure, review, candidate, publication, acceptance,
+    requirements, adr, design, manifestText, lockText, versionSource, lspText,
+    mcpText, hostScript] = await Promise.all([
     readFile(path.join(root, "plans/release-0.11.1.pert"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.1-release.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.11.1-self-review.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.1-candidate.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.1-publish.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.1-release-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
     readFile(path.join(root, "docs/basic-design.md"), "utf8"),
@@ -36,9 +40,13 @@ test("0.11.1 is a compatible candidate-bound VSIX host reliability patch", async
   ]) {
     assert.match(plan, new RegExp(`^task ${id} `, "mu"));
   }
+  assert.equal((plan.match(/^  status done$/gmu) ?? []).length, 5);
   assert.match(procedure, /confirmation naming the exact candidate/u);
   assert.match(review, /changes repository validation and evidence, not installed/u);
-  assert.match(requirements, /^27\. \[[ x]\] Release the accepted VSIX host reliability correction/mu);
+  assert.match(candidate, /e8ff0846e9fbf1a40a0b21d68140ad1f6a5d3547d44bb699ce1a108793af2f72/u);
+  assert.match(publication, /34202430536/u);
+  assert.match(acceptance, /sha256:e57115a37b8093537bb4d78ca50b6b2c04db9a242a11e5ee19c7191dd91276ec/u);
+  assert.match(requirements, /^27\. \[x\] Release the accepted VSIX host reliability correction/mu);
   assert.match(adr, /^### Accepted compatible `0\.11\.1` VSIX host reliability patch$/mu);
   assert.match(design, /^### Post-MVP Slice 8B: compatible `v0\.11\.1` host-gate patch$/mu);
 
