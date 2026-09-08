@@ -13,7 +13,7 @@ import {
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("0.11.0 publication and durable acceptance retain their exact boundaries", async () => {
-  const [plan, requirements, adr, design, procedure, preparation, candidate, publication, acceptance, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol] = await Promise.all([
+  const [plan, requirements, adr, design, procedure, preparation, candidate, publication, acceptance, gate, gateReview, issueBody, bindingContract, bindingAcceptance, replanDocument, replanResealDocument, replanRequestText, correction, integration, planningContract, changelog, readme, selfUse, manifestText, lockText, lspManifestText, mcpManifestText, versionSource, mcpProtocol, ciCorrection, plansReadme, agents, copilot] = await Promise.all([
     readFile(path.join(root, "plans/planning-pool-release-readiness.pert"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/adr/0003-beta-versioning.md"), "utf8"),
@@ -43,6 +43,10 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
     readFile(path.join(root, "adapters/mcp/package.json"), "utf8"),
     readFile(path.join(root, "src/version.ts"), "utf8"),
     readFile(path.join(root, "adapters/mcp/src/protocol.ts"), "utf8"),
+    readFile(path.join(root, "docs/process/0.11.0-ci-documentation-correction.md"), "utf8"),
+    readFile(path.join(root, "plans/README.md"), "utf8"),
+    readFile(path.join(root, "AGENTS.md"), "utf8"),
+    readFile(path.join(root, ".github/copilot-instructions.md"), "utf8"),
   ]);
 
   const checked = checkDocument(plan);
@@ -224,12 +228,31 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.match(candidate, /`POOL_RELEASE_PUBLISH` remains a separate boundary/u);
   assert.match(publication, /- Document status: Accepted 1\.0/u);
   assert.match(publication, /Annotated tag object:\n  `51e35070ce0ad288d19f0ac6597653d3133b82aa`/u);
-  assert.match(publication, /CI run `34113325516`, attempt 2/u);
+  assert.match(publication, /CI run `34113325516` did not pass on its first attempt/u);
+  assert.match(publication, /Node\.js 24 passed all 1,341 tests/u);
+  assert.match(publication, /Attempt 2 reran only the failed Node\.js 24 job/u);
+  assert.match(publication, /No source or\ncandidate byte changed between these runs/u);
   assert.match(publication, /`beta=0\.11\.0`, `latest=0\.10\.5`, and no\n`alpha`/u);
   assert.match(acceptance, /- Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Completed plan source digest:\n  `sha256:e7cbb956bc2d1959513e4149a700d8d0f964bd37ed285e331d20d5db3652fcfe`/u);
   assert.match(acceptance, /The acceptance task finished at `2026-09-07T21:05:13\+09:00`/u);
   assert.match(acceptance, /Issues #35, #36, #37, and #38 remain open/u);
+  assert.match(acceptance, /Node\.js 22 success in CI run `34113325516` attempt 1/u);
+  assert.match(acceptance, /Node\.js 24 success in its\nfailed-job rerun attempt 2/u);
+  assert.match(procedure, /Manual run `34113325516` attempt 1 passed Node\.js 22/u);
+  assert.match(procedure, /Attempt 2 reran that unchanged job\nsuccessfully/u);
+  assert.match(ciCorrection, /- Document status: Implemented 1\.0/u);
+  assert.match(ciCorrection, /Root cause of the CI failure: the supported-host harness treated one timeout/u);
+  assert.match(ciCorrection, /Remaining unknown: available evidence does not establish why the external/u);
+  assert.match(ciCorrection, /retries only `--list-extensions --show-versions`/u);
+  assert.match(ciCorrection, /does not modify the immutable `0\.11\.0` candidate/u);
+  assert.match(plansReadme, /planning-pool-release-readiness\.pert/u);
+  assert.match(plansReadme, /completed nineteen-task review and `0\.11\.0` beta release-readiness plan/u);
+  assert.match(plansReadme, /release-0\.10\.0\.pert[\s\S]*?all six tasks are done/u);
+  assert.match(agents, /releases through `v0\.11\.0`/u);
+  assert.match(agents, /all forty-six self-use plans/u);
+  assert.match(copilot, /current published beta is `perttool@0\.11\.0`/u);
+  assert.match(copilot, /planning-pool-release-readiness\.pert/u);
   assert.match(gate, /- Document status: Candidate 3\.0 independently reviewed, owner accepted, and\n  registered as the conformant completed Gate Design Outcome/u);
   assert.match(gateReview, /- Verdict: `PASS`/u);
   assert.match(gateReview, /- Findings: zero P0, P1, P2, or P3 findings/u);

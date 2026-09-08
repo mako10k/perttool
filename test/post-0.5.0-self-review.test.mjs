@@ -101,7 +101,7 @@ test("current guidance records the published 0.5.2 schema boundary", async () =>
   }
   assert.match(
     agents,
-    /`release-0\.2\.0\.pert` through `release-0\.9\.0\.pert` as independent post-beta workstreams/,
+    /`planning-pool\.pert`, `planning-pool-release-readiness\.pert`, and `release-0\.2\.0\.pert` through `release-0\.10\.0\.pert` as independent post-beta workstreams/,
   );
   assert.doesNotMatch(
     agents,

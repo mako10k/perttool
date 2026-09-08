@@ -5,18 +5,18 @@ This directory contains `.pert` plans for the present and future work on
 
 Plans are separated by level of detail.
 
-- [planning-pool.pert](planning-pool.pert): selected and initially sealed
-  `PLAN-POOL-001` implementation workstream from the normative Work-centered
-  planning-pool contract through private source, reshape, projection, Window,
-  observation, history, public-contract, and final acceptance tasks; release,
-  publication, Issue mutation, editor or MCP mutation, and plan advance remain
-  separate
-- [release-0.10.0.pert](release-0.10.0.pert): selected six-stage beta release
-  plan for the accepted Grammar 8 and CLI Contract 9 temporal scheduling
-  boundary; only local gate design is currently ready, while source
-  preparation, candidate acceptance, PUBLISH, durable acceptance, npm latest,
-  plan advance, public VSIX publication, and Issue mutation remain separately
-  gated
+- [planning-pool.pert](planning-pool.pert): completed and canonically advanced
+  `PLAN-POOL-001` implementation workstream; the residual document retains the
+  accepted `PLANNING_POOL_ACCEPTED` milestone and its evidence with no task,
+  recommendation, or startable work
+- [planning-pool-release-readiness.pert](planning-pool-release-readiness.pert):
+  completed nineteen-task review and `0.11.0` beta release-readiness plan;
+  publication and durable acceptance are complete and retained before advance,
+  while npm `latest`, public VSIX publication, Issue mutation, and both plan
+  advances remain separate
+- [release-0.10.0.pert](release-0.10.0.pert): completed six-stage Grammar 8 and
+  CLI Contract 9 temporal-scheduling beta release plan; all six tasks are done
+  and retained before advance with no ready, recommended, or startable task
 
 - [mvp.pert](mvp.pert): macro milestones, work packages, and resource
   schedule from the MVP through beta

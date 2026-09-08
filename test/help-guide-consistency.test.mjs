@@ -116,9 +116,9 @@ test("repository policy and self-use registration include the accepted workstrea
   for (const policy of [agents, copilot]) {
     assert.match(policy, /GUIDE-CONSISTENCY-001/);
     assert.match(policy, /help-guide-consistency-acceptance\.md/);
-    assert.match(policy, /Perttool\.NextResult\.v7/);
-    assert.match(policy, /beta=latest=0\.9\.0/);
-    assert.match(policy, /0\.9\.2.*rollback pin/s);
+    assert.match(policy, /Perttool\.NextResult\.v8/);
+    assert.match(policy, /`beta=0\.11\.0`, `latest=0\.10\.5`/);
+    assert.match(policy, /0\.10\.6.*rollback pin/s);
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);

@@ -22,15 +22,48 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 const vscodeVersion = "1.101.0";
 const extensionId = "perttool-private.perttool-vscode-private";
 const expectedDirectoryPrefix = `${extensionId}-`;
+const processTimeout = 120_000;
+const processKillGrace = 5_000;
+const extensionInventoryAttempts = 2;
 
 function digest(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
-async function runProcess(command, args, options = {}) {
+export class ProcessTimeoutError extends Error {
+  constructor(command, args, timeout, stdout, stderr) {
+    super(
+      `${command} timed out after ${timeout} ms: ${args.join(" ")}\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+    );
+    this.name = "ProcessTimeoutError";
+    this.command = command;
+    this.args = [...args];
+    this.timeout = timeout;
+    this.stdout = stdout;
+    this.stderr = stderr;
+  }
+}
+
+function signalProcessGroup(child, signal) {
+  if (child.pid === undefined) return;
+  if (process.platform !== "win32") {
+    try {
+      process.kill(-child.pid, signal);
+      return;
+    } catch (error) {
+      if (error?.code === "ESRCH") return;
+      if (error?.code !== "EPERM") throw error;
+    }
+  }
+  child.kill(signal);
+}
+
+export async function runProcess(command, args, options = {}) {
   return new Promise((resolve, reject) => {
+    const timeout = options.timeout ?? processTimeout;
     const child = spawn(command, args, {
       cwd: options.cwd ?? repositoryRoot,
+      detached: process.platform !== "win32",
       env: {
         ...process.env,
         DONT_PROMPT_WSL_INSTALL: "1",
@@ -40,10 +73,25 @@ async function runProcess(command, args, options = {}) {
     });
     let stdout = "";
     let stderr = "";
+    let timedOut = false;
+    let forceKillTimer;
     const timer = setTimeout(() => {
-      child.kill("SIGTERM");
-      reject(new Error(`Timed out: ${command} ${args.join(" ")}`));
-    }, options.timeout ?? 120_000);
+      timedOut = true;
+      try {
+        signalProcessGroup(child, "SIGTERM");
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      forceKillTimer = setTimeout(() => {
+        try {
+          signalProcessGroup(child, "SIGKILL");
+        } catch {
+          // The close event still owns the final timeout result.
+        }
+      }, options.killGrace ?? processKillGrace);
+      forceKillTimer.unref?.();
+    }, timeout);
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
     child.stdout.on("data", (chunk) => {
@@ -54,10 +102,16 @@ async function runProcess(command, args, options = {}) {
     });
     child.on("error", (error) => {
       clearTimeout(timer);
+      clearTimeout(forceKillTimer);
       reject(error);
     });
     child.on("close", (code, signal) => {
       clearTimeout(timer);
+      clearTimeout(forceKillTimer);
+      if (timedOut) {
+        reject(new ProcessTimeoutError(command, args, timeout, stdout, stderr));
+        return;
+      }
       if (!(options.acceptedExitCodes ?? [0]).includes(code)) {
         reject(
           new Error(
@@ -69,6 +123,35 @@ async function runProcess(command, args, options = {}) {
       resolve({ code, stdout, stderr });
     });
   });
+}
+
+export async function runExtensionInventory(cli, extensionArgs, options = {}) {
+  const args = [
+    ...extensionArgs,
+    "--list-extensions",
+    "--show-versions",
+  ];
+  for (let attempt = 1; attempt <= extensionInventoryAttempts; attempt += 1) {
+    try {
+      return await runProcess(cli, args, {
+        timeout: options.timeout,
+        killGrace: options.killGrace,
+      });
+    } catch (error) {
+      if (
+        !(error instanceof ProcessTimeoutError) ||
+        attempt === extensionInventoryAttempts
+      ) {
+        throw error;
+      }
+      const message =
+        `VS Code extension inventory timed out on attempt ${attempt}/${extensionInventoryAttempts}; ` +
+        "retrying once after process closure\n";
+      if (options.onRetry) options.onRetry(message, error);
+      else process.stderr.write(message);
+    }
+  }
+  throw new Error("unreachable extension inventory retry state");
 }
 
 async function writeProfile(profile, trustEnabled) {
@@ -206,11 +289,7 @@ async function installExtension(
 }
 
 async function assertInstalledExtension(cli, extensionArgs) {
-  const listed = await runProcess(cli, [
-    ...extensionArgs,
-    "--list-extensions",
-    "--show-versions",
-  ]);
+  const listed = await runExtensionInventory(cli, extensionArgs);
   assert.deepEqual(
     listed.stdout.trim().split(/\r?\n/u).filter(Boolean),
     [`${extensionId}@0.0.0`],
@@ -252,11 +331,7 @@ async function uninstallExtension(cli, extensionArgs, isWsl) {
   if (uninstall.code === 134) {
     assert.match(uninstall.stdout, /was successfully uninstalled/iu);
   }
-  const afterUninstall = await runProcess(cli, [
-    ...extensionArgs,
-    "--list-extensions",
-    "--show-versions",
-  ]);
+  const afterUninstall = await runExtensionInventory(cli, extensionArgs);
   assert.equal(afterUninstall.stdout.trim(), "");
 }
 
@@ -354,4 +429,9 @@ async function main() {
   }
 }
 
-await main();
+if (
+  process.argv[1] !== undefined &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  await main();
+}

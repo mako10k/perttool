@@ -5,31 +5,22 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.4`; npm reports
-  `beta=0.9.4`, `latest=0.9.0`, and no `alpha`. Version `0.9.4` is the
-  compatible Issue #19 emergency patch; peeled `v0.9.4` and `origin/main`
-  agree at `094132c`, CI passed, the GitHub and npm artifacts agree at
-  SHA-256 `63a12ddf...d6fe53b`, and Issue #19 is closed with release evidence.
-  Version `0.9.3` remains the exact rollback pin, `0.9.2` remains its preceding
-  emergency rollback pin, version `0.9.0` remains the suffix-free Grammar 7
-  and CLI Contract 8 rollback pin, and version `0.8.1` remains the compatible
-  Grammar 6 and CLI Contract 7 rollback pin.
-- The current source atomically activates Grammar 7 and CLI
-  Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
-  and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
-  canonically advanced; the residual plan has no diagnostic, task,
-  recommendation, or startable task. The selected `plans/release-0.9.0.pert`
-  workstream completed local gates, candidate acceptance, PUBLISH, and durable
-  acceptance. Release commit and peeled `v0.9.0` target `3aca4f0`; CI passed;
-  GitHub and npm match the retained candidate at SHA-256
-  `88e51bfe...37345e7`. The accepted record was pushed, npm now reports
-  `beta=latest=0.9.0` with no `alpha`, and Issues #10 and #11 are closed with
-  release evidence. The Grammar 6 plan was migrated and given six accepted
-  artifact criteria before history- and acceptance-guarded canonical advance.
-  Residual Grammar 7 digest `sha256:59b5fbbe...d4e71a` retains only accepted
-  reached milestone `RELEASE_090_ACCEPTED`, has zero tasks and makespans, no
-  diagnostic, and no ready, recommended, or startable task. Public VSIX
-  publication and unrelated work remain separate.
+- The current published beta is `perttool@0.11.0`; npm reports
+  `beta=0.11.0`, `latest=0.10.5`, and no `alpha`. It is the first public
+  Grammar 9 and CLI Contract 10 Planning Pool release, with 71 commands, 29
+  active root schemas, 139 root and reference-identical Node exports, 51 Core
+  exports, and `Perttool.NextResult.v8`. Release commit and peeled `v0.11.0`
+  target `6ad44db`; retained, GitHub, and npm tarballs agree at SHA-256
+  `fa43e222...2fecf4`. Manual CI run `34113325516` passed Node.js 22 in
+  attempt 1; Node.js 24 timed out only in the external VS Code extension-
+  inventory probe and passed as the unchanged failed-job rerun in attempt 2.
+  Main run `34115992442` then passed both Node.js versions. Exact `0.10.6`
+  remains the rollback pin.
+- The completed `plans/planning-pool.pert` was canonically advanced and retains
+  only its accepted reached milestone. All nineteen tasks in
+  `plans/planning-pool-release-readiness.pert` are complete and retained before
+  advance with no ready, recommended, or startable task. npm `latest`, public
+  VSIX publication, Issue mutation, and both plan advances remain separate.
 - The selected `plans/release-0.9.1.pert` workstream publishes the compatible
   ACT-003 / Issue #8 current-velocity observation correction. Its
   compatibility review, source preparation, and immutable candidate
