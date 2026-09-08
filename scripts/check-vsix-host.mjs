@@ -24,7 +24,6 @@ const extensionId = "perttool-private.perttool-vscode-private";
 const expectedDirectoryPrefix = `${extensionId}-`;
 const processTimeout = 120_000;
 const processKillGrace = 5_000;
-const extensionInventoryAttempts = 2;
 
 function digest(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
@@ -125,33 +124,11 @@ export async function runProcess(command, args, options = {}) {
   });
 }
 
-export async function runExtensionInventory(cli, extensionArgs, options = {}) {
-  const args = [
-    ...extensionArgs,
-    "--list-extensions",
-    "--show-versions",
-  ];
-  for (let attempt = 1; attempt <= extensionInventoryAttempts; attempt += 1) {
-    try {
-      return await runProcess(cli, args, {
-        timeout: options.timeout,
-        killGrace: options.killGrace,
-      });
-    } catch (error) {
-      if (
-        !(error instanceof ProcessTimeoutError) ||
-        attempt === extensionInventoryAttempts
-      ) {
-        throw error;
-      }
-      const message =
-        `VS Code extension inventory timed out on attempt ${attempt}/${extensionInventoryAttempts}; ` +
-        "retrying once after process closure\n";
-      if (options.onRetry) options.onRetry(message, error);
-      else process.stderr.write(message);
-    }
-  }
-  throw new Error("unreachable extension inventory retry state");
+export async function readExtensionRegistry(extensionsDirectory) {
+  const registryPath = path.join(extensionsDirectory, "extensions.json");
+  const registry = JSON.parse(await readFile(registryPath, "utf8"));
+  assert.equal(Array.isArray(registry), true, `${registryPath} must contain an array`);
+  return registry;
 }
 
 async function writeProfile(profile, trustEnabled) {
@@ -288,12 +265,23 @@ async function installExtension(
   return installedExtensionPath(extensionsDirectory);
 }
 
-async function assertInstalledExtension(cli, extensionArgs) {
-  const listed = await runExtensionInventory(cli, extensionArgs);
+async function assertInstalledExtension(extensionsDirectory, installedPath) {
+  const registry = await readExtensionRegistry(extensionsDirectory);
   assert.deepEqual(
-    listed.stdout.trim().split(/\r?\n/u).filter(Boolean),
-    [`${extensionId}@0.0.0`],
+    registry.map((entry) => ({
+      id: entry?.identifier?.id,
+      version: entry?.version,
+      relativeLocation: entry?.relativeLocation,
+      source: entry?.metadata?.source,
+    })),
+    [{
+      id: extensionId,
+      version: "0.0.0",
+      relativeLocation: `${extensionId}-0.0.0`,
+      source: "vsix",
+    }],
   );
+  assert.equal(path.resolve(registry[0]?.location?.fsPath), installedPath);
 }
 
 async function acceptHostProfile(
@@ -317,7 +305,12 @@ async function acceptHostProfile(
   assert.equal(digest(await readFile(settings.settingsPath)), settings.digest);
 }
 
-async function uninstallExtension(cli, extensionArgs, isWsl) {
+async function uninstallExtension(
+  cli,
+  extensionArgs,
+  extensionsDirectory,
+  isWsl,
+) {
   const uninstall = await runProcess(cli, [
     ...extensionArgs,
     "--uninstall-extension",
@@ -331,8 +324,7 @@ async function uninstallExtension(cli, extensionArgs, isWsl) {
   if (uninstall.code === 134) {
     assert.match(uninstall.stdout, /was successfully uninstalled/iu);
   }
-  const afterUninstall = await runExtensionInventory(cli, extensionArgs);
-  assert.equal(afterUninstall.stdout.trim(), "");
+  assert.deepEqual(await readExtensionRegistry(extensionsDirectory), []);
 }
 
 async function main() {
@@ -370,7 +362,7 @@ async function main() {
       vsixPath,
       extensionsDirectory,
     );
-    await assertInstalledExtension(cli, extensionArgs);
+    await assertInstalledExtension(extensionsDirectory, installedPath);
     await acceptHostProfile(
       temporaryRoot,
       executable,
@@ -419,7 +411,7 @@ async function main() {
       await readFile(fixture.untrustedFormatFile, "utf8"),
       fixture.expectedFormatted,
     );
-    await uninstallExtension(cli, extensionArgs, isWsl);
+    await uninstallExtension(cli, extensionArgs, extensionsDirectory, isWsl);
 
     process.stdout.write(
       `supported VS Code ${vscodeVersion} trusted/untrusted install, host, replacement, and uninstall acceptance passed\n`,

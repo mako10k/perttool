@@ -241,10 +241,10 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.match(acceptance, /Node\.js 24 success in its\nfailed-job rerun attempt 2/u);
   assert.match(procedure, /Manual run `34113325516` attempt 1 passed Node\.js 22/u);
   assert.match(procedure, /Attempt 2 reran that unchanged job\nsuccessfully/u);
-  assert.match(ciCorrection, /- Document status: Implemented 1\.0/u);
-  assert.match(ciCorrection, /Root cause of the CI failure: the supported-host harness treated one timeout/u);
-  assert.match(ciCorrection, /Remaining unknown: available evidence does not establish why the external/u);
-  assert.match(ciCorrection, /retries only `--list-extensions --show-versions`/u);
+  assert.match(ciCorrection, /- Document status: Implemented 1\.1/u);
+  assert.match(ciCorrection, /Root cause of the recurring CI failure: the supported-host harness coupled/u);
+  assert.match(ciCorrection, /Upstream internal boundary: the available attempt-1 evidence cannot identify/u);
+  assert.match(ciCorrection, /There is no extension-inventory retry and no second VS Code list process/u);
   assert.match(ciCorrection, /does not modify the immutable `0\.11\.0` candidate/u);
   assert.match(plansReadme, /planning-pool-release-readiness\.pert/u);
   assert.match(plansReadme, /completed nineteen-task review and `0\.11\.0` beta release-readiness plan/u);
