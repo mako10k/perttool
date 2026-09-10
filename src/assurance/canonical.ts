@@ -123,7 +123,7 @@ function exactValueRecord(value: CanonicalExactValueV1): unknown {
   };
 }
 
-function timingRecord(value: CanonicalDurationOrEstimateV1): unknown {
+export function timingRecord(value: CanonicalDurationOrEstimateV1): unknown {
   if (value.kind === "duration") {
     assertExactValue(value.value, "duration");
     return { kind: "duration", value: exactValueRecord(value.value) };
@@ -145,7 +145,7 @@ function timingRecord(value: CanonicalDurationOrEstimateV1): unknown {
   };
 }
 
-function calendarRecord(value: CanonicalCalendarValueV1): unknown {
+export function calendarRecord(value: CanonicalCalendarValueV1): unknown {
   if (value.kind !== "date" && value.kind !== "date_time") {
     throw new Error("calendar value has an unknown kind");
   }

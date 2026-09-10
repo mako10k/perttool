@@ -180,12 +180,37 @@ export function fieldLine(
   return { name, rawValue, valueColumn: rawValue === "" ? line.text.length : name.length + 3 };
 }
 
-function maskedLine(line: TemporalSourceLine): string {
+export function maskedSourceLine(line: TemporalSourceLine): string {
   const endingLength = line.end - line.contentEnd;
   const ending = endingLength === 0 ? "" : endingLength === 2 ? "\r\n" : "\n";
   const contentLength = line.contentEnd - line.start;
   if (contentLength === 0) return ending;
   return `#${" ".repeat(contentLength - 1)}${ending}`;
+}
+
+export function maskSourceDeclarationBlocks(
+  text: string,
+  blocks: readonly Readonly<{
+    header: TemporalSourceLine;
+    lines: readonly TemporalSourceLine[];
+  }>[],
+  sourceVersion: number,
+  baseVersion: number,
+): string {
+  const replacements = new Map<number, string>();
+  for (const block of blocks) {
+    replacements.set(block.header.start, maskedSourceLine(block.header));
+    for (const line of block.lines) replacements.set(line.start, maskedSourceLine(line));
+  }
+  for (const line of splitTemporalSourceLines(text)) {
+    if (line.text === `  version ${sourceVersion}`) {
+      const ending = text.slice(line.contentEnd, line.end);
+      replacements.set(line.start, `  version ${baseVersion}${ending}`);
+    }
+  }
+  return splitTemporalSourceLines(text)
+    .map((line) => replacements.get(line.start) ?? text.slice(line.start, line.end))
+    .join("");
 }
 
 const projectFields = new Set(["time_zone", "tzdb", "calendar", "workday"]);
@@ -209,14 +234,14 @@ export function temporalScheduleBaseText(
   const replacements = new Map<number, string>();
   for (const block of blocks) {
     if (block.kind === "calendar") {
-      replacements.set(block.header.start, maskedLine(block.header));
-      for (const line of block.lines) replacements.set(line.start, maskedLine(line));
+      replacements.set(block.header.start, maskedSourceLine(block.header));
+      for (const line of block.lines) replacements.set(line.start, maskedSourceLine(line));
       continue;
     }
     for (const line of block.lines) {
       const field = fieldLine(line);
       if (field !== null && isOwnedField(block.kind, field.name)) {
-        replacements.set(line.start, maskedLine(line));
+        replacements.set(line.start, maskedSourceLine(line));
       } else if (block.kind === "project" && /^  version 8$/u.test(line.text)) {
         const ending = text.slice(line.contentEnd, line.end);
         replacements.set(line.start, `${line.text.slice(0, -1)}7${ending}`);

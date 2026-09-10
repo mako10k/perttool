@@ -1,5 +1,6 @@
 import type { SourceSpan } from "../model/diagnostics.js";
 import {
+  maskSourceDeclarationBlocks,
   sourcePosition,
   scanSourceDeclarationSegments,
   sourceDeclarationBlockEnd,
@@ -187,32 +188,11 @@ export function planningFields(
   return Object.freeze(result);
 }
 
-function maskedLine(text: string, line: TemporalSourceLine): string {
-  const ending = text.slice(line.contentEnd, line.end);
-  const length = line.contentEnd - line.start;
-  return length === 0 ? ending : `#${" ".repeat(length - 1)}${ending}`;
-}
-
 export function planningPoolBaseText(
   text: string,
   blocks: readonly PlanningDeclarationBlock[],
 ): string {
-  const replacements = new Map<number, string>();
-  for (const block of blocks) {
-    replacements.set(block.header.start, maskedLine(text, block.header));
-    for (const line of block.lines) {
-      replacements.set(line.start, maskedLine(text, line));
-    }
-  }
-  for (const line of splitTemporalSourceLines(text)) {
-    if (/^  version 9$/u.test(line.text)) {
-      const ending = text.slice(line.contentEnd, line.end);
-      replacements.set(line.start, `${line.text.slice(0, -1)}8${ending}`);
-    }
-  }
-  return splitTemporalSourceLines(text)
-    .map((line) => replacements.get(line.start) ?? text.slice(line.start, line.end))
-    .join("");
+  return maskSourceDeclarationBlocks(text, blocks, 9, 8);
 }
 
 export function declaredPlanningGrammarVersion(text: string): number {

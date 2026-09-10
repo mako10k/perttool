@@ -1,0 +1,17 @@
+{
+  "contract": "Plan Review Request Source Core v1",
+  "cases": [
+    { "id": "PRSC-001", "depends_on": [], "purpose": "private identity-checked capability" },
+    { "id": "PRSC-002", "depends_on": ["PRSC-001"], "purpose": "unchanged Grammar 1 through 9 input" },
+    { "id": "PRSC-003", "depends_on": ["PRSC-001"], "purpose": "open request source projection" },
+    { "id": "PRSC-004", "depends_on": ["PRSC-003"], "purpose": "resolved current and historical Task references" },
+    { "id": "PRSC-005", "depends_on": ["PRSC-003"], "purpose": "conditional field sets and canonical order" },
+    { "id": "PRSC-006", "depends_on": ["PRSC-003"], "purpose": "shared identity and declaration placement" },
+    { "id": "PRSC-007", "depends_on": ["PRSC-003"], "purpose": "exact source and free-text limits" },
+    { "id": "PRSC-008", "depends_on": ["PRSC-003"], "purpose": "BOM CRLF spans and source-preserving format" },
+    { "id": "PRSC-009", "depends_on": ["PRSC-003"], "purpose": "advisory review projection" },
+    { "id": "PRSC-010", "depends_on": ["PRSC-003"], "purpose": "closed semantic plan basis" },
+    { "id": "PRSC-011", "depends_on": ["PRSC-010"], "purpose": "deterministic RFC 8785 digest and exclusions" },
+    { "id": "PRSC-012", "depends_on": ["PRSC-001", "PRSC-011"], "purpose": "unchanged current public surface" }
+  ]
+}
