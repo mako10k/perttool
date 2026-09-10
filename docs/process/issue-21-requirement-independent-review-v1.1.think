@@ -1,0 +1,67 @@
+framework DecisionAudit
+
+domain Issue21Candidate11IndependentReview:
+  description "Independent review of Issue 21 Candidate 1.1"
+
+problem P1:
+  "Is exact Candidate 1.1 internally consistent with Issue 21 and current Grammar 9, CLI Contract 10, governance, assurance, acceptance, recommendation, and history authorities?"
+
+step S1:
+  premise PR1:
+    "The owner selected REVIEW_THEN_DECIDE for exact Candidate 1.1, so the review must not edit or accept the candidate and must return findings to lifecycle Step 4"
+
+step S2:
+  evidence EV1:
+    "GitHub Issue 21 remains open and requests a persistent advisory Plan Review path, separates review-request resolution from actual plan-change authority, allows plan retention or a normally governed plan change, and leaves exact DSL and schemas to design"
+
+step S3:
+  evidence EV2:
+    "Exact docs/requirements/plan-review-request-v1.1.md has SHA-256 197b14fd7eed8178f1abae725fe168f9bb8e3da64ccef79ba744867740a4640f and corrects last-open clearance, Contract 11 NextResult v9 envelope semantics, plan_changed timing, and distinct resolution authority"
+
+step S4:
+  evidence EV3:
+    "Candidate 1.1 requires a plan_changed mutation to be separately authorized and persisted before resolution, while Section 7 forbids removal or remove-and-add rename of the referenced Task until the request is resolved and Section 4 says resolution never performs the plan mutation"
+
+step S5:
+  decision D1 based_on EV1, EV3:
+    "There is a high-severity contradiction for a legitimate plan change that removes or remove-and-add renames the referenced Task because neither change-first nor resolve-first ordering is permitted"
+
+step S6:
+  evidence EV4:
+    "The open record stores no creation-time plan digest, semantic basis, changed-field identity, or change receipt, and the resolved record adds only the current pre-resolution source digest while Candidate 1.1 requires proof that a separately governed plan mutation already exists"
+
+step S7:
+  decision D2 based_on EV4:
+    "There is a high-severity evidence gap because the declared source model cannot distinguish a persisted relevant plan change from an unchanged or unrelated current plan; the later contract cannot derive the required fact from the selected fields alone"
+
+step S8:
+  evidence EV5:
+    "Candidate 1.1 permits canonical advance to remove resolved records with their removed Task but does not explicitly define whether an ordinary governed Task removal must retain a historical reference, remove the resolved record atomically, or fail"
+
+step S9:
+  decision D3 based_on EV5:
+    "The ordinary post-resolution Task-removal behavior is a medium-severity unresolved lifecycle unknown and must not be silently inferred by the later contract"
+
+step S10:
+  evidence EV6:
+    "Current Contract 10 uses NextResult v8 and current governance derives affected scopes from actual candidate changes, while Candidate 1.1 keeps Contract 10 unchanged, uses one v9 envelope only under proposed Contract 11, and introduces a separate Plan Review authority projection"
+
+step S11:
+  decision D4 based_on EV2, EV6:
+    "The former Candidate 1.0 multiple-open, Next identity, and resolution-authority contradictions are resolved without conflicting with current authorities"
+
+step S12:
+  evidence EV7:
+    "Candidate 1.1 retains advisory-only behavior, independent assurance and acceptance axes, no authority grant from creation or resolution, explicit history protection, untrusted locator closure, and unchanged external-write and implementation boundaries"
+
+step S13:
+  decision D5 based_on EV1, EV7:
+    "No optional or future feature became an acceptance blocker and the overall Issue 21 scope is otherwise preserved"
+
+step S14:
+  decision D6 based_on P1, PR1, EV1, EV2, D1, D2, D3, D4, D5:
+    "The independent review is completed and reviewable, but Candidate 1.1 should return to Step 1 for revision because one ordering contradiction and one material evidence gap prevent acceptance"
+
+step S15:
+  pending PD1:
+    "The owner must choose REVISE, REREVIEW, or ACCEPT at Step 4; implementation, specification, ADR, plan mutation, commit, push, release, publication, Issue mutation, and plan advance remain unauthorized"

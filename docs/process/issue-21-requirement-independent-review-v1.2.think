@@ -1,0 +1,63 @@
+framework DecisionAudit
+
+domain Issue21Candidate12IndependentReview:
+  description "Independent review of Issue 21 Candidate 1.2"
+
+problem P1:
+  "Is exact Candidate 1.2 internally consistent with Issue 21, current authorities, and its proposed review input?"
+
+step S1:
+  premise PR1:
+    "The owner selected REVIEW_THEN_DECIDE, so the candidate remains unchanged and the completed review returns to lifecycle Step 4"
+
+step S2:
+  evidence EV1:
+    "Candidate 1.2 has SHA-256 94632d3c85cf3400a920ff56cb59064b8ca378fc5e11c3d97c9bc6c031e28c38 and keeps current Grammar 9, Contract 10, NextResult v8, and authority meanings unchanged"
+
+step S3:
+  evidence EV2:
+    "A plan_changed candidate now proves a non-Plan-Review plan-content delta with unequal basis digests, keeps relevance as an actor assertion, and independently requires Plan Review and existing plan-mutation decisions before one write"
+
+step S4:
+  decision D1 based_on EV2:
+    "IR-21-101 and IR-21-102 are resolved because Task removal or rename can compose atomically with resolution and the candidate distinguishes machine-proved plan change from asserted relevance"
+
+step S5:
+  evidence EV3:
+    "Resolved Task references are explicitly historical and valid after ordinary removal, while open references cannot become historical without atomic plan_changed resolution"
+
+step S6:
+  decision D2 based_on EV3:
+    "IR-21-103 is resolved and no ordinary-removal lifecycle contradiction remains"
+
+step S7:
+  evidence EV4:
+    "Candidate 1.2 requires plan_changed to contain a basis change but also makes an exact repeated resolution an idempotent no-op; it does not state whether replay short-circuits before candidate construction or rechecks stored evidence"
+
+step S8:
+  decision D3 based_on EV4:
+    "Exact plan_changed replay is a medium-severity contract unknown, not a requirement contradiction, because a no-op need not construct a new resolution candidate and exact replay behavior is explicitly deferred"
+
+step S9:
+  evidence EV5:
+    "Canonical advance may remove declarations for a Task whose requests are all resolved, while a candidate may atomically resolve an open request as it advances away the Task; the requirement does not state whether removal eligibility uses pre-change status or may include the newly resolved record"
+
+step S10:
+  decision D4 based_on EV5:
+    "Newly resolved record retention during canonical advance is a medium-severity contract unknown; the contract must retain the record if its final plan_changed evidence would otherwise be absent and must not silently choose a different lifecycle meaning"
+
+step S11:
+  evidence EV6:
+    "Candidate 1.2 preserves advisory-only behavior, separate authorities, assurance and acceptance independence, deterministic safe writes, untrusted locator closure, compatibility, and all stated out-of-scope effects"
+
+step S12:
+  decision D5 based_on EV1, EV6:
+    "No current authority conflict, optional-scope expansion, external namespace collision, or unauthorized downstream effect was found"
+
+step S13:
+  decision D6 based_on P1, PR1, D1, D2, D3, D4, D5:
+    "The independent review is completed with no contradiction; Candidate 1.2 may proceed to Step 4 and acceptance is supportable with the two exact contract unknowns retained"
+
+step S14:
+  pending PD1:
+    "The owner must choose REVISE, REREVIEW, or ACCEPT, and acceptance would authorize only the exact requirement bytes, not specification, implementation, repository synchronization, Issue mutation, release, or plan advance"

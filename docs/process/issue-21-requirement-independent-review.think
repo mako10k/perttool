@@ -1,0 +1,71 @@
+framework DecisionAudit
+
+domain Issue21RequirementIndependentReview:
+  description "Independent review of Plan Review Request Requirements Candidate 1.0"
+
+problem P1:
+  "Is exact candidate a43466a2922d10795e0c6696e2eb1336d2e7ac0005a519ce2604c691eb94e132 internally consistent with Issue 21 and the current Grammar 9, CLI Contract 10, governance, assurance, acceptance, recommendation, and history authorities?"
+
+step S1:
+  premise PR1:
+    "The selected REVIEW_THEN_DECIDE route in docs/process/issue-21-requirement-review-input.md requires review of the unchanged candidate and review input, classification of every material result, and return to a second owner decision without editing or accepting the requirement"
+
+step S2:
+  evidence EV1:
+    "Product-source GitHub Issue 21 requests a persistent machine-readable advisory before new downstream work, keeps task eligibility and start authority unchanged, separates request creation and resolution from plan-change authority, leaves exact DSL and schema to design, and does not authorize implementation"
+
+step S3:
+  evidence EV2:
+    "Exact candidate docs/requirements/plan-review-request-v1.md identifies Grammar 9 and CLI Contract 10 as the current authority, proposes additive Grammar 10 and Contract 11, requires explicit request identity and time, makes review advisory-only, preserves existing governance and assurance boundaries, and excludes implementation and publication"
+
+step S4:
+  evidence EV3:
+    "Candidate docs/requirements/plan-review-request-v1.md section 4 says resolving a request clears the project-wide review-required advisory, while section 5 derives review_required whenever at least one request remains open and the acceptance criteria require multiple-open-request coverage"
+
+step S5:
+  decision D1 based_on EV3:
+    "There is a high-severity internal contradiction from candidate authoring: resolving one request cannot clear the project-wide advisory when another request remains open"
+
+step S6:
+  evidence EV4:
+    "Candidate docs/requirements/plan-review-request-v1.md sections 2 and 6 propose replacement Perttool.NextResult.v9 for Contract 11, while section 9 says Grammar 1 through 9 inputs retain their exact current result identities; docs/specs/json-schema.md identifies the current result as Perttool.NextResult.v8"
+
+step S7:
+  decision D2 based_on EV4:
+    "There is a high-severity compatibility contradiction from candidate authoring unless the requirement explicitly chooses either version-dispatched v8 results for legacy inputs or v9 results with preserved legacy semantics but a changed envelope identity"
+
+step S8:
+  evidence EV5:
+    "Candidate docs/requirements/plan-review-request-v1.md permits plan_changed resolution without performing or authorizing a plan mutation, records only the reviewed pre-resolution source digest, and does not define whether plan_changed means a review decision to change or evidence that a separately governed change already occurred"
+
+step S9:
+  decision D3 based_on EV5:
+    "The meaning and evidence binding of plan_changed is a medium-severity unresolved unknown for the later contract; it is not established as a contradiction because the candidate can define it as a review conclusion rather than a completed mutation"
+
+step S10:
+  evidence EV6:
+    "Current docs/specs/governance-authority.md derives affected goal and DAG scopes from candidate changes and treats owner assertions as candidate-bound caller assertions, while Candidate 1.0 proposes operation-specific resolution authority without classifying the request resolution as a DAG mutation"
+
+step S11:
+  decision D4 based_on EV6:
+    "The exact result shape and diagnostic behavior for operation-specific resolution authority is a medium-severity contract unknown, not a current-authority contradiction, because the candidate explicitly separates it from existing DAG mutation authority"
+
+step S12:
+  evidence EV7:
+    "Issue 21 treats severity, hard blocking, automatic observation capture, and external integration as future or non-goals, and Candidate 1.0 keeps them out of scope in docs/requirements/plan-review-request-v1.md"
+
+step S13:
+  decision D5 based_on EV7:
+    "No optional or future feature has been converted into an acceptance blocker, and external synchronization, editor or MCP writes, release, publication, Issue mutation, and plan advance remain out of scope"
+
+step S14:
+  evidence EV8:
+    "Candidate docs/requirements/plan-review-request-v1.md says creation does not grant plan authority, resolution does not perform a plan change, open requests cannot be orphaned, resolved advance removal is explicit and history-protected, and free text or locators cannot trigger external access"
+
+step S15:
+  decision D6 based_on P1, PR1, EV1, EV2, D1, D2, D3, D4, D5, EV8:
+    "The independent review is completed and reviewable, with two high-severity contradictions requiring an owner decision and two medium-severity unresolved contract unknowns; the unchanged candidate proceeds to second owner review under REVIEW_THEN_DECIDE, but revision is recommended before acceptance"
+
+step S16:
+  pending PD1:
+    "Candidate edits, acceptance, specification, ADR, plan mutation, implementation, commit, push, PR, release, publication, Issue mutation, dist-tag changes, and runtime activation remain unauthorized"

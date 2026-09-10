@@ -1,0 +1,124 @@
+# Review candidate only. Registration under repository plans requires a separate owner decision.
+project PLAN_REVIEW_021:
+  version 9
+  title "Persistent Plan Review Request"
+  description "Implement the accepted Issue #21 Plan Review Request contract as one future Grammar 10 and CLI Contract 11 boundary. Add persistent advisory review records, a closed semantic plan basis, separate resolution authority, atomic plan-changed composition, deterministic replay, Task-removal and advance retention, public commands and schemas, and end-to-end acceptance while preserving current Grammar 9, Contract 10, recommendation, start authority, governance, assurance, milestone acceptance, and safe-write meanings until atomic activation. Release selection, publication, remote writes, Issue mutation, editor or MCP mutation, external synchronization, automatic request creation, and plan advance remain separate."
+  as_of 2026-09-10
+  duration_unit point
+  finish PLAN_REVIEW_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone PLAN_REVIEW_STARTED:
+  title "Plan Review implementation selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may proceed concurrently after the shared source Core is accepted."
+  capacity 2
+
+resource SOURCE_SURFACE:
+  title "Grammar and semantic basis ownership"
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Mutation and authority ownership"
+  capacity 1
+
+resource HISTORY_SURFACE:
+  title "Task lifecycle and advance-history ownership"
+  capacity 1
+
+resource PUBLIC_SURFACE:
+  title "Contract 11 command and result ownership"
+  capacity 1
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  capacity 1
+
+milestone PLAN_REVIEW_SOURCE_READY:
+  title "Plan Review source and semantic basis ready"
+
+milestone PLAN_REVIEW_MUTATION_READY:
+  title "Plan Review mutation and authority ready"
+
+milestone PLAN_REVIEW_LIFECYCLE_READY:
+  title "Plan Review lifecycle and history behavior ready"
+
+milestone PLAN_REVIEW_CORE_READY:
+  title "Plan Review Core behaviors integrated"
+
+milestone PLAN_REVIEW_PUBLIC_READY:
+  title "Grammar 10 and Contract 11 public boundary ready"
+
+milestone PLAN_REVIEW_ACCEPTED:
+  title "Plan Review Request accepted end to end"
+
+task PLAN_REVIEW_SOURCE_CORE PLAN_REVIEW_STARTED -> PLAN_REVIEW_SOURCE_READY:
+  title "Implement Grammar 10 source and Plan Review basis Core"
+  description "Implement the identity-checked Grammar 10 declaration, parser, validation, source-preserving formatter, current and historical Task references, exact field ordering and limits, PlanReviewBasis v1 canonical projection and digests, and advisory project projection without changing current public surfaces. Cover the accepted source, basis, malformed-input, determinism, and legacy-input cases."
+  duration 8p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+    REVIEWERS 1
+  source "Issue #21; Plan Review Request Contract Normative 1.0 sections 2-4"
+
+task PLAN_REVIEW_MUTATION_CORE PLAN_REVIEW_SOURCE_READY -> PLAN_REVIEW_MUTATION_READY:
+  title "Implement Plan Review mutation and authority composition"
+  description "Implement preview-first create and resolve, distinct PlanReviewAuthorityDecision v1, owner and delegate evaluation, candidate-bound confirmation, plan-retained equality, atomic plan-changed batch composition, normalized change-request digest replay, independent existing guards, one final candidate, safe persistence, and stable PTREV failures."
+  duration 13p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MUTATION_SURFACE 1
+  source "Issue #21; Plan Review Request Contract Normative 1.0 sections 5-8"
+
+task PLAN_REVIEW_LIFECYCLE_HISTORY PLAN_REVIEW_SOURCE_READY -> PLAN_REVIEW_LIFECYCLE_READY:
+  title "Implement Task-removal, advance, and history retention"
+  description "Block orphaning open references, atomically resolve Task removal or rename as plan-changed, preserve resolved historical references under ordinary mutations, remove only input-pre-resolved records during canonical advance, retain same-candidate newly resolved records, expose removed and blocking IDs, and compose exact destructive-history proof without adding an ordinary delete command or external receipt."
+  duration 8p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    HISTORY_SURFACE 1
+  source "Issue #21; Plan Review Request Contract Normative 1.0 section 9"
+
+gate PLAN_REVIEW_MUTATION_JOIN PLAN_REVIEW_MUTATION_READY -> PLAN_REVIEW_CORE_READY:
+  reason "Mutation and authority behavior accepted"
+
+gate PLAN_REVIEW_LIFECYCLE_JOIN PLAN_REVIEW_LIFECYCLE_READY -> PLAN_REVIEW_CORE_READY:
+  reason "Lifecycle and history behavior accepted"
+
+task PLAN_REVIEW_PUBLIC_CONTRACT PLAN_REVIEW_CORE_READY -> PLAN_REVIEW_PUBLIC_READY:
+  title "Activate Grammar 10 and CLI Contract 11 atomically"
+  description "Integrate four commands, create and resolve request identities, PlanReviewResult v1, PlanReviewMutationResult v1, NextResult v9, two added active root schemas, closed nested schemas, 75-command registry, migration, diagnostics, text and JSON parity, Help, Guide, exports, package inventory, and unchanged Grammar 1 through 9 meanings as one public boundary. Freeze exact export counts from the completed implementation rather than estimating them."
+  duration 13p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 2
+    PUBLIC_SURFACE 1
+    REVIEWERS 1
+  source "Issue #21; Plan Review Request Contract Normative 1.0 sections 7 and 10-12"
+
+task PLAN_REVIEW_ACCEPTANCE PLAN_REVIEW_PUBLIC_READY -> PLAN_REVIEW_ACCEPTED:
+  title "Accept the complete Plan Review Request behavior"
+  description "Trace every closed contract case through Core, CLI, result schemas, text, JSON, Help, Guide, migration, Task removal, advance history, output race, safe writes, temporary link, isolated package, current Contract 10 compatibility, and complete repository gates. Record that release, publication, remote writes, Issue mutation, editor or MCP mutation, and plan advance remain separate."
+  duration 8p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SOURCE_SURFACE 1
+    MUTATION_SURFACE 1
+    HISTORY_SURFACE 1
+    PUBLIC_SURFACE 1
+  source "Issue #21; Plan Review Request Contract Normative 1.0 section 13"
