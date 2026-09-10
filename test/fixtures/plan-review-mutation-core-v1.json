@@ -1,0 +1,19 @@
+{
+  "contract": "Plan Review Mutation Core v1",
+  "cases": [
+    { "id": "PRMC-001", "depends_on": [], "purpose": "closed request normalization" },
+    { "id": "PRMC-002", "depends_on": ["PRMC-001"], "purpose": "create and exact create replay" },
+    { "id": "PRMC-003", "depends_on": ["PRMC-002"], "purpose": "conflicting create and deterministic insertion" },
+    { "id": "PRMC-004", "depends_on": ["PRMC-002"], "purpose": "direct owner and delegate resolution" },
+    { "id": "PRMC-005", "depends_on": ["PRMC-004"], "purpose": "confirmed owner and denied actor" },
+    { "id": "PRMC-006", "depends_on": ["PRMC-002"], "purpose": "stale source binding" },
+    { "id": "PRMC-007", "depends_on": ["PRMC-004"], "purpose": "retained basis equality" },
+    { "id": "PRMC-008", "depends_on": ["PRMC-005", "PRMC-007"], "purpose": "atomic changed basis composition" },
+    { "id": "PRMC-009", "depends_on": ["PRMC-008"], "purpose": "independent composed guard failure" },
+    { "id": "PRMC-010", "depends_on": ["PRMC-008"], "purpose": "changed basis inequality requirement" },
+    { "id": "PRMC-011", "depends_on": ["PRMC-008"], "purpose": "exact changed replay and digest mismatch" },
+    { "id": "PRMC-012", "depends_on": ["PRMC-008"], "purpose": "complete candidate source and authority bindings" },
+    { "id": "PRMC-013", "depends_on": ["PRMC-012"], "purpose": "validated optimistic safe persistence" },
+    { "id": "PRMC-014", "depends_on": ["PRMC-001"], "purpose": "unchanged public surfaces" }
+  ]
+}

@@ -1,0 +1,77 @@
+framework DecisionAudit
+
+domain PlanReviewMutationCore:
+  description "Implementation decision for PLAN_REVIEW_MUTATION_CORE"
+
+problem P1:
+  "How should private Grammar 10 Plan Review create and resolve mutation compose existing plan mutation guards while preserving one candidate and the unchanged public surface?"
+
+step S1:
+  premise PR1:
+    "The accepted contract requires closed preview-first create and resolve requests, exact replay behavior, a distinct Plan Review authority decision, semantic basis checks, one final candidate, and safe persistence"
+
+step S2:
+  evidence EV1:
+    "The accepted source core parses and formats identity-checked Grammar 10 requests, projects the closed Plan Review basis and review state, and keeps all of those APIs private"
+    resource:
+      file "src/plan-review/source.ts"
+      label "Grammar 10 source boundary"
+    resource:
+      file "src/plan-review/basis.ts"
+      label "Semantic basis boundary"
+
+step S3:
+  evidence EV2:
+    "The source lexical layer masks every Plan Review declaration with byte-position-preserving comments; lowering the two-digit Grammar 10 version to the one-digit Grammar 9 version creates one known offset delta for all later edits"
+    resource:
+      file "src/plan-review/source-lexical.ts"
+      label "Plan Review masking"
+    resource:
+      file "src/temporal-schedule/source-lexical.ts"
+      label "Position-preserving masking primitive"
+
+step S4:
+  evidence EV3:
+    "The current Contract 10 batch planner already composes the active mutation, governance, assurance, milestone-acceptance, and validation behavior and returns normalized edits plus one digest-bound candidate"
+    resource:
+      file "src/application/contract10-runtime.ts"
+      label "Current batch planner"
+
+step S5:
+  evidence EV4:
+    "The Node Host already exposes optimistic-locking validated create and replace operations through the SafePersistencePort"
+    resource:
+      file "src/ports/node-host.ts"
+      label "Safe persistence boundary"
+
+step S6:
+  decision D1 based_on P1, PR1, EV1, EV2, EV3:
+    "Implement a private Plan Review planner that normalizes closed create and resolve requests, handles exact replays before candidate construction, masks Review declarations for the injected Grammar 9 batch planner, and maps its edits back across the one-character version delta"
+
+step S7:
+  decision D2 based_on PR1, EV1, D1:
+    "Create inserts one canonical request declaration; plan_retained appends resolution evidence only when before and final semantic basis digests are equal; plan_changed requires the composed batch to succeed and requires unequal before and final basis digests"
+
+step S8:
+  decision D3 based_on PR1, EV3, D1, D2:
+    "For plan_changed, apply the existing batch edits and the non-overlapping Review resolution edit to the original source, validate the complete Grammar 10 candidate once, preserve the existing composed result and diagnostics, and fail with PTREV-109 when its independent guards do not succeed"
+
+step S9:
+  decision D4 based_on PR1, EV1, D2, D3:
+    "Evaluate the distinct PlanReviewAuthorityDecision v1 against the original effective DAG owner and delegates, bind it to source and complete candidate digests, and accept a non-direct actor only when the exact owner is in the fresh request assertions"
+
+step S10:
+  decision D5 based_on PR1, EV1, D1:
+    "Normalize the closed plan_changed batch request with RFC 8785 JSON and store its SHA-256 digest; an already resolved request compares normalized resolution fields and digest and returns before applying any later source mutation"
+
+step S11:
+  decision D6 based_on PR1, EV4, D3, D4:
+    "Expose private persistence helpers that accept only successful authorized digest-bound candidates, revalidate Grammar 10 through SafePersistencePort, and retain output and in-place optimistic-lock behavior"
+
+step S12:
+  decision D7 based_on D1, D2, D3, D4, D5, D6:
+    "Focused acceptance covers closed input normalization, create replay and conflict, direct and confirmed authority, retained and changed basis rules, composed-guard failure, changed replay mismatch, one-candidate edit composition, stale expected digest, and unchanged public exports"
+
+step S13:
+  pending PD1:
+    "Public CLI commands, schemas, Next integration, lifecycle and advance behavior, plan task status, commit, push, release, and Issue mutation remain separate"
