@@ -1,3 +1,4 @@
+// R: Format Plan Review declarations while preserving the surrounding source.
 import { canonicalizeEventDateTimeSourceToken } from "../model/calendar.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import { formatValidatedSource } from "../mutation/validated-source.js";

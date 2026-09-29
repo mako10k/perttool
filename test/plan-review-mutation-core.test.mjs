@@ -142,6 +142,12 @@ test("PRMC-003 rejects a conflicting create and inserts requests by ID", () => {
   assert.equal(second.ok, true, JSON.stringify(second.diagnostics));
   assert.ok(second.updatedText.indexOf("plan_review_request PRR_001") <
     second.updatedText.indexOf("plan_review_request PRR_002"));
+  const punctuated = planPlanReviewCreate(source(), createInput({ requestId: "PRR-a" }));
+  const ordered = planPlanReviewCreate(punctuated.updatedText,
+    createInput({ requestId: "PRR_A" }));
+  assert.equal(ordered.ok, true, JSON.stringify(ordered.diagnostics));
+  assert.ok(ordered.updatedText.indexOf("plan_review_request PRR-a") <
+    ordered.updatedText.indexOf("plan_review_request PRR_A"));
   const conflict = planPlanReviewCreate(second.updatedText, createInput({ reason: "Different" }));
   assert.equal(conflict.ok, false);
   assert.deepEqual(codes(conflict), ["PTREV-105"]);

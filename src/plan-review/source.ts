@@ -1,3 +1,4 @@
+// R: Parse and validate the private Grammar 10 Plan Review source model.
 import { milestoneAcceptanceBaseText } from "../milestone-acceptance/source.js";
 import { canonicalizeEventDateTimeSourceToken } from "../model/calendar.js";
 import {

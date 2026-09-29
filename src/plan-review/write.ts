@@ -1,3 +1,4 @@
+// R: Persist a validated Plan Review candidate through the safe-write port.
 import type { SafePersistencePort } from "../ports/node-host.js";
 import { SafeWriteConflictError } from "../io/safe-write.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";

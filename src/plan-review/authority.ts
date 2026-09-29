@@ -1,3 +1,4 @@
+// R: Evaluate Plan Review resolution authority from the effective DAG owner and delegates.
 import { compareStableStrings } from "../model/diagnostics.js";
 import type { GovernanceSourceSnapshot } from "../governance/source.js";
 import type { PlanReviewAuthorityDecisionV1 } from "./mutation-types.js";

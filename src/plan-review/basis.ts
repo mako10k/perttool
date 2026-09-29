@@ -1,3 +1,4 @@
+// R: Project and digest the closed semantic planning basis for Plan Review.
 import {
   canonicalizeEventDateTimeSourceToken,
   type DeclaredCalendarValue,

@@ -1,3 +1,4 @@
+// R: Define private Plan Review source and projection contracts.
 import type { DiagnosticCounts, SourceSpan } from "../model/diagnostics.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import type { PlanningPoolSourceModel } from "../planning-pool/source-types.js";

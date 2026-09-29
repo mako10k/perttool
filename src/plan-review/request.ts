@@ -1,3 +1,4 @@
+// R: Normalize and validate closed Plan Review mutation requests.
 import { canonicalizeEventDateTimeSourceToken } from "../model/calendar.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";

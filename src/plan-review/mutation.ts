@@ -1,6 +1,8 @@
+// R: Plan one validated Plan Review create or resolution candidate.
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import { governanceMetadataFromDocument } from "../governance/source.js";
 import {
+  compareStableStrings,
   limitDiagnostics,
   normalizeMaxDiagnostics,
   sortDiagnostics,
@@ -191,7 +193,7 @@ function serializedOpen(request: NormalizedPlanReviewCreateRequestV1, eol: strin
 
 function createInsertion(text: string, requestId: string, declaration: string): TextEdit {
   const blocks = scanPlanReviewDeclarationBlocks(text);
-  const nextRequest = blocks.find(({ id }) => id.localeCompare(requestId, "en") > 0);
+  const nextRequest = blocks.find(({ id }) => compareStableStrings(id, requestId) > 0);
   const firstLater = splitTemporalSourceLines(text).find((line) =>
     /^(?:task_relation|plan_seal|task_outcome|assurance_receipt|milestone_criterion_set|milestone_acceptance_receipt|work_event)\b/u.test(line.text)
   );

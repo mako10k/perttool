@@ -1,3 +1,4 @@
+// R: Derive the advisory Plan Review state from source requests.
 import type {
   PlanReviewProjectionV1,
   PlanReviewSourceModel,

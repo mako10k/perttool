@@ -1,3 +1,4 @@
+// R: Define the private Plan Review mutation request, result, and persistence contracts.
 import type { Diagnostic } from "../model/diagnostics.js";
 import type { BatchMutation } from "../mutation/types.js";
 import type { TextEdit } from "../mutation/text-edits.js";

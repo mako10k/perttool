@@ -1,3 +1,4 @@
+// R: Locate Plan Review source declarations and construct the legacy parser view.
 import type { SourceSpan } from "../model/diagnostics.js";
 import {
   maskSourceDeclarationBlocks,

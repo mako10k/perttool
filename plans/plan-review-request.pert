@@ -60,7 +60,7 @@ task PLAN_REVIEW_SOURCE_CORE PLAN_REVIEW_STARTED -> PLAN_REVIEW_SOURCE_READY:
   title "Implement Grammar 10 source and Plan Review basis Core"
   description "Implement the identity-checked Grammar 10 declaration, parser, validation, source-preserving formatter, current and historical Task references, exact field ordering and limits, PlanReviewBasis v1 canonical projection and digests, and advisory project projection without changing current public surfaces. Cover the accepted source, basis, malformed-input, determinism, and legacy-input cases."
   duration 8p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -72,7 +72,7 @@ task PLAN_REVIEW_MUTATION_CORE PLAN_REVIEW_SOURCE_READY -> PLAN_REVIEW_MUTATION_
   title "Implement Plan Review mutation and authority composition"
   description "Implement preview-first create and resolve, distinct PlanReviewAuthorityDecision v1, owner and delegate evaluation, candidate-bound confirmation, plan-retained equality, atomic plan-changed batch composition, normalized change-request digest replay, independent existing guards, one final candidate, safe persistence, and stable PTREV failures."
   duration 13p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
