@@ -1,3 +1,4 @@
+// R: Project Planning Pool changes and their destructive source ownership.
 import type { TextEdit } from "../mutation/text-edits.js";
 import {
   auditPlanningReshape,
@@ -32,7 +33,7 @@ export interface PlanningOwnershipTransfer {
 
 export interface PlanningDestructiveRecord {
   readonly ownerClass: "temporary_draft" | "canonical";
-  readonly entityKind: "event" | "activity" | "work" | "window" | "work_order" | "milestone" | "task";
+  readonly entityKind: "event" | "activity" | "work" | "window" | "work_order" | "milestone" | "task" | "plan_review_request";
   readonly qualifiedId: string | null;
   readonly startOffset: number;
   readonly endOffset: number;

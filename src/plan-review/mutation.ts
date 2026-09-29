@@ -16,6 +16,7 @@ import {
 } from "../mutation/text-edits.js";
 import { splitTemporalSourceLines } from "../temporal-schedule/source-lexical.js";
 import { evaluatePlanReviewAuthority } from "./authority.js";
+import { assessPlanReviewTaskLifecycle } from "./lifecycle.js";
 import { digestPlanReviewBasis, projectPlanReviewBasis } from "./basis.js";
 import type {
   NormalizedPlanReviewCreateRequestV1,
@@ -52,7 +53,7 @@ const emptyBasis: PlanReviewMutationPlanBasis = Object.freeze({
 });
 
 function diagnostic(
-  code: "PTREV-104" | "PTREV-105" | "PTREV-106" | "PTREV-107" | "PTREV-109",
+  code: "PTREV-104" | "PTREV-105" | "PTREV-106" | "PTREV-107" | "PTREV-108" | "PTREV-109",
   message: string,
   data: Readonly<Record<string, unknown>> = {},
 ): Diagnostic {
@@ -569,6 +570,15 @@ function finalizeResolution(
     "Plan Review complete resolution",
   );
   const candidate = applyTextEdits(context.text, edits);
+  const lifecycle = assessPlanReviewTaskLifecycle(context.text, candidate, "ordinary");
+  if (!lifecycle.ok) {
+    return failure("resolve", context.text, context.model.documentId,
+      lifecycle.diagnostics, context.options, {
+        requestBefore: context.stored,
+        projectionBefore: context.projectionBefore,
+        composedMutation: composition.composed,
+      });
+  }
   const after = parsePlanReviewSource(
     candidate,
     PLAN_REVIEW_SOURCE_CAPABILITY,
@@ -632,6 +642,24 @@ export function planPlanReviewResolve(
   if ("operation" in prepared) return prepared;
   const composition = composeResolutionPlan(prepared, dependencies);
   if ("operation" in composition) return composition;
+  if (prepared.request.outcome === "plan_changed") {
+    const preliminary = assessPlanReviewTaskLifecycle(
+      text, composition.planCandidate, "ordinary",
+    );
+    const otherOpen = preliminary.blockingRequestIds
+      .filter((id) => id !== prepared.stored.id);
+    if (otherOpen.length > 0) return failure(
+      "resolve", text, prepared.model.documentId, [diagnostic(
+        "PTREV-108",
+        `Task removal would orphan Plan Review request(s): ${otherOpen.join(", ")}`,
+        { request_ids: Object.freeze(otherOpen) },
+      )], options, {
+        requestBefore: prepared.stored,
+        projectionBefore: prepared.projectionBefore,
+        composedMutation: composition.composed,
+      },
+    );
+  }
   const basis = evaluateResolutionBasis(prepared, composition);
   if ("operation" in basis) return basis;
   return finalizeResolution(prepared, composition, basis);

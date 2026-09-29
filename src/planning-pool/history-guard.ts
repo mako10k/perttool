@@ -1,3 +1,4 @@
+// R: Compare canonical destructive source ranges with exact Git baseline bytes.
 import type { AdvanceHistoryBaselineCapture } from "../history/git-probe.js";
 import type { PlanningDestructiveRecord } from "./projection.js";
 import type { TextEdit } from "../mutation/text-edits.js";
@@ -18,14 +19,17 @@ export interface PlanningHistoryGuard {
   readonly forceRequested: boolean;
 }
 
-interface ComparableBlock {
+export interface CanonicalComparableBlock {
   readonly kind: string;
   readonly id: string | null;
   readonly startOffset: number;
   readonly endOffset: number;
 }
 
-function blocks(text: string): readonly ComparableBlock[] {
+function blocks(
+  text: string,
+  additionalBlocks: (source: string) => readonly CanonicalComparableBlock[] = () => [],
+): readonly CanonicalComparableBlock[] {
   return Object.freeze([
     ...scanPlanningDeclarationBlocks(text).map((block) => Object.freeze({
       kind: block.kind,
@@ -41,6 +45,7 @@ function blocks(text: string): readonly ComparableBlock[] {
         startOffset: block.span.start.offset,
         endOffset: block.span.end.offset,
       })),
+    ...additionalBlocks(text),
   ]);
 }
 
@@ -76,22 +81,23 @@ function recordKey(record: PlanningDestructiveRecord): string {
   return `${record.entityKind}\u0000${local ?? ""}`;
 }
 
-function blockKey(block: ComparableBlock): string {
+function blockKey(block: CanonicalComparableBlock): string {
   return `${block.kind}\u0000${block.id ?? ""}`;
 }
 
 function selectedBlock(
   text: string,
   record: PlanningDestructiveRecord,
-): ComparableBlock | null {
-  const matches = blocks(text).filter((block) => blockKey(block) === recordKey(record));
+  additionalBlocks: (source: string) => readonly CanonicalComparableBlock[],
+): CanonicalComparableBlock | null {
+  const matches = blocks(text, additionalBlocks).filter((block) => blockKey(block) === recordKey(record));
   return matches.length === 1 ? matches[0]! : null;
 }
 
 function decoded(value: Uint8Array | null): string | null {
   if (value === null) return null;
   try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(value);
+    return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(value);
   } catch {
     return null;
   }
@@ -145,10 +151,11 @@ function recordMatchesBaseline(
   head: string,
   index: string,
   record: PlanningDestructiveRecord,
+  additionalBlocks: (source: string) => readonly CanonicalComparableBlock[],
 ): boolean {
-  const currentBlock = selectedBlock(currentText, record);
-  const headBlock = selectedBlock(head, record);
-  const indexBlock = selectedBlock(index, record);
+  const currentBlock = selectedBlock(currentText, record, additionalBlocks);
+  const headBlock = selectedBlock(head, record, additionalBlocks);
+  const indexBlock = selectedBlock(index, record, additionalBlocks);
   if (currentBlock === null || headBlock === null || indexBlock === null) return false;
   if (record.startOffset !== currentBlock.startOffset ||
       record.endOffset !== currentBlock.endOffset) return false;
@@ -163,9 +170,10 @@ function overlappingRecords(
   head: string,
   index: string,
   records: readonly PlanningDestructiveRecord[],
+  additionalBlocks: (source: string) => readonly CanonicalComparableBlock[],
 ): readonly string[] {
   return records
-    .filter((record) => !recordMatchesBaseline(currentText, head, index, record))
+    .filter((record) => !recordMatchesBaseline(currentText, head, index, record, additionalBlocks))
     .map(recordIdentity);
 }
 
@@ -181,6 +189,7 @@ export function assessPlanningHistoryBaseline(
   recordsInput: readonly PlanningDestructiveRecord[],
   baseline: AdvanceHistoryBaselineCapture,
   forceRequested = false,
+  additionalBlocks: (source: string) => readonly CanonicalComparableBlock[] = () => [],
 ): PlanningHistoryGuard {
   const records = recordsInput.filter(({ ownerClass }) => ownerClass === "canonical");
   if (records.length === 0) {
@@ -197,7 +206,7 @@ export function assessPlanningHistoryBaseline(
   if (capturedCurrent !== currentText || head === null || index === null) {
     return blockedOrForced("baseline_invalid", records, baseline, forceRequested);
   }
-  const overlapping = overlappingRecords(currentText, head, index, records);
+  const overlapping = overlappingRecords(currentText, head, index, records, additionalBlocks);
   if (overlapping.length > 0) {
     return blockedOrForced(
       "destructive_overlap", records, baseline, forceRequested, overlapping,

@@ -104,7 +104,8 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 90);
+  // The private lifecycle and advance modules add two source files to this retained baseline.
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 90 + 2);
 });
 
 test("relocated services retain exact compatibility facades", async () => {

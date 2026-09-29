@@ -83,7 +83,7 @@ task PLAN_REVIEW_LIFECYCLE_HISTORY PLAN_REVIEW_SOURCE_READY -> PLAN_REVIEW_LIFEC
   title "Implement Task-removal, advance, and history retention"
   description "Block orphaning open references, atomically resolve Task removal or rename as plan-changed, preserve resolved historical references under ordinary mutations, remove only input-pre-resolved records during canonical advance, retain same-candidate newly resolved records, expose removed and blocking IDs, and compose exact destructive-history proof without adding an ordinary delete command or external receipt."
   duration 8p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
