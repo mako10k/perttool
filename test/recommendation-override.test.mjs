@@ -11,6 +11,7 @@ import {
   selectNextTasks,
   validateOverride,
 } from "../dist/index.js";
+import { selectNextTasks as selectContract10NextTasks } from "../dist/application/contract10-runtime.js";
 import {
   evaluateRecommendationExpression,
 } from "../dist/recommendation/explanation-values.js";
@@ -18,9 +19,9 @@ import {
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const fixtureDirectory = path.join(testDirectory, "fixtures/recommendation");
 
-async function sourceFor(fixture) {
+async function sourceFor(fixture, legacy = false) {
   const source = await readFile(path.join(fixtureDirectory, fixture), "utf8");
-  const result = selectNextTasks(source);
+  const result = (legacy ? selectContract10NextTasks : selectNextTasks)(source);
   assert.equal(result.ok, true);
   assert.ok(result.recommendation);
   return result;
@@ -28,7 +29,7 @@ async function sourceFor(fixture) {
 
 function requestFor(source, selectedTaskIds, overrides = {}) {
   return {
-    sourceSchemaVersion: "Perttool.NextResult.v8",
+    sourceSchemaVersion: source.schemaVersion,
     sourceDigest: source.recommendation.sourceDigest,
     sourceResultDecisionId: source.recommendation.resultDecision.id,
     selectedTaskIds,
@@ -59,7 +60,7 @@ function diagnosticCode(result) {
 }
 
 test("OVR-001 and OVR-006 produce a deterministic allowed replacement artifact", async () => {
-  const source = await sourceFor("rec-001-critical-priority.pert");
+  const source = await sourceFor("rec-001-critical-priority.pert", true);
   const sourceBefore = structuredClone(source);
   const request = requestFor(source, ["OPTIONAL_POLISH"]);
   const first = validateOverride(source, request);

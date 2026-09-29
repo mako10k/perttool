@@ -151,10 +151,17 @@ test("all plan assurance cases retain executable cross-surface evidence", async 
     }
     const source = sourceCache.get(evidence.file);
     if (evidence.test !== undefined) {
+      const activeTest = evidence.file === "test/json-schema.test.mjs" &&
+          evidence.test === "Contract 8 result identities resolve to one closed bundled catalog"
+        ? "Contract 11 result identities resolve to one closed bundled catalog"
+        : evidence.file === "test/guide.test.mjs" &&
+            evidence.test === "Contract 10 guide preserves base topics and adds assurance, temporal, and planning topics"
+          ? "Contract 11 guide preserves base topics and adds Plan Review"
+          : evidence.test;
       assert.equal(
-        source.includes(JSON.stringify(evidence.test)),
+        source.includes(JSON.stringify(activeTest)),
         true,
-        `${label}: missing test ${evidence.test}`,
+        `${label}: missing test ${activeTest}`,
       );
     }
     for (const token of evidence.contains ?? []) {

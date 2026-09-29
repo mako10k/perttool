@@ -55,7 +55,7 @@ function invokeJson(args) {
   );
   const value = JSON.parse(result.stdout);
   assert.equal(value.ok, true);
-  assert.equal(value.cli_contract_version, 10);
+  assert.equal(value.cli_contract_version, 11);
   return value;
 }
 
@@ -207,7 +207,7 @@ assert.match(hash.stdout, /^sha256:[0-9a-f]{64}\n$/);
 assert.equal(hash.stdout, `${work.contract_hash}\n`);
 
 const next = invokeJson(["dag", "next", sealedPlan]);
-assert.equal(next.schema_version, "Perttool.NextResult.v8");
+assert.equal(next.schema_version, "Perttool.NextResult.v9");
 assert.equal(
   next.temporal?.authority?.policy,
   "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",

@@ -1,6 +1,10 @@
+// R: Expose the supported public package contract through one root facade.
 export {
   analyzeDocument,
   checkDocument,
+  selectNextTasks,
+} from "./application/contract11-runtime.js";
+export {
   getProjectMetadata,
   inspectPlanAssurance,
   planAssuranceMutation,
@@ -10,8 +14,20 @@ export {
   planLifecycle as planLifecycleMutation,
   planMutation,
   planUnitMigration,
-  selectNextTasks,
 } from "./application/contract10-runtime.js";
+export { planReviewProjection } from "./application/contract11-runtime.js";
+export { planContract11GrammarMigration } from "./application/contract11-migration.js";
+export { planPlanReviewCreate, planPlanReviewResolve, planPlanReviewBatchMutation } from "./application/plan-review-mutation.js";
+export { persistPlanReviewMutation } from "./plan-review/write.js";
+export { parsePlanReviewSource, PLAN_REVIEW_SOURCE_CAPABILITY } from "./plan-review/source.js";
+export { formatPlanReviewSource } from "./plan-review/format.js";
+export { projectPlanReviewState } from "./plan-review/projection.js";
+export { PLAN_REVIEW_BASIS_ID, projectPlanReviewBasis, digestPlanReviewBasis } from "./plan-review/basis.js";
+export { PLAN_REVIEW_CREATE_REQUEST_ID, PLAN_REVIEW_RESOLVE_REQUEST_ID, PLAN_REVIEW_AUTHORITY_ID } from "./plan-review/mutation-types.js";
+export type { PlanReviewCreateRequestV1, PlanReviewResolveRequestV1, PlanReviewMutationCoreResult } from "./plan-review/mutation-types.js";
+export type { PlanReviewBasisV1 } from "./plan-review/basis.js";
+export type { PlanReviewRequestSource, PlanReviewProjectionV1 } from "./plan-review/source-types.js";
+export type { Contract11NextResult as NextResult, Contract11NextResult as NextResultV9 } from "./application/contract11-runtime.js";
 export {
   planMilestoneAcceptanceMigration,
   recheckCommittedMigrationProof,
@@ -63,26 +79,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  CONTRACT10_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  contract10CommandDescriptorToJson as commandDescriptorToJson,
-  contract10CommandHelpResultToJson as commandHelpResultToJson,
-  contract10CommandRegistryToJson as commandRegistryToJson,
-  getContract10CommandDiscovery as getCommandDiscovery,
-  renderContract10CommandHelpResult as renderCommandHelpResult,
-  serializeContract10CommandHelpResult as serializeCommandHelpResult,
-} from "./command/contract10-discovery.js";
+  CONTRACT11_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  contract11CommandDescriptorToJson as commandDescriptorToJson,
+  contract11CommandHelpResultToJson as commandHelpResultToJson,
+  contract11CommandRegistryToJson as commandRegistryToJson,
+  getContract11CommandDiscovery as getCommandDiscovery,
+  renderContract11CommandHelpResult as renderCommandHelpResult,
+  serializeContract11CommandHelpResult as serializeCommandHelpResult,
+} from "./command/contract11-discovery.js";
 export {
-  contract10CommandUsageErrorToJson as commandUsageErrorToJson,
-  renderContract10CommandUsageError as renderCommandUsageError,
-  serializeContract10CommandUsageError as serializeCommandUsageError,
-  validateContract10CommandInvocation as validateCommandInvocation,
-} from "./command/contract10-usage.js";
+  contract11CommandUsageErrorToJson as commandUsageErrorToJson,
+  renderContract11CommandUsageError as renderCommandUsageError,
+  serializeContract11CommandUsageError as serializeCommandUsageError,
+  validateContract11CommandInvocation as validateCommandInvocation,
+} from "./command/contract11-usage.js";
 export {
-  contract10GuideResultToJson as guideResultToJson,
-  getContract10Guide as getGuide,
-  renderContract10GuideResult as renderGuideResult,
-  serializeContract10GuideResult as serializeGuideResult,
-} from "./help/contract10-guide.js";
+  contract11GuideResultToJson as guideResultToJson,
+  getContract11Guide as getGuide,
+  renderContract11GuideResult as renderGuideResult,
+  serializeContract11GuideResult as serializeGuideResult,
+} from "./help/contract11-guide.js";
 export {
   getJsonSchema,
   getJsonSchemaCatalog,
@@ -250,7 +266,6 @@ export type {
   Contract9AnalysisResult as AnalysisResultV7,
   Contract9CheckResult as CheckResult,
   Contract9CheckResult as CheckResultV6,
-  Contract9NextResult as NextResult,
   Contract9NextResult as NextResultV8,
 } from "./application/contract9-temporal.js";
 export type {

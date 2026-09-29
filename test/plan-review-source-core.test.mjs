@@ -338,14 +338,16 @@ test("PRSC-011 fixes deterministic digest inclusion and exclusion", () => {
   }
 });
 
-test("PRSC-012 retains the current public package surfaces", () => {
-  for (const api of [rootApi, nodeApi, coreApi]) {
-    for (const name of [
+test("PRSC-012 activates the accepted root and Node surface while Core stays portable", () => {
+  for (const name of [
       "PLAN_REVIEW_SOURCE_CAPABILITY",
       "parsePlanReviewSource",
       "formatPlanReviewSource",
       "projectPlanReviewBasis",
       "projectPlanReviewState",
-    ]) assert.equal(name in api, false, name);
+  ]) {
+    assert.equal(name in rootApi, true, name);
+    assert.equal(nodeApi[name], rootApi[name], name);
+    assert.equal(name in coreApi, false, name);
   }
 });

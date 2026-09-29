@@ -1,3 +1,4 @@
+// R: Validate a human recommendation override against one complete source decision.
 import { sha256HexUtf8 } from "../model/sha256.js";
 import type { PlanAssuranceStartAuthorityV1 } from "../assurance/authority.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
@@ -40,7 +41,7 @@ interface OverrideSourceAuthority extends PlanAssuranceStartAuthorityV1 {
   readonly unavailableRecommendedTaskIds: readonly string[];
 }
 
-/** Consumer-owned projection required to validate a NextResult v7 override. */
+/** Consumer-owned projection required to validate a supported NextResult override. */
 export interface OverrideValidationSource {
   readonly schemaVersion: string;
   readonly ok: boolean;
@@ -72,7 +73,7 @@ type OverrideSource = OverrideValidationSource;
 
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
-const sourceSchemaVersion = "Perttool.NextResult.v8" as const;
+const supportedSourceSchemaVersions = new Set(["Perttool.NextResult.v8", "Perttool.NextResult.v9"]);
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
 const overrideReasonCodes = new Set<HumanOverrideReasonCode>([
   "human_priority_decision",
@@ -167,17 +168,17 @@ function sourceContractError(
   request: OverrideRequest,
 ): string | null {
   try {
-    if (request.sourceSchemaVersion !== sourceSchemaVersion) {
+    if (!supportedSourceSchemaVersions.has(request.sourceSchemaVersion)) {
       return `unsupported source schema ${String(request.sourceSchemaVersion)}`;
     }
     if (
       !source.ok ||
       source.recommendation === null ||
       source.diagnosticsTruncated ||
-      source.schemaVersion !== sourceSchemaVersion ||
+      source.schemaVersion !== request.sourceSchemaVersion ||
       source.temporal === null
     ) {
-      return "source NextResult.v8 must be successful, untruncated, and include temporal and plan-assurance authority";
+      return "source NextResult must be successful, untruncated, and include temporal and plan-assurance authority";
     }
     const recommendation = source.recommendation;
     const authority = source.temporal.authority;
@@ -752,7 +753,7 @@ export function validateOverride(
   const payload: OverrideDecisionPayload = {
     overrideContractVersion: 1,
     source: {
-      schemaVersion: sourceSchemaVersion,
+      schemaVersion: request.sourceSchemaVersion,
       toolVersion: TOOL_VERSION,
       sourceDigest: recommendation.sourceDigest,
       recommendationInterfaceVersion: 1,

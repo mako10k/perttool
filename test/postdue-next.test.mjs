@@ -37,8 +37,8 @@ test("PDN-005 through PDN-008 preserve recommendation and authority", () => {
   assert.equal(projectTargetPostdueNext(base, unavailable).recommendation, base.recommendation);
 });
 
-test("PDN-009 through PDN-012 bind documents and activate public v8", () => {
+test("PDN-009 through PDN-012 bind documents while the current public Next result is v9", () => {
   assert.throws(() => projectTargetPostdueNext(base, { ...alerts, documentId: "OTHER" }), /identities differ/);
   assert.equal("projectTargetPostdueNext" in publicApi, false);
-  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.NextResult.v8"), true);
+  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.NextResult.v9"), true);
 });

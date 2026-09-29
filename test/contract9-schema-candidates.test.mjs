@@ -12,7 +12,7 @@ const identities = Object.freeze([
   "Perttool.AnalysisResult.v7",
   "Perttool.CheckResult.v6",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v8",
+  "Perttool.NextResult.v9",
   "Perttool.PlanAssuranceResult.v2",
   "Perttool.ProjectResult.v5",
   "Perttool.UnitMigrationResult.v5",
@@ -49,7 +49,7 @@ function wirePositions(value) {
   return projected;
 }
 
-test("Contract 10 retains seven strict-result schema artifacts at canonical paths", async () => {
+test("Contract 11 retains seven strict-result schema artifacts at canonical paths", async () => {
   const names = (await readdir(activeDirectory)).sort();
   for (const identity of identities) {
     assert.ok(names.includes(`${identity}.schema.json`), identity);
@@ -57,11 +57,11 @@ test("Contract 10 retains seven strict-result schema artifacts at canonical path
     assert.equal(value.$id, `https://github.com/mako10k/perttool/schemas/${identity}.schema.json`);
     assert.equal(value.title, identity);
     assert.equal(value.properties.schema_version.const, identity);
-    assert.equal(value.properties.cli_contract_version.const, 10);
+    assert.equal(value.properties.cli_contract_version.const, 11);
   }
 });
 
-test("active Contract 10 schema references compile from canonical paths", async () => {
+test("active Contract 11 schema references compile from canonical paths", async () => {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   for (const name of (await readdir(activeDirectory)).filter((name) => name.endsWith(".schema.json"))) {
     ajv.addSchema(await schema(path.join(activeDirectory, name)));
@@ -71,7 +71,7 @@ test("active Contract 10 schema references compile from canonical paths", async 
   }
 });
 
-test("active Contract 10 schemas contain no unspecified object shape", async () => {
+test("active Contract 11 schemas contain no unspecified object shape", async () => {
   const failures = [];
   for (const identity of identities) {
     const value = await schema(path.join(activeDirectory, `${identity}.schema.json`));

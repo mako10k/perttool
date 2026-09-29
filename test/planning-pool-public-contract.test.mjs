@@ -71,7 +71,7 @@ function json(args, expectedStatus = 0, cwd = root) {
   const result = invoke([...args, "--format=json"], expectedStatus, cwd);
   assert.equal(result.stderr, "");
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 10);
+  assert.equal(value.cli_contract_version, 11);
   return value;
 }
 

@@ -44,7 +44,7 @@ function json(args, expectedStatus = 0) {
   const result = invoke(installedCli, [...args, "--format=json"], expectedStatus);
   assert.equal(result.stderr, "");
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 10);
+  assert.equal(value.cli_contract_version, 11);
   return value;
 }
 
@@ -76,7 +76,7 @@ assert.equal(checked.grammar_version, 5);
 lifecycle("start", "2026-07-29T09:00:00+09:00");
 lifecycle("suspend", "2026-07-29T11:00:00+09:00");
 const suspended = json(["dag", "next", plan]);
-assert.equal(suspended.schema_version, "Perttool.NextResult.v8");
+assert.equal(suspended.schema_version, "Perttool.NextResult.v9");
 assert.deepEqual(suspended.groups.suspended, ["WORK"]);
 lifecycle("resume", "2026-07-29T12:00:00+09:00");
 lifecycle(

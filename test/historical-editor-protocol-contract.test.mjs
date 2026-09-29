@@ -66,8 +66,8 @@ test("historical editor identities are additive and keep current GraphView uncha
     root_node_runtime_names: 122,
     core_runtime_names: 45,
   });
-  assert.equal(COMMAND_REGISTRY.length, 71);
-  assert.equal(getJsonSchemaCatalog().length, 29);
+  assert.equal(COMMAND_REGISTRY.length, 75);
+  assert.equal(getJsonSchemaCatalog().length, 31);
 });
 
 test("historical negotiation, trust, and request boundaries are closed", async () => {

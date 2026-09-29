@@ -566,11 +566,11 @@ test("E0 formatting and current public identities remain unchanged", async () =>
       import("../dist/core/index.js"),
     ]);
   assert.equal(JSON.parse(packageJson).version, "0.11.1");
-  assert.equal(rootIndex.COMMAND_REGISTRY.length, 71);
-  assert.equal(rootIndex.getJsonSchemaCatalog().length, 29);
-  assert.equal(Object.keys(rootIndex).length, 139);
+  assert.equal(rootIndex.COMMAND_REGISTRY.length, 75);
+  assert.equal(rootIndex.getJsonSchemaCatalog().length, 31);
+  assert.equal(Object.keys(rootIndex).length, 155);
   assert.equal(Object.keys(coreIndex).length, 51);
-  assert.match(schemaRegistry, /Perttool\.NextResult\.v8/u);
+  assert.match(schemaRegistry, /Perttool\.NextResult\.v9/u);
   assert.match(hostProbe, /vscode\.executeCodeActionProvider/u);
   assert.match(hostProbe, /vscode\.workspace\.applyEdit/u);
   assert.match(hostProbe, /executeCommand\("undo"\)/u);

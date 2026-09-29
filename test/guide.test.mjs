@@ -13,6 +13,7 @@ import {
   renderGuideResult,
   serializeGuideResult,
 } from "../dist/index.js";
+import { getContract10Guide } from "../dist/help/contract10-guide.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -74,7 +75,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 10 guide preserves base topics and adds assurance, temporal, and planning topics", () => {
+test("Contract 11 guide preserves base topics and adds Plan Review", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -86,7 +87,7 @@ test("Contract 10 guide preserves base topics and adds assurance, temporal, and 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 10);
+    assert.equal(guide.cliContractVersion, 11);
     assert.equal(guide.operation, "guide");
     const help = getHelp(topicId, level);
     assert.equal(guide.ok, help.ok);
@@ -105,6 +106,7 @@ test("Contract 10 guide preserves base topics and adds assurance, temporal, and 
       "milestone-acceptance",
       "temporal-schedule",
       "planning-pool",
+      "plan-review",
     ],
   );
 });
@@ -139,17 +141,17 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
     "utf8",
   );
 
-  assert.equal(serializeGuideResult(getGuide(null, "index")), expectedJson);
+  assert.equal(serializeGuideResult(getContract10Guide(null, "index")), expectedJson);
   assert.equal(
-    renderGuideResult(getGuide("syntax", "quick")),
+    renderGuideResult(getContract10Guide("syntax", "quick")),
     expectedText,
   );
   assert.equal(
-    renderGuideResult(getGuide("syntax.temporal", "detail")),
+    renderGuideResult(getContract10Guide("syntax.temporal", "detail")),
     expectedTemporalText,
   );
   assert.equal(
-    renderGuideResult(getGuide("planning-pool", "detail")),
+    renderGuideResult(getContract10Guide("planning-pool", "detail")),
     expectedPlanningPoolText,
   );
 });
@@ -185,7 +187,7 @@ test("GuideResult is a domain projection rather than a command contract", () => 
   }
 });
 
-test("active Contract 10 Guide states exact additive Grammar 8 and 9 identities and authority", async () => {
+test("active Contract 11 Guide retains Grammar 8 and 9 meanings with current identities", async () => {
   const syntax = getGuide("syntax", "detail");
   assert.match(syntax.summary, /Grammar versions 1 through 9/);
   assert.deepEqual(
@@ -247,11 +249,11 @@ test("active Contract 10 Guide states exact additive Grammar 8 and 9 identities 
   const temporal = getGuide("analysis.temporal", "detail");
   const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
   assert.match(temporalBody, /AnalysisResult v7/);
-  assert.match(temporalBody, /NextResult v8/);
+  assert.match(temporalBody, /NextResult v9/);
 
   const next = getGuide("next", "detail");
   const nextBody = next.sections.map(({ body }) => body).join("\n");
-  assert.match(next.summary, /NextResult\.v8/);
+  assert.match(next.summary, /NextResult\.v9/);
   assert.match(
     nextBody,
     /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,
@@ -267,7 +269,7 @@ test("active Contract 10 Guide states exact additive Grammar 8 and 9 identities 
 
   const editingBody = getGuide("editing", "detail").sections
     .map(({ body }) => body).join("\n");
-  assert.match(editingBody, /current Contract 10 candidate/);
+  assert.match(editingBody, /current Contract 11 candidate/);
 
   const assurance = getGuide("plan-assurance", "detail");
   assert.equal(assurance.examples.length, 3);

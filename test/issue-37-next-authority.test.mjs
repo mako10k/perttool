@@ -68,7 +68,10 @@ test("Issue #37 composes raw recommendation with runnable selection before start
 test("Issue #37 JSON and text expose the same non-runnable raw recommendation", () => {
   const before = readFileSync(fixture);
   const json = JSON.parse(run(["dag", "next", fixture, "--format=json"]));
-  assert.equal(json.schema_version, "Perttool.NextResult.v8");
+  assert.equal(json.schema_version, "Perttool.NextResult.v9");
+  assert.deepEqual(json.plan_review, {
+    model_version: 1, state: "clear", open_request_ids: [], required_actions: [],
+  });
   assert.deepEqual(json.recommendation.recommended_task_ids, ["CRITICAL"]);
   assert.deepEqual(json.groups.runnable_now, ["HIGH_PRIORITY"]);
   assert.deepEqual(json.temporal.authority.raw_recommended_task_ids, [
@@ -90,11 +93,11 @@ test("Issue #37 JSON and text expose the same non-runnable raw recommendation", 
 test("Issue #37 complete JSON satisfies the active closed schema and documents authority", () => {
   const json = JSON.parse(run(["dag", "next", fixture, "--format=json"]));
   const validate = validator().getSchema(
-    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v8.schema.json",
+    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json",
   );
   assert.equal(validate(json), true, JSON.stringify(validate.errors));
 
-  const schema = getJsonSchema("Perttool.NextResult.v8");
+  const schema = getJsonSchema("Perttool.NextResult.v9");
   const authority = schema.$defs.nextTemporal.properties.authority.properties;
   assert.match(
     authority.startable_recommended_task_ids.description,

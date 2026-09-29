@@ -106,7 +106,7 @@ test("Contract 10 criterion replacement preserves Planning Pool and governance b
 
     const preview = json(directory, replaceArgs("codex"));
     assert.equal(preview.ok, true);
-    assert.equal(preview.cli_contract_version, 10);
+    assert.equal(preview.cli_contract_version, 11);
     assert.equal(preview.changed, true);
     assert.equal(preview.write.written, false);
     assert.equal(preview.governance.write_authorized, true);
@@ -128,7 +128,7 @@ test("Contract 10 criterion replacement preserves Planning Pool and governance b
     ], 1);
     assert.equal(deniedPersist.schema_version,
       "Perttool.MutationResult.v6");
-    assert.equal(deniedPersist.cli_contract_version, 10);
+    assert.equal(deniedPersist.cli_contract_version, 11);
     assert.equal(deniedPersist.operation, "milestone-acceptance.replace");
     assert.equal(deniedPersist.ok, false);
     assert.equal(deniedPersist.changed, true);
@@ -152,7 +152,7 @@ test("Contract 10 criterion replacement preserves Planning Pool and governance b
     ], 5);
     assert.equal(stale.ok, false);
     assert.equal(stale.schema_version, "Perttool.CliError.v1");
-    assert.equal(stale.cli_contract_version, 10);
+    assert.equal(stale.cli_contract_version, 11);
     assert.equal(stale.diagnostics[0].code, "PTIO-501");
     assert.equal(stale.diagnostics[0].data.reason,
       "expected_digest_mismatch");

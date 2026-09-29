@@ -104,8 +104,8 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  // The private lifecycle and advance modules add two source files to this retained baseline.
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 90 + 2);
+  // The retained node-host baseline stays fixed; current Contract 11 source has 98 additive files.
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 98);
 });
 
 test("relocated services retain exact compatibility facades", async () => {
@@ -144,14 +144,14 @@ test("public package closure and dependency cases remain stable", async () => {
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
   assert.equal(
     Object.keys(packageRoot).length,
-    nodeHost.target.root_runtime_exports + 10,
+    nodeHost.target.root_runtime_exports + 26,
   );
   assert.equal(
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 27);
-  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 9);
+  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 31);
+  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 11);
 
   const accepted = new Set();
   for (const contractCase of fixture.cases) {

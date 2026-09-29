@@ -230,7 +230,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 10);
+  assert.equal(json.cli_contract_version, 11);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -464,7 +464,7 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v8");
+  assert.equal(json.schema_version, "Perttool.NextResult.v9");
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.recommendation.explanation_status.complete, true);
   assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE"]);

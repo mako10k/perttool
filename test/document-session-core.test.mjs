@@ -592,8 +592,8 @@ test("current Core catalog and runtime closure remain portable and additive", as
     assert.equal(name in packageRoot, false, name);
     assert.equal(name in nodeApi, false, name);
   }
-  assert.equal(Object.keys(packageRoot).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(packageRoot).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal(packageRoot.createNodeHost, nodeApi.createNodeHost);
 

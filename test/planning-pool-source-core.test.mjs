@@ -363,11 +363,11 @@ test("PPSC-015 revalidates complete private mutation candidates", () => {
 });
 
 test("PPSC-016 preserves the active public boundary", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
-  assert.equal(Object.keys(rootApi).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 31);
+  assert.equal(Object.keys(rootApi).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, 51);
-  assert.equal(rootApi.getCommandDiscovery({ resource: null, action: null }).cliContractVersion, 10);
+  assert.equal(rootApi.getCommandDiscovery({ resource: null, action: null }).cliContractVersion, 11);
   assert.equal(rootApi.checkDocument(source()).ok, true);
 });

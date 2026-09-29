@@ -1,0 +1,2203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanReviewMutationResult.v1.schema.json",
+  "title": "Perttool.PlanReviewMutationResult.v1",
+  "$defs": {
+    "authority": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "request_id",
+        "source_digest",
+        "candidate_digest",
+        "actor",
+        "effective_dag_owner",
+        "effective_dag_delegates",
+        "actor_direct",
+        "owner_confirmation_required",
+        "owner_confirmation_satisfied",
+        "authorized"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "source_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+        },
+        "candidate_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "effective_dag_owner": {
+          "type": "string"
+        },
+        "effective_dag_delegates": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "actor_direct": {
+          "type": "boolean"
+        },
+        "owner_confirmation_required": {
+          "type": "boolean"
+        },
+        "owner_confirmation_satisfied": {
+          "type": "boolean"
+        },
+        "authorized": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewAuthorityDecision.v1"
+    },
+    "createRequest": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "request_id",
+        "task_id",
+        "reason",
+        "created_at",
+        "actor"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.PlanReviewCreateRequest.v1"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewCreateRequest.v1"
+    },
+    "resolveRequest": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "request_id",
+            "outcome",
+            "resolved_at",
+            "actor",
+            "resolution_reason"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "Perttool.PlanReviewResolveRequest.v1"
+            },
+            "request_id": {
+              "type": "string"
+            },
+            "resolved_at": {
+              "type": "string"
+            },
+            "actor": {
+              "type": "string"
+            },
+            "resolution_reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "accepted_owners": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "outcome": {
+              "const": "plan_retained"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "request_id",
+            "outcome",
+            "resolved_at",
+            "actor",
+            "resolution_reason",
+            "request"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "Perttool.PlanReviewResolveRequest.v1"
+            },
+            "request_id": {
+              "type": "string"
+            },
+            "resolved_at": {
+              "type": "string"
+            },
+            "actor": {
+              "type": "string"
+            },
+            "resolution_reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "accepted_owners": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "outcome": {
+              "const": "plan_changed"
+            },
+            "request": {
+              "$ref": "#/$defs/batchRequest"
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "title": "Perttool.PlanReviewResolveRequest.v1"
+    },
+    "basisRational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisExact": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisWindow": {
+      "type": "object",
+      "required": [
+        "start_minute",
+        "end_minute"
+      ],
+      "properties": {
+        "start_minute": {
+          "type": "integer"
+        },
+        "end_minute": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisConstraint": {
+      "type": "object",
+      "required": [
+        "event",
+        "direction",
+        "value"
+      ],
+      "properties": {
+        "event": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "earliest",
+            "latest"
+          ]
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisRequirement": {
+      "type": "object",
+      "required": [
+        "resource_id",
+        "units"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string"
+        },
+        "units": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisDate": {
+      "type": "object",
+      "required": [
+        "kind",
+        "year",
+        "month",
+        "day"
+      ],
+      "properties": {
+        "kind": {
+          "const": "date"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "month": {
+          "type": "integer"
+        },
+        "day": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisDateTime": {
+      "type": "object",
+      "required": [
+        "kind",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "offset_minutes"
+      ],
+      "properties": {
+        "kind": {
+          "const": "date_time"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "month": {
+          "type": "integer"
+        },
+        "day": {
+          "type": "integer"
+        },
+        "hour": {
+          "type": "integer"
+        },
+        "minute": {
+          "type": "integer"
+        },
+        "second": {
+          "$ref": "#/$defs/basisRational"
+        },
+        "offset_minutes": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisCalendarValue": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/basisDate"
+        },
+        {
+          "$ref": "#/$defs/basisDateTime"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "basisTiming": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "duration"
+            },
+            "value": {
+              "$ref": "#/$defs/basisExact"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "optimistic",
+            "most_likely",
+            "pessimistic"
+          ],
+          "properties": {
+            "kind": {
+              "const": "estimate"
+            },
+            "optimistic": {
+              "$ref": "#/$defs/basisExact"
+            },
+            "most_likely": {
+              "$ref": "#/$defs/basisExact"
+            },
+            "pessimistic": {
+              "$ref": "#/$defs/basisExact"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "basisCalendarProfile": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "continuous_fixed_offset"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "zone_id",
+            "tzdb_release",
+            "calendar_id",
+            "workday_hours"
+          ],
+          "properties": {
+            "kind": {
+              "const": "named_zone"
+            },
+            "zone_id": {
+              "type": "string"
+            },
+            "tzdb_release": {
+              "type": "string"
+            },
+            "calendar_id": {
+              "type": "string"
+            },
+            "workday_hours": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/basisRational"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "basisCalendar": {
+      "type": "object",
+      "required": [
+        "id",
+        "profile",
+        "weekdays",
+        "exceptions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/basisCalendarProfile"
+        },
+        "weekdays": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "weekday",
+              "windows"
+            ],
+            "properties": {
+              "weekday": {
+                "enum": [
+                  "mon",
+                  "tue",
+                  "wed",
+                  "thu",
+                  "fri",
+                  "sat",
+                  "sun"
+                ]
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/basisWindow"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "windows"
+            ],
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/basisWindow"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisResource": {
+      "type": "object",
+      "required": [
+        "id",
+        "capacity",
+        "calendar_id",
+        "available_from",
+        "available_until",
+        "overrides"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "integer"
+        },
+        "calendar_id": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available_from": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available_until": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "start",
+              "end",
+              "capacity"
+            ],
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "capacity": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisMilestone": {
+      "type": "object",
+      "required": [
+        "id",
+        "deadline",
+        "temporal_constraints"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "deadline": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "temporal_constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisConstraint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisTask": {
+      "type": "object",
+      "required": [
+        "id",
+        "from_milestone_id",
+        "to_milestone_id",
+        "description",
+        "timing",
+        "not_before",
+        "deadline",
+        "priority",
+        "requirements",
+        "owner",
+        "tags",
+        "source",
+        "temporal_constraints"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from_milestone_id": {
+          "type": "string"
+        },
+        "to_milestone_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "timing": {
+          "$ref": "#/$defs/basisTiming"
+        },
+        "not_before": {
+          "$ref": "#/$defs/basisCalendarValue"
+        },
+        "deadline": {
+          "$ref": "#/$defs/basisCalendarValue"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisRequirement"
+          }
+        },
+        "owner": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "temporal_constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisConstraint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisGate": {
+      "type": "object",
+      "required": [
+        "id",
+        "from_milestone_id",
+        "to_milestone_id",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from_milestone_id": {
+          "type": "string"
+        },
+        "to_milestone_id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisRelation": {
+      "type": "object",
+      "required": [
+        "relation_id",
+        "predecessor_task_id",
+        "successor_task_id",
+        "mode",
+        "explicit"
+      ],
+      "properties": {
+        "relation_id": {
+          "type": "string"
+        },
+        "predecessor_task_id": {
+          "type": "string"
+        },
+        "successor_task_id": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "explicit": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisWork": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "description",
+        "event_ids",
+        "activity_ids",
+        "milestone_link_ids",
+        "task_link_ids",
+        "depends_on_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "activity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "milestone_link_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "task_link_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "depends_on_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisEvent": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "description",
+        "tags",
+        "source"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisActivity": {
+      "type": "object",
+      "required": [
+        "id",
+        "from_id",
+        "to_id",
+        "title",
+        "description",
+        "timing",
+        "priority",
+        "requirements",
+        "owner",
+        "tags",
+        "source",
+        "calendar_id",
+        "when",
+        "deadline"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from_id": {
+          "type": "string"
+        },
+        "to_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timing": {
+          "$ref": "#/$defs/basisTiming"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisRequirement"
+          }
+        },
+        "owner": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "calendar_id": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "when": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisConstraint"
+          }
+        },
+        "deadline": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "basisPlanningPool": {
+      "type": "object",
+      "required": [
+        "works",
+        "events",
+        "activities",
+        "windows",
+        "work_order"
+      ],
+      "properties": {
+        "works": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisWork"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisEvent"
+          }
+        },
+        "activities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisActivity"
+          }
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "objective",
+              "start",
+              "end",
+              "work_ids"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "objective": {
+                "type": "string"
+              },
+              "start": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "end": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "work_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "work_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "basis": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "project",
+        "calendars",
+        "resources",
+        "milestones",
+        "tasks",
+        "gates",
+        "assurance_relations",
+        "planning_pool"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "project": {
+          "type": "object",
+          "required": [
+            "id",
+            "finish_milestone_id",
+            "duration_unit",
+            "velocity",
+            "target_duration",
+            "critical_epsilon"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "finish_milestone_id": {
+              "type": "string"
+            },
+            "duration_unit": {
+              "enum": [
+                "day",
+                "hour",
+                "point"
+              ]
+            },
+            "velocity": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "target_duration": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "critical_epsilon": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "calendars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisCalendar"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisResource"
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisMilestone"
+          }
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisTask"
+          }
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisGate"
+          }
+        },
+        "assurance_relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basisRelation"
+          }
+        },
+        "planning_pool": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/basisPlanningPool"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewBasis.v1"
+    },
+    "createRequestSummary": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "request_id",
+        "task_id",
+        "reason",
+        "created_at",
+        "actor",
+        "locator"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.PlanReviewCreateRequest.v1"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewCreateRequestSummary.v1"
+    },
+    "resolveRequestSummary": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "request_id",
+        "outcome",
+        "resolved_at",
+        "actor",
+        "resolution_reason",
+        "accepted_owners",
+        "change_request_digest"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.PlanReviewResolveRequest.v1"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "plan_retained",
+            "plan_changed"
+          ]
+        },
+        "resolved_at": {
+          "type": "string"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "resolution_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accepted_owners": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "change_request_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewResolveRequestSummary.v1"
+    },
+    "batchRequirement": {
+      "type": "object",
+      "required": [
+        "resourceId",
+        "units"
+      ],
+      "properties": {
+        "resourceId": {
+          "type": "string"
+        },
+        "units": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchEstimate": {
+      "type": "object",
+      "required": [
+        "optimistic",
+        "mostLikely",
+        "pessimistic"
+      ],
+      "properties": {
+        "optimistic": {
+          "type": "string"
+        },
+        "mostLikely": {
+          "type": "string"
+        },
+        "pessimistic": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchProjectFields": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "asOf": {
+          "type": "string"
+        },
+        "durationUnit": {
+          "type": "string"
+        },
+        "velocity": {
+          "type": "string"
+        },
+        "finish": {
+          "type": "string"
+        },
+        "goalOwner": {
+          "type": "string"
+        },
+        "dagOwner": {
+          "type": "string"
+        },
+        "criticalEpsilon": {
+          "type": "string"
+        },
+        "targetDuration": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer"
+        },
+        "goalDelegates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dagDelegates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchTaskDefinition": {
+      "type": "object",
+      "required": [
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "estimate": {
+          "$ref": "#/$defs/batchEstimate"
+        },
+        "notBefore": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "active",
+            "blocked",
+            "done"
+          ]
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "blockedReason": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/batchRequirement"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchTaskFields": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "estimate": {
+          "$ref": "#/$defs/batchEstimate"
+        },
+        "notBefore": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "active",
+            "blocked",
+            "done"
+          ]
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "blockedReason": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchGateDefinition": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchGateFields": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchMilestoneDefinition": {
+      "type": "object",
+      "required": [
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "reached"
+          ]
+        },
+        "deadline": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchMilestoneFields": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "reached"
+          ]
+        },
+        "deadline": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchResourceDefinition": {
+      "type": "object",
+      "required": [
+        "title",
+        "capacity"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchResourceFields": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchAtomicMutation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "project.set"
+            },
+            "set": {
+              "$ref": "#/$defs/batchProjectFields"
+            },
+            "clear": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "description",
+                  "as_of",
+                  "velocity",
+                  "goal_owner",
+                  "goal_delegates",
+                  "dag_owner",
+                  "dag_delegates",
+                  "critical_epsilon",
+                  "target_duration"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "from",
+            "to",
+            "task"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task.add"
+            },
+            "id": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "task": {
+              "$ref": "#/$defs/batchTaskDefinition",
+              "allOf": [
+                {
+                  "oneOf": [
+                    {
+                      "required": [
+                        "duration"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "estimate"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task.set"
+            },
+            "id": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "set": {
+              "$ref": "#/$defs/batchTaskFields"
+            },
+            "clear": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "description",
+                  "not_before",
+                  "deadline",
+                  "status",
+                  "priority",
+                  "owner",
+                  "blocked_reason",
+                  "source",
+                  "tags",
+                  "requires"
+                ]
+              }
+            },
+            "addTags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "removeTags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "upsertRequirements": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/batchRequirement"
+              }
+            },
+            "removeRequirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task.remove"
+            },
+            "id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task.finish"
+            },
+            "id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "from",
+            "to",
+            "gate"
+          ],
+          "properties": {
+            "kind": {
+              "const": "gate.add"
+            },
+            "id": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "gate": {
+              "$ref": "#/$defs/batchGateDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "gate.set"
+            },
+            "id": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "set": {
+              "$ref": "#/$defs/batchGateFields"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "gate.remove"
+            },
+            "id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "milestone"
+          ],
+          "properties": {
+            "kind": {
+              "const": "milestone.add"
+            },
+            "id": {
+              "type": "string"
+            },
+            "milestone": {
+              "$ref": "#/$defs/batchMilestoneDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "milestone.set"
+            },
+            "id": {
+              "type": "string"
+            },
+            "set": {
+              "$ref": "#/$defs/batchMilestoneFields"
+            },
+            "clear": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "description",
+                  "state",
+                  "deadline",
+                  "tags"
+                ]
+              }
+            },
+            "addTags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "removeTags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "milestone.remove"
+            },
+            "id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "resource"
+          ],
+          "properties": {
+            "kind": {
+              "const": "resource.add"
+            },
+            "id": {
+              "type": "string"
+            },
+            "resource": {
+              "$ref": "#/$defs/batchResourceDefinition"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "resource.set"
+            },
+            "id": {
+              "type": "string"
+            },
+            "set": {
+              "$ref": "#/$defs/batchResourceFields"
+            },
+            "clear": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "description"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "resource.remove"
+            },
+            "id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "batchRequest": {
+      "type": "object",
+      "required": [
+        "kind",
+        "mutations"
+      ],
+      "properties": {
+        "kind": {
+          "const": "batch"
+        },
+        "mutations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10000,
+          "items": {
+            "$ref": "#/$defs/batchAtomicMutation"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "request",
+    "request_before",
+    "request_after",
+    "projection_before",
+    "projection_after",
+    "plan_basis",
+    "plan_review_authority",
+    "composed_mutation",
+    "candidate",
+    "edits",
+    "diff",
+    "write",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.PlanReviewMutationResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 11
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "plan.review-request",
+        "plan.review-resolve"
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "request": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/createRequestSummary"
+        },
+        {
+          "$ref": "#/$defs/resolveRequestSummary"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "request_before": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.PlanReviewResult.v1.schema.json#/$defs/request"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "request_after": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.PlanReviewResult.v1.schema.json#/$defs/request"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "projection_before": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.PlanReviewResult.v1.schema.json#/$defs/projection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "projection_after": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.PlanReviewResult.v1.schema.json#/$defs/projection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "plan_basis": {
+      "type": "object",
+      "required": [
+        "status",
+        "before_digest",
+        "after_digest"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unchanged",
+            "changed"
+          ]
+        },
+        "before_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "after_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "plan_review_authority": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/authority"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "composed_mutation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "changed",
+            "original_digest",
+            "updated_digest",
+            "updated_text",
+            "edits",
+            "diagnostics",
+            "diagnostics_truncated"
+          ],
+          "properties": {
+            "ok": {
+              "type": "boolean"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "original_digest": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+            },
+            "updated_digest": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+            },
+            "updated_text": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "edits": {
+              "type": "array",
+              "items": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/edit"
+              }
+            },
+            "diagnostics": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+            },
+            "diagnostics_truncated": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "required": [
+        "source_digest",
+        "candidate_digest",
+        "text",
+        "changed"
+      ],
+      "properties": {
+        "source_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+        },
+        "candidate_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "text": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "changed": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "edits": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.Common.v1.schema.json#/$defs/edit"
+      }
+    },
+    "diff": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "write": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    }
+  },
+  "additionalProperties": false
+}

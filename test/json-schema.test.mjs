@@ -14,13 +14,13 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 import {
-  COMMAND_REGISTRY,
   getJsonSchema,
   getJsonSchemaCatalog,
   getJsonSchemaResult,
   jsonSchemaResultToJson,
   JSON_SCHEMA_DIALECT,
 } from "../dist/index.js";
+import { CONTRACT11_COMMAND_REGISTRY } from "../dist/command/contract11-discovery.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -131,17 +131,17 @@ function schemaReferences(value) {
   return references;
 }
 
-test("Contract 8 result identities resolve to one closed bundled catalog", () => {
+test("Contract 11 result identities resolve to one closed bundled catalog", () => {
   const catalog = getJsonSchemaCatalog();
   const advertised = [...new Set(
-    COMMAND_REGISTRY.flatMap(({ resultSchemas }) => resultSchemas),
+    CONTRACT11_COMMAND_REGISTRY.flatMap(({ resultSchemas }) => resultSchemas),
   )].sort();
   const commandSchemas = catalog
     .filter(({ commandResult }) => commandResult)
     .map(({ schemaId }) => schemaId);
   assert.deepEqual(commandSchemas, advertised);
-  assert.equal(COMMAND_REGISTRY.length, 71);
-  assert.equal(advertised.length, 25);
+  assert.equal(CONTRACT11_COMMAND_REGISTRY.length, 75);
+  assert.equal(advertised.length, 27);
   assert.deepEqual(
     catalog
       .filter(({ publicLibraryResult }) => publicLibraryResult)
@@ -154,10 +154,10 @@ test("Contract 8 result identities resolve to one closed bundled catalog", () =>
     ...catalog.map(({ schemaId }) => `${schemaId}.schema.json`),
   ].sort();
   assert.deepEqual(schemaFiles(), expectedFiles);
-  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 29);
+  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 31);
   assert.equal(
     new Set(catalog.map(({ artifactPath }) => artifactPath)).size,
-    29,
+    31,
   );
 
   for (const entry of catalog) {
@@ -231,49 +231,49 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   assert.equal(catalog.operation, "schema");
   assert.equal(catalog.ok, true);
   assert.equal(catalog.query.schema_id, null);
-  assert.equal(catalog.schemas.length, 29);
+  assert.equal(catalog.schemas.length, 31);
   assert.equal(catalog.schema, null);
 
   const selected = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
   ]);
   assert.equal(selected.ok, true);
   assert.deepEqual(selected.query, {
-    schema_id: "Perttool.NextResult.v8",
+    schema_id: "Perttool.NextResult.v9",
   });
   assert.equal(
     selected.schema.$id,
-    `${schemaBase}Perttool.NextResult.v8.schema.json`,
+    `${schemaBase}Perttool.NextResult.v9.schema.json`,
   );
   assert.ok(Object.hasOwn(selected.schema, "$defs"));
   assert.deepEqual(
     jsonSchemaResultToJson(
-      getJsonSchemaResult("Perttool.NextResult.v8"),
+      getJsonSchemaResult("Perttool.NextResult.v9"),
     ),
     selected,
   );
 
   const explicitFull = cliJson([
     "schema",
-        "Perttool.NextResult.v8",
+        "Perttool.NextResult.v9",
     "--view",
     "full",
   ]);
   assert.deepEqual(explicitFull.query, {
-    schema_id: "Perttool.NextResult.v8",
+    schema_id: "Perttool.NextResult.v9",
     view: "full",
   });
   assert.deepEqual(explicitFull.schema, selected.schema);
 
   const outline = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
     "--view",
     "outline",
   ]);
   assert.deepEqual(outline.query, {
-    schema_id: "Perttool.NextResult.v8",
+    schema_id: "Perttool.NextResult.v9",
     view: "outline",
   });
   assert.equal(Object.hasOwn(outline.schema, "$defs"), false);
@@ -290,7 +290,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   );
   assert.equal(
     outline.schema.properties.groups.$ref,
-    `${schemaBase}Perttool.NextResult.v8.schema.json#/properties/groups`,
+    `${schemaBase}Perttool.NextResult.v9.schema.json#/properties/groups`,
   );
   const ajv = validator();
   assert.doesNotThrow(() => ajv.compile(outline.schema));
@@ -299,14 +299,14 @@ test("schema command lists, resolves, and rejects schema identities", () => {
     outline.schema.properties.recommendation.$ref;
   const detail = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
     "--view",
     "outline",
     "--ref",
     recommendationRef,
   ]);
   assert.deepEqual(detail.query, {
-    schema_id: "Perttool.NextResult.v8",
+    schema_id: "Perttool.NextResult.v9",
     view: "outline",
     ref: recommendationRef,
   });
@@ -318,7 +318,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
 
   const commonDetail = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
     "--view=outline",
     "--ref",
     "Perttool.Common.v1.schema.json#/$defs/diagnostics",
@@ -334,7 +334,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
 
   const missingRef = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
     "--view=outline",
     "--ref=#/$defs/missing",
   ], 1);
@@ -363,7 +363,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
 
   const refWithoutOutline = cliJson([
     "schema",
-    "Perttool.NextResult.v8",
+    "Perttool.NextResult.v9",
     "--ref=#/$defs/recommendation",
   ], 2);
   assert.equal(refWithoutOutline.schema_version, "Perttool.CliError.v1");

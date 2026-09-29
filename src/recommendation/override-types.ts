@@ -1,3 +1,4 @@
+// R: Define the public data contract for recommendation override evidence and decisions.
 import type { Diagnostic } from "../model/diagnostics.js";
 import type { RecommendationExpression } from "./explanation-types.js";
 import type { RecommendationTier } from "./types.js";
@@ -36,7 +37,7 @@ export interface OverrideActor {
 }
 
 export interface OverrideRequest {
-  readonly sourceSchemaVersion: "Perttool.NextResult.v8";
+  readonly sourceSchemaVersion: "Perttool.NextResult.v8" | "Perttool.NextResult.v9";
   readonly sourceDigest: string;
   readonly sourceResultDecisionId: string;
   readonly selectedTaskIds: readonly string[];
@@ -49,7 +50,7 @@ export interface OverrideRequest {
 }
 
 export interface OverrideDecisionSource {
-  readonly schemaVersion: "Perttool.NextResult.v8";
+  readonly schemaVersion: "Perttool.NextResult.v8" | "Perttool.NextResult.v9";
   readonly toolVersion: string;
   readonly sourceDigest: string;
   readonly recommendationInterfaceVersion: 1;

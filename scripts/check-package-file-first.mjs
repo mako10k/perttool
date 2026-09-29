@@ -47,7 +47,7 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 10);
+  assert.equal(value.cli_contract_version, 11);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
@@ -433,7 +433,7 @@ assert.deepEqual(fullProject.project, {
 });
 
 const blockedNext = invokeJson(["dag", "next", planPath]);
-assert.equal(blockedNext.schema_version, "Perttool.NextResult.v8");
+assert.equal(blockedNext.schema_version, "Perttool.NextResult.v9");
 assert.equal(blockedNext.recommendation.explanation_status.complete, true);
 assert.deepEqual(blockedNext.groups.ready, []);
 assert.deepEqual(blockedNext.groups.blocked_now, ["BUILD"]);

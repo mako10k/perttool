@@ -1,3 +1,4 @@
+// R: Resolve and enumerate the active closed public JSON Schema catalog.
 import { readFileSync } from "node:fs";
 import { TOOL_VERSION } from "../version.js";
 
@@ -44,7 +45,7 @@ export type JsonSchemaDiagnostic =
 
 export interface JsonSchemaResult {
   readonly schemaVersion: typeof JSON_SCHEMA_RESULT_SCHEMA_VERSION;
-  readonly cliContractVersion: 10;
+  readonly cliContractVersion: 11;
   readonly toolVersion: string;
   readonly operation: "schema";
   readonly ok: boolean;
@@ -74,7 +75,9 @@ const commandResultSchemaIds = Object.freeze([
   "Perttool.MilestoneAcceptanceMigrationResult.v1",
   "Perttool.MilestoneAcceptanceResult.v1",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v8",
+  "Perttool.NextResult.v9",
+  "Perttool.PlanReviewMutationResult.v1",
+  "Perttool.PlanReviewResult.v1",
   "Perttool.PlanningMutationResult.v1",
   "Perttool.PlanningPoolResult.v1",
   "Perttool.PlanningReshapePreflightResult.v1",
@@ -410,7 +413,7 @@ export function getJsonSchemaResult(
   }
   return Object.freeze({
     schemaVersion: JSON_SCHEMA_RESULT_SCHEMA_VERSION,
-    cliContractVersion: 10,
+    cliContractVersion: 11,
     toolVersion: TOOL_VERSION,
     operation: "schema",
     ok: diagnostics.length === 0,

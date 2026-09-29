@@ -158,11 +158,11 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.deepEqual(mcp.dependencies, { "@modelcontextprotocol/server": "2.0.0" });
   assert.equal(mcp.peerDependencies.perttool, "0.11.1");
 
-  assert.equal(Object.keys(packageRoot).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(packageRoot).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(core).length, 51);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 71);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 29);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 75);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 31);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeApi[name], name);
@@ -191,7 +191,7 @@ test("Contract 9 CLI and read-only adapters preserve the shared Application boun
   const cases = [
     { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v6" },
     { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v7" },
-    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v8" },
+    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v9" },
   ];
   const mcpResults = new Map();
   for (const acceptanceCase of cases) {

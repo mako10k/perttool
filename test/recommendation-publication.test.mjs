@@ -24,7 +24,7 @@ function run(args, options = {}) {
   });
 }
 
-test("NextResult.v8 publishes the same complete recommendation from Core and CLI", async () => {
+test("NextResult.v9 publishes the same complete recommendation from Core and CLI", async () => {
   const source = await readFile(path.join(root, fixture));
   const sourceDigest = digestDocumentBytes(source);
   const core = selectNextTasks(source.toString("utf8"), { sourceDigest });
@@ -34,8 +34,8 @@ test("NextResult.v8 publishes the same complete recommendation from Core and CLI
   const command = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v8");
-  assert.equal(json.cli_contract_version, 10);
+  assert.equal(json.schema_version, "Perttool.NextResult.v9");
+  assert.equal(json.cli_contract_version, 11);
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
@@ -52,7 +52,7 @@ test("NextResult.v8 publishes the same complete recommendation from Core and CLI
   );
 });
 
-test("NextResult.v8 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
+test("NextResult.v9 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
   const command = run([
     "dag",
     "next",
@@ -80,10 +80,11 @@ test("NextResult.v8 complete empty recommendation preserves operational fields a
     { ...retained, groups: retainedGroups },
     {
       ...expected,
-      schema_version: "Perttool.NextResult.v8",
-      cli_contract_version: 10,
+      schema_version: "Perttool.NextResult.v9",
+      cli_contract_version: 11,
       acceptance: null,
       schedule_alerts: null,
+      plan_review: { model_version: 1, state: "clear", open_request_ids: [], required_actions: [] },
     },
   );
   assert.equal(grammarVersion, 1);
@@ -147,11 +148,11 @@ test("CLI recommendation provenance preserves the raw BOM-bound source digest", 
   );
 });
 
-test("dag next command help identifies the Contract 10 strict-DAG consumer boundary", () => {
+test("dag next command help identifies the Contract 11 strict-DAG consumer boundary", () => {
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(command.stdout, /Perttool\.NextResult\.v8/);
-  assert.match(command.stdout, /CLI contract: 10/);
+  assert.match(command.stdout, /Perttool\.NextResult\.v9/);
+  assert.match(command.stdout, /CLI contract: 11/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 

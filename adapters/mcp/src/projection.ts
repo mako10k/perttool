@@ -1,3 +1,4 @@
+// R: Project application results into the MCP adapter's closed wire data.
 import {
   convertWithVelocity,
   formatDecimal,
@@ -415,6 +416,7 @@ export function projectNextResult(result: NextResult): JsonObject {
     diagnostics: result.diagnostics.map(diagnosticJson),
     diagnostics_truncated: result.diagnosticsTruncated,
     grammar_version: result.grammarVersion,
+    plan_review: snakeJson(result.planReview),
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
     acceptance: snakeJson(result.acceptance),

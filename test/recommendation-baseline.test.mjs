@@ -179,7 +179,7 @@ test("NextResult.v7 preserves the stable operational field baseline", async () =
       .map(({ case_id, fixture }) => [case_id, runCurrent(fixture)]),
   );
   for (const [caseId, projection] of Object.entries(actual)) {
-    assert.equal(projection.schema_version, "Perttool.NextResult.v8");
+    assert.equal(projection.schema_version, "Perttool.NextResult.v9");
     const {
       schema_version: _currentSchema,
       ...currentOperational

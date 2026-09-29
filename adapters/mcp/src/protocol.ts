@@ -1,3 +1,4 @@
+// R: Define the private MCP adapter's fixed read-only protocol identities.
 export const MCP_PROTOCOL_MODEL_VERSION = 1 as const;
 export const MCP_PROTOCOL_REVISION = "2026-07-28" as const;
 export const MCP_SERVER_NAME = "perttool" as const;
@@ -60,7 +61,7 @@ export const MCP_TOOL_DEFINITIONS = Object.freeze([
     title: "Select next PERT tasks",
     description: "Return recommendation and complete start-authority evidence without changing the document.",
     operation: "dag_next",
-    resultSchemaVersion: "Perttool.NextResult.v8",
+    resultSchemaVersion: "Perttool.NextResult.v9",
     wireSchemaVersion: "Perttool.McpNextResult.v1",
   }),
   Object.freeze({

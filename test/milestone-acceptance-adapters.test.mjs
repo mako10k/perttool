@@ -214,7 +214,7 @@ test("MCP retains Contract 8 acceptance under unchanged wire identities", async 
   const cases = [
     ["perttool_check", "Perttool.McpCheckResult.v1", "Perttool.CheckResult.v6"],
     ["perttool_analyze", "Perttool.McpAnalyzeResult.v1", "Perttool.AnalysisResult.v7"],
-    ["perttool_next", "Perttool.McpNextResult.v1", "Perttool.NextResult.v8"],
+    ["perttool_next", "Perttool.McpNextResult.v1", "Perttool.NextResult.v9"],
   ];
   for (const [name, wire, applicationIdentity] of cases) {
     const result = await adapter.executeTool(name, {

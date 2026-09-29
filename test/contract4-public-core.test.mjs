@@ -55,7 +55,7 @@ test("Contract 6 public results retain typed temporal and release-gated views", 
   assert.equal(analysis.precedence.makespan.numerator, 2n);
 
   const next = perttool.selectNextTasks(text);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v8");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v9");
   assert.deepEqual(next.recommendation.recommendedTaskIds, ["LEAP_WINDOW"]);
   assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(

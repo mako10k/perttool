@@ -214,7 +214,7 @@ test("target Analysis v3 and Next v4 are deterministic and retain Recommendation
   assert.equal(firstNext.temporal.authority.deadlineFactsUsedForRanking, false);
 });
 
-test("active package root keeps temporal helpers internal while CLI uses Contract 7", async () => {
+test("active package root keeps temporal helpers internal under Contract 11", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetTemporalInputs",
@@ -248,13 +248,13 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
   assert.equal(help.status, 0, help.stderr);
   assert.equal(guide.status, 0, guide.stderr);
   for (const serialized of [help.stdout, guide.stdout]) {
-    assert.equal(serialized.includes("NextResult.v8"), true);
+    assert.equal(serialized.includes("NextResult.v9"), true);
   }
   assert.equal(help.stdout.includes("Perttool.AnalysisResult.v7"), true);
   assert.equal(help.stdout.includes('"not-before"'), true);
   assert.equal(help.stdout.includes('"deadline"'), true);
-  assert.equal(JSON.parse(help.stdout).cli_contract_version, 10);
-  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 10);
+  assert.equal(JSON.parse(help.stdout).cli_contract_version, 11);
+  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 11);
 
   const targetFixture = path.join(
     fixtureDirectory,
@@ -264,14 +264,14 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
     [["document", "check"], "Perttool.CheckResult.v6"],
     [["project", "show"], "Perttool.ProjectResult.v5"],
     [["dag", "analyze"], "Perttool.AnalysisResult.v7"],
-    [["dag", "next"], "Perttool.NextResult.v8"],
+    [["dag", "next"], "Perttool.NextResult.v9"],
   ]) {
     const accepted = runCli([...route, targetFixture, "--format=json"]);
     assert.equal(accepted.status, 0);
     assert.equal(accepted.stderr, "");
     const result = JSON.parse(accepted.stdout);
     assert.equal(result.schema_version, schemaVersion);
-    assert.equal(result.cli_contract_version, 10);
+    assert.equal(result.cli_contract_version, 11);
     assert.equal(result.ok, true);
     assert.equal(result.grammar_version, 2);
   }

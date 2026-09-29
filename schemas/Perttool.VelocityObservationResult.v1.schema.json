@@ -222,7 +222,7 @@
       "const": "Perttool.VelocityObservationResult.v1"
     },
     "cli_contract_version": {
-      "const": 10
+      "const": 11
     },
     "tool_version": {
       "type": "string"

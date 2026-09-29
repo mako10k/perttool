@@ -101,6 +101,6 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/);
   assert.match(changelog, /^## \[0\.5\.5\] - 2026-07-30$/m);
-  assert.equal(COMMAND_REGISTRY.length, 71);
-  assert.equal(getJsonSchemaCatalog().length, 29);
+  assert.equal(COMMAND_REGISTRY.length, 75);
+  assert.equal(getJsonSchemaCatalog().length, 31);
 });

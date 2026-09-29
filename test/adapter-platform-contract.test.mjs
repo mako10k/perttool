@@ -129,14 +129,14 @@ test("captured package and reverse-import baselines remain closed", async () => 
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
   assert.equal(
     Object.keys(packageRoot).length,
-    nodeHost.target.root_runtime_exports + 10,
+    nodeHost.target.root_runtime_exports + 26,
   );
   assert.equal(
     nodeHost.baseline.root_runtime_exports,
     baseline.package_root_export_count,
   );
-  assert.equal(COMMAND_REGISTRY.length, baseline.command_count + 27);
-  assert.equal(getJsonSchemaCatalog().length, baseline.root_schema_count + 9);
+  assert.equal(COMMAND_REGISTRY.length, baseline.command_count + 31);
+  assert.equal(getJsonSchemaCatalog().length, baseline.root_schema_count + 11);
   assert.equal(baseline.typescript_source_file_count, 144);
   const expectedImports = fixture.legacy_reverse_dependencies.map(
     ({ source, target }) => ({ source, target }),

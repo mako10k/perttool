@@ -6,7 +6,7 @@
   "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "milestones", "diagnostics"],
   "properties": {
     "schema_version": { "const": "Perttool.MilestoneAcceptanceResult.v1" },
-    "cli_contract_version": { "const": 10 },
+    "cli_contract_version": { "const": 11 },
     "tool_version": { "type": "string" },
     "operation": { "const": "milestone-acceptance.show" },
     "ok": { "type": "boolean" },

@@ -75,8 +75,8 @@ test("0.7.0 readiness remains historical after durable acceptance", async () => 
     repositoryText("src/version.ts"),
   ]);
 
-  assert.equal(COMMAND_REGISTRY.length, 71);
-  assert.equal(getJsonSchemaCatalog().length, 29);
+  assert.equal(COMMAND_REGISTRY.length, 75);
+  assert.equal(getJsonSchemaCatalog().length, 31);
   for (const route of [
     "plan-assurance show",
     "plan-assurance hash",

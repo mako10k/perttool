@@ -159,10 +159,10 @@ test("public contract activates the reserved planning runtime atomically", async
   const catalog = rootApi.getJsonSchemaCatalog();
 
   assert.equal(packageJson.version, "0.11.1");
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
-  assert.equal(catalog.length, 29);
-  assert.equal(Object.keys(rootApi).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
+  assert.equal(catalog.length, 31);
+  assert.equal(Object.keys(rootApi).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, 51);
   assert.equal(commands.filter((command) => command.startsWith("work ")).length, 5);
   assert.equal(commands.filter((command) => command.startsWith("window ")).length, 6);

@@ -168,8 +168,8 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
   assert.equal(lockfile.packages[""].version, "0.11.1");
   assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/);
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.equal(COMMAND_REGISTRY.length, 71);
-  assert.equal(getJsonSchemaCatalog().length, 29);
+  assert.equal(COMMAND_REGISTRY.length, 75);
+  assert.equal(getJsonSchemaCatalog().length, 31);
   assert.match(
     getGuide("next", "detail").sections.map(({ body }) => body).join("\n"),
     /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,

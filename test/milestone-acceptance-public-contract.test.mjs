@@ -19,21 +19,21 @@ function run(args, options = {}) {
 }
 
 test("Contract 9 activates one exact public registry and closed schema catalog", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 29);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 31);
   assert.equal(rootApi.ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v4");
   assert.equal(typeof rootApi.planMilestoneAcceptanceMigration, "function");
   assert.equal(typeof rootApi.planCriterionSetReplacement, "function");
   assert.equal(typeof rootApi.planMilestoneAcceptanceAdvance, "function");
-  assert.equal(Object.keys(rootApi).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(Object.keys(rootApi).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
 });
 
 test("registry validation preserves the exact three-token acceptance command paths", () => {
   const help = run(["help", "milestone", "acceptance", "replace", "--format", "json"]);
   assert.equal(help.status, 0, help.stderr);
   const result = JSON.parse(help.stdout);
-  assert.equal(result.cli_contract_version, 10);
+  assert.equal(result.cli_contract_version, 11);
   assert.deepEqual(result.commands.map(({ path }) => path), [["milestone", "acceptance", "replace"]]);
 
   const legacyAlias = run(["milestone-acceptance", "show", "-", "--format", "json"], { input: "" });
@@ -46,7 +46,7 @@ test("older grammars remain readable but advance fails before Git history inspec
   assert.equal(checked.status, 0, checked.stderr);
   const checkResult = JSON.parse(checked.stdout);
   assert.equal(checkResult.schema_version, "Perttool.CheckResult.v6");
-  assert.equal(checkResult.cli_contract_version, 10);
+  assert.equal(checkResult.cli_contract_version, 11);
   assert.equal(checkResult.grammar_version, 1);
   assert.equal(checkResult.acceptance, null);
   assert.equal(checkResult.diagnostics.some(({ code }) => code === "PTMAC-102"), false);

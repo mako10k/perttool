@@ -78,7 +78,7 @@ export function liftContract9AnalysisResultJson(base: Readonly<Record<string, un
 }
 
 export function liftContract9NextResultJson(base: Readonly<Record<string, unknown>>,
-  result: Contract9NextResult): Readonly<Record<string, unknown>> {
+  result: Pick<Contract9NextResult, "scheduleAlerts">): Readonly<Record<string, unknown>> {
   return replacement(base, "Perttool.NextResult.v7", "Perttool.NextResult.v8", Object.freeze({
     schedule_alerts: contract9ScheduleAlertsToJson(result.scheduleAlerts),
   }));

@@ -141,10 +141,17 @@ test("all fourteen PACT cases retain executable acceptance evidence", async () =
   async function assertEvidence(evidence, label) {
     const source = await evidenceSource(evidence.file);
     if (evidence.test !== undefined) {
+      const currentTest = evidence.file === "test/command-registry.test.mjs" &&
+        evidence.test === "the Contract 9 registry covers the complete active surface exactly once"
+        ? "the Contract 11 registry covers the complete active surface exactly once"
+        : evidence.file === "test/guide.test.mjs" &&
+            evidence.test === "Contract 10 guide preserves base topics and adds assurance, temporal, and planning topics"
+          ? "active Contract 11 Guide retains Grammar 8 and 9 meanings with current identities"
+          : evidence.test;
       assert.equal(
-        source.includes(`test(${JSON.stringify(evidence.test)}`),
+        source.includes(`test(${JSON.stringify(currentTest)}`),
         true,
-        `${label}: missing test ${evidence.test}`,
+        `${label}: missing test ${currentTest}`,
       );
     }
     for (const token of evidence.contains ?? []) {
@@ -326,7 +333,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
   );
 });
 
-test("active Contract 10 retains the complete project actuals command set", () => {
+test("active Contract 11 retains the complete project actuals command set", () => {
   const help = runJson("help");
   const actions = Object.fromEntries(
     help.resources.map(({ name, actions: resourceActions }) => [
@@ -335,7 +342,7 @@ test("active Contract 10 retains the complete project actuals command set", () =
     ]),
   );
 
-  assert.equal(help.cli_contract_version, 10);
+  assert.equal(help.cli_contract_version, 11);
   assert.deepEqual(
     actions.task,
     ["add", "finish", "remove", "resume", "set", "start", "suspend"],

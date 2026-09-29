@@ -53,7 +53,7 @@ const emptyBasis: PlanReviewMutationPlanBasis = Object.freeze({
 });
 
 function diagnostic(
-  code: "PTREV-104" | "PTREV-105" | "PTREV-106" | "PTREV-107" | "PTREV-108" | "PTREV-109",
+  code: "PTREV-104" | "PTREV-105" | "PTREV-106" | "PTREV-107" | "PTREV-108" | "PTREV-109" | "PTREV-110",
   message: string,
   data: Readonly<Record<string, unknown>> = {},
 ): Diagnostic {
@@ -156,11 +156,16 @@ function validSource(
 ): { readonly model: PlanReviewSourceModel } | PlanReviewMutationCoreResult {
   const source = parsePlanReviewSource(text, PLAN_REVIEW_SOURCE_CAPABILITY, options);
   if (!source.ok || source.model === null || source.grammarVersion !== 10) {
+    const diagnostics = source.grammarVersion !== 10
+      ? [diagnostic("PTREV-110", "Plan Review mutations require Grammar 10", {
+          grammar_version: source.grammarVersion,
+        })]
+      : source.diagnostics as readonly Diagnostic[];
     return failure(
       operation,
       text,
       source.documentId,
-      source.diagnostics as readonly Diagnostic[],
+      diagnostics,
       options,
     );
   }

@@ -302,11 +302,13 @@ test("PRMC-013 persists only one validated digest-bound candidate", async () => 
   assert.equal(calls.length, 2);
 });
 
-test("PRMC-014 leaves root, Node, Core, and CLI Application exports unchanged", () => {
-  for (const api of [rootApi, nodeApi, coreApi]) {
-    for (const name of [
+test("PRMC-014 activates accepted root and Node mutation exports while Core stays portable", () => {
+  for (const name of [
       "planPlanReviewCreate", "planPlanReviewResolve", "persistPlanReviewMutation",
       "PLAN_REVIEW_CREATE_REQUEST_ID", "PLAN_REVIEW_RESOLVE_REQUEST_ID",
-    ]) assert.equal(name in api, false, name);
+  ]) {
+    assert.equal(name in rootApi, true, name);
+    assert.equal(nodeApi[name], rootApi[name], name);
+    assert.equal(name in coreApi, false, name);
   }
 });

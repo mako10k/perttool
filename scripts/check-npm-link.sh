@@ -46,7 +46,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.CheckResult.v6" ||
-          result.cli_contract_version !== 10 ||
+          result.cli_contract_version !== 11 ||
           result.grammar_version !== 5 ||
           result.actuals_inputs?.events?.length !== 0
         ) process.exit(1);
@@ -66,7 +66,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.MutationResult.v6" ||
-          result.cli_contract_version !== 10 ||
+          result.cli_contract_version !== 11 ||
           result.changed !== true ||
           result.write?.mode !== "preview" ||
           result.lifecycle?.from_state !== "planned" ||
@@ -84,7 +84,7 @@ fi
         const topicIds = result.topics?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 10 ||
+          result.cli_contract_version !== 11 ||
           result.operation !== "guide" ||
           JSON.stringify(topicIds) !== JSON.stringify([
             "syntax",
@@ -101,6 +101,7 @@ fi
             "milestone-acceptance",
             "temporal-schedule",
             "planning-pool",
+            "plan-review",
           ]) ||
           /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
         ) process.exit(1);
@@ -116,7 +117,7 @@ fi
         const sectionIds = result.sections?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 10 ||
+          result.cli_contract_version !== 11 ||
           result.operation !== "guide" ||
           result.topic_id !== "next" ||
           JSON.stringify(sectionIds) !== JSON.stringify([
@@ -180,14 +181,14 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.schemas?.length !== 29 ||
+          result.schemas?.length !== 31 ||
           result.schema?.$id !==
             "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v4.schema.json" ||
           result.schema?.properties?.history_guard === undefined
         ) process.exit(1);
       });
     '
-  "$linked_cli" schema Perttool.NextResult.v8 --format=json |
+  "$linked_cli" schema Perttool.NextResult.v9 --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -196,12 +197,12 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.cli_contract_version !== 10 ||
-          result.schemas?.length !== 29 ||
+          result.cli_contract_version !== 11 ||
+          result.schemas?.length !== 31 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v8.schema.json"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json"
         ) process.exit(1);
       });
     '
@@ -219,7 +220,7 @@ fi
           const result = JSON.parse(input);
           const expected = process.argv[1];
           if (
-            result.schemas?.length !== 29 ||
+            result.schemas?.length !== 31 ||
             result.schema?.$id !==
               `https://github.com/mako10k/perttool/schemas/${expected}.schema.json`
           ) process.exit(1);
@@ -244,7 +245,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.AdvanceResult.v4" ||
-          result.cli_contract_version !== 10 ||
+          result.cli_contract_version !== 11 ||
           result.diagnostics?.[0]?.code !== "PTMAC-101" ||
           result.history_guard !== null ||
           result.acceptance_guard !== null
@@ -254,7 +255,7 @@ fi
   node "$repo_root/scripts/check-advance-clean-candidate.mjs" \
     "$linked_cli" \
     "$link_prefix/advance-clean-candidate-workflow" >/dev/null
-  "$linked_cli" schema Perttool.NextResult.v8 --view=outline --format=json |
+  "$linked_cli" schema Perttool.NextResult.v9 --view=outline --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -265,7 +266,7 @@ fi
           result.query?.view !== "outline" ||
           Object.hasOwn(result.schema ?? {}, "$defs") ||
           result.schema?.properties?.groups?.$ref !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v8.schema.json#/properties/groups"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json#/properties/groups"
         ) process.exit(1);
       });
     '

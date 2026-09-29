@@ -1,3 +1,4 @@
+// R: Expose the platform-neutral Core runtime and guidance surface.
 export {
   formatDocument,
   parseDocument,
@@ -8,11 +9,11 @@ export { analyzePrecedence } from "../analysis/precedence.js";
 export { analyzeResources } from "../analysis/resource.js";
 export { getHelp } from "../help/registry.js";
 export {
-  contract10GuideResultToJson as guideResultToJson,
-  getContract10Guide as getGuide,
-  renderContract10GuideResult as renderGuideResult,
-  serializeContract10GuideResult as serializeGuideResult,
-} from "../help/contract10-guide.js";
+  contract11GuideResultToJson as guideResultToJson,
+  getContract11Guide as getGuide,
+  renderContract11GuideResult as renderGuideResult,
+  serializeContract11GuideResult as serializeGuideResult,
+} from "../help/contract11-guide.js";
 export {
   auditPlanningWindowMutationCore,
   inspectPlanningPool,
@@ -95,8 +96,8 @@ export type {
   HelpSection,
 } from "../help/registry.js";
 export type {
-  Contract10GuideResult as GuideResult,
-} from "../help/contract10-guide.js";
+  Contract11GuideResult as GuideResult,
+} from "../help/contract11-guide.js";
 export type {
   PlanningPoolReadOperation,
   PlanningPoolReadQuery,

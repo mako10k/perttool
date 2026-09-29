@@ -54,7 +54,7 @@ const planNames = [
   "mvp",
 ];
 const knownContract = {
-  schema_version: "Perttool.NextResult.v8",
+  schema_version: "Perttool.NextResult.v9",
   recommendation_interface_version: 1,
   algorithm_id: "perttool.recommendation-ranking.lexicographic-frontier",
   algorithm_version: 1,

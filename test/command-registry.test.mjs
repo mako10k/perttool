@@ -89,6 +89,10 @@ const expectedPaths = [
   "window add",
   "window set",
   "window close",
+  "plan review-request",
+  "plan review-list",
+  "plan review-show",
+  "plan review-resolve",
 ];
 
 function run(args) {
@@ -128,7 +132,7 @@ function invocationTokens(invocation) {
   return tokens;
 }
 
-test("the Contract 9 registry covers the complete active surface exactly once", () => {
+test("the Contract 11 registry covers the complete active surface exactly once", () => {
   assert.equal(COMMAND_REGISTRY.length, expectedPaths.length);
   assert.deepEqual(
     commandRegistryToJson(),
@@ -149,7 +153,7 @@ test("the Contract 9 registry covers the complete active surface exactly once", 
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 10, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 11, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(

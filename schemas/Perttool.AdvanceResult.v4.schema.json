@@ -33,7 +33,7 @@
       "const": "Perttool.AdvanceResult.v4"
     },
     "cli_contract_version": {
-      "const": 10
+      "const": 11
     },
     "tool_version": {
       "type": "string"
@@ -158,6 +158,9 @@
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "removed_assurance_record_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_plan_review_request_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "updated_assurance_receipt_ids": {

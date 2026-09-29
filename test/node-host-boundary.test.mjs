@@ -66,8 +66,8 @@ test("Node builtins remain confined to logical and concrete hosts", async () => 
 
 test("Node Host is additive while root and Node facades remain identical", async () => {
   const cases = await fixture();
-  assert.equal(Object.keys(packageRoot).length, cases.target.root_runtime_exports + 10);
-  assert.equal(Object.keys(nodeApi).length, cases.target.node_runtime_exports + 10);
+  assert.equal(Object.keys(packageRoot).length, cases.target.root_runtime_exports + 26);
+  assert.equal(Object.keys(nodeApi).length, cases.target.node_runtime_exports + 26);
   assert.equal(Object.keys(core).length, cases.target.core_runtime_exports + 6);
   assert.deepEqual(Object.keys(nodeApi), Object.keys(packageRoot));
   for (const name of Object.keys(packageRoot)) {
@@ -76,9 +76,9 @@ test("Node Host is additive while root and Node facades remain identical", async
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal("createNodeHost" in core, false);
   assert.equal(cases.target.commands + 15, 67);
-  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, 71);
+  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, 75);
   assert.equal(cases.target.root_schemas + 7, 29);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 29);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 31);
 });
 
 test("Node Host digest, byte sources, and process context are exact and bounded", async () => {

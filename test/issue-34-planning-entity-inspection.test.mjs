@@ -40,7 +40,7 @@ test("Issue #34 publishes four read-only Event and Activity inspection commands"
   for (const operation of operations) {
     const descriptor = COMMAND_REGISTRY.find((entry) => entry.operation === operation);
     assert.notEqual(descriptor, undefined, operation);
-    assert.equal(descriptor.contractVersion, 10);
+    assert.equal(descriptor.contractVersion, 11);
     assert.equal(descriptor.effect, "read");
     assert.equal(descriptor.output.fileEffect, "none");
     assert.deepEqual(descriptor.resultSchemas, [
@@ -52,7 +52,7 @@ test("Issue #34 publishes four read-only Event and Activity inspection commands"
       ["format", "color", "max-diagnostics", "warnings-as-errors"],
     );
   }
-  assert.equal(COMMAND_REGISTRY.length, 71);
+  assert.equal(COMMAND_REGISTRY.length, 75);
 });
 
 test("Issue #34 keeps Event and Activity lists compact and project-owned", () => {

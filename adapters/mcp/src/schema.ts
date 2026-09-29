@@ -1,3 +1,4 @@
+// R: Bind MCP read results to the active public semantic schema definitions.
 import { createNodeHost, getJsonSchema } from "perttool/node";
 import {
   MCP_PROTOCOL_MODEL_VERSION,
@@ -51,6 +52,8 @@ function rewriteReferences(
         result[key] = `#/$defs/project_${child.slice(child.lastIndexOf("/") + 1)}`;
       } else if (child.startsWith("Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/")) {
         result[key] = `#/$defs/acceptance_${child.slice(child.lastIndexOf("/") + 1)}`;
+      } else if (child.startsWith("Perttool.PlanReviewResult.v1.schema.json#/$defs/")) {
+        result[key] = `#/$defs/review_${child.slice(child.lastIndexOf("/") + 1)}`;
       } else if (child.startsWith("#/$defs/")) {
         result[key] = `#/$defs/${common ? commonPrefix : localPrefix}${child.slice(8)}`;
       } else if (child === "https://json-schema.org/draft/2020-12/schema") {
@@ -138,22 +141,30 @@ function commonDefinitions(): Readonly<Record<string, MutableJson>> {
   );
 }
 
-function acceptanceDefinitions(): Readonly<Record<string, MutableJson>> {
-  const source = getJsonSchema("Perttool.MilestoneAcceptanceResult.v1");
+function referencedDefinitions(schemaId: string, prefix: string, label: string): Readonly<Record<string, MutableJson>> {
+  const source = getJsonSchema(schemaId);
   if (source === null) {
-    throw new Error("unavailable public milestone acceptance schema");
+    throw new Error(`unavailable public ${label} schema`);
   }
   const cloned = cloneJson(source);
   const definitions = isObject(cloned) ? cloned["$defs"] : undefined;
   if (!isObject(cloned) || definitions === undefined || !isObject(definitions)) {
-    throw new Error("invalid public milestone acceptance schema");
+    throw new Error(`invalid public ${label} schema`);
   }
   return Object.fromEntries(
     Object.entries(definitions).map(([key, value]) => [
-      `acceptance_${key}`,
-      rewriteReferences(value, "acceptance_", "common_", false),
+      `${prefix}${key}`,
+      rewriteReferences(value, prefix, "common_", false),
     ]),
   );
+}
+
+function acceptanceDefinitions(): Readonly<Record<string, MutableJson>> {
+  return referencedDefinitions("Perttool.MilestoneAcceptanceResult.v1", "acceptance_", "milestone acceptance");
+}
+
+function reviewDefinitions(): Readonly<Record<string, MutableJson>> {
+  return referencedDefinitions("Perttool.PlanReviewResult.v1", "review_", "Plan Review");
 }
 
 function analysisDefinitions(): Readonly<Record<string, MutableJson>> {
@@ -177,18 +188,7 @@ function analysisDefinitions(): Readonly<Record<string, MutableJson>> {
 }
 
 function projectDefinitions(): Readonly<Record<string, MutableJson>> {
-  const source = getJsonSchema("Perttool.ProjectResult.v5");
-  const cloned = source === null ? null : cloneJson(source);
-  const definitions = isObject(cloned) ? cloned["$defs"] : undefined;
-  if (definitions === undefined || !isObject(definitions)) {
-    throw new Error("invalid public project schema");
-  }
-  return Object.fromEntries(
-    Object.entries(definitions).map(([key, value]) => [
-      `project_${key}`,
-      rewriteReferences(value, "project_", "common_", false),
-    ]),
-  );
+  return referencedDefinitions("Perttool.ProjectResult.v5", "project_", "project");
 }
 
 const sourceBindingSchema: MutableJson = {
@@ -288,6 +288,7 @@ function toolOutputSchema(name: McpToolName): McpJsonSchema {
   const definitions = {
     ...commonDefinitions(),
     ...acceptanceDefinitions(),
+    ...reviewDefinitions(),
     ...analysisDefinitions(),
     ...projectDefinitions(),
     ...Object.assign({}, ...layers.map(({ definitions: value }) => value)),

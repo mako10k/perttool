@@ -1,3 +1,4 @@
+// R: Compose CLI application services with injected Node host ports.
 import type {
   CreateDocumentOptions,
   DocumentWriteResult,
@@ -11,8 +12,6 @@ import {
   validateTargetGrammar6Document,
 } from "../semantic/target-validator.js";
 import {
-  analyzeDocument,
-  checkDocument,
   getProjectMetadata,
   planAssuranceMutation,
   planBatchMutation,
@@ -22,9 +21,9 @@ import {
   planLifecycle,
   planMutation,
   planUnitMigration,
-  selectNextTasks,
   withUnitMigrationWrite,
 } from "./contract10-runtime.js";
+import { analyzeDocument, checkDocument, selectNextTasks } from "./contract11-runtime.js";
 import {
   planAdvance,
 } from "./contract7-mutation.js";

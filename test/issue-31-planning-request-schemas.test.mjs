@@ -68,7 +68,7 @@ test("Issue #31 publishes exactly three standalone request schema roots", () => 
       `${schemaBase}${entry.schemaId}.schema.json`,
     );
     const selected = runSchema(entry.schemaId);
-    assert.equal(selected.schemas.length, 29);
+    assert.equal(selected.schemas.length, 31);
     assert.equal(selected.schema.$id, `${schemaBase}${entry.schemaId}.schema.json`);
   }
 });
@@ -128,7 +128,7 @@ test("standalone request schemas reject unsupported enum and version values", ()
   }
 });
 
-test("Contract 10 Help links every low-level request option to its schema", () => {
+test("Contract 11 Help links every low-level request option to its schema", () => {
   const expected = new Map([
     ["work observe", "Perttool.PlanningObservationRequest.v1"],
     ["window observe", "Perttool.PlanningObservationRequest.v1"],

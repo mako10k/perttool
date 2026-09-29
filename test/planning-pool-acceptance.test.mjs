@@ -61,10 +61,10 @@ test("final Planning Pool acceptance preserves its historical boundary and curre
   // The trace is the immutable public-activation boundary. Later accepted
   // request schemas and Issue #34 inspection commands extend the live catalog
   // without rewriting that historical evidence.
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 71);
-  assert.equal(catalog.length, 29);
-  assert.equal(Object.keys(rootApi).length, trace.target.root_exports);
-  assert.equal(Object.keys(nodeApi).length, trace.target.node_exports);
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
+  assert.equal(catalog.length, 31);
+  assert.equal(Object.keys(rootApi).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, trace.target.core_exports);
   assert.deepEqual(trace.forbidden_effects, [
     "release_selection",

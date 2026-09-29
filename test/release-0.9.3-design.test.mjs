@@ -106,10 +106,10 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
   assert.match(planIndex, /All forty-seven plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/u);
 
-  assert.equal(perttool.COMMAND_REGISTRY.length, 71);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 29);
-  assert.equal(Object.keys(perttool).length, 139);
-  assert.equal(Object.keys(nodeApi).length, 139);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 75);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 31);
+  assert.equal(Object.keys(perttool).length, 155);
+  assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(core).length, 51);
   assert.deepEqual(Object.keys(perttool), Object.keys(nodeApi));
   for (const name of Object.keys(perttool)) assert.equal(perttool[name], nodeApi[name], name);

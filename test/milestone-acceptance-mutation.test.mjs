@@ -115,8 +115,8 @@ test("show shares the evaluator and mutation is publicly exported", async () => 
   assert.equal(shown.milestones.find(({ milestoneId }) => milestoneId === "DONE").closure, "reached");
   const root = await import("../dist/index.js");
   assert.equal(typeof root.planCriterionSetReplacement, "function");
-  assert.equal(root.COMMAND_REGISTRY.length, 71);
-  assert.equal(root.getJsonSchemaCatalog().length, 29);
+  assert.equal(root.COMMAND_REGISTRY.length, 75);
+  assert.equal(root.getJsonSchemaCatalog().length, 31);
 });
 
 test("all fourteen mutation cases are dependency ordered", async () => {

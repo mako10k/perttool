@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanReviewResult.v1.schema.json",
+  "title": "Perttool.PlanReviewResult.v1",
+  "$defs": {
+    "projection": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "state",
+        "open_request_ids",
+        "required_actions"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "state": {
+          "enum": [
+            "clear",
+            "review_required"
+          ]
+        },
+        "open_request_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "required_actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "request_ids"
+            ],
+            "properties": {
+              "kind": {
+                "const": "review_before_new_downstream_work"
+              },
+              "request_ids": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewProjection.v1"
+    },
+    "request": {
+      "type": "object",
+      "required": [
+        "id",
+        "qualified_id",
+        "task_id",
+        "qualified_task_id",
+        "state",
+        "task_reference_state",
+        "model",
+        "reason",
+        "created_at",
+        "created_by",
+        "locator",
+        "outcome",
+        "resolved_at",
+        "resolved_by",
+        "resolution_reason",
+        "reviewed_source_digest",
+        "change_request_digest",
+        "plan_basis_before",
+        "plan_basis_after",
+        "source_binding"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "qualified_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "qualified_task_id": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "resolved"
+          ]
+        },
+        "task_reference_state": {
+          "enum": [
+            "current",
+            "historical"
+          ]
+        },
+        "model": {
+          "const": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "outcome": {
+          "enum": [
+            "plan_retained",
+            "plan_changed",
+            null
+          ]
+        },
+        "resolved_at": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "resolved_by": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "resolution_reason": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "reviewed_source_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "change_request_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "plan_basis_before": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "plan_basis_after": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "source_binding": {
+          "type": "object",
+          "required": [
+            "source_digest",
+            "span"
+          ],
+          "properties": {
+            "source_digest": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+            },
+            "span": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/span"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewRequestModel.v1"
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "query",
+    "projection",
+    "requests",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.PlanReviewResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 11
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "plan.review-list",
+        "plan.review-show"
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "query": {
+      "type": "object",
+      "required": [
+        "state",
+        "request_id"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "open",
+            "resolved",
+            "all",
+            null
+          ]
+        },
+        "request_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "projection": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/projection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/request"
+      }
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    }
+  },
+  "additionalProperties": false
+}

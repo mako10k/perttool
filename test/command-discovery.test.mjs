@@ -90,6 +90,10 @@ const expectedPaths = [
   "window add",
   "window set",
   "window close",
+  "plan review-request",
+  "plan review-list",
+  "plan review-show",
+  "plan review-resolve",
 ];
 
 const expectedResources = [
@@ -102,6 +106,7 @@ const expectedResources = [
   ["event", ["list", "show"]],
   ["gate", ["add", "remove", "set"]],
   ["milestone", ["acceptance fail", "acceptance replace", "acceptance revoke", "acceptance show", "acceptance unavailable", "acceptance verify", "acceptance waive", "add", "remove", "set"]],
+  ["plan", ["review-list", "review-request", "review-resolve", "review-show"]],
   ["plan-assurance", ["hash", "reseal", "seal", "show"]],
   ["plan-dependency", ["add", "remove", "set"]],
   ["project", ["history", "init", "migrate-unit", "observe-velocity", "set", "show"]],
@@ -128,8 +133,10 @@ const knownSchemas = new Set([
   "Perttool.MilestoneAcceptanceMigrationResult.v1",
   "Perttool.MilestoneAcceptanceResult.v1",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v8",
+  "Perttool.NextResult.v9",
   "Perttool.PlanAssuranceResult.v2",
+  "Perttool.PlanReviewMutationResult.v1",
+  "Perttool.PlanReviewResult.v1",
   "Perttool.ProjectHistoryResult.v1",
   "Perttool.ProjectResult.v5",
   "Perttool.SchemaResult.v1",
@@ -147,7 +154,7 @@ function runCli(args) {
   });
 }
 
-test("Contract 10 command discovery projects every implemented capability in canonical order", () => {
+test("Contract 11 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
     COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
@@ -160,7 +167,7 @@ test("Contract 10 command discovery projects every implemented capability in can
   );
   assert.ok(
     COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 10,
+      ({ contractVersion }) => contractVersion === 11,
     ),
   );
   for (const descriptor of COMMAND_REGISTRY) {
@@ -187,7 +194,7 @@ test("Contract 10 command discovery projects every implemented capability in can
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 10);
+  assert.equal(top.cliContractVersion, 11);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
@@ -206,7 +213,7 @@ test("Contract 10 command discovery projects every implemented capability in can
   }
 });
 
-test("Contract 10 projections are the active public surface", () => {
+test("Contract 11 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -262,7 +269,7 @@ test("Contract 10 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 10);
+    assert.equal(json.cli_contract_version, 11);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }
