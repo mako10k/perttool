@@ -45,3 +45,13 @@ step S8:
 step S9:
   decision D4 based_on D2, D3, PR1, U2, A3:
     "Present this exact six-file corrective scope for owner confirmation, with the maximum two local commits explicitly disclosed. Do not execute either additional commit before that confirmation. Retain the first rejected artifact and source commit; after authorization, verify durable bundled text and the exact retained tarball, record measured completion, and present the final commit/hash for the distinct publication decision"
+
+step S10:
+  evidence E7:
+    "The owner approved the exact six-file corrective scope with at most two local commits. Clean corrective commit 6a1b1dd77a427780446ace710e9d4207302b78e6 matched the approved paths and hashes. Both unchanged complete gates passed 1420 of 1421 tests and failed server/discover at its existing request timer. Corrected packing was not reached"
+  premise PR7:
+    "The owner permits release if the rerun succeeds and retains timeout adjustment as a separate task. The rerun did not succeed"
+  pending U7:
+    "The exact producing condition of either recurrence is unmeasured. No corrected artifact is verified, and no timeout correction or publication is authorized"
+  decision D7 based_on E7, PR7, U7:
+    "Record observed resume and suspension through digest-guarded CLI and preserve both failed gates in the remaining records-only local commit. Keep the candidate incomplete. Recommend separately scoped timeout correction followed by clean-source and retained-artifact gates; do not publish or claim candidate readiness"

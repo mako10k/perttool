@@ -103,3 +103,16 @@ work_event PR_RELEASE_0120_CANDIDATE_SUSPEND_20260930:
   kind suspend
   occurred_at 2026-09-30T06:31:48+00:00
   reason "Await exact additional corrective commit authorization; initial artifact rejected for transient package documentation"
+
+work_event PR_RELEASE_0120_CANDIDATE_RESUME_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind resume
+  occurred_at 2026-09-30T06:47:13+00:00
+
+work_event PR_RELEASE_0120_CANDIDATE_GATE_SUSPEND_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind suspend
+  occurred_at 2026-09-30T07:07:55+00:00
+  reason "Both unchanged clean-source gates failed MCP discovery; await separately scoped timeout correction"
