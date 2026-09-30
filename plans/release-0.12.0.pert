@@ -61,7 +61,7 @@ task RELEASE_0120_CANDIDATE RELEASE_0120_PREPARED -> RELEASE_0120_CANDIDATE_ACCE
 task RELEASE_0120_PUBLISH RELEASE_0120_CANDIDATE_ACCEPTED -> RELEASE_0120_PUBLISHED:
   title "Publish the exact separately accepted artifact once after publication authorization"
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -129,3 +129,17 @@ work_event PR_RELEASE_0120_CANDIDATE_FINISH_20260930:
   kind finish
   occurred_at 2026-09-30T08:43:48+00:00
   active_time 1.1175h
+
+work_event PR_RELEASE_0120_PUBLISH_START_20260930:
+  model 1
+  task RELEASE_0120_PUBLISH
+  kind start
+  occurred_at 2026-09-30T09:07:17+00:00
+  planned_value 3p
+
+work_event PR_RELEASE_0120_PUBLISH_FINISH_20260930:
+  model 1
+  task RELEASE_0120_PUBLISH
+  kind finish
+  occurred_at 2026-09-30T09:20:26+00:00
+  active_time 263/1200h
