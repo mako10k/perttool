@@ -70,7 +70,7 @@ task RELEASE_0120_PUBLISH RELEASE_0120_CANDIDATE_ACCEPTED -> RELEASE_0120_PUBLIS
 task RELEASE_0120_ACCEPTANCE RELEASE_0120_PUBLISHED -> RELEASE_0120_ACCEPTED:
   title "Verify independent remote, artifact and installed exact and beta readback"
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -143,3 +143,17 @@ work_event PR_RELEASE_0120_PUBLISH_FINISH_20260930:
   kind finish
   occurred_at 2026-09-30T09:20:26+00:00
   active_time 263/1200h
+
+work_event PR_RELEASE_0120_ACCEPTANCE_START_20260930:
+  model 1
+  task RELEASE_0120_ACCEPTANCE
+  kind start
+  occurred_at 2026-09-30T09:37:44+00:00
+  planned_value 3p
+
+work_event PR_RELEASE_0120_ACCEPTANCE_FINISH_20260930:
+  model 1
+  task RELEASE_0120_ACCEPTANCE
+  kind finish
+  occurred_at 2026-09-30T09:42:22+00:00
+  active_time 139/1800h
