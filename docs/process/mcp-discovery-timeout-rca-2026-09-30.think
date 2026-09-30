@@ -1,0 +1,66 @@
+framework DecisionAudit
+problem P1:
+  "Determine the producing condition of the observed MCP discovery timeout without asserting resource contention from a passing retry"
+step S1:
+  evidence EV1:
+    "The failed full-suite log reports discovery timeout at a five-second request timer; the test first awaited a successful old-protocol rejection. Full default concurrency failed once, a prior default run passed, isolation and concurrency four passed"
+step S2:
+  evidence EV2:
+    "The test stores pending promises in a Map and starts its five-second deadline before stdin.write. Timeout deletes the pending ID; late responses are then silently unclaimed. This is an observation gap, not proof of the producing cause"
+step S3:
+  pending H1:
+    "Server execution or scheduling was delayed beyond five seconds"
+  pending H2:
+    "The test parent event loop or pipe reception was delayed, and its timer won before processing an available response"
+  pending H3:
+    "The adapter or SDK discarded, rejected or stalled discovery independently of scheduling pressure"
+  pending U1:
+    "No original process timing, pipe timestamps, CPU pressure or raw discovery response was captured. The original occurrence may remain causally unproved"
+step S4:
+  premise PR1:
+    "RCA is authorized; source fixes, increased timeouts, load on unrelated tasks, remote writes and plan changes are not necessary to this investigation"
+step S5:
+  decision D1 based_on P1, EV1, EV2, H1, H2, H3, U1, PR1:
+    "Inspect the installed SDK route and run bounded instrumented stdio replicas from scratch files, first without load, then with only owned disposable clients. Capture monotonic request and raw-response times, parent event-loop delay, late responses and process exit. Distinguish controlled reproduction from attribution to the original occurrence; audit any causal conclusion before adopting it"
+step S6:
+  evidence EV3:
+    "Controlled real-server experiment warmed all 22 legacy responses first (1243-2325ms), then constrained only owned server processes to CPUs 0-3 and sent discovery together. Eighteen five-second deadlines fired; all 22 valid replies later arrived (3701-9391ms). Parent event-loop maximum delay was 69ms. Example server receive-to-send was 9174ms with 2026ms CPU, client deadline at 5001ms and reply at 9200ms"
+step S7:
+  evidence EV4:
+    "A separate V8 profile of real createServer measured 973ms wall and 1466ms aggregate process CPU. 892026 of 905025 microseconds sampled within createServer were in AJV frames (98.56%). Source inspection shows SDK handles first discovery by invoking the factory, and fromJsonSchema eagerly obtains an AJV validator for every tool input/output schema"
+step S8:
+  evidence EV5:
+    "Same four-CPU server affinity and barrier with four clients passed all discovery deadlines (970-1359ms), parent loop maximum 17ms. Normal-affinity 22-client trial also passed (2457-4340ms). Original suite used no explicit concurrency; installed Node 22 code defaults to availableParallelism minus one, currently 21 file workers, with additional server children"
+step S9:
+  pending U2:
+    "Affinity restriction and a synchronized 22-discovery barrier are deliberate experimental interventions, not observed original conditions. Original resource pressure, exact factory duration and late-response status were not captured. The test replica retains late responses beyond its soft deadline, unlike the original pending-ID deletion"
+step S10:
+  decision D2 based_on P1, EV1, EV2, EV3, EV4, EV5, H1, H2, H3, U1, U2:
+    "The controlled reproduction's producing condition is cold synchronous schema compilation inside first discovery competing for CPU execution capacity against a fixed five-second client success budget. Parent event-loop delay and dropped protocol responses do not explain this controlled run. For the original occurrence, that mechanism is the leading medium-confidence explanation, not a verified causal fact; retain original root attribution as unconfirmed"
+step S11:
+  premise PR2:
+    "The accepted MCP contract has no five-second discovery SLA. A test failure cannot establish a production latency defect. Changing the SDK, discovery semantics or timeout is not authorized by this RCA-only request"
+step S12:
+  pending A1:
+    "Candidate remedy: bound the canonical unit-test worker concurrency to four and retain the current timeout; verify the complete gate and both low/high-capacity scenarios"
+  pending A2:
+    "Candidate remedy: change the test budget after defining supported workload and latency threshold, or optimize factory compilation after profiling a user workload; neither is selected"
+step S13:
+  decision D3 based_on D2, EV2, EV5, PR1, PR2, A1, A2, U1, U2:
+    "Recommend explicit four-worker test scheduling as the bounded immediate correction candidate and preserve raw request/response, child timing and late-reply diagnostics for future failures as separate recurrence detection. Do not implement a source fix in this investigation. Archive exact experiment evidence and report original attribution limits. New instrumentation is required if the original environment fails again before upgrading confidence"
+step S14:
+  decision D4 based_on P1, D2, U1, U2, PR1:
+    "Run one bounded full default-worker unit suite with only a scratch copy of the MCP test instrumented for parent deadlines, received replies and owned child raw stdio timings. Preserve original five-second rejection and pending deletion; make no affinity or server change. This discriminates actual default-suite failures from the artificial barrier scenario. A passing run is negative reproduction evidence, not proof of original cause"
+step S15:
+  evidence EV6:
+    "The final instrumented default-worker suite passed all 1421 tests. Real MCP discovery send-to-parent-receive was 2413ms, child receive-to-write 2412ms with 3156ms aggregate CPU; parent event-loop maximum delay was 30ms. No five-second deadline fired. An earlier launch was stopped for an omitted Node PATH and supplies no causal evidence"
+step S16:
+  decision D5 based_on D2, D3, D4, EV6, U1, U2:
+    "Retain the controlled producing mechanism as confirmed and original attribution as unconfirmed. The measured normal-suite success does not establish what delayed the original failing request. Archive the negative reproduction and original semantics-preserving timing instrumentation; propose future timeout capture and bounded concurrency without claiming resolution or changing source"
+
+step S17:
+  premise PR3:
+    "On 2026-09-30 the owner confirmed that timeout adjustment is separate work, complete causal attribution is not a release blocker, and a successful rerun is sufficient for this incident's release judgment; the owner then explicitly instructed proceeding on that decision"
+step S18:
+  decision D6 based_on PR3, EV6, D2, U1, U2:
+    "Record the owner's incident release decision as confirmed. The successful 1421-test rerun satisfies the incident-specific rerun condition. Preserve unknown original attribution. Supersede the prior immediate concurrency-remedy recommendation with separately scoped timeout-budget work. Continue local release-boundary review; version selection, candidate acceptance and publication retain their distinct decisions"

@@ -1017,4 +1017,7 @@ if (
   !/^override:sha256:[0-9a-f]{64}$/.test(override.override.overrideId)
 ) throw new Error("installed override contract mismatch");
 NODE
+PERTTOOL_PLAN_REVIEW_PACKAGE_ROOT="$install_prefix/lib/node_modules/$package_name" \
+  node --test test/plan-review-acceptance.test.mjs \
+    test/plan-review-independent-guards.test.mjs test/plan-review-public-advance.test.mjs
 printf 'release package check passed (%s)\n' "$actual_version"

@@ -1,4 +1,5 @@
 // R: Compose Plan Review resolution with the existing application batch planner.
+import { MilestoneAcceptanceCandidateError } from "./contract8-milestone-acceptance.js";
 import { planBatchMutation } from "./contract10-runtime.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
@@ -85,16 +86,23 @@ export function planPlanReviewResolve(
   options: PlanReviewMutationOptions = {},
 ): PlanReviewMutationCoreResult {
   return planCoreResolve(text, input, options, {
-    composeBatch: (base, request, authority) => planBatchMutation(
-      base,
-      request,
-      {
-        governance: {
-          intent: "persist",
-          actor: authority.actor,
-          acceptedByOwner: authority.acceptedOwners,
-        },
-      },
-    ) as PlanReviewComposedMutationResult,
+    composeBatch: (base, request, authority) => {
+      try {
+        return planBatchMutation(base, request, {
+          governance: {
+            intent: "persist",
+            actor: authority.actor,
+            acceptedByOwner: authority.acceptedOwners,
+          },
+        }) as PlanReviewComposedMutationResult;
+      } catch (error) {
+        if (!(error instanceof MilestoneAcceptanceCandidateError)) throw error;
+        return Object.freeze({
+          ok: false, changed: false, originalDigest: sha256DigestUtf8(base),
+          updatedDigest: null, updatedText: null, edits: Object.freeze([]),
+          diagnostics: error.diagnostics, diagnosticsTruncated: false,
+        });
+      }
+    },
   });
 }

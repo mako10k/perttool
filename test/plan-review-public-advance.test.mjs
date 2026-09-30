@@ -4,16 +4,15 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
-import {
-  planAcceptanceReceiptMutation,
-  planCriterionSetReplacement,
-  planMilestoneAcceptanceMigration,
-} from "../dist/index.js";
+import { fileURLToPath, pathToFileURL } from "node:url";
+const packageRoot = process.env.PERTTOOL_PLAN_REVIEW_PACKAGE_ROOT ??
+  path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const { planAcceptanceReceiptMutation, planCriterionSetReplacement, planMilestoneAcceptanceMigration } =
+  await import(pathToFileURL(path.join(packageRoot, "dist/index.js")));
 import { sha256DigestUtf8 } from "../dist/model/sha256.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const cli = path.join(root, "dist", "cli.js");
+const cli = path.join(packageRoot, "dist", "cli.js");
 
 function run(args, expectedStatus = 0, cwd = root) {
   const child = spawnSync(process.execPath, [cli, ...args, "--format=json"], {

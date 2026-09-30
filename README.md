@@ -5,10 +5,16 @@ reviewable text files. It validates plans, calculates precedence and
 resource-constrained schedules, recommends the next task, and previews every
 change before writing it.
 
-The recommended npm `latest` release is `0.10.5`; npm `beta` is `0.11.1` with
+The recommended npm `latest` release is `0.11.1`; npm `beta` is `0.11.1` with
 Grammar 9 and CLI Contract 10 for the Work-centered Planning Pool. Both require
 Node.js 22 or later. Exact `0.10.6` remains the compatible Grammar 8 and CLI
 Contract 9 rollback pin that includes the Issue #36 correction.
+
+
+The local source is preparing `0.12.0` (Grammar 10 and CLI Contract 11) for
+Plan Review requests and guarded resolution. This source version is not yet
+published. See the [migration guide](docs/process/0.11.1-to-0.12.0-migration.md)
+and [release procedure](docs/process/0.12.0-release.md).
 
 ## Install
 

@@ -1,0 +1,116 @@
+framework DecisionAudit
+
+domain PlanReviewAcceptance:
+  description "PLAN_REVIEW_ACCEPTANCE cross-surface conformance verification"
+
+problem P1:
+  "Verify every accepted Plan Review behavior through source and isolated installed package without conflating technical evidence and owner acceptance"
+
+step S1:
+  premise PR1:
+    "The user explicitly selects PLAN_REVIEW_ACCEPTANCE; accepted spec section 13 has seventeen mandatory groups and the task requires Core, CLI, schemas, history, races, link and isolated package evidence"
+
+step S2:
+  evidence EV1:
+    "The existing public task is done; latest source passed 1396 tests and all repository gates; current changes belong to this branch and no remote write or owner acceptance was performed"
+    resource:
+      file "docs/process/plan-review-public-byte-limit-review-2026-09-30.md"
+      label "Current verified implementation baseline"
+
+step S3:
+  evidence EV2:
+    "Existing tests cover source, mutation, lifecycle, public schemas and advance, but the package gate does not execute a complete Plan Review workflow"
+    resource:
+      file "scripts/check-package.sh"
+      label "Existing installed-package gate"
+
+step S4:
+  premise PR2:
+    "A test matrix alone would not prove the capability; unsupported or uncovered obligations must remain open"
+
+step S5:
+  decision D1 based_on P1, PR1, PR2, EV1, EV2:
+    "Create eighteen executable trace rows by splitting normative group 15 into limits/untrusted input and race/no-partial-write; preserve all seventeen mandatory groups. Reuse existing evidence and add public API/CLI acceptance tests for uncovered combinations, running the same public tests against the isolated installed package"
+
+step S6:
+  decision D2 based_on PR1, PR2, D1:
+    "Use one read-only coverage reviewer; keep scope decisions, writes, integration and shared PERT state with the main agent. Verify source and target bytes for real output races in disposable directories"
+
+step S7:
+  pending PD1:
+    "Owner acceptance, milestone criteria/receipts, outcomes, canonical advance, commit, push, PR, release and Issue changes remain separate. Mark technical task done only after its exact evidence exists and a status-only digest-bound preview authorizes the write"
+
+step S8:
+  premise PR3:
+    "The updated user instructions require immediate observed-work measurement when velocity is unusable and prohibit invented actuals"
+
+step S9:
+  evidence EV3:
+    "project observe-velocity reports incomplete unsupported_source_version evidence for this retained Grammar 9 plan; no usable measured velocity has been established"
+
+step S10:
+  decision D3 based_on PR3, EV3, D1:
+    "Start measuring the remaining authorized acceptance interval now through a task-start preview with an observed timestamp and distinct event ID; apply only if scope-free and authorized, then record actual completion and reobserve. Preserve the unsupported-source observation as a limitation without expanding implementation scope"
+
+step S11:
+  evidence EV4:
+    "A valid milestone-acceptance source becomes invalid when the real batch removes its referenced milestone; liftMilestoneAcceptanceCandidate throws a generic Error with the parser diagnostics discarded, and Plan Review composition has no typed domain-failure translation"
+    resource:
+      file "src/application/contract8-milestone-acceptance.ts"
+      label "Observed candidate-validation throw"
+    resource:
+      file "src/application/plan-review-mutation.ts"
+      label "Application composition seam"
+
+step S12:
+  premise PR4:
+    "Section 10 requires domain failures to exit 1 without candidate or write, while genuine internal invariant failures remain exit 70; existing Grammar 1 through 9 meanings must remain unchanged"
+
+step S13:
+  premise PR5:
+    "A broad exception catch would conceal unrelated internal errors; lower-candidate parser rejection is independently observable and can be distinguished from unexpected exceptions"
+
+step S14:
+  decision D4 based_on EV4, PR4, PR5:
+    "The producing condition for this Plan Review failure is treating an expected lower candidate-validation rejection as an untyped invariant exception at the adapter seam. Detection coverage previously used an injected guard rather than this real milestone-removal input. Other exception-producing paths remain unproven"
+
+step S15:
+  decision D5 based_on D4, PR4, PR5, D1:
+    "Carry existing parser diagnostics in a private typed Error retaining the existing lower throw message; only Plan Review resolution translates that exact class to a failed composed result and PTREV-109. Rethrow unexpected errors. Verify a real public API and CLI rejection plus legacy failure behavior; retain unchanged owner and persistence gates"
+
+step S16:
+  evidence EV5:
+    "Independent final review and direct inspection show that section 4 requires the complete review projection before recommendation in both dag next text and JSON; current text omits clear state and JSON appends the projection after recommendation"
+    resource:
+      file "src/cli.ts"
+      label "Observed Next presentation order"
+
+step S17:
+  decision D6 based_on EV5, PR1, PR2:
+    "Emit every projection field before recommendation in text for clear and review_required states, and position the JSON plan_review property before recommendation. Preserve all recommendation semantics, add both-state text and raw JSON order assertions to PRAC-017, rebuild and rerun relevant and complete gates"
+
+step S18:
+  evidence EV6:
+    "The post-presentation full run failed the old recommendation text golden because the required additive projection is now present; an unchanged MCP stdio discovery test also timed out. The latter producing condition is unknown"
+
+step S19:
+  decision D7 based_on EV6, D6, PR2:
+    "Validate the added projection against JSON and compare the remaining operational text byte-for-byte with the historical golden. Preserve the golden. Run the unchanged MCP suite alone and the complete suite with concurrency four; do not infer or fix an unproved MCP cause or relax its timeout"
+
+step S20:
+  evidence EV7:
+    "Final corrected source passes 1421 tests and every repository gate; isolated package passes 26 cases. The task finish is scope-free and applied with digest protection. Next is empty and both makespans are zero; milestone acceptance remains not_declared and velocity history remains unsupported"
+
+step S21:
+  pending PD2:
+    "Whole-task measured velocity and independent person effort are unavailable. The 39-minute-eight-second interval covers only remaining work. Owner waiting and future release scope have no bounded calendar assumption"
+
+step S22:
+  pending A1:
+    "Close the authorized technical task and ask the owner to select any subsequent durable acceptance or release work from this exact record"
+  pending A2:
+    "Extend this task into history correction or assurance acceptance without an owner-selected exact scope"
+
+step S23:
+  decision D8 based_on EV7, PD1, PD2, A1, A2:
+    "Close technical work at zero remaining effort. Recommend owner review of the record; any owner-selected acceptance record or criterion/receipt candidate is provisionally 0.2-0.5 agent-hours low confidence. Keep the separate unsupported-source investigation candidate at 0.5-1.5 agent-hours low confidence, with current-validator replay and a fully measured task as verification checkpoints. Do not execute either extension or adopt partial-task velocity"

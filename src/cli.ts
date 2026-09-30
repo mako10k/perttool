@@ -4412,7 +4412,7 @@ async function runNext(args: readonly string[]): Promise<number> {
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson({ ...liftContract9NextResultJson({
+    writeJson({ plan_review: planReviewProjection(input.text), ...liftContract9NextResultJson({
       schema_version: "Perttool.NextResult.v7",
       cli_contract_version: 8,
       recommendation_interface_version: 1,
@@ -4429,13 +4429,12 @@ async function runNext(args: readonly string[]): Promise<number> {
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
       acceptance: snakeJson(result.acceptance),
-    }, result), schema_version: "Perttool.NextResult.v9",
-      plan_review: planReviewProjection(input.text) });
+    }, result), schema_version: "Perttool.NextResult.v9" });
   } else {
     if (ok) {
       const review = planReviewProjection(input.text);
-      if (review?.state === "review_required") {
-        process.stdout.write(`PLAN_REVIEW review before new downstream work: ${review.open_request_ids.join(", ")}\n`);
+      if (review !== null) {
+        process.stdout.write(`PLAN_REVIEW ${JSON.stringify(review)}\n`);
       }
       process.stdout.write(renderNextText(result));
     }

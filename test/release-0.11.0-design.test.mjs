@@ -74,13 +74,13 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.equal(next.temporal.authority.complete, true);
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  assert.equal(manifest.version, "0.11.1");
-  assert.equal(lock.version, "0.11.1");
-  assert.equal(lock.packages[""].version, "0.11.1");
-  assert.equal(JSON.parse(lspManifestText).peerDependencies.perttool, "0.11.1");
-  assert.equal(JSON.parse(mcpManifestText).peerDependencies.perttool, "0.11.1");
-  assert.match(versionSource, /TOOL_VERSION = "0\.11\.1"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.11\.1"/u);
+  assert.equal(manifest.version, "0.12.0");
+  assert.equal(lock.version, "0.12.0");
+  assert.equal(lock.packages[""].version, "0.12.0");
+  assert.equal(JSON.parse(lspManifestText).peerDependencies.perttool, "0.12.0");
+  assert.equal(JSON.parse(mcpManifestText).peerDependencies.perttool, "0.12.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.0"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.0"/u);
   assert.match(plan, /^task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:$/mu);
   assert.match(plan, /^task POOL_RELEASE_GATE_DESIGN POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY -> POOL_RELEASE_GATE_ACCEPTED:$/mu);
   assert.match(plan, /task POOL_GRAMMAR9_ACCEPTANCE_MUTATION[\s\S]*?^  status done$/mu);
@@ -349,5 +349,5 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.match(readme, /npm `beta` is `0\.11\.1` with\nGrammar 9 and CLI Contract 10/u);
   assert.match(readme, /Exact `0\.10\.6` remains the compatible Grammar 8/u);
   assert.match(selfUse, /plans\/planning-pool-release-readiness\.pert/u);
-  assert.match(selfUse, /read-only self-use checks passed \(47 plans/u);
+  assert.match(selfUse, /read-only self-use checks passed \(48 plans/u);
 });

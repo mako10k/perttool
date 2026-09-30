@@ -1,0 +1,38 @@
+framework DecisionAudit
+problem P1:
+  "Prepare the owner-selected 0.12.0 beta source and reviewable release plan candidate locally"
+step S1:
+  premise PR1:
+    "The owner explicitly approved suffix-free 0.12.0 local release preparation after reviewing the Grammar 10 and CLI Contract 11 boundary; publication remains a separate candidate-bound decision"
+  evidence E1:
+    "The matching isolated worktree contains completed feature implementation and acceptance changes. Live GitHub main remains d51fcbba and no matching PR exists. Current source and package identities still say 0.11.1"
+  evidence E2:
+    "The feature plan check and both schedules pass with all five tasks done. Velocity observation reports unsupported-version PTHIS-102 warnings and supplies no usable sample. Prior acceptance gates and default-concurrency rerun passed 1421 tests"
+  pending U1:
+    "A clean committed source, immutable release artifact, exact release-plan owner assertion and publication payload are not yet accepted; original MCP timeout attribution remains unknown"
+step S2:
+  pending A1:
+    "Align only current version-bearing source, private peer versions, current test expectations and derived goldens; preserve historical release records and exact legacy replay pins"
+  pending A2:
+    "Prepare the initial release plan through project init and batch preview, preserving governance and presenting its exact candidate before any owner assertion; measure authorized preparation from its actual start even while plan adoption is pending"
+step S3:
+  decision D1 based_on P1, PR1, E1, E2, U1, A1, A2:
+    "Apply bounded current-version alignment and add release procedure, migration and preparation records. Generate one standard CLI release-plan candidate. Run the complete Node 22 gate with the canonical unchanged timeout and worker settings; a successful rerun satisfies the confirmed incident rule if the unchanged MCP test fails. Record observed active interval without inventing effort. Preserve all prior changes and do not commit, publish, change timeout, move dist-tags or manufacture acceptance"
+
+step S4:
+  premise PR2:
+    "The owner separately adopted the exact 2589-byte initial release-plan candidate SHA256 2da724b224ee79adc8b19d7e0d88f2b1e6b7f550496643096061d882f4f5d301. CLI write with one goal/DAG user assertion and independent byte-identical readback succeeded"
+  evidence E3:
+    "Fresh npm registry read reports beta=latest=0.11.1 with no alpha; the stale current README latest statement was corrected, preserving historical publication-time records. Live work branch remains e39c739f"
+  evidence E4:
+    "Version alignment exposed stale escaped version assertions and an Override digest, an accidental historical test-reference replacement, and three stale exact self-use count assertions. Historical references were restored and bounded related expectation searches completed; the complete gate is running on corrected source"
+step S5:
+  decision D2 based_on D1, PR2, E3, E4, U1:
+    "Adopt the confirmed release plan through the standard CLI; record measured preparation start and scope-free task status. Preserve current latest=0.11.1 as the read-only publication baseline. Verify corrected source, record exact outcomes and active time, then present the frozen local file scope for commit authorization; do not infer person effort, original timeout cause, artifact acceptance or external publication authority"
+
+step S6:
+  evidence E5:
+    "The corrected full Node 22 gate completed with all 1421 unit tests and 26 installed Plan Review cases passing, plus static, English/docs, 48 self-use plans, isolated LSP/MCP, VS Code 1.101.0 supported host, npm link and 1112-file package checks; no timeout change or publication occurred"
+step S7:
+  decision D3 based_on D2, E5, PR1, PR2, U1:
+    "Record local preparation as technically complete, write the observed finish interval through the scope-free CLI task lifecycle route, immediately retry velocity and reanalyze. Preserve lack of Git path history as the velocity limitation. Freeze an exact local file manifest for the next commit decision without staging or committing; artifact acceptance and external publication remain separate"

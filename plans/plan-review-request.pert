@@ -100,7 +100,7 @@ task PLAN_REVIEW_PUBLIC_CONTRACT PLAN_REVIEW_CORE_READY -> PLAN_REVIEW_PUBLIC_RE
   title "Activate Grammar 10 and CLI Contract 11 atomically"
   description "Integrate four commands, create and resolve request identities, PlanReviewResult v1, PlanReviewMutationResult v1, NextResult v9, two added active root schemas, closed nested schemas, 75-command registry, migration, diagnostics, text and JSON parity, Help, Guide, exports, package inventory, and unchanged Grammar 1 through 9 meanings as one public boundary. Freeze exact export counts from the completed implementation rather than estimating them."
   duration 13p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 2
@@ -112,7 +112,7 @@ task PLAN_REVIEW_ACCEPTANCE PLAN_REVIEW_PUBLIC_READY -> PLAN_REVIEW_ACCEPTED:
   title "Accept the complete Plan Review Request behavior"
   description "Trace every closed contract case through Core, CLI, result schemas, text, JSON, Help, Guide, migration, Task removal, advance history, output race, safe writes, temporary link, isolated package, current Contract 10 compatibility, and complete repository gates. Record that release, publication, remote writes, Issue mutation, editor or MCP mutation, and plan advance remain separate."
   duration 8p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -122,3 +122,17 @@ task PLAN_REVIEW_ACCEPTANCE PLAN_REVIEW_PUBLIC_READY -> PLAN_REVIEW_ACCEPTED:
     HISTORY_SURFACE 1
     PUBLIC_SURFACE 1
   source "Issue #21; Plan Review Request Contract Normative 1.0 section 13"
+
+work_event PR_ACCEPT_START_20260930:
+  model 1
+  task PLAN_REVIEW_ACCEPTANCE
+  kind start
+  occurred_at 2026-09-30T02:10:33+00:00
+  planned_value 8p
+
+work_event PR_ACCEPT_FINISH_20260930:
+  model 1
+  task PLAN_REVIEW_ACCEPTANCE
+  kind finish
+  occurred_at 2026-09-30T02:49:41+00:00
+  active_time 587/900h

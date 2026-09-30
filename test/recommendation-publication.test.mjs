@@ -1,3 +1,4 @@
+// R: Verify recommendation conformance across public library and CLI publication.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -121,7 +122,13 @@ test("dag next text publishes four tier sections and preserves operational secti
     path.join(testDirectory, "golden/recommendation/v5-text.expected.txt"),
     "utf8",
   );
-  assert.equal(command.stdout, expected);
+  const newline = command.stdout.indexOf("\n");
+  const projection = command.stdout.slice(0, newline);
+  assert.ok(projection.startsWith("PLAN_REVIEW "));
+  const json = run(["dag", "next", fixture, "--format=json"]);
+  assert.equal(json.status, 0, json.stderr);
+  assert.deepEqual(JSON.parse(projection.slice("PLAN_REVIEW ".length)), JSON.parse(json.stdout).plan_review);
+  assert.equal(command.stdout.slice(newline + 1), expected);
 });
 
 test("NextResult.v6 JSON is byte deterministic for the same snapshot and options", () => {

@@ -1,0 +1,167 @@
+{
+  "contract": "Plan Review Request Normative 1.0 section 13",
+  "normative_groups": 17,
+  "note": "Group 15 is split into limits/untrusted input and races; all seventeen groups remain mandatory. Independent guards and real Git advance have supplementary executable traces.",
+  "cases": [
+    {
+      "id": "PRAC-001",
+      "normative_group": 1,
+      "purpose": "Create and exact/conflicting replay without locator",
+      "depends_on": [],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-002",
+      "normative_group": 2,
+      "purpose": "List/show deterministic mixed-state filtering",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-003",
+      "normative_group": 3,
+      "purpose": "Partial and last resolution of two requests",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-004",
+      "normative_group": 4,
+      "purpose": "Owner/delegate/confirmed/stale resolution authority",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-005",
+      "normative_group": 5,
+      "purpose": "Retained equal basis and rejected change input",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-006",
+      "normative_group": 6,
+      "purpose": "Atomic changed basis with composed guards",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-007",
+      "normative_group": 7,
+      "purpose": "Rejected review-only batch class",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-008",
+      "normative_group": 8,
+      "purpose": "Every normalized replay mismatch and later-source no-op",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-009",
+      "normative_group": 9,
+      "purpose": "Current active/blocked/suspended/done references",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-010",
+      "normative_group": 10,
+      "purpose": "Open removal and rename blocking IDs",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-011",
+      "normative_group": 11,
+      "purpose": "Atomic resolution with removal or rename",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-012",
+      "normative_group": 12,
+      "purpose": "Later removal preserves historical resolved declaration",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-013",
+      "normative_group": 13,
+      "purpose": "Pre-resolved advance with exact destructive proof",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-014",
+      "normative_group": 14,
+      "purpose": "Same-candidate newly resolved advance retention",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-015",
+      "normative_group": 15,
+      "purpose": "Invalid/limit/untrusted input",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-016",
+      "normative_group": 15,
+      "purpose": "Real output/source races and no partial write",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-017",
+      "normative_group": 16,
+      "purpose": "Help/Guide/text/JSON/closed schemas/export counts",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    },
+    {
+      "id": "PRAC-018",
+      "normative_group": 17,
+      "purpose": "Grammar9 migration and Grammar1-9 Next parity",
+      "depends_on": [
+        "PRAC-001"
+      ],
+      "test": "test/plan-review-acceptance.test.mjs"
+    }
+  ]
+}

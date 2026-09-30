@@ -55,7 +55,7 @@ test("Plan Review projection and read result reject unknown fields", () => {
   const row = {
     schema_version: identity,
     cli_contract_version: 11,
-    tool_version: "0.11.1",
+    tool_version: "0.12.0",
     operation: "plan.review-list",
     ok: true,
     document_id: "PROJECT_A",

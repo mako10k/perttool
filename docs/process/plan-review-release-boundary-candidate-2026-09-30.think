@@ -1,0 +1,20 @@
+framework DecisionAudit
+problem P1:
+  "Continue from the confirmed MCP incident release judgment into a concrete local release-boundary candidate"
+step S1:
+  evidence E1:
+    "Current branch is codex/issue-21-plan-review at e39c739f plus retained uncommitted changes; package version is still 0.11.1. Accepted Plan Review specification defines Grammar 10 and CLI Contract 11. Technical acceptance and all 1421 unit tests passed"
+  evidence E2:
+    "Accepted ADR 0003 uses suffix-free beta minor releases for new grammar and CLI contract boundaries, and prior release procedures separate version selection, source preparation, immutable candidate acceptance and publication"
+  premise PR1:
+    "The owner confirmed that original MCP causal attribution is not a blocker after a successful rerun and instructed proceeding. Timeout adjustment is separate work"
+  pending U1:
+    "The owner has not yet selected the next release version or authorized publication; fresh remote and registry state have not been checked in this local review"
+step S2:
+  pending A1:
+    "Propose suffix-free 0.12.0 as the next beta minor for Grammar 10 and CLI Contract 11, retaining exact 0.11.1 as the previous public rollback pin"
+  pending A2:
+    "A 0.11.x patch would understate the new grammar, result identities and CLI contract boundary; defer version mutation until the owner selects the exact target"
+step S3:
+  decision D1 based_on P1, E1, E2, PR1, U1, A1, A2:
+    "Produce a local candidate review of the 0.12.0 beta boundary and the remaining release steps. Preserve dirty source and canonical completed feature plan. Do not change package versions, create a new governed plan, commit, publish or assert acceptance receipts. Present the concrete candidate for the required version decision"

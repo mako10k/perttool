@@ -4,6 +4,24 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Prepare `0.12.0` with Grammar 10 and CLI Contract 11 for project-owned Plan
+  Review requests, read-only inspection, and guarded atomic resolution.
+- Expose four additional command paths, 31 active root schemas, 155 root/Node
+  runtime exports, and the complete `NextResult.v9` review projection before
+  operational recommendations. Portable Core remains at 51 runtime exports.
+- Add explicit Grammar 9-to-10 document migration and eighteen executable
+  acceptance cases covering the seventeen normative groups.
+
+### Fixed
+
+- Enforce the 8,388,608-byte request limit before canonical JSON serialization
+  through the public library as well as the CLI.
+- Return domain diagnostics and exit 1 when resolution would orphan a
+  milestone criterion set, without creating or writing a candidate.
+
+
 ## [0.11.1] - 2026-09-08
 
 Compatible Grammar 9 and CLI Contract 10 patch. Public commands, schemas,

@@ -1,0 +1,59 @@
+framework DecisionAudit
+
+domain PlanReviewByteLimit:
+  description "Resume public contract WIP at e39c739f"
+
+problem P1:
+  "Reject oversized direct-library composed batch input before canonical string allocation"
+
+step S1:
+  premise PR1:
+    "User requests resumption from latest handoff; accepted spec section 10 bounds composed JSON to 8388608 UTF-8 bytes before allocation or expansion"
+
+step S2:
+  evidence EV1:
+    "request.ts normalizedBatch currently calls rfc8785Json before checking encoded length"
+    resource:
+      file "src/plan-review/request.ts"
+      label "Observed allocation order"
+
+step S3:
+  evidence EV2:
+    "model/rfc8785.ts serializes strings with JSON escaping and permits safe integers, arrays and objects"
+    resource:
+      file "src/model/rfc8785.ts"
+      label "Canonical serializer semantics"
+
+step S4:
+  decision I1 based_on PR1, EV1, EV2:
+    "A bounded counting pass can reject oversize without materializing escaped strings or full JSON while retaining exact accepted canonical identity"
+
+step S5:
+  premise A1:
+    "Checking only source string lengths undercounts escaping and multibyte UTF-8"
+
+step S6:
+  decision D1 based_on P1, A1, PR1, EV1, EV2, I1:
+    "Add an internal Plan Review byte counter for canonical JSON syntax, string escapes, Unicode and safe integers; stop at the limit, then call existing canonicalizer only for bounded input; verify exact boundary and early rejection through direct library APIs"
+
+step S7:
+  pending PD1:
+    "Full closed-case acceptance belongs to PLAN_REVIEW_ACCEPTANCE; owner acceptance, PERT mutation, push, merge and release remain separate. Invalid object graphs must fail closed. No external beneficiary release occurs in this correction."
+
+step S8:
+  evidence EV3:
+    "Final bounded full-suite run exited zero with 1396 tests; static, English, docs, self-use, isolated LSP/MCP, supported VSIX, link and public-package gates passed"
+    resource:
+      file "test/plan-review-request-size.test.mjs"
+      label "Direct-library preallocation regression"
+
+step S9:
+  evidence EV4:
+    "The handoff keeps PLAN_REVIEW_PUBLIC_CONTRACT planned until the direct-library gap and complete gate are resolved. The status-only done preview changes one task status, has no affected governance scope or owner assertion, and reports write_authorized true"
+    resource:
+      file "docs/process/plan-review-public-contract-wip-handoff-2026-09-29.md"
+      label "Task completion boundary"
+
+step S10:
+  decision D2 based_on P1, PR1, EV3, EV4, D1:
+    "Record only PLAN_REVIEW_PUBLIC_CONTRACT technical completion with actor codex and the preview source digest; read back check, both schedules and Next. Owner acceptance, receipts, outcomes, advance, remote writes and releases remain separate"

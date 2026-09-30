@@ -104,8 +104,8 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  // The retained node-host baseline stays fixed; current Contract 11 source has 98 additive files.
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 98);
+  // The retained node-host baseline stays fixed; current Contract 11 source has 99 additive files.
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 99);
 });
 
 test("relocated services retain exact compatibility facades", async () => {

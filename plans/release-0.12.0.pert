@@ -1,0 +1,90 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0120:
+  version 6
+  title "perttool 0.12.0 Plan Review beta release"
+  description "Parent outcome: distribute accepted Plan Review capability to beta consumers. Exact 0.12.0 local preparation is authorized. Commit, publication, latest promotion, public VSIX, Issue writes, acceptance receipts, timeout changes and plan advance retain separate authority."
+  as_of 2026-09-30
+  duration_unit point
+  finish RELEASE_0120_ACCEPTED
+
+milestone RELEASE_0120_STARTED:
+  title "Version 0.12.0 release started"
+  state reached
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  capacity 1
+
+milestone RELEASE_0120_REVIEWED:
+  title "Version 0.12.0 reviewed"
+
+milestone RELEASE_0120_PREPARED:
+  title "Version 0.12.0 prepared"
+
+milestone RELEASE_0120_CANDIDATE_ACCEPTED:
+  title "Version 0.12.0 candidate accepted"
+
+milestone RELEASE_0120_PUBLISHED:
+  title "Version 0.12.0 published"
+
+milestone RELEASE_0120_ACCEPTED:
+  title "Version 0.12.0 accepted"
+
+task RELEASE_0120_SELF_REVIEW RELEASE_0120_STARTED -> RELEASE_0120_REVIEWED:
+  title "Review the owner-selected Grammar 10 and CLI Contract 11 release boundary"
+  duration 2p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "docs/process/0.12.0-release.md"
+
+task RELEASE_0120_PREPARATION RELEASE_0120_REVIEWED -> RELEASE_0120_PREPARED:
+  title "Align current source versions and pass complete local and installed gates"
+  duration 5p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "docs/process/0.12.0-release.md"
+
+task RELEASE_0120_CANDIDATE RELEASE_0120_PREPARED -> RELEASE_0120_CANDIDATE_ACCEPTED:
+  title "Freeze clean committed source and one immutable artifact after exact authorization"
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "docs/process/0.12.0-release.md"
+
+task RELEASE_0120_PUBLISH RELEASE_0120_CANDIDATE_ACCEPTED -> RELEASE_0120_PUBLISHED:
+  title "Publish the exact separately accepted artifact once after publication authorization"
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "docs/process/0.12.0-release.md"
+
+task RELEASE_0120_ACCEPTANCE RELEASE_0120_PUBLISHED -> RELEASE_0120_ACCEPTED:
+  title "Verify independent remote, artifact and installed exact and beta readback"
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "docs/process/0.12.0-release.md"
+
+work_event PR_RELEASE_0120_START_20260930:
+  model 1
+  task RELEASE_0120_PREPARATION
+  kind start
+  occurred_at 2026-09-30T05:34:24+00:00
+  planned_value 5p
+
+work_event PR_RELEASE_0120_FINISH_20260930:
+  model 1
+  task RELEASE_0120_PREPARATION
+  kind finish
+  occurred_at 2026-09-30T05:56:58+00:00
+  active_time 677/1800h

@@ -1,0 +1,3586 @@
+{
+  "responsibility": "Retain exact controlled MCP timeout observations and experiment code; not a production benchmark or original-occurrence trace",
+  "baseline": "e39c739f07558cf0d6030ea89196856459efaed9 plus existing retained local changes",
+  "runtime": "Node.js 22.22.3",
+  "sdk": "@modelcontextprotocol/server 2.0.0",
+  "experiments": {
+    "perttool-mcp-timing-baseline.json": {
+      "count": 1,
+      "parentLoopMaxMs": 11.476991,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 920.1374330000001,
+          "discoverMs": 747.8606909999999,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 9.246991999999999
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 929.277476,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 929.4579550000001
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 1677.278332,
+              "late": false
+            }
+          ],
+          "stderr": "perttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-traced-baseline.json": {
+      "count": 1,
+      "parentLoopMaxMs": 10.969087,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 380.179857,
+          "discoverMs": 479.441866,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 6.432048999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 386.532965,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 386.758873
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 866.174767,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13860661083198\",\"cpu\":{\"user\":25518,\"system\":3645}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13861010754834\",\"cpu\":{\"user\":424202,\"system\":37210},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13861014231170\",\"cpu\":{\"user\":427409,\"system\":37210},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13861015173534\",\"cpu\":{\"user\":427951,\"system\":37213},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13861493870443\",\"cpu\":{\"user\":1131926,\"system\":76927},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-parallel22.json": {
+      "count": 22,
+      "parentLoopMaxMs": 33.112063,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 1290.382708,
+          "discoverMs": 3865.870615,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.492583
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1294.826887,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1294.947728
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5160.791328,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889374045317\",\"cpu\":{\"user\":14123,\"system\":17654}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890607063534\",\"cpu\":{\"user\":1016913,\"system\":136325},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890632362339\",\"cpu\":{\"user\":1038984,\"system\":136325},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890636285517\",\"cpu\":{\"user\":1041703,\"system\":136677},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894496765421\",\"cpu\":{\"user\":3551508,\"system\":520411},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 1,
+          "legacyMs": 1471.024242,
+          "discoverMs": 2889.102841,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.6243470000000002
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1472.614563,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1472.763445
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 4361.848332,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889378933221\",\"cpu\":{\"user\":25291,\"system\":7226}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890801070136\",\"cpu\":{\"user\":1075073,\"system\":273516},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890815494824\",\"cpu\":{\"user\":1085213,\"system\":273516},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890820883615\",\"cpu\":{\"user\":1087005,\"system\":276485},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13893704746730\",\"cpu\":{\"user\":3422176,\"system\":635710},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 2,
+          "legacyMs": 3378.3836610000003,
+          "discoverMs": 3774.204826,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.644598000000002
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 3380.004125,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 3382.419949
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7156.6030709999995,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889390623507\",\"cpu\":{\"user\":30322,\"system\":11370}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892689464790\",\"cpu\":{\"user\":1888238,\"system\":712950},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13892723977538\",\"cpu\":{\"user\":1926747,\"system\":718741},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892729581159\",\"cpu\":{\"user\":1929016,\"system\":718741},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896500862817\",\"cpu\":{\"user\":4976251,\"system\":1091027},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 3,
+          "legacyMs": 1663.5649640000001,
+          "discoverMs": 3269.489408,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.5936590000000024
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1665.1137019999999,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1665.235718
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 4934.697909,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889392020994\",\"cpu\":{\"user\":41370,\"system\":0}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890991572611\",\"cpu\":{\"user\":1166228,\"system\":292494},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13891011366511\",\"cpu\":{\"user\":1177112,\"system\":296152},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891013509284\",\"cpu\":{\"user\":1178165,\"system\":296417},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894280395072\",\"cpu\":{\"user\":3413062,\"system\":574589},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 4,
+          "legacyMs": 3575.773706,
+          "discoverMs": 3124.8252230000003,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.554001999999997
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 3578.310338,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 3578.3867149999996
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6703.187082,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889397632932\",\"cpu\":{\"user\":41100,\"system\":3736}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892860415503\",\"cpu\":{\"user\":1998234,\"system\":710579},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13892926426442\",\"cpu\":{\"user\":2035567,\"system\":715071},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892928303189\",\"cpu\":{\"user\":2036902,\"system\":715071},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896050381148\",\"cpu\":{\"user\":4658183,\"system\":903158},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 5,
+          "legacyMs": 1259.983218,
+          "discoverMs": 4331.060931,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.5776870000000045
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1261.419313,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1261.665087
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5592.702548,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889388991640\",\"cpu\":{\"user\":27448,\"system\":6862}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890592933883\",\"cpu\":{\"user\":1002654,\"system\":159681},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890611913140\",\"cpu\":{\"user\":1019192,\"system\":159946},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890613662123\",\"cpu\":{\"user\":1020803,\"system\":159946},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894942971074\",\"cpu\":{\"user\":4057251,\"system\":744789},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 6,
+          "legacyMs": 1288.947058,
+          "discoverMs": 4339.682235,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.324520999999997
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1292.243419,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1292.312283
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5631.980691000001,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889402752494\",\"cpu\":{\"user\":36556,\"system\":7311}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890613961348\",\"cpu\":{\"user\":956200,\"system\":174191},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890637534652\",\"cpu\":{\"user\":977189,\"system\":174191},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890647547213\",\"cpu\":{\"user\":984684,\"system\":174191},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894979046869\",\"cpu\":{\"user\":3934147,\"system\":580774},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 7,
+          "legacyMs": 3571.952937,
+          "discoverMs": 3216.12184,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.0018499999999975
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 3574.934867,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 3575.1212140000002
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6791.226903999999,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889413928994\",\"cpu\":{\"user\":34897,\"system\":11632}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892843273776\",\"cpu\":{\"user\":1780697,\"system\":614917},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13892930746812\",\"cpu\":{\"user\":1800902,\"system\":620263},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892933201378\",\"cpu\":{\"user\":1802460,\"system\":620263},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896147213046\",\"cpu\":{\"user\":4324258,\"system\":891009},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 8,
+          "legacyMs": 1302.368153,
+          "discoverMs": 3836.7872660000003,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.5354039999999998
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1304.865874,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1304.981005
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5141.747348,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889398580437\",\"cpu\":{\"user\":34808,\"system\":0}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890653993902\",\"cpu\":{\"user\":999847,\"system\":168556},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890663927923\",\"cpu\":{\"user\":1008346,\"system\":168696},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890666308729\",\"cpu\":{\"user\":1009636,\"system\":168912},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894500292507\",\"cpu\":{\"user\":3572234,\"system\":578210},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 9,
+          "legacyMs": 2722.112478,
+          "discoverMs": 3660.198572,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.417709000000002
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2724.513586,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2724.653541
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6384.83463,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889411728637\",\"cpu\":{\"user\":29757,\"system\":14878}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892050449318\",\"cpu\":{\"user\":1469526,\"system\":436453},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13892086388155\",\"cpu\":{\"user\":1498539,\"system\":437911},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892120445414\",\"cpu\":{\"user\":1502894,\"system\":442027},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895746973397\",\"cpu\":{\"user\":4094176,\"system\":741082},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 10,
+          "legacyMs": 3706.416594,
+          "discoverMs": 3547.951906,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.2085849999999994
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 3708.603453,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 3708.7031650000004
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7256.639942,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889429420855\",\"cpu\":{\"user\":37736,\"system\":20583}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13893046017782\",\"cpu\":{\"user\":1995281,\"system\":717637},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13893073223430\",\"cpu\":{\"user\":1999549,\"system\":736893},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13893075510671\",\"cpu\":{\"user\":2001325,\"system\":741692},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896621641414\",\"cpu\":{\"user\":4980336,\"system\":1063446},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 11,
+          "legacyMs": 2192.05262,
+          "discoverMs": 3903.084078,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.8200879999999984
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2193.84425,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2193.943189
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6097.007321,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889409006514\",\"cpu\":{\"user\":29965,\"system\":7491}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891531533326\",\"cpu\":{\"user\":1409766,\"system\":292516},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13891560996443\",\"cpu\":{\"user\":1425283,\"system\":292516},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891563202591\",\"cpu\":{\"user\":1426552,\"system\":292626},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895463732658\",\"cpu\":{\"user\":4252094,\"system\":681822},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 12,
+          "legacyMs": 1795.841938,
+          "discoverMs": 4171.626823,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 36.571256000000005
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1832.3756150000002,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1832.4906700000001
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6004.093872,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889458105308\",\"cpu\":{\"user\":34910,\"system\":10473}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891169065979\",\"cpu\":{\"user\":1186966,\"system\":267538},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13891200961024\",\"cpu\":{\"user\":1198036,\"system\":267538},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891204263727\",\"cpu\":{\"user\":1199742,\"system\":267866},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895372536694\",\"cpu\":{\"user\":4349453,\"system\":807872},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 13,
+          "legacyMs": 1560.105967,
+          "discoverMs": 3799.861128,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.3591320000000024
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1562.41728,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1563.108037
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5362.948060000001,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889459601518\",\"cpu\":{\"user\":43839,\"system\":3653}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890931670048\",\"cpu\":{\"user\":1186799,\"system\":226605},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890946671133\",\"cpu\":{\"user\":1197465,\"system\":241023},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890973694796\",\"cpu\":{\"user\":1207482,\"system\":241023},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894767978453\",\"cpu\":{\"user\":4260943,\"system\":679458},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 14,
+          "legacyMs": 4869.940869,
+          "discoverMs": 2457.123393,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.9455409999999915
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 4871.862798,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 4871.957484
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7329.064074,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889566674871\",\"cpu\":{\"user\":106521,\"system\":35507}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13894246075353\",\"cpu\":{\"user\":2758235,\"system\":964223},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894277813523\",\"cpu\":{\"user\":2777607,\"system\":967533},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13894283420838\",\"cpu\":{\"user\":2780672,\"system\":967533},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896737193833\",\"cpu\":{\"user\":5347008,\"system\":1253810},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 15,
+          "legacyMs": 1385.199419,
+          "discoverMs": 4258.093708,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.1128209999999967
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1387.221125,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1387.464713
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5645.532364,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889487582643\",\"cpu\":{\"user\":48245,\"system\":18555}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890775402411\",\"cpu\":{\"user\":999759,\"system\":211844},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13890797176427\",\"cpu\":{\"user\":1014434,\"system\":215520},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13890811281345\",\"cpu\":{\"user\":1025686,\"system\":216326},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895053932186\",\"cpu\":{\"user\":3367187,\"system\":498842},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 16,
+          "legacyMs": 3607.57357,
+          "discoverMs": 3454.2820950000005,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.7144970000000086
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 3610.264134,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 3610.370063
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7064.635802000001,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889494174430\",\"cpu\":{\"user\":43125,\"system\":27443}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892982995877\",\"cpu\":{\"user\":2172117,\"system\":668028},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13893020956900\",\"cpu\":{\"user\":2200831,\"system\":673724},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13893025104420\",\"cpu\":{\"user\":2207391,\"system\":673724},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896477474242\",\"cpu\":{\"user\":4982063,\"system\":973876},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 17,
+          "legacyMs": 1988.4752000000003,
+          "discoverMs": 3760.972637,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 8.159002999999998
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1996.2999419999999,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 1996.7885590000003
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5757.743583,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889502322978\",\"cpu\":{\"user\":46575,\"system\":21496}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891400994783\",\"cpu\":{\"user\":1218228,\"system\":295098},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13891410530890\",\"cpu\":{\"user\":1226795,\"system\":295339},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891414690561\",\"cpu\":{\"user\":1227967,\"system\":295621},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895170515012\",\"cpu\":{\"user\":3696921,\"system\":540732},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 18,
+          "legacyMs": 2973.9360580000002,
+          "discoverMs": 2982.750719,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.8435889999999944
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2977.762056,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2977.854038
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5960.587913,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889513029528\",\"cpu\":{\"user\":69847,\"system\":11028}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892371031166\",\"cpu\":{\"user\":1664520,\"system\":542950},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13892401735097\",\"cpu\":{\"user\":1683553,\"system\":549328},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13892403980021\",\"cpu\":{\"user\":1684652,\"system\":549687},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895380390074\",\"cpu\":{\"user\":4154868,\"system\":925510},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 19,
+          "legacyMs": 4121.121534,
+          "discoverMs": 2807.1044440000005,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.961345999999992
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 4126.067586,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 4126.12879
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6933.217294,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889559592923\",\"cpu\":{\"user\":71722,\"system\":37970}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13893533787478\",\"cpu\":{\"user\":2197431,\"system\":831221},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13893549475026\",\"cpu\":{\"user\":2211644,\"system\":831221},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13893555360667\",\"cpu\":{\"user\":2216569,\"system\":831221},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896361321193\",\"cpu\":{\"user\":4750571,\"system\":1147260},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 20,
+          "legacyMs": 4936.6019049999995,
+          "discoverMs": 2475.734952,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 16.036873999999983
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 4952.613891,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 4952.740531
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7428.371386,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889514302533\",\"cpu\":{\"user\":34649,\"system\":11549}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13894353811596\",\"cpu\":{\"user\":2491645,\"system\":932652},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13894384847580\",\"cpu\":{\"user\":2511042,\"system\":932652},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13894393385648\",\"cpu\":{\"user\":2514373,\"system\":932652},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13896861652248\",\"cpu\":{\"user\":5050121,\"system\":1103921},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 21,
+          "legacyMs": 2193.4323240000003,
+          "discoverMs": 4102.252724,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 19.975020999999998
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2213.389127,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2213.475641
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6315.662783,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13889658966260\",\"cpu\":{\"user\":58705,\"system\":31309}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891637966133\",\"cpu\":{\"user\":1282831,\"system\":322628},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13891662237939\",\"cpu\":{\"user\":1297133,\"system\":323321},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13891665045328\",\"cpu\":{\"user\":1298726,\"system\":323321},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13895764674742\",\"cpu\":{\"user\":4335295,\"system\":757663},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-parallel22-cpu4.json": {
+      "count": 22,
+      "parentLoopMaxMs": 39.747583,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 11325.494995000001,
+          "discoverMs": 5968.967817999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 8.089359999999992
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5009.9187409999995
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11333.534118000001,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11333.640001000002
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16337.459503000002
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17302.541629,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13937859672529\",\"cpu\":{\"user\":54644,\"system\":9643}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948932450798\",\"cpu\":{\"user\":1193337,\"system\":180808},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13948967599641\",\"cpu\":{\"user\":1199108,\"system\":181134},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948989436973\",\"cpu\":{\"user\":1200261,\"system\":181308},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13954940395652\",\"cpu\":{\"user\":2436610,\"system\":305958},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 1,
+          "legacyMs": 6159.169279999999,
+          "discoverMs": 6530.26354,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.2384190000000075
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5002.80545
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 6162.0837839999995,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 6162.665379
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 11167.843596
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 12692.904379,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13937800010008\",\"cpu\":{\"user\":56706,\"system\":28353}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943786376556\",\"cpu\":{\"user\":1189255,\"system\":293774},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13943808007475\",\"cpu\":{\"user\":1198652,\"system\":297011},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943813417256\",\"cpu\":{\"user\":1198652,\"system\":298527},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13950334427509\",\"cpu\":{\"user\":2783411,\"system\":542589},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 2,
+          "legacyMs": 7449.842299,
+          "discoverMs": 6354.853653,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.075069999999997
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5005.898928
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 7453.871266,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 7454.004679
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 12454.762868
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 13808.844992,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13937802654577\",\"cpu\":{\"user\":52546,\"system\":14012}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13945002241308\",\"cpu\":{\"user\":1275103,\"system\":334215},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13945086441864\",\"cpu\":{\"user\":1288069,\"system\":334215},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13945117998998\",\"cpu\":{\"user\":1290318,\"system\":334215},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13951397188921\",\"cpu\":{\"user\":2717536,\"system\":432335},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 3,
+          "legacyMs": 6254.130958,
+          "discoverMs": 5697.515749,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 16.22962000000001
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5016.900911
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 6270.326955,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 6270.828408
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 11272.162875
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11968.319228999999,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13937835619871\",\"cpu\":{\"user\":64493,\"system\":3793}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943897078512\",\"cpu\":{\"user\":1260525,\"system\":324951},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13943924384841\",\"cpu\":{\"user\":1276502,\"system\":328039},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943933183794\",\"cpu\":{\"user\":1277991,\"system\":331067},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949614979988\",\"cpu\":{\"user\":2931553,\"system\":537214},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 4,
+          "legacyMs": 11271.438023,
+          "discoverMs": 6011.886619999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 5.266529000000006
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5006.177583000001
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11276.655562,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11276.741124
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16277.165141
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17288.612029999997,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13937953713658\",\"cpu\":{\"user\":43499,\"system\":16730}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948875445143\",\"cpu\":{\"user\":1138593,\"system\":214155},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13948937062192\",\"cpu\":{\"user\":1144677,\"system\":214627},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948949731058\",\"cpu\":{\"user\":1145425,\"system\":214767},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13954955505571\",\"cpu\":{\"user\":2341746,\"system\":283627},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 5,
+          "legacyMs": 11401.721852,
+          "discoverMs": 6781.812068000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 6.929485
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5008.60223
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11408.631153999999,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11408.676617
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16409.217824
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18190.474683,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938046341887\",\"cpu\":{\"user\":48365,\"system\":18602}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949066812625\",\"cpu\":{\"user\":1107450,\"system\":252706},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949085796809\",\"cpu\":{\"user\":1114303,\"system\":252706},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949092597072\",\"cpu\":{\"user\":1115272,\"system\":252706},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955863530147\",\"cpu\":{\"user\":2302216,\"system\":335202},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 6,
+          "legacyMs": 11546.425349000001,
+          "discoverMs": 6680.712218999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 10.160942000000006
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5011.277596
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11556.564821999998,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11556.619952
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16557.629942
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18237.319859,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938057360426\",\"cpu\":{\"user\":55707,\"system\":22282}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949096248667\",\"cpu\":{\"user\":1139275,\"system\":216829},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949241123960\",\"cpu\":{\"user\":1144252,\"system\":216829},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949259933594\",\"cpu\":{\"user\":1145010,\"system\":216829},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955922102765\",\"cpu\":{\"user\":2323775,\"system\":286795},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 7,
+          "legacyMs": 6484.080218,
+          "discoverMs": 6609.287088,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.8156589999999966
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5004.062809999999
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 6486.865893,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 6486.943085999999
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 11495.665929
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 13096.164616,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938159304443\",\"cpu\":{\"user\":68322,\"system\":14383}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13944063581243\",\"cpu\":{\"user\":1266740,\"system\":338277},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13944177839018\",\"cpu\":{\"user\":1285343,\"system\":338437},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13944183613548\",\"cpu\":{\"user\":1286316,\"system\":338693},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13950790977422\",\"cpu\":{\"user\":2750709,\"system\":504652},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 8,
+          "legacyMs": 11546.067731000001,
+          "discoverMs": 6721.501741999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 14.231921000000014
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5014.699488
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11560.276906,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11560.335281
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16561.018357
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18281.817725,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938228512092\",\"cpu\":{\"user\":57385,\"system\":16878}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949142491002\",\"cpu\":{\"user\":1123364,\"system\":220267},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949258050709\",\"cpu\":{\"user\":1140533,\"system\":220267},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949273153315\",\"cpu\":{\"user\":1141399,\"system\":220267},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955979592327\",\"cpu\":{\"user\":2329641,\"system\":298952},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 9,
+          "legacyMs": 11365.409733,
+          "discoverMs": 5818.273062999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 8.322508
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5009.297465
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11373.727047,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11373.751036
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16374.261441999999
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17192.009388,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938206866969\",\"cpu\":{\"user\":44835,\"system\":24142}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949045742143\",\"cpu\":{\"user\":1100080,\"system\":226705},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949085894431\",\"cpu\":{\"user\":1107409,\"system\":226705},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949124598940\",\"cpu\":{\"user\":1108321,\"system\":226705},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13954895723824\",\"cpu\":{\"user\":2281790,\"system\":323374},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 10,
+          "legacyMs": 11437.957619,
+          "discoverMs": 6595.893091,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 30.913838999999996
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5031.8482890000005
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11468.849102999999,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11468.911887999999
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16469.437682
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18064.791851,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938250387808\",\"cpu\":{\"user\":56078,\"system\":16022}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949023563974\",\"cpu\":{\"user\":1149597,\"system\":162643},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949167123686\",\"cpu\":{\"user\":1154973,\"system\":162880},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949191613273\",\"cpu\":{\"user\":1155628,\"system\":162973},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955786473709\",\"cpu\":{\"user\":2347329,\"system\":230704},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 11,
+          "legacyMs": 6081.480214,
+          "discoverMs": 6686.481592,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 11.261154000000005
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5011.818931
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 6092.700862,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 6092.80866
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 11095.713999
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 12779.178301,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938218847422\",\"cpu\":{\"user\":57744,\"system\":25263}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943698225648\",\"cpu\":{\"user\":1200768,\"system\":346888},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13943843079049\",\"cpu\":{\"user\":1215532,\"system\":346888},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13943886918778\",\"cpu\":{\"user\":1217640,\"system\":346888},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13950531517518\",\"cpu\":{\"user\":2706751,\"system\":548869},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 12,
+          "legacyMs": 10909.135104,
+          "discoverMs": 7050.962990000002,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 40.12290399999998
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5041.478733999999
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 10949.223923000001,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 10949.289615
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 15950.376464
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18000.234294,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938261265515\",\"cpu\":{\"user\":57586,\"system\":7198}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948573805368\",\"cpu\":{\"user\":1128903,\"system\":179428},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13948713344969\",\"cpu\":{\"user\":1135721,\"system\":179428},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948740821311\",\"cpu\":{\"user\":1136482,\"system\":179444},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955759805247\",\"cpu\":{\"user\":2316901,\"system\":261219},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 13,
+          "legacyMs": 10702.59834,
+          "discoverMs": 7430.566918,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 11.515239000000008
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5011.730235999999
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 10714.06991,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 10714.163257
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 15714.72169
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18144.718561,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938350137072\",\"cpu\":{\"user\":49168,\"system\":24584}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948374852637\",\"cpu\":{\"user\":1183393,\"system\":199075},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13948469004543\",\"cpu\":{\"user\":1190581,\"system\":199075},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948528239508\",\"cpu\":{\"user\":1192161,\"system\":199075},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955948739105\",\"cpu\":{\"user\":2364012,\"system\":274195},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 14,
+          "legacyMs": 11827.908433999999,
+          "discoverMs": 5391.074962999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 20.00092699999999
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5020.197316
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11847.880625,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11847.988907
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16848.022403
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17239.051392999998,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938417934351\",\"cpu\":{\"user\":49651,\"system\":28372}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949599656413\",\"cpu\":{\"user\":1181132,\"system\":178499},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949646820710\",\"cpu\":{\"user\":1186737,\"system\":178771},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949665781816\",\"cpu\":{\"user\":1187756,\"system\":178924},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955055356262\",\"cpu\":{\"user\":2365720,\"system\":255951},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 15,
+          "legacyMs": 11808.398978,
+          "discoverMs": 5609.136803000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 23.84114500000004
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5023.301592000001
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11832.21535,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11832.287521
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16832.148451999998
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17441.405479999998,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938413085326\",\"cpu\":{\"user\":48881,\"system\":22560}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949605752614\",\"cpu\":{\"user\":1144447,\"system\":190741},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949667737643\",\"cpu\":{\"user\":1150433,\"system\":190741},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949669558562\",\"cpu\":{\"user\":1151691,\"system\":190741},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955276828575\",\"cpu\":{\"user\":2428452,\"system\":254306},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 16,
+          "legacyMs": 7207.211254,
+          "discoverMs": 5654.211842000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 31.87926299999998
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5032.075659
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 7239.0491950000005,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 7239.322164
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 12240.247501
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 12893.519021999999,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938389763641\",\"cpu\":{\"user\":54637,\"system\":22497}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13944987118444\",\"cpu\":{\"user\":1314550,\"system\":252105},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13945097239839\",\"cpu\":{\"user\":1337888,\"system\":252105},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13945117264625\",\"cpu\":{\"user\":1339953,\"system\":252105},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13950753736278\",\"cpu\":{\"user\":2675450,\"system\":445305},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 17,
+          "legacyMs": 11664.100952,
+          "discoverMs": 4567.19383,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.442347999999981
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5004.462255
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11668.523935000001,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11668.570648
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 16235.75188,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938558883258\",\"cpu\":{\"user\":59222,\"system\":23688}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949443672723\",\"cpu\":{\"user\":1123047,\"system\":205208},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949535142870\",\"cpu\":{\"user\":1129336,\"system\":205208},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949576640507\",\"cpu\":{\"user\":1130440,\"system\":205208},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13954126396184\",\"cpu\":{\"user\":2370978,\"system\":295437},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 18,
+          "legacyMs": 11339.356914999998,
+          "discoverMs": 6774.933038000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 31.26906699999995
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5031.106838000001
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11370.60596,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11370.658826
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16371.403551
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18145.520834,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938402796433\",\"cpu\":{\"user\":50450,\"system\":16816}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949172889277\",\"cpu\":{\"user\":1132750,\"system\":202935},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949236971064\",\"cpu\":{\"user\":1142821,\"system\":202935},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949292631143\",\"cpu\":{\"user\":1143980,\"system\":202964},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13956042441613\",\"cpu\":{\"user\":2373714,\"system\":234028},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 19,
+          "legacyMs": 11477.41127,
+          "discoverMs": 6598.111289999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 28.18667800000003
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5029.786207
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11505.575679000001,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11505.629661
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16506.035327
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18103.728321000002,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938560163178\",\"cpu\":{\"user\":53225,\"system\":21290}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949318623805\",\"cpu\":{\"user\":1116992,\"system\":198451},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949433500704\",\"cpu\":{\"user\":1123947,\"system\":198451},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949434821921\",\"cpu\":{\"user\":1124771,\"system\":198451},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13956031792174\",\"cpu\":{\"user\":2296110,\"system\":260006},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 20,
+          "legacyMs": 11784.290057999999,
+          "discoverMs": 6237.060069000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 28.128937000000008
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5028.813397
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11812.397504,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11812.451884
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16812.843616000002
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 18049.498713,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938599560342\",\"cpu\":{\"user\":48855,\"system\":24427}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949693428747\",\"cpu\":{\"user\":1110516,\"system\":186328},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949733572722\",\"cpu\":{\"user\":1116598,\"system\":186722},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949774053218\",\"cpu\":{\"user\":1117635,\"system\":186895},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13956005857220\",\"cpu\":{\"user\":2281015,\"system\":265749},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 21,
+          "legacyMs": 11049.37975,
+          "discoverMs": 6675.330586,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 31.22424000000001
+            },
+            {
+              "kind": "deadline",
+              "id": 1,
+              "ms": 5031.708165
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 11080.578747000001,
+              "late": true
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 11080.630987
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 16080.959918
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 17755.948094,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"13938721461256\",\"cpu\":{\"user\":77821,\"system\":7782}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13948974875056\",\"cpu\":{\"user\":1144886,\"system\":243194},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13949065325643\",\"cpu\":{\"user\":1151036,\"system\":243194},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"13949104734573\",\"cpu\":{\"user\":1151945,\"system\":243194},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"13955740727762\",\"cpu\":{\"user\":2326623,\"system\":314408},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-discover-barrier22-cpu4.json": {
+      "count": 22,
+      "parentLoopMaxMs": 69.271551,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 1868.14087,
+          "discoverMs": 9199.865022000002,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.365880000000001
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1872.456377,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2372.732666
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7373.762438
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11572.570582999999,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040778306046\",\"cpu\":{\"user\":37709,\"system\":3770}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042591566791\",\"cpu\":{\"user\":1314391,\"system\":330497},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042601755660\",\"cpu\":{\"user\":1323797,\"system\":330497},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043129913739\",\"cpu\":{\"user\":1325325,\"system\":330497},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052303915585\",\"cpu\":{\"user\":3217585,\"system\":463862},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 1,
+          "legacyMs": 1842.5110160000002,
+          "discoverMs": 8335.585252,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.4018489999999986
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1843.830102,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2367.518328
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7368.552249
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10702.976749000001,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040774393270\",\"cpu\":{\"user\":26433,\"system\":7552}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042531403394\",\"cpu\":{\"user\":1306026,\"system\":279862},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042547009355\",\"cpu\":{\"user\":1332282,\"system\":279862},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043144011557\",\"cpu\":{\"user\":1338553,\"system\":283230},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051439294381\",\"cpu\":{\"user\":3305735,\"system\":421611},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 2,
+          "legacyMs": 1890.536218,
+          "discoverMs": 3817.235136,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.9216270000000009
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1892.399612,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2366.080651
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6183.204076999999,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040780753342\",\"cpu\":{\"user\":31444,\"system\":6987}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042596683726\",\"cpu\":{\"user\":1242820,\"system\":258296},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042605612765\",\"cpu\":{\"user\":1251433,\"system\":258529},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043112682825\",\"cpu\":{\"user\":1252378,\"system\":258724},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14046921172642\",\"cpu\":{\"user\":3157460,\"system\":358802},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 3,
+          "legacyMs": 1513.140924,
+          "discoverMs": 8351.022422,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.3151200000000003
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1514.421358,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2363.680351
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7365.018721
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10714.676387,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040785557362\",\"cpu\":{\"user\":33468,\"system\":7437}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042236815256\",\"cpu\":{\"user\":1134353,\"system\":201747},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042253606041\",\"cpu\":{\"user\":1143014,\"system\":201747},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043106178987\",\"cpu\":{\"user\":1144220,\"system\":201747},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051454632458\",\"cpu\":{\"user\":3020533,\"system\":323653},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 4,
+          "legacyMs": 2087.686891,
+          "discoverMs": 9322.764866000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.6676100000000034
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2089.334457,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2362.799768
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7364.147502
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11685.545198,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040779150807\",\"cpu\":{\"user\":30297,\"system\":3787}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042806827489\",\"cpu\":{\"user\":1541226,\"system\":404933},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042825358471\",\"cpu\":{\"user\":1554931,\"system\":408324},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043122166006\",\"cpu\":{\"user\":1556998,\"system\":408324},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052427031989\",\"cpu\":{\"user\":3368980,\"system\":534634},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 5,
+          "legacyMs": 1541.211111,
+          "discoverMs": 5902.420793000001,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.5922139999999985
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1542.768655,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2360.424531
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7361.652366
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 8262.799509999999,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040801429503\",\"cpu\":{\"user\":37562,\"system\":15025}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042270752063\",\"cpu\":{\"user\":1078685,\"system\":215737},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042280120329\",\"cpu\":{\"user\":1087154,\"system\":215915},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043104948412\",\"cpu\":{\"user\":1088326,\"system\":215915},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14049005744458\",\"cpu\":{\"user\":3042880,\"system\":352689},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 6,
+          "legacyMs": 2324.680542,
+          "discoverMs": 9090.741955,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.3962880000000055
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2328.0527389999997,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2359.212345
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7360.5078490000005
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11449.930873000001,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040795266621\",\"cpu\":{\"user\":32624,\"system\":10874}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043063332439\",\"cpu\":{\"user\":1560042,\"system\":382882},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14043073481314\",\"cpu\":{\"user\":1569411,\"system\":382882},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043168835965\",\"cpu\":{\"user\":1570641,\"system\":382882},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052194910632\",\"cpu\":{\"user\":3345952,\"system\":547806},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 7,
+          "legacyMs": 1746.293539,
+          "discoverMs": 3904.8062819999996,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.950410000000005
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1748.206952,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2355.318744
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6260.051274,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040798940314\",\"cpu\":{\"user\":41341,\"system\":3758}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042475735387\",\"cpu\":{\"user\":1308357,\"system\":284597},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042492228174\",\"cpu\":{\"user\":1319160,\"system\":284597},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043108632864\",\"cpu\":{\"user\":1323881,\"system\":284597},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14047008793643\",\"cpu\":{\"user\":3245117,\"system\":397593},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 8,
+          "legacyMs": 2289.85392,
+          "discoverMs": 9204.568383,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.023711999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2291.840985,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2353.563384
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7354.876807000001
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11558.103516,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040799130241\",\"cpu\":{\"user\":29154,\"system\":14577}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043027056540\",\"cpu\":{\"user\":1561944,\"system\":310034},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14043042578967\",\"cpu\":{\"user\":1576262,\"system\":310034},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043165288188\",\"cpu\":{\"user\":1577482,\"system\":310034},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052308782156\",\"cpu\":{\"user\":3395773,\"system\":508583},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 9,
+          "legacyMs": 1600.337475,
+          "discoverMs": 6049.245174,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.4053630000000013
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1602.54755,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2350.695354
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7351.8612299999995
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 8399.915106,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040803931884\",\"cpu\":{\"user\":35853,\"system\":7967}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042324681785\",\"cpu\":{\"user\":1040102,\"system\":187687},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042339091098\",\"cpu\":{\"user\":1062051,\"system\":191325},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043129397539\",\"cpu\":{\"user\":1083041,\"system\":194791},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14049139219691\",\"cpu\":{\"user\":3027861,\"system\":261479},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 10,
+          "legacyMs": 1243.212226,
+          "discoverMs": 3910.8981780000004,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.9422169999999994
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1245.015499,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2347.415758
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 6258.270151,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040818650846\",\"cpu\":{\"user\":37919,\"system\":18959}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14041989366230\",\"cpu\":{\"user\":1008163,\"system\":213852},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042000728148\",\"cpu\":{\"user\":1014452,\"system\":217382},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043104613170\",\"cpu\":{\"user\":1016873,\"system\":217382},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14047014109695\",\"cpu\":{\"user\":2946471,\"system\":328644},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 11,
+          "legacyMs": 1769.641751,
+          "discoverMs": 8917.670169,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.068989000000002
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1771.657459,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2346.137237
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7347.191087
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11263.786441,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040807433087\",\"cpu\":{\"user\":37103,\"system\":7420}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042494348775\",\"cpu\":{\"user\":1229157,\"system\":301491},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042517454616\",\"cpu\":{\"user\":1246986,\"system\":304990},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043130501252\",\"cpu\":{\"user\":1249490,\"system\":305603},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052021651444\",\"cpu\":{\"user\":3220914,\"system\":476892},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 12,
+          "legacyMs": 2218.620955,
+          "discoverMs": 5526.218999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 29.885180999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2248.4831019999997,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2344.156298
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7345.487131
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7870.356905,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040881172212\",\"cpu\":{\"user\":52439,\"system\":26219}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042996733113\",\"cpu\":{\"user\":1429408,\"system\":481734},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14043008733522\",\"cpu\":{\"user\":1440480,\"system\":481734},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043156211165\",\"cpu\":{\"user\":1441629,\"system\":481859},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14048630186823\",\"cpu\":{\"user\":3280643,\"system\":563920},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 13,
+          "legacyMs": 1343.757122,
+          "discoverMs": 8499.190919,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.6914519999999982
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1345.406696,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2313.4190019999996
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7314.856071
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10812.583672,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040889980881\",\"cpu\":{\"user\":36344,\"system\":19824}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042095985084\",\"cpu\":{\"user\":1008045,\"system\":202344},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042121516539\",\"cpu\":{\"user\":1030446,\"system\":202344},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043108006098\",\"cpu\":{\"user\":1048207,\"system\":210379},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051602835052\",\"cpu\":{\"user\":2977816,\"system\":313847},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 14,
+          "legacyMs": 2020.392227,
+          "discoverMs": 8201.740176,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.7756909999999948
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2022.131958,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2312.3373540000002
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7313.664831
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10514.060429000001,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040884071658\",\"cpu\":{\"user\":55613,\"system\":11917}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042801060856\",\"cpu\":{\"user\":1560415,\"system\":354278},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042810709719\",\"cpu\":{\"user\":1569147,\"system\":354452},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043121164068\",\"cpu\":{\"user\":1570217,\"system\":354693},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051305636236\",\"cpu\":{\"user\":3372661,\"system\":638990},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 15,
+          "legacyMs": 1876.766017,
+          "discoverMs": 9221.032338,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.9819400000000087
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1878.714211,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2310.4350689999997
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7311.436258000001
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11531.445994,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040871772793\",\"cpu\":{\"user\":34083,\"system\":26509}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042657133366\",\"cpu\":{\"user\":1326894,\"system\":341423},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042672180662\",\"cpu\":{\"user\":1349334,\"system\":342194},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043124588626\",\"cpu\":{\"user\":1372636,\"system\":353732},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052324947098\",\"cpu\":{\"user\":3256276,\"system\":473708},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 16,
+          "legacyMs": 2288.128497,
+          "discoverMs": 9391.177829,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.6893030000000095
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2290.797965,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2308.505643
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7309.783168
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 11699.569714,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040936493706\",\"cpu\":{\"user\":58940,\"system\":47152}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043076297601\",\"cpu\":{\"user\":1453217,\"system\":546952},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14043083717036\",\"cpu\":{\"user\":1459264,\"system\":547724},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043157381913\",\"cpu\":{\"user\":1460330,\"system\":547724},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14052495337261\",\"cpu\":{\"user\":3266123,\"system\":703472},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 17,
+          "legacyMs": 1988.58239,
+          "discoverMs": 5504.740689,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 6.701482999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1995.2606939999998,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2305.5824310000003
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7306.8054870000005
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 7810.294255,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040893416993\",\"cpu\":{\"user\":51602,\"system\":18429}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042777536492\",\"cpu\":{\"user\":1378982,\"system\":281114},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042792028092\",\"cpu\":{\"user\":1392028,\"system\":281448},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043108670510\",\"cpu\":{\"user\":1393881,\"system\":281823},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14048608665037\",\"cpu\":{\"user\":3281746,\"system\":428544},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 18,
+          "legacyMs": 2283.990608,
+          "discoverMs": 8500.689538999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 5.025791999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2288.915662,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2298.970653
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7300.231534
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10799.64251,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040938301261\",\"cpu\":{\"user\":52253,\"system\":6531}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043077311579\",\"cpu\":{\"user\":1575489,\"system\":321528},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14043086489759\",\"cpu\":{\"user\":1583888,\"system\":321601},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043190601702\",\"cpu\":{\"user\":1584857,\"system\":321798},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051604984001\",\"cpu\":{\"user\":3589889,\"system\":430786},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 19,
+          "legacyMs": 1747.5478730000002,
+          "discoverMs": 8566.347851999999,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.5755439999999936
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1750.082804,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2293.5415439999997
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7294.590734
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10859.870131000001,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14041016092227\",\"cpu\":{\"user\":68232,\"system\":34116}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042514892794\",\"cpu\":{\"user\":1204171,\"system\":246912},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042522720482\",\"cpu\":{\"user\":1211397,\"system\":246912},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043105592514\",\"cpu\":{\"user\":1212274,\"system\":247015},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051669589213\",\"cpu\":{\"user\":3131700,\"system\":332603},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 20,
+          "legacyMs": 2167.717408,
+          "discoverMs": 8253.253893,
+          "deadlineFired": true,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 6.840001000000001
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 2174.528805,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2291.020842
+            },
+            {
+              "kind": "deadline",
+              "id": 2,
+              "ms": 7292.3676860000005
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 10544.230781999999,
+              "late": true
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040910940098\",\"cpu\":{\"user\":61175,\"system\":22940}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042972744939\",\"cpu\":{\"user\":1777179,\"system\":340828},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042987800807\",\"cpu\":{\"user\":1790803,\"system\":341105},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043156886175\",\"cpu\":{\"user\":1792182,\"system\":341105},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14051357379567\",\"cpu\":{\"user\":3670245,\"system\":434788},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 21,
+          "legacyMs": 1621.5224890000002,
+          "discoverMs": 3701.3426159999995,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 7.35436
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 1628.8407269999998,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 2283.77941
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 5985.070466,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14040927634013\",\"cpu\":{\"user\":57457,\"system\":26519}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14042408013009\",\"cpu\":{\"user\":1241127,\"system\":215028},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14042444034440\",\"cpu\":{\"user\":1278303,\"system\":220004},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14043105044782\",\"cpu\":{\"user\":1279434,\"system\":220199},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14046796042387\",\"cpu\":{\"user\":3171073,\"system\":339353},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-discover-barrier4-cpu4.json": {
+      "count": 4,
+      "parentLoopMaxMs": 15.278079,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 850.762025,
+          "discoverMs": 1203.7031670000001,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 8.943604999999998
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 859.590552,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 902.910255
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 2106.584443,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14165986880706\",\"cpu\":{\"user\":42488,\"system\":19312}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166766933094\",\"cpu\":{\"user\":847943,\"system\":141323},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14166776996068\",\"cpu\":{\"user\":853783,\"system\":144772},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166828697805\",\"cpu\":{\"user\":855011,\"system\":144980},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14168023913002\",\"cpu\":{\"user\":2345612,\"system\":242778},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 1,
+          "legacyMs": 856.213661,
+          "discoverMs": 1508.510933,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 4.324208999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 860.502256,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 892.63513
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 2401.097084,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14165999920863\",\"cpu\":{\"user\":53999,\"system\":10799}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166780872682\",\"cpu\":{\"user\":871769,\"system\":109442},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14166788638438\",\"cpu\":{\"user\":878938,\"system\":109442},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166822203152\",\"cpu\":{\"user\":880023,\"system\":109530},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14168329463182\",\"cpu\":{\"user\":2317786,\"system\":282388},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 2,
+          "legacyMs": 867.4548629999999,
+          "discoverMs": 1282.39097,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 5.929767999999996
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 873.330337,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 888.1450719999999
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 2170.501154,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14165997341079\",\"cpu\":{\"user\":41550,\"system\":15109}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166800237641\",\"cpu\":{\"user\":920935,\"system\":83721},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14166806147449\",\"cpu\":{\"user\":922906,\"system\":87203},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166832678802\",\"cpu\":{\"user\":923847,\"system\":87292},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14168103113599\",\"cpu\":{\"user\":2401925,\"system\":194458},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 3,
+          "legacyMs": 871.461121,
+          "discoverMs": 1097.1578610000001,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 3.5135219999999947
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 874.870806,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 881.904125
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 1978.824357,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14165999720399\",\"cpu\":{\"user\":37423,\"system\":16632}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166803155411\",\"cpu\":{\"user\":863286,\"system\":134888},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14166810568300\",\"cpu\":{\"user\":870129,\"system\":134888},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14166836743707\",\"cpu\":{\"user\":871182,\"system\":134917},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14167917306632\",\"cpu\":{\"user\":2334551,\"system\":214628},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-timing-discover-barrier4-cpu4-serial.json": {
+      "count": 4,
+      "parentLoopMaxMs": 17.432575,
+      "results": [
+        {
+          "index": 0,
+          "legacyMs": 595.008415,
+          "discoverMs": 1358.649482,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 5.5780790000000025
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 600.553949,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 656.193525
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 2014.757337,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14265306469340\",\"cpu\":{\"user\":32632,\"system\":3625}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265859953391\",\"cpu\":{\"user\":601135,\"system\":98298},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14265865440826\",\"cpu\":{\"user\":606193,\"system\":98298},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265932665674\",\"cpu\":{\"user\":606937,\"system\":98298},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14267279370936\",\"cpu\":{\"user\":2021795,\"system\":185485},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 1,
+          "legacyMs": 576.607348,
+          "discoverMs": 1216.252102,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 1.6136340000000047
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 578.145253,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 649.431151
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 1865.6297299999999,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14265311709680\",\"cpu\":{\"user\":29509,\"system\":7377}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265840225199\",\"cpu\":{\"user\":610908,\"system\":83478},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14265848265602\",\"cpu\":{\"user\":618330,\"system\":83478},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265928697847\",\"cpu\":{\"user\":619291,\"system\":83478},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14267136379052\",\"cpu\":{\"user\":2034576,\"system\":175781},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 2,
+          "legacyMs": 640.2027909999999,
+          "discoverMs": 992.830978,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.0790930000000003
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 642.227039,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 648.218912
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 1641.001288,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14265337989750\",\"cpu\":{\"user\":27420,\"system\":13710}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265910506238\",\"cpu\":{\"user\":575196,\"system\":107617},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14265915212438\",\"cpu\":{\"user\":579428,\"system\":107714},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265921893540\",\"cpu\":{\"user\":579934,\"system\":107808},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14266913438866\",\"cpu\":{\"user\":1947115,\"system\":172244},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        },
+        {
+          "index": 3,
+          "legacyMs": 579.4277500000001,
+          "discoverMs": 969.7658769999999,
+          "deadlineFired": false,
+          "discoveryOk": true,
+          "closed": {
+            "code": 0,
+            "signal": null
+          },
+          "events": [
+            {
+              "kind": "send",
+              "id": 1,
+              "method": "initialize",
+              "ms": 2.3879969999999986
+            },
+            {
+              "kind": "receive",
+              "id": 1,
+              "ms": 581.78225,
+              "late": false
+            },
+            {
+              "kind": "send",
+              "id": 2,
+              "method": "server/discover",
+              "ms": 645.917929
+            },
+            {
+              "kind": "receive",
+              "id": 2,
+              "ms": 1615.4210340000002,
+              "late": false
+            }
+          ],
+          "stderr": "RCA_TRACE {\"event\":\"preload\",\"ns\":\"14265325321506\",\"cpu\":{\"user\":28136,\"system\":17585}}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265843104975\",\"cpu\":{\"user\":604470,\"system\":81585},\"id\":1,\"method\":\"initialize\"}\nperttool-mcp: Rejected 2025-era request on a modern-only stdio connection (modern-only-missing-envelope): Unsupported protocol version: 2025-11-25\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14265848901982\",\"cpu\":{\"user\":609819,\"system\":81585},\"id\":1,\"hasResult\":false,\"hasError\":true}\nRCA_TRACE {\"event\":\"receive\",\"ns\":\"14265921706238\",\"cpu\":{\"user\":610551,\"system\":81585},\"id\":2,\"method\":\"server/discover\"}\nRCA_TRACE {\"event\":\"send\",\"ns\":\"14266890104388\",\"cpu\":{\"user\":1958523,\"system\":147257},\"id\":2,\"hasResult\":true,\"hasError\":false}\n"
+        }
+      ]
+    },
+    "perttool-mcp-factory-profile.json": {
+      "elapsedMs": 973.4346499999999,
+      "cpuMs": 1466.243,
+      "top": [
+        [
+          "addNames file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:896",
+          131247
+        ],
+        [
+          "compileSchema file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:2541",
+          100871
+        ],
+        [
+          "post node:inspector:118",
+          100237
+        ],
+        [
+          " file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:47",
+          62520
+        ],
+        [
+          "(garbage collector) :0",
+          44809
+        ],
+        [
+          "safeStringify file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:120",
+          26429
+        ],
+        [
+          " file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:509",
+          21427
+        ],
+        [
+          "subschema file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:2410",
+          19353
+        ],
+        [
+          "shouldUseRule file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:1328",
+          15861
+        ],
+        [
+          "get names file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:554",
+          14802
+        ],
+        [
+          "_ file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:55",
+          14594
+        ],
+        [
+          "optimizeNames file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:497",
+          13375
+        ],
+        [
+          "hasRef file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:1974",
+          12324
+        ],
+        [
+          "get names file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:508",
+          11108
+        ],
+        [
+          "toString file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/ajvProvider-CEoC__sr.mjs:33",
+          11026
+        ]
+      ]
+    }
+  },
+  "experiment_code": {
+    "perttool-mcp-timing-probe.mjs": "// R: Measure actual MCP discovery deadlines in bounded disposable server processes.\nimport { spawn, spawnSync } from 'node:child_process';\nimport { performance, monitorEventLoopDelay } from 'node:perf_hooks';\nconst root='/home/katsumata-m/perttool-worktrees/issue-21-plan-review';\nconst count=Number(process.argv[2]??1);\nlet ready=0, release; const barrier=new Promise(resolve=>release=resolve);\nconst loop=monitorEventLoopDelay({resolution:10}); loop.enable();\nasync function run(index){\n const start=performance.now(), child=spawn(process.execPath,['--import','/tmp/perttool-mcp-stdio-trace.mjs',root+'/adapters/mcp/dist/main.js'],{cwd:root,stdio:['pipe','pipe','pipe']});\n let buffer='',stderr='',id=0; const pending=new Map(),events=[];\n const exit=new Promise(resolve=>child.once('exit',(code,signal)=>resolve({code,signal})));\n child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stderr.on('data',s=>stderr+=s);\n child.stdout.on('data',s=>{buffer+=s;let n;while((n=buffer.indexOf('\\n'))>=0){const line=buffer.slice(0,n);buffer=buffer.slice(n+1);const m=JSON.parse(line),p=pending.get(m.id);events.push({kind:'receive',id:m.id,ms:performance.now()-start,late:p?.timedOut??null});if(p){p.resolve(m);clearTimeout(p.timer);pending.delete(m.id);}}});\n function request(method,params){const key=++id,sent=performance.now();events.push({kind:'send',id:key,method,ms:sent-start});return new Promise((resolve,reject)=>{const p={resolve,timedOut:false,timer:setTimeout(()=>{p.timedOut=true;events.push({kind:'deadline',id:key,ms:performance.now()-start});},5000)};pending.set(key,p);p.hard=setTimeout(()=>reject(new Error('hard deadline 15000ms')),15000);p.resolve=m=>{clearTimeout(p.hard);resolve({message:m,elapsed:performance.now()-sent,timedOut:p.timedOut});};child.stdin.write(JSON.stringify({jsonrpc:'2.0',id:key,method,params})+'\\n');});}\n try{\n const legacy=await request('initialize',{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'legacy',version:'1.0.0'}});\n if(process.argv[3]){const affinity=spawnSync('taskset',['-pc',process.argv[3],String(child.pid)],{encoding:'utf8'});if(affinity.status!==0)throw new Error(affinity.stderr);}\n if(++ready===count)release();await barrier;\n const discover=await request('server/discover',{_meta:{'io.modelcontextprotocol/protocolVersion':'2026-07-28','io.modelcontextprotocol/clientInfo':{name:'probe',version:'1.0.0'},'io.modelcontextprotocol/clientCapabilities':{}}});\n child.stdin.end(); const closed=await exit;return {index,legacyMs:legacy.elapsed,discoverMs:discover.elapsed,deadlineFired:discover.timedOut,discoveryOk:!!discover.message.result,closed,events,stderr};\n }catch(error){child.kill('SIGTERM');return {index,error:error.message,events,stderr};}\n}\nconst results=await Promise.all(Array.from({length:count},(_,i)=>run(i)));\nloop.disable();console.log(JSON.stringify({count,parentLoopMaxMs:loop.max/1e6,results},null,2));\n",
+    "perttool-mcp-stdio-trace.mjs": "// R: Timestamp raw stdio events in an owned diagnostic server process.\nconst trace=(event,fields={})=>process.stderr.write('RCA_TRACE '+JSON.stringify({event,ns:process.hrtime.bigint().toString(),cpu:process.cpuUsage(),...fields})+'\\n');\nlet input='';const emit=process.stdin.emit;\nprocess.stdin.emit=function(event,...args){if(event==='data'){input+=String(args[0]);let n;while((n=input.indexOf('\\n'))>=0){const line=input.slice(0,n);input=input.slice(n+1);try{const m=JSON.parse(line);trace('receive',{id:m.id,method:m.method});}catch{trace('non_json_input');}}}return emit.call(this,event,...args);};\nconst write=process.stdout.write;\nprocess.stdout.write=function(chunk,...args){try{const m=JSON.parse(String(chunk));trace('send',{id:m.id,hasResult:!!m.result,hasError:!!m.error});}catch{}return write.call(this,chunk,...args);};\ntrace('preload');\n",
+    "perttool-mcp-factory-profile.mjs": "// R: Profile the actual MCP server factory independently from stdio transport.\nimport inspector from 'node:inspector';\nimport {performance} from 'node:perf_hooks';\nimport {writeFileSync} from 'node:fs';\nimport {createPerttoolMcpAdapter} from '/home/katsumata-m/perttool-worktrees/issue-21-plan-review/adapters/mcp/dist/server.js';\nconst adapter=createPerttoolMcpAdapter();\nconst session=new inspector.Session();session.connect();\nconst post=(method)=>new Promise((resolve,reject)=>session.post(method,(error,result)=>error?reject(error):resolve(result)));\nawait post('Profiler.enable');await post('Profiler.start');\nconst cpu=process.cpuUsage(),start=performance.now();const server=adapter.createServer();\nconst elapsed=performance.now()-start,usage=process.cpuUsage(cpu);\nconst {profile}=await post('Profiler.stop');session.disconnect();\nwriteFileSync('/tmp/perttool-mcp-factory.cpuprofile',JSON.stringify(profile));\nconst byId=new Map(profile.nodes.map(n=>[n.id,n.callFrame]));const totals=new Map();\nfor(let i=0;i<profile.samples.length;i++){const frame=byId.get(profile.samples[i]);const key=frame.functionName+' '+frame.url+':'+(frame.lineNumber+1);totals.set(key,(totals.get(key)??0)+(profile.timeDeltas[i]??0));}\nconsole.log(JSON.stringify({elapsedMs:elapsed,cpuMs:(usage.user+usage.system)/1000,top:[...totals].sort((a,b)=>b[1]-a[1]).slice(0,15)},null,2));\nawait server.close();\n",
+    "perttool-mcp-original-instrumented.test.mjs": "import {appendFileSync} from \"node:fs\";\nimport {monitorEventLoopDelay} from \"node:perf_hooks\";\nconst parentTrace=(event,data={})=>appendFileSync(\"/tmp/perttool-mcp-original-parent.jsonl\",JSON.stringify({event,ns:process.hrtime.bigint().toString(),cpu:process.cpuUsage(),...data})+\"\\n\");\nimport assert from \"node:assert/strict\";\nimport { spawn } from \"node:child_process\";\nimport { createHash } from \"node:crypto\";\nimport { readFile, readdir } from \"node:fs/promises\";\nimport path from \"node:path\";\nimport test from \"node:test\";\nimport { fileURLToPath } from \"node:url\";\nimport {\n  ProtocolError,\n  ProtocolErrorCode,\n  fromJsonSchema,\n} from \"/home/katsumata-m/perttool-worktrees/issue-21-plan-review/node_modules/@modelcontextprotocol/server/dist/index.mjs\";\nimport {\n  MCP_LIMITS,\n  MCP_PROTOCOL_MODEL_VERSION,\n  MCP_PROTOCOL_REVISION,\n  MCP_TOOL_INPUT_SCHEMAS,\n  MCP_TOOL_OUTPUT_SCHEMAS,\n  createPerttoolMcpAdapter,\n  createRegistrationCatalog,\n  externalSchemaReferences,\n} from \"/home/katsumata-m/perttool-worktrees/issue-21-plan-review/adapters/mcp/dist/index.js\";\nimport {\n  analyzeDocument,\n  checkDocument,\n  createNodeHost,\n  selectNextTasks,\n} from \"/home/katsumata-m/perttool-worktrees/issue-21-plan-review/dist/node/index.js\";\n\nconst testDirectory = path.dirname(fileURLToPath(import.meta.url));\nconst root = \"/home/katsumata-m/perttool-worktrees/issue-21-plan-review\";\n\nfunction repositoryText(relativePath) {\n  return readFile(path.join(root, relativePath), \"utf8\");\n}\n\nasync function fixture() {\n  return JSON.parse(\n    await repositoryText(\"test/fixtures/mcp-read-adapter-cases-v1.json\"),\n  );\n}\n\nfunction digestBytes(bytes) {\n  return `sha256:${createHash(\"sha256\").update(bytes).digest(\"hex\")}`;\n}\n\nfunction input(kind, text) {\n  return { source: { kind, text } };\n}\n\nasync function validate(schema, value) {\n  const validator = fromJsonSchema(schema);\n  const result = await validator[\"~standard\"].validate(value);\n  assert.equal(result.issues, undefined, result.issues?.[0]?.message);\n}\n\nfunction assertContentIdentity(result) {\n  assert.equal(result.content.length, 1);\n  assert.equal(result.content[0].type, \"text\");\n  assert.deepEqual(JSON.parse(result.content[0].text), result.structuredContent);\n}\n\ntest(\"private MCP workspace pins the accepted stable SDK and source inventory\", async () => {\n  const [cases, manifestText, lockText, sourceEntries] = await Promise.all([\n    fixture(),\n    repositoryText(\"adapters/mcp/package.json\"),\n    repositoryText(\"package-lock.json\"),\n    readdir(path.join(root, \"adapters/mcp/src\")),\n  ]);\n  const manifest = JSON.parse(manifestText);\n  const lock = JSON.parse(lockText);\n  assert.equal(cases.schema_version, \"Perttool.McpReadAdapterCases.v1\");\n  assert.equal(cases.protocol_model_version, MCP_PROTOCOL_MODEL_VERSION);\n  assert.equal(cases.protocol_revision, MCP_PROTOCOL_REVISION);\n  assert.equal(manifest.name, cases.workspace.name);\n  assert.equal(manifest.private, true);\n  assert.equal(manifest.dependencies[cases.sdk.package], cases.sdk.version);\n  assert.equal(\n    lock.packages[`node_modules/${cases.sdk.package}`].version,\n    cases.sdk.version,\n  );\n  assert.deepEqual(\n    sourceEntries.filter((name) => name.endsWith(\".ts\")).sort(),\n    cases.workspace.source_files,\n  );\n});\n\ntest(\"discovery is exact, deterministic, and advertises no write capability\", async () => {\n  const cases = await fixture();\n  const adapter = createPerttoolMcpAdapter();\n  assert.deepEqual(adapter.resourceUris, cases.resources);\n  assert.deepEqual(adapter.toolNames, cases.tools);\n  const capabilities = await adapter.readResource(\"perttool://capabilities\");\n  assert.equal(capabilities.schema_version, \"Perttool.McpCapabilities.v1\");\n  assert.deepEqual(capabilities.source_kinds, [\"inline\", \"registered\"]);\n  assert.ok(capabilities.unavailable.includes(\"mutations\"));\n  assert.ok(capabilities.unavailable.includes(\"git_refs\"));\n  assert.ok(capabilities.unavailable.includes(\"network_transport\"));\n  assert.equal(JSON.stringify(capabilities).includes(path.sep + \"home\"), false);\n\n  const server = adapter.createServer();\n  assert.deepEqual(server.server.getCapabilities(), {\n    resources: { subscribe: false, listChanged: false },\n    tools: { listChanged: false },\n  });\n  await server.close();\n  await assert.rejects(\n    () => adapter.readResource(\"perttool://capabilities?extra=true\"),\n    /unknown perttool resource/u,\n  );\n});\n\ntest(\"all local schemas are closed at their adapter roots and have no external reference\", async () => {\n  for (const name of Object.keys(MCP_TOOL_INPUT_SCHEMAS)) {\n    assert.deepEqual(externalSchemaReferences(MCP_TOOL_INPUT_SCHEMAS[name]), []);\n    assert.deepEqual(externalSchemaReferences(MCP_TOOL_OUTPUT_SCHEMAS[name]), []);\n    const inputSchema = MCP_TOOL_INPUT_SCHEMAS[name];\n    if (inputSchema.type === \"object\") {\n      assert.equal(inputSchema.additionalProperties, false, name);\n    }\n    const outputSchema = MCP_TOOL_OUTPUT_SCHEMAS[name];\n    assert.equal(outputSchema.$schema, \"https://json-schema.org/draft/2020-12/schema\");\n  }\n\n  const unknown = {\n    source: { kind: \"inline\", text: \"\" },\n    unexpected: true,\n  };\n  const validator = fromJsonSchema(MCP_TOOL_INPUT_SCHEMAS.perttool_check);\n  const checked = await validator[\"~standard\"].validate(unknown);\n  assert.ok(checked.issues?.length > 0);\n});\n\ntest(\"inline tools preserve exact source identity and Application result identities\", async () => {\n  const text = await repositoryText(\"docs/examples/minimal.pert\");\n  const digest = digestBytes(Buffer.from(text, \"utf8\"));\n  const adapter = createPerttoolMcpAdapter();\n  const calls = [\n    [\"perttool_check\", input(\"inline\", text), checkDocument(text).schemaVersion],\n    [\"perttool_analyze\", input(\"inline\", text), analyzeDocument(text).schemaVersion],\n    [\n      \"perttool_next\",\n      input(\"inline\", text),\n      selectNextTasks(text, { sourceDigest: digest }).schemaVersion,\n    ],\n  ];\n  for (const [name, args, applicationIdentity] of calls) {\n    const result = await adapter.executeTool(name, args);\n    assert.equal(result.isError, false, name);\n    assert.equal(result.structuredContent.result_schema_version, applicationIdentity);\n    assert.deepEqual(result.structuredContent.source, {\n      kind: \"inline\",\n      document_id: null,\n      source_digest: digest,\n    });\n    assert.equal(\"document\" in result.structuredContent.result, false);\n    assertContentIdentity(result);\n    await validate(MCP_TOOL_OUTPUT_SCHEMAS[name], result.structuredContent);\n  }\n});\n\ntest(\"domain-invalid documents retain bounded diagnostics as tool errors\", async () => {\n  const adapter = createPerttoolMcpAdapter();\n  for (const name of [\"perttool_check\", \"perttool_analyze\", \"perttool_next\"]) {\n    const result = await adapter.executeTool(name, input(\"inline\", \"not a PERT document\\n\"));\n    assert.equal(result.isError, true, name);\n    assert.notEqual(result.structuredContent.schema_version, \"Perttool.McpSourceError.v1\");\n    assert.equal(result.structuredContent.result.ok, false);\n    assert.ok(result.structuredContent.result.diagnostics.length > 0);\n    assertContentIdentity(result);\n    await validate(MCP_TOOL_OUTPUT_SCHEMAS[name], result.structuredContent);\n  }\n});\n\ntest(\"registered sources bind exact hidden paths and never invoke Git or persistence\", async () => {\n  const text = await repositoryText(\"docs/examples/minimal.pert\");\n  const bytes = Buffer.from(text, \"utf8\");\n  const digest = digestBytes(bytes);\n  const reads = [];\n  const forbidden = () => {\n    throw new Error(\"forbidden host port invoked\");\n  };\n  const host = {\n    modelVersion: 1,\n    digest: {\n      sha256Bytes: digestBytes,\n      sha256Utf8: (value) => digestBytes(Buffer.from(value, \"utf8\")),\n    },\n    documentBytes: {\n      read: async (sourcePath) => {\n        reads.push(sourcePath);\n        return bytes;\n      },\n    },\n    bundledArtifacts: { read: forbidden },\n    gitEvidence: {\n      probeHistory: forbidden,\n      captureAdvanceBaseline: forbidden,\n      recheckAdvanceBaseline: forbidden,\n    },\n    safePersistence: {\n      replaceValidatedDocument: forbidden,\n      createValidatedDocument: forbidden,\n      createValidatedDocumentFromSource: forbidden,\n      createArtifact: forbidden,\n    },\n    processContext: {\n      cwd: forbidden,\n      pid: forbidden,\n      platform: forbidden,\n      umask: forbidden,\n    },\n  };\n  const hiddenPath = path.join(root, \"docs/examples/minimal.pert\");\n  const adapter = createPerttoolMcpAdapter({\n    host,\n    registrations: [{ documentId: \"main-plan\", path: hiddenPath }],\n  });\n  const result = await adapter.executeTool(\"perttool_check\", {\n    source: {\n      kind: \"registered\",\n      documentId: \"main-plan\",\n      expectedDigest: digest,\n    },\n  });\n  assert.equal(result.isError, false);\n  assert.deepEqual(reads, [hiddenPath]);\n  assert.equal(result.content[0].text.includes(hiddenPath), false);\n  assert.deepEqual(result.structuredContent.source, {\n    kind: \"registered\",\n    document_id: \"main-plan\",\n    source_digest: digest,\n  });\n\n  const unknown = await adapter.executeTool(\"perttool_check\", {\n    source: {\n      kind: \"registered\",\n      documentId: \"unknown\",\n      expectedDigest: digest,\n    },\n  });\n  assert.equal(unknown.structuredContent.diagnostic.code, \"PTMCP-101\");\n  assert.equal(unknown.content[0].text.includes(hiddenPath), false);\n\n  const mismatch = await adapter.executeTool(\"perttool_check\", {\n    source: {\n      kind: \"registered\",\n      documentId: \"main-plan\",\n      expectedDigest: `sha256:${\"0\".repeat(64)}`,\n    },\n  });\n  assert.equal(mismatch.structuredContent.diagnostic.code, \"PTMCP-103\");\n  assert.equal(mismatch.content[0].text.includes(hiddenPath), false);\n});\n\ntest(\"startup, argument, request, source, and cancellation limits fail closed\", async () => {\n  assert.throws(\n    () => createRegistrationCatalog([\n      { documentId: \"relative\", path: \"relative.pert\" },\n    ]),\n    /must be absolute/u,\n  );\n  assert.throws(\n    () => createRegistrationCatalog([\n      { documentId: \"same\", path: \"/tmp/one.pert\" },\n      { documentId: \"same\", path: \"/tmp/two.pert\" },\n    ]),\n    /duplicate MCP document ID/u,\n  );\n  assert.throws(\n    () => createRegistrationCatalog(Array.from(\n      { length: MCP_LIMITS.registrations + 1 },\n      (_, index) => ({ documentId: `document-${index}`, path: `/tmp/${index}.pert` }),\n    )),\n    /registration count exceeds/u,\n  );\n\n  const adapter = createPerttoolMcpAdapter();\n  await assert.rejects(\n    () => adapter.executeTool(\"perttool_analyze\", {\n      source: { kind: \"inline\", text: \"\" },\n      capacities: [\n        { resourceId: \"DEV\", capacity: 1 },\n        { resourceId: \"DEV\", capacity: 2 },\n      ],\n    }),\n    (error) => error instanceof ProtocolError &&\n      error.code === ProtocolErrorCode.InvalidParams,\n  );\n  const oversizedRequest = await adapter.executeTool(\"perttool_check\", {\n    source: { kind: \"inline\", text: \"x\".repeat(MCP_LIMITS.requestBytes) },\n  });\n  assert.equal(oversizedRequest.structuredContent.diagnostic.code, \"PTMCP-104\");\n\n  const baseHost = createNodeHost();\n  const oversizedSource = createPerttoolMcpAdapter({\n    host: {\n      ...baseHost,\n      documentBytes: {\n        read: async () => new Uint8Array(MCP_LIMITS.sourceBytes + 1),\n      },\n    },\n    registrations: [{ documentId: \"large\", path: \"/tmp/large.pert\" }],\n  });\n  const oversizedSourceResult = await oversizedSource.executeTool(\"perttool_check\", {\n    source: {\n      kind: \"registered\",\n      documentId: \"large\",\n      expectedDigest: digestBytes(new Uint8Array(MCP_LIMITS.sourceBytes + 1)),\n    },\n  });\n  assert.equal(oversizedSourceResult.structuredContent.diagnostic.code, \"PTMCP-104\");\n\n  const cancelled = new AbortController();\n  cancelled.abort();\n  const cancelledResult = await adapter.executeTool(\n    \"perttool_help\",\n    { kind: \"command\" },\n    cancelled.signal,\n  );\n  assert.equal(cancelledResult.structuredContent.diagnostic.code, \"PTMCP-107\");\n\n  const ticks = [0, MCP_LIMITS.deadlineMilliseconds];\n  const expired = createPerttoolMcpAdapter({ now: () => ticks.shift() ?? ticks.at(-1) });\n  const expiredResult = await expired.executeTool(\"perttool_help\", { kind: \"command\" });\n  assert.equal(expiredResult.structuredContent.diagnostic.code, \"PTMCP-107\");\n\n  const outputBounded = createPerttoolMcpAdapter({ outputByteLimit: 1 });\n  const outputBoundedResult = await outputBounded.executeTool(\n    \"perttool_help\",\n    { kind: \"command\" },\n  );\n  assert.equal(outputBoundedResult.isError, true);\n  assert.equal(outputBoundedResult.structuredContent.diagnostic.code, \"PTMCP-105\");\n\n  const text = await repositoryText(\"docs/examples/minimal.pert\");\n  const bytes = Buffer.from(text, \"utf8\");\n  let releaseReads;\n  const readGate = new Promise((resolve) => {\n    releaseReads = resolve;\n  });\n  const concurrent = createPerttoolMcpAdapter({\n    host: {\n      ...baseHost,\n      documentBytes: { read: async () => readGate.then(() => bytes) },\n    },\n    registrations: [{ documentId: \"gated\", path: \"/tmp/gated.pert\" }],\n  });\n  const registeredInput = {\n    source: {\n      kind: \"registered\",\n      documentId: \"gated\",\n      expectedDigest: digestBytes(bytes),\n    },\n  };\n  const admitted = Array.from(\n    { length: MCP_LIMITS.concurrentTools },\n    () => concurrent.executeTool(\"perttool_check\", registeredInput),\n  );\n  const rejected = await concurrent.executeTool(\"perttool_check\", registeredInput);\n  assert.equal(rejected.structuredContent.diagnostic.code, \"PTMCP-107\");\n  releaseReads();\n  assert.equal((await Promise.all(admitted)).every((result) => !result.isError), true);\n});\n\ntest(\"offline help and schema tools retain shared registry results\", async () => {\n  const adapter = createPerttoolMcpAdapter();\n  const calls = [\n    [\"perttool_help\", { kind: \"command\" }, \"Perttool.CommandHelpResult.v1\"],\n    [\"perttool_help\", { kind: \"guide\" }, \"Perttool.GuideResult.v1\"],\n    [\"perttool_schema\", {}, \"Perttool.SchemaResult.v1\"],\n  ];\n  for (const [name, args, identity] of calls) {\n    const result = await adapter.executeTool(name, args);\n    assert.equal(result.isError, false);\n    assert.equal(result.structuredContent.source, null);\n    assert.equal(result.structuredContent.result_schema_version, identity);\n    await validate(MCP_TOOL_OUTPUT_SCHEMAS[name], result.structuredContent);\n  }\n  const notFound = await adapter.executeTool(\"perttool_schema\", {\n    schema_id: \"Perttool.Unknown.v1\",\n  });\n  assert.equal(notFound.isError, true);\n  assert.equal(notFound.structuredContent.result.diagnostics[0].code, \"PTSCH-001\");\n});\n\ntest(\"modern stdio discovery, listing, resource reads, and tool calls stay protocol-only\", async () => {\n  const child = spawn(process.execPath, [\"--import\", \"/tmp/perttool-mcp-file-trace.mjs\", path.join(root, \"adapters/mcp/dist/main.js\")], {\n    cwd: root,\n    stdio: [\"pipe\", \"pipe\", \"pipe\"],\n  });\n  const lag=monitorEventLoopDelay({resolution:10});lag.enable();\n  const pending = new Map();\n  let stdout = \"\";\n  let stderr = \"\";\n  child.stdout.setEncoding(\"utf8\");\n  child.stderr.setEncoding(\"utf8\");\n  child.stderr.on(\"data\", (chunk) => {\n    stderr += chunk;\n  });\n  child.stdout.on(\"data\", (chunk) => {\n    stdout += chunk;\n    while (true) {\n      const newline = stdout.indexOf(\"\\n\");\n      if (newline < 0) break;\n      const line = stdout.slice(0, newline);\n      stdout = stdout.slice(newline + 1);\n      const message = JSON.parse(line);\n      parentTrace(\"receive\",{id:message.id,pending:pending.has(message.id)});\n      const resolve = pending.get(message.id);\n      if (resolve !== undefined) {\n        pending.delete(message.id);\n        resolve(message);\n      }\n    }\n  });\n  const envelope = {\n    \"io.modelcontextprotocol/protocolVersion\": MCP_PROTOCOL_REVISION,\n    \"io.modelcontextprotocol/clientInfo\": { name: \"perttool-test\", version: \"1.0.0\" },\n    \"io.modelcontextprotocol/clientCapabilities\": {},\n  };\n  const request = (id, method, params = {}) => new Promise((resolve, reject) => {\n    const timer = setTimeout(() => {\n      parentTrace(\"deadline\",{id,method,loopMaxMs:lag.max/1e6});\n      pending.delete(id);\n      reject(new Error(`timed out waiting for ${method}`));\n    }, 5_000);\n    pending.set(id, (message) => {\n      clearTimeout(timer);\n      resolve(message);\n    });\n    parentTrace(\"send\",{id,method});\n    child.stdin.write(`${JSON.stringify({\n      jsonrpc: \"2.0\",\n      id,\n      method,\n      params: { ...params, _meta: envelope },\n    })}\\n`);\n  });\n\n  try {\n    const legacy = new Promise((resolve, reject) => {\n      const timer = setTimeout(() => reject(new Error(\"legacy rejection timed out\")), 5_000);\n      pending.set(1, (message) => {\n        clearTimeout(timer);\n        resolve(message);\n      });\n      child.stdin.write(`${JSON.stringify({\n        jsonrpc: \"2.0\",\n        id: 1,\n        method: \"initialize\",\n        params: {\n          protocolVersion: \"2025-11-25\",\n          capabilities: {},\n          clientInfo: { name: \"legacy\", version: \"1.0.0\" },\n        },\n      })}\\n`);\n    });\n    assert.equal((await legacy).error.code, -32022);\n\n    const discovered = await request(2, \"server/discover\");\n    assert.deepEqual(discovered.result.supportedVersions, [MCP_PROTOCOL_REVISION]);\n    assert.deepEqual(discovered.result.capabilities, {\n      resources: { subscribe: false, listChanged: false },\n      tools: { listChanged: false },\n    });\n\n    const listedTools = await request(3, \"tools/list\");\n    assert.deepEqual(\n      listedTools.result.tools.map(({ name }) => name),\n      (await fixture()).tools,\n    );\n    assert.equal(listedTools.result.tools.every(\n      ({ annotations }) => annotations.readOnlyHint === true &&\n        annotations.destructiveHint === false &&\n        annotations.idempotentHint === true &&\n        annotations.openWorldHint === false,\n    ), true);\n\n    const listedResources = await request(4, \"resources/list\");\n    assert.deepEqual(\n      listedResources.result.resources.map(({ uri }) => uri),\n      (await fixture()).resources,\n    );\n    const resource = await request(5, \"resources/read\", {\n      uri: \"perttool://capabilities\",\n    });\n    assert.equal(\n      JSON.parse(resource.result.contents[0].text).schema_version,\n      \"Perttool.McpCapabilities.v1\",\n    );\n\n    const source = await repositoryText(\"docs/examples/minimal.pert\");\n    const called = await request(6, \"tools/call\", {\n      name: \"perttool_next\",\n      arguments: { source: { kind: \"inline\", text: source } },\n    });\n    assert.equal(called.result.isError, false);\n    assert.equal(\n      called.result.structuredContent.schema_version,\n      \"Perttool.McpNextResult.v1\",\n    );\n    assert.deepEqual(\n      JSON.parse(called.result.content[0].text),\n      called.result.structuredContent,\n    );\n  } finally {\n    lag.disable();parentTrace(\"finally\",{loopMaxMs:lag.max/1e6});\n    child.stdin.end();\n    await new Promise((resolve) => child.once(\"exit\", resolve));\n  }\n  assert.equal(stdout, \"\");\n  assert.match(stderr, /Rejected 2025-era request/u);\n});\n\ntest(\"implementation cases remain complete and dependency ordered\", async () => {\n  const cases = await fixture();\n  const accepted = new Set();\n  for (const implementationCase of cases.cases) {\n    assert.equal(\n      implementationCase.depends_on.every((id) => accepted.has(id)),\n      true,\n      implementationCase.id,\n    );\n    accepted.add(implementationCase.id);\n  }\n  assert.deepEqual(\n    [...accepted],\n    Array.from(\n      { length: 12 },\n      (_, index) => `MCA-${String(index + 1).padStart(3, \"0\")}`,\n    ),\n  );\n});\n\ntest(\"implementation acceptance and completed lifecycle remain aligned\", async () => {\n  const [acceptance, plan] = await Promise.all([\n    repositoryText(\"docs/process/adapter-mcp-read-adapter-acceptance.md\"),\n    repositoryText(\"plans/adapter-platform.pert\"),\n  ]);\n  assert.match(acceptance, /Document status: Accepted 1\\.0/u);\n  assert.match(acceptance, /Task: `MCP_READ_ADAPTER`/u);\n  assert.match(\n    acceptance,\n    /WE-c1c6559db94c1b46f5bebbf5e13456ff8384fd54823114309cb4d30fedf1c3d4/u,\n  );\n  assert.match(plan, /task MCP_READ_ADAPTER [\\s\\S]*?status done/u);\n  assert.match(\n    plan,\n    /work_event WE-c1c6559db94c1b46f5bebbf5e13456ff8384fd54823114309cb4d30fedf1c3d4:/u,\n  );\n});\n",
+    "perttool-mcp-file-trace.mjs": "import {appendFileSync} from \"node:fs\";\nconst trace=(event,fields={})=>appendFileSync('/tmp/perttool-mcp-original-child.jsonl',JSON.stringify({event,ns:process.hrtime.bigint().toString(),cpu:process.cpuUsage(),...fields})+'\\n');\nlet input='';const emit=process.stdin.emit;\nprocess.stdin.emit=function(event,...args){if(event==='data'){input+=String(args[0]);let n;while((n=input.indexOf('\\n'))>=0){const line=input.slice(0,n);input=input.slice(n+1);try{const m=JSON.parse(line);trace('receive',{id:m.id,method:m.method});}catch{trace('non_json_input');}}}return emit.call(this,event,...args);};\nconst write=process.stdout.write;\nprocess.stdout.write=function(chunk,...args){try{const m=JSON.parse(String(chunk));trace('send',{id:m.id,hasResult:!!m.result,hasError:!!m.error});}catch{}return write.call(this,chunk,...args);};\ntrace('preload');\n"
+  },
+  "original_failure_log_excerpt": "\n  ---\n  duration_ms: 10519.037458\n  type: 'test'\n  location: '/home/katsumata-m/perttool-worktrees/issue-21-plan-review/test/mcp-read-adapter.test.mjs:387:1'\n  failureType: 'testCodeFailure'\n  error: 'timed out waiting for server/discover'\n  code: 'ERR_TEST_FAILURE'\n  stack: |-\n    Timeout._onTimeout (file:///home/katsumata-m/perttool-worktrees/issue-21-plan-review/test/mcp-read-adapter.test.mjs:423:14)\n    listOnTimeout (node:internal/timers:585:17)\n    process.processTimers (node:internal/timers:521:7)\n  ...\n",
+  "profile_artifact": {
+    "path": "mcp-discovery-timeout-rca-2026-09-30.cpuprofile.gz",
+    "sha256": "5ce3d6826df58c6c9a2f3ec0cc84280b1f201e72707e96e47fbe1fb88cf8354f",
+    "uncompressed_sha256": "bb0c7cf00c0881c5d0ec2a04295793c1c2979ae0a25393ffb2d6bc538f7b41c9",
+    "uncompressed_bytes": 3472834
+  },
+  "code_scope": "Annotated final barrier-probe replay code. Initial baseline and normal-affinity 22-client trials preceded the barrier addition; untraced baseline also preceded preload tracing. Raw result JSON is retained exactly.",
+  "normal_suite_trace": {
+    "parent": [
+      {
+        "event": "receive",
+        "ns": "15259887919417",
+        "cpu": {
+          "user": 5005591,
+          "system": 669488
+        },
+        "id": 1,
+        "pending": true
+      },
+      {
+        "event": "send",
+        "ns": "15259890315125",
+        "cpu": {
+          "user": 5007657,
+          "system": 669488
+        },
+        "id": 2,
+        "method": "server/discover"
+      },
+      {
+        "event": "receive",
+        "ns": "15262303816030",
+        "cpu": {
+          "user": 5037531,
+          "system": 700091
+        },
+        "id": 2,
+        "pending": true
+      },
+      {
+        "event": "send",
+        "ns": "15262304597407",
+        "cpu": {
+          "user": 5038246,
+          "system": 700091
+        },
+        "id": 3,
+        "method": "tools/list"
+      },
+      {
+        "event": "receive",
+        "ns": "15262332520352",
+        "cpu": {
+          "user": 5043864,
+          "system": 703249
+        },
+        "id": 3,
+        "pending": true
+      },
+      {
+        "event": "send",
+        "ns": "15262334568096",
+        "cpu": {
+          "user": 5045575,
+          "system": 703488
+        },
+        "id": 4,
+        "method": "resources/list"
+      },
+      {
+        "event": "receive",
+        "ns": "15262342877424",
+        "cpu": {
+          "user": 5046424,
+          "system": 703606
+        },
+        "id": 4,
+        "pending": true
+      },
+      {
+        "event": "send",
+        "ns": "15262347248570",
+        "cpu": {
+          "user": 5046933,
+          "system": 707039
+        },
+        "id": 5,
+        "method": "resources/read"
+      },
+      {
+        "event": "receive",
+        "ns": "15262353866691",
+        "cpu": {
+          "user": 5047909,
+          "system": 707176
+        },
+        "id": 5,
+        "pending": true
+      },
+      {
+        "event": "send",
+        "ns": "15262357108264",
+        "cpu": {
+          "user": 5051107,
+          "system": 707176
+        },
+        "id": 6,
+        "method": "tools/call"
+      },
+      {
+        "event": "receive",
+        "ns": "15262579422368",
+        "cpu": {
+          "user": 5059654,
+          "system": 712186
+        },
+        "id": 6,
+        "pending": true
+      },
+      {
+        "event": "finally",
+        "ns": "15262582178336",
+        "cpu": {
+          "user": 5062182,
+          "system": 712186
+        },
+        "loopMaxMs": 30.081023
+      }
+    ],
+    "child": [
+      {
+        "event": "preload",
+        "ns": "15258664688199",
+        "cpu": {
+          "user": 75656,
+          "system": 30262
+        }
+      },
+      {
+        "event": "receive",
+        "ns": "15259875822977",
+        "cpu": {
+          "user": 1307100,
+          "system": 184618
+        },
+        "id": 1,
+        "method": "initialize"
+      },
+      {
+        "event": "send",
+        "ns": "15259886098172",
+        "cpu": {
+          "user": 1316587,
+          "system": 184618
+        },
+        "id": 1,
+        "hasResult": false,
+        "hasError": true
+      },
+      {
+        "event": "receive",
+        "ns": "15259891036459",
+        "cpu": {
+          "user": 1317736,
+          "system": 184618
+        },
+        "id": 2,
+        "method": "server/discover"
+      },
+      {
+        "event": "send",
+        "ns": "15262302859414",
+        "cpu": {
+          "user": 4329296,
+          "system": 328807
+        },
+        "id": 2,
+        "hasResult": true,
+        "hasError": false
+      },
+      {
+        "event": "receive",
+        "ns": "15262306723504",
+        "cpu": {
+          "user": 4329296,
+          "system": 332369
+        },
+        "id": 3,
+        "method": "tools/list"
+      },
+      {
+        "event": "send",
+        "ns": "15262323360269",
+        "cpu": {
+          "user": 4344347,
+          "system": 332675
+        },
+        "id": 3,
+        "hasResult": true,
+        "hasError": false
+      },
+      {
+        "event": "receive",
+        "ns": "15262335435950",
+        "cpu": {
+          "user": 4346350,
+          "system": 332828
+        },
+        "id": 4,
+        "method": "resources/list"
+      },
+      {
+        "event": "send",
+        "ns": "15262341916285",
+        "cpu": {
+          "user": 4352334,
+          "system": 332828
+        },
+        "id": 4,
+        "hasResult": true,
+        "hasError": false
+      },
+      {
+        "event": "receive",
+        "ns": "15262348174381",
+        "cpu": {
+          "user": 4353717,
+          "system": 332828
+        },
+        "id": 5,
+        "method": "resources/read"
+      },
+      {
+        "event": "send",
+        "ns": "15262351882288",
+        "cpu": {
+          "user": 4357121,
+          "system": 332828
+        },
+        "id": 5,
+        "hasResult": true,
+        "hasError": false
+      },
+      {
+        "event": "receive",
+        "ns": "15262357822749",
+        "cpu": {
+          "user": 4358737,
+          "system": 332828
+        },
+        "id": 6,
+        "method": "tools/call"
+      },
+      {
+        "event": "send",
+        "ns": "15262576674000",
+        "cpu": {
+          "user": 4545967,
+          "system": 347586
+        },
+        "id": 6,
+        "hasResult": true,
+        "hasError": false
+      }
+    ],
+    "suite_summary": "\n# tests 1421\n# suites 0\n# pass 1421\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 174217.530374\n",
+    "full_log_sha256": "1614d500591cc7a86e623d543ce3ab1fb3fd0e59e5f081cf16ca03bf5a3cbc7e",
+    "initial_aborted_launch": "Omitted Node PATH; stopped and not used for causal conclusions"
+  }
+}

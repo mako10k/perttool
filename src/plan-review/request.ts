@@ -6,6 +6,7 @@ import { rfc8785Json } from "../model/rfc8785.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import type { BatchMutation } from "../mutation/types.js";
 import { PLAN_REVIEW_SOURCE_LIMITS } from "./source.js";
+import { planReviewBatchFitsUtf8 } from "./request-size.js";
 import {
   PLAN_REVIEW_CREATE_REQUEST_ID,
   PLAN_REVIEW_RESOLVE_REQUEST_ID,
@@ -145,6 +146,7 @@ function normalizedBatch(input: unknown): Readonly<{
       mutation.kind.startsWith("plan_review.") || !closedAtomicMutation(mutation);
   })) return null;
   try {
+    if (!planReviewBatchFitsUtf8(value, 8_388_608)) return null;
     const canonical = rfc8785Json(value);
     if (encoder.encode(canonical).byteLength > 8_388_608) return null;
     return Object.freeze({

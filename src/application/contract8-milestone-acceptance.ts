@@ -1,3 +1,4 @@
+// R: Lift milestone acceptance semantics through retained Application contracts.
 import {
   MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
   milestoneAcceptanceBaseText,
@@ -7,6 +8,7 @@ import {
   limitDiagnostics,
   normalizeMaxDiagnostics,
   sortDiagnostics,
+  type Diagnostic,
 } from "../model/diagnostics.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
@@ -56,6 +58,13 @@ export type {
   CheckResultV5,
   NextResultV7,
 } from "./contract8-milestone-read.js";
+
+/** Preserve diagnostics when a lower mutation orphans milestone evidence. */
+export class MilestoneAcceptanceCandidateError extends Error {
+  constructor(readonly diagnostics: readonly Diagnostic[]) {
+    super("Contract 8 mutation lost milestone acceptance source validity");
+  }
+}
 
 export interface Contract8CandidateOptions {
   readonly originalLabel?: string;
@@ -140,7 +149,7 @@ export function liftMilestoneAcceptanceCandidate<T extends {
   }
   const updatedText = applyTextEdits(text, planned.edits);
   const checked = parseMilestoneAcceptanceSource(updatedText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
-  if (!checked.ok) throw new Error("Contract 8 mutation lost milestone acceptance source validity");
+  if (!checked.ok) throw new MilestoneAcceptanceCandidateError(sourceDiagnostics(updatedText));
   return contract8CandidateIdentity(Object.freeze({
     ...rebound,
     updatedDigest: sha256DigestUtf8(updatedText),
