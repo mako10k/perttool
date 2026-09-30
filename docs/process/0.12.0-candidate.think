@@ -65,3 +65,9 @@ step S11:
     "A retained clean-source corrected artifact still requires its own exact gate. Original recurrence attribution and owner publication acceptance remain unconfirmed"
   decision D11 based_on PR11, E11, U11:
     "Commit the adopted test change and observed in-scope plan and candidate records, pack clean source once into retained storage, verify bundled durable text and run the exact archive gate. Complete candidate actuals only after success and prove final records-only commit repacks byte-identically. Do not publish"
+
+step S12:
+  evidence E12:
+    "The corrected archive SHA256 188db268dce87247d4799b84ddf07848cd988b8aac31b1bbd9140676ab7c1d43 was packed from clean a759ea98 source, durable bundled text checks passed and its exact retained archive gate passed 26 installed cases. Canonical digest-guarded technical completion records actual active intervals with null effort. External version/tag/release reads remain absent"
+  decision D12 based_on D11, E12:
+    "Commit only canonical completion and observed candidate records; repack final clean HEAD and require identical archive bytes. Bind final commit and verification in an external sidecar, leaving publication and owner acceptance pending. Retain preparation-only provisional velocity because combined elapsed throughput includes suspended waits"

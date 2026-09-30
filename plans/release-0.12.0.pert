@@ -52,7 +52,7 @@ task RELEASE_0120_PREPARATION RELEASE_0120_REVIEWED -> RELEASE_0120_PREPARED:
 task RELEASE_0120_CANDIDATE RELEASE_0120_PREPARED -> RELEASE_0120_CANDIDATE_ACCEPTED:
   title "Freeze clean committed source and one immutable artifact after exact authorization"
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -122,3 +122,10 @@ work_event PR_RELEASE_0120_TIMEOUT_RESUME_20260930:
   task RELEASE_0120_CANDIDATE
   kind resume
   occurred_at 2026-09-30T08:19:26+00:00
+
+work_event PR_RELEASE_0120_CANDIDATE_FINISH_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind finish
+  occurred_at 2026-09-30T08:43:48+00:00
+  active_time 1.1175h
