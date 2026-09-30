@@ -5,6 +5,7 @@ project RELEASE_0120:
   description "Parent outcome: distribute accepted Plan Review capability to beta consumers. Exact 0.12.0 local preparation is authorized. Commit, publication, latest promotion, public VSIX, Issue writes, acceptance receipts, timeout changes and plan advance retain separate authority."
   as_of 2026-09-30
   duration_unit point
+  velocity 9000p/677h
   finish RELEASE_0120_ACCEPTED
 
 milestone RELEASE_0120_STARTED:
@@ -51,7 +52,7 @@ task RELEASE_0120_PREPARATION RELEASE_0120_REVIEWED -> RELEASE_0120_PREPARED:
 task RELEASE_0120_CANDIDATE RELEASE_0120_PREPARED -> RELEASE_0120_CANDIDATE_ACCEPTED:
   title "Freeze clean committed source and one immutable artifact after exact authorization"
   duration 3p
-  status planned
+  status suspended
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -88,3 +89,17 @@ work_event PR_RELEASE_0120_FINISH_20260930:
   kind finish
   occurred_at 2026-09-30T05:56:58+00:00
   active_time 677/1800h
+
+work_event PR_RELEASE_0120_CANDIDATE_START_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind start
+  occurred_at 2026-09-30T06:09:49+00:00
+  planned_value 3p
+
+work_event PR_RELEASE_0120_CANDIDATE_SUSPEND_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind suspend
+  occurred_at 2026-09-30T06:31:48+00:00
+  reason "Await exact additional corrective commit authorization; initial artifact rejected for transient package documentation"

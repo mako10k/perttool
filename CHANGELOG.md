@@ -4,9 +4,11 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-09-30
+
 ### Added
 
-- Prepare `0.12.0` with Grammar 10 and CLI Contract 11 for project-owned Plan
+- Activate Grammar 10 and CLI Contract 11 for project-owned Plan
   Review requests, read-only inspection, and guarded atomic resolution.
 - Expose four additional command paths, 31 active root schemas, 155 root/Node
   runtime exports, and the complete `NextResult.v9` review projection before
@@ -682,7 +684,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.11.1...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/mako10k/perttool/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/mako10k/perttool/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/mako10k/perttool/compare/v0.10.6...v0.11.0
 [0.10.6]: https://github.com/mako10k/perttool/compare/v0.10.5...v0.10.6

@@ -1,0 +1,47 @@
+framework DecisionAudit
+problem P1:
+  "Commit the exact approved source scope and freeze one locally verified 0.12.0 distributable without publication"
+step S1:
+  premise PR1:
+    "The owner explicitly approved the listed 85 files for one local commit on the current branch and artifact freezing/verification, excluding push and publication"
+  evidence E1:
+    "The 85-file manifest SHA256 95450f05f7aecd724aa91d146a3b2567415d88f0fece108fd9a6aa1e686f6f5e matches every current path and byte hash; HEAD remains e39c739f, the correct isolated worktree is active, all local preparation gates passed 1421 plus 26 installed cases"
+  evidence E2:
+    "Canonical release plan review and preparation are done; both remaining schedules are 9p, only RELEASE_0120_CANDIDATE is recommended. Its next contribution is immutable exact-source artifact evidence, not consumer publication"
+  pending U1:
+    "No next-version registry/tag/release availability observation or candidate artifact acceptance is yet current; hosted CI has not run for the local release commit and original MCP cause remains unconfirmed"
+step S2:
+  pending A1:
+    "Commit only the approved 85 files, verify exact committed blobs, then pack from that clean commit and inspect the retained bytes through the existing explicit-tarball installed workflow"
+  pending A2:
+    "Stop if the approved bytes, branch, staged inventory or gate evidence has drifted; retain any generated artifact and do not infer publication permission"
+step S3:
+  decision D1 based_on P1, PR1, E1, E2, U1, A1, A2:
+    "Recheck source fit, stage only manifest paths, create one local commit and independently read back its parent, changed paths, blob bytes and clean worktree. Build and pack one retained 0.12.0 tarball outside the worktree, record exact hashes/inventory/bytes and verify that same tarball using the canonical installed package gate. Read remote/registry identities without writes through protected GitHub routes. Measure start/finish and retry velocity, preserving unknown person effort and history limitations. Prepare a reviewable candidate and publication payload, with no remote write, tag, release, npm publish or latest mutation"
+
+step S4:
+  evidence E3:
+    "The approved 85-file commit b3ffa980 was verified byte-identical and clean. Retained 1112-file tarball SHA256 af93741b7297d68baf7cd67e579bbe194996c0b1a965cc1e1848ddf741ba10ac passed all 26 installed cases and existing package workflow. Existing process-scoped NPM_TOKEN route authenticates npm mako10k; the unscoped npm whoami 401 is not evidence against this documented publication route"
+  evidence E4:
+    "Direct inspection of the immutable tarball README found local source is preparing 0.12.0 and this source version is not yet published. Its CHANGELOG keeps 0.12.0 behavior under Unreleased as Prepare 0.12.0. These source-owned status claims are packed as immutable documentation and become false or misleading after the intended publication. Prior accepted 0.7.0 candidate gate explicitly rejected the same transient README boundary"
+  pending U2:
+    "The owner authorized one exact 85-file commit, not an additional corrective commit. The artifact is verified executable evidence but must not be accepted as the publication candidate while transient bundled wording remains"
+step S5:
+  decision D2 based_on D1, E3, E4, U1, U2:
+    "Retain and classify the current tarball as rejected for publication because time-sensitive preparation claims are embedded in immutable distributed documentation. Correct README to describe package capability durably and qualify registry observations by their exact snapshot time; put version behavior in a durable 0.12.0 changelog entry. Add a bounded regression assertion and run relevant verification before presenting the exact additional commit scope. Record actual candidate work and the owner-wait boundary through the canonical plan without inventing effort or declaring owner acceptance. Do not amend the approved source commit or repack a silently changed candidate"
+
+step S6:
+  evidence E5:
+    "After the approved tracking commit, observe-velocity succeeds with one completed preparation sample: 5p over 677/1800h, declared elapsed-hour throughput token 9000p/677h. Effort productivity is unavailable because effort is null. The standard project-set preview affects no governed scope, requires no owner confirmation and authorizes the write without an owner assertion"
+  premise PR2:
+    "The user's goal-progress instructions require appropriate measured velocity to be applied through the standard authorized route and reanalyzed; recommendations alone do not supply this authority"
+step S7:
+  decision D3 based_on E5, PR2, PR1, E2, U1, U2:
+    "Adopt exactly 9000p/677h provisionally through the digest-bound scope-free CLI route, without an owner assertion. Use the single preparation sample only as low-confidence elapsed throughput for this release plan; do not call it person-effort productivity or bound owner/CI/registry waits. Reanalyze and reobserve at candidate completion to update the provisional rate. This rate change is separate from commit and artifact acceptance authority"
+
+step S8:
+  pending A3:
+    "Proposed bounded continuation: up to two additional local commits limited to README, CHANGELOG, the README regression test, canonical release plan, candidate record and candidate reasoning. The first freezes reviewed documentation; the second records only observed verification, actuals and rate updates, then proves the same corrected packaged bytes against the final clean source. Publication remains separately authorized"
+step S9:
+  decision D4 based_on D2, D3, PR1, U2, A3:
+    "Present this exact six-file corrective scope for owner confirmation, with the maximum two local commits explicitly disclosed. Do not execute either additional commit before that confirmation. Retain the first rejected artifact and source commit; after authorization, verify durable bundled text and the exact retained tarball, record measured completion, and present the final commit/hash for the distinct publication decision"
