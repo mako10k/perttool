@@ -421,7 +421,7 @@ test("modern stdio discovery, listing, resource reads, and tool calls stay proto
     const timer = setTimeout(() => {
       pending.delete(id);
       reject(new Error(`timed out waiting for ${method}`));
-    }, 5_000);
+    }, method === "server/discover" ? 15_000 : 5_000);
     pending.set(id, (message) => {
       clearTimeout(timer);
       resolve(message);

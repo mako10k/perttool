@@ -55,3 +55,13 @@ step S10:
     "The exact producing condition of either recurrence is unmeasured. No corrected artifact is verified, and no timeout correction or publication is authorized"
   decision D7 based_on E7, PR7, U7:
     "Record observed resume and suspension through digest-guarded CLI and preserve both failed gates in the remaining records-only local commit. Keep the candidate incomplete. Recommend separately scoped timeout correction followed by clean-source and retained-artifact gates; do not publish or claim candidate readiness"
+
+step S11:
+  premise PR11:
+    "The owner adopted and authorized implementation of the exact discovery-only fifteen-second test budget and its focused, complete and artifact verification route"
+  evidence E11:
+    "The focused MCP replay passed eleven tests and the default-worker complete gate passed 1421 tests, 48 self-use plans, adapter/host/link checks and 26 installed Plan Review cases. Product timeout and CI concurrency were unchanged"
+  pending U11:
+    "A retained clean-source corrected artifact still requires its own exact gate. Original recurrence attribution and owner publication acceptance remain unconfirmed"
+  decision D11 based_on PR11, E11, U11:
+    "Commit the adopted test change and observed in-scope plan and candidate records, pack clean source once into retained storage, verify bundled durable text and run the exact archive gate. Complete candidate actuals only after success and prove final records-only commit repacks byte-identically. Do not publish"

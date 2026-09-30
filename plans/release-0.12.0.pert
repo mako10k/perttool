@@ -52,7 +52,7 @@ task RELEASE_0120_PREPARATION RELEASE_0120_REVIEWED -> RELEASE_0120_PREPARED:
 task RELEASE_0120_CANDIDATE RELEASE_0120_PREPARED -> RELEASE_0120_CANDIDATE_ACCEPTED:
   title "Freeze clean committed source and one immutable artifact after exact authorization"
   duration 3p
-  status suspended
+  status active
   priority 100
   requires:
     RELEASE_ENGINEERS 1
@@ -116,3 +116,9 @@ work_event PR_RELEASE_0120_CANDIDATE_GATE_SUSPEND_20260930:
   kind suspend
   occurred_at 2026-09-30T07:07:55+00:00
   reason "Both unchanged clean-source gates failed MCP discovery; await separately scoped timeout correction"
+
+work_event PR_RELEASE_0120_TIMEOUT_RESUME_20260930:
+  model 1
+  task RELEASE_0120_CANDIDATE
+  kind resume
+  occurred_at 2026-09-30T08:19:26+00:00
