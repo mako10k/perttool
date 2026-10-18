@@ -370,7 +370,8 @@ committed payload before the event disappears through advance and emits the
 associated removal commit as provenance. The same event visible in many
 snapshots is one event, not many.
 
-A changed payload under the same event ID is a conflict. History model 1 does
+Except for a proved exact historical unit conversion under section 9.3, a
+changed payload under the same event ID is a conflict. History model 1 does
 not reinterpret it as a correction, even before advance. The result retains
 the conflicting commit IDs and no selected payload for that event.
 
@@ -581,6 +582,27 @@ returns `advance.removed_work_event_ids` in event-ID order.
 accepts Grammar 5, and identifies `planned_value` paths. Its unit-migration
 algorithm version is 3; Grammar 1 through 4 behavior remains exact and
 otherwise unchanged.
+
+#### Exact historical unit conversion
+
+History MAY recognize a change to an existing start event's `planned_value`
+as a representation conversion only across adjacent valid snapshots of the
+same project with different declared duration units. Every retained task's
+individual duration or three estimate inputs and every existing start baseline
+MUST use one positive exact target/source ratio. Every previous task and event
+MUST remain present. Task endpoints and states and every other event payload
+field MUST remain unchanged. Added tasks and metadata edits are permitted.
+For hour/day conversions the ratio MUST equal the fixed 24-hour conversion.
+The ratio is a calibration proven from the snapshots, not observed throughput;
+subsequent edits to project velocity MUST NOT reinterpret it.
+
+The reducer retains original Git snapshots and event first-seen identities,
+projects the latest verified unit representation for summaries, and updates
+its comparison baseline only after the whole conversion is proved. Missing
+or invalid intermediate evidence, event removal/reappearance, conflicting
+ratios, changed actual times, active time, effort, reasons, or a same-unit
+baseline edit remain conflicts. A later conversion MUST NOT erase an earlier
+conflict. No history rewrite or project-root substitution is involved.
 
 ### 9.4 `Perttool.ProjectHistoryResult.v1`
 

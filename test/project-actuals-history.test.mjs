@@ -706,3 +706,63 @@ test("project history is public without target-prefixed package exports", async 
   assert.match(declarations, /ProjectHistoryResultV1/);
   assert.match(declarations, /inspectProjectHistory/);
 });
+
+function migrationSource(unit = "point", amount = "4p", finishTime = "13:00:00", effort = "2ph") {
+  return actualsSource({ status: "done", events: [
+    ...event("WE-start", ["  kind start", "  occurred_at 2026-07-28T09:00:00+09:00", `  planned_value ${amount}`]),
+    ...event("WE-finish", ["  kind finish", `  occurred_at 2026-07-28T${finishTime}+09:00`, `  effort ${effort}`]),
+  ] }).replace("duration_unit point", `duration_unit ${unit}`).replace("duration 4p", `duration ${amount}`).replace("velocity 4p/1d", unit === "hour" ? "velocity 8p/1h" : "velocity 4p/1d");
+}
+
+async function historyForMigration(t, sources) {
+  const root = await repository(t), plan = join(root, "migration.pert");
+  for (const [index, source] of sources.entries()) {
+    await write(plan, source); commit(root, `snapshot ${index}`);
+  }
+  return inspectTargetProjectHistoryFile({ targetPath: plan }, TARGET_GRAMMAR_5_CAPABILITY);
+}
+
+test("exact unit migration preserves event identity and projects converted start baseline", async (t) => {
+  const result = await historyForMigration(t, [migrationSource("hour", "0.5h"), migrationSource()]);
+  assert.equal(result.ok, true);
+  assert.equal(result.history.status, "complete");
+  assert.equal(result.events.length, 2);
+  assert.equal(result.tasks[0].plannedValue.numerator, "4");
+  assert.equal(result.tasks[0].plannedValue.unit, "point");
+  assert.equal(result.tasks[0].cycleTime.numerator, "4");
+});
+
+test("exact unit migration survives later velocity edits and a reverse conversion", async (t) => {
+  const result = await historyForMigration(t, [migrationSource("hour", "0.5h"), migrationSource(),
+    migrationSource().replace("velocity 4p/1d", "velocity 17p/1h"), migrationSource("hour", "0.5h")]);
+  assert.equal(result.ok, true);
+  assert.equal(result.tasks[0].plannedValue.numerator, "1");
+  assert.equal(result.tasks[0].plannedValue.denominator, "2");
+  assert.equal(result.tasks[0].plannedValue.unit, "hour");
+});
+
+for (const [name, altered] of [
+  ["a changed actual time", migrationSource("point", "4p", "14:00:00")],
+  ["changed effort", migrationSource("point", "4p", "13:00:00", "3ph")],
+  ["a baseline-only edit", migrationSource().replace("planned_value 4p", "planned_value 5p")],
+  ["an inconsistent estimate input", migrationSource().replace("duration 4p", "estimate:\n    optimistic 3p\n    most_likely 4p\n    pessimistic 5p")],
+]) {
+  test(`unit migration refuses ${name}`, async (t) => {
+    const result = await historyForMigration(t, [migrationSource("hour", "0.5h"), altered]);
+    assert.notEqual(result.history.status, "complete");
+    assert.ok(result.diagnostics.some(({ code }) => code === "PTHIS-103" || code === "PTHIS-102"));
+  });
+}
+
+test("a later exact migration cannot clear an earlier payload conflict", async (t) => {
+  const result = await historyForMigration(t, [migrationSource("hour", "0.5h"),
+    migrationSource("hour", "0.6h"), migrationSource("point", "4.8p")]);
+  assert.equal(result.ok, false);
+  assert.ok(result.diagnostics.some(({ code }) => code === "PTHIS-103"));
+});
+
+test("hour and day migrations require the fixed 24 hour ratio", async (t) => {
+  const result = await historyForMigration(t, [migrationSource("hour", "0.5h"), migrationSource("day", "0.5d")]);
+  assert.equal(result.ok, false);
+  assert.ok(result.diagnostics.some(({ code }) => code === "PTHIS-103"));
+});
