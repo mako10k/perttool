@@ -1,3 +1,4 @@
+import { provesHistoryUnitConversion } from "./unit-conversion-proof.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   reduceTaskLifecycle,
@@ -247,6 +248,7 @@ interface ParsedTask {
 
 interface ParsedSnapshot<GrammarVersion extends number> {
   readonly snapshot: PlanRevisionSnapshot;
+  readonly document: DocumentNode<TargetDeclarationKind> | null;
   readonly documentId: string | null;
   readonly grammarVersion: GrammarVersion | null;
   readonly tasks: ReadonlyMap<string, ParsedTask>;
@@ -612,6 +614,7 @@ function parseSnapshot<GrammarVersion extends number>(
     return {
       parsed: {
         snapshot,
+        document: null,
         documentId: null,
         grammarVersion: null,
         tasks: new Map(),
@@ -668,6 +671,7 @@ function parseSnapshot<GrammarVersion extends number>(
   return {
     parsed: {
       snapshot,
+      document: checked.document,
       documentId: checked.documentId,
       grammarVersion: checked.grammarVersion,
       tasks,
@@ -1155,6 +1159,8 @@ export function inspectProjectHistoryWithValidator<
   const allTaskIds = new Set<string>();
   const plannedByCommit =
     new Map<string, ReadonlyMap<string, ActualQuantity>>();
+  let previousDocument: DocumentNode<TargetDeclarationKind> | null = null;
+  let previousEvents: readonly ActualWorkEvent[] = [];
   let previousTasks = new Map<string, ParsedTask>();
   let previousEventIds = new Set<string>();
   let previousSourceDigest: string | null = null;
@@ -1169,10 +1175,16 @@ export function inspectProjectHistoryWithValidator<
     causes.push(...parsedSnapshot.causes);
     if (parsedSnapshot.parsed === null) {
       transitionContinuityKnown = false;
+      previousDocument = null;
+      previousEvents = [];
       previousEventIds = new Set();
       continue;
     }
     const parsed = parsedSnapshot.parsed;
+    const unitConversion = provesHistoryUnitConversion(
+      previousDocument, parsed.document, previousEvents, parsed.events,
+      (event) => payloadDigest({ ...eventProjection(event), plannedValue: null }),
+    );
     if (parsed.documentId !== null) documentId = parsed.documentId;
     if (parsed.grammarVersion !== null) {
       grammarVersion = parsed.grammarVersion;
@@ -1232,6 +1244,12 @@ export function inspectProjectHistoryWithValidator<
           removalCommitId: null,
         });
       } else if (
+        unitConversion && existing.removalCommitId === null &&
+        !conflictedEventIds.has(event.id)
+      ) {
+        eventMap.set(event.id, { ...existing, event, projection,
+          payloadDigest: digest, lastSeenCommitId: snapshot.commitId });
+      } else if (
         existing.payloadDigest !== digest ||
         existing.removalCommitId !== null
       ) {
@@ -1284,6 +1302,8 @@ export function inspectProjectHistoryWithValidator<
         evidenceClass: "git_recorded_transition",
       }));
     }
+    previousDocument = parsed.document;
+    previousEvents = parsed.events;
     previousTasks = new Map(parsed.tasks);
     previousEventIds = new Set(currentEventsById.keys());
     previousSourceDigest = snapshot.sourceDigest;
