@@ -8,7 +8,7 @@ change before writing it.
 Registry snapshot on 2026-10-19: npm `latest` and `beta` both identify
 `0.12.0`; no `alpha` channel is present. Node.js 22 or later is required.
 
-The source is preparing `0.12.1`, a compatible history unit-conversion patch.
+The `0.12.1` package provides the compatible history unit-conversion patch.
 Grammar 10 and CLI Contract 11 remain unchanged. Existing Grammar 1 through 9
 documents remain readable; Plan Review operations require explicit migration
 to Grammar 10. Exact `0.12.0` is the rollback pin for this patch.

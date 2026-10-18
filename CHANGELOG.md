@@ -4,7 +4,7 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
-## [0.12.1] - Unreleased
+## [0.12.1] - 2026-10-19
 
 ### Fixed
 
