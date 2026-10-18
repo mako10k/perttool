@@ -4,6 +4,15 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.12.1] - Unreleased
+
+### Fixed
+
+- Recognize proved exact duration-unit conversions in project history without
+  treating converted start baselines as conflicting event payloads. Preserve
+  conflicts for changed actuals, inconsistent conversions, event reuse, and
+  conflicts that predate a conversion.
+
 ## [0.12.0] - 2026-09-30
 
 ### Added
@@ -684,7 +693,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/mako10k/perttool/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/mako10k/perttool/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/mako10k/perttool/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/mako10k/perttool/compare/v0.10.6...v0.11.0

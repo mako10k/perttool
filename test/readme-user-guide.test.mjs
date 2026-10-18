@@ -10,12 +10,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 test("README is a current user guide with separate historical and developer routes", async () => {
   const readme = await readFile(path.join(root, "README.md"), "utf8");
 
-  assert.match(readme, /Registry snapshot at `\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z`/u);
-  assert.match(readme, /The `0\.12\.0` package provides Grammar 10 and CLI Contract 11/u);
-  assert.doesNotMatch(readme, /local source is preparing|source version is not yet published/u);
-  assert.match(readme, /The recommended npm `latest` release is `0\.11\.1`/u);
-  assert.match(readme, /npm `beta` is `0\.11\.1` with\nGrammar 9 and CLI Contract 10/u);
-  assert.match(readme, /Exact `0\.10\.6` remains the compatible Grammar 8/u);
+  assert.match(readme, /Registry snapshot on \d{4}-\d{2}-\d{2}/u);
+  assert.match(readme, /source is preparing `0\.12\.1`/u);
+  assert.match(readme, /Grammar 10 and CLI Contract 11 remain unchanged/u);
+  assert.match(readme, /npm `latest` and `beta` both identify\n`0\.12\.0`/u);
+  assert.match(readme, /Exact `0\.12\.0` is the rollback pin/u);
+  assert.match(readme, /no `alpha` channel is present/u);
   assert.match(readme, /npm install --global perttool@latest/u);
   assert.match(readme, /^## Create your first plan$/mu);
   assert.match(readme, /^## Migrate an existing plan$/mu);
