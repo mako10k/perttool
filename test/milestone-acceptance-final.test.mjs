@@ -72,7 +72,7 @@ test("Contract 9 package and private adapters retain one read-only semantic boun
     repositoryText("package.json"),
   ]);
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.12.1");
+  assert.equal(manifest.version, "0.12.2");
   assert.equal(packageRoot.COMMAND_REGISTRY.length, 75);
   assert.equal(packageRoot.getJsonSchemaCatalog().length, 31);
   assert.equal(Object.keys(packageRoot).length, 155);

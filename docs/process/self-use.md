@@ -2272,3 +2272,14 @@ Stage 1 entry evidence:
   pre-advance target snapshot in `HEAD`, the passing guard,
   diff/deletion review, expected-digest write, reanalysis, and a separate
   advance commit.
+
+
+## Version 0.12.2 release workstream
+
+The owner-selected remaining-estimate patch release is tracked in
+[release-0.12.2.pert](../../plans/release-0.12.2.pert). Its four tasks total
+13p from preparation through immutable candidate acceptance, beta publication
+and independent distribution acceptance. The exact initial plan candidate
+was confirmed separately. The release scope and fresh authentication gate
+are in [the release procedure](0.12.2-release.md). No plan advance or npm
+latest promotion is authorized by this release plan.

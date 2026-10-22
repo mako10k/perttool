@@ -1,0 +1,65 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0122:
+  version 5
+  title "Version 0.12.2 remaining-estimate patch release"
+  as_of 2026-10-22
+  duration_unit point
+  finish RELEASE_0122_ACCEPTED
+
+milestone RELEASE_0122_STARTED:
+  title "Release instruction received"
+  state reached
+
+milestone RELEASE_0122_PREPARED:
+  title "prepared"
+
+milestone RELEASE_0122_CANDIDATE_ACCEPTED:
+  title "candidate accepted"
+
+milestone RELEASE_0122_PUBLISHED:
+  title "published"
+
+milestone RELEASE_0122_ACCEPTED:
+  title "accepted"
+
+task RELEASE_0122_PREPARATION RELEASE_0122_STARTED -> RELEASE_0122_PREPARED:
+  title "Prepare version metadata and focused release verification"
+  duration 3p
+  status done
+  source "docs/process/0.12.2-release.md"
+
+task RELEASE_0122_CANDIDATE RELEASE_0122_PREPARED -> RELEASE_0122_CANDIDATE_ACCEPTED:
+  title "Accept clean source, Node 22/24 CI and one retained tarball"
+  duration 5p
+  status active
+  source "docs/process/0.12.2-release.md"
+
+task RELEASE_0122_PUBLISH RELEASE_0122_CANDIDATE_ACCEPTED -> RELEASE_0122_PUBLISHED:
+  title "Publish the same tarball to GitHub prerelease and npm beta"
+  duration 2p
+  source "docs/process/0.12.2-release.md"
+
+task RELEASE_0122_ACCEPTANCE RELEASE_0122_PUBLISHED -> RELEASE_0122_ACCEPTED:
+  title "Verify independent Git, CI, artifact and registry readbacks"
+  duration 3p
+  source "docs/process/0.12.2-release.md"
+
+work_event WE-9ae9de4ae7758e43b5c2eb5c9cdd71148ece7ed789badba3636e46bb43414b3a:
+  model 1
+  task RELEASE_0122_PREPARATION
+  kind start
+  occurred_at 2026-10-22T13:10:17+09:00
+  planned_value 3p
+
+work_event WE-3ef35ee25f4ac8e0b97c28c357fb49b4715cc48f0f372b6bf53fe3c745f75ca2:
+  model 1
+  task RELEASE_0122_PREPARATION
+  kind finish
+  occurred_at 2026-10-22T13:14:35+09:00
+
+work_event WE-84406fb659f4f6c1b0fb504823a77abe6c67575efcc8b848a7a369dd29b2eb93:
+  model 1
+  task RELEASE_0122_CANDIDATE
+  kind start
+  occurred_at 2026-10-22T13:14:36+09:00
+  planned_value 5p

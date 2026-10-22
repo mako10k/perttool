@@ -4,6 +4,16 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-10-22
+
+### Fixed
+
+- Allow supported remaining-duration and three-point estimate updates after
+  task start while retaining the first-start planned baseline. Match identical
+  start retries against stored event evidence instead of recalculating the
+  baseline from the current residual estimate. Preserve malformed-event,
+  lifecycle, same-ID payload conflict and exact unit-conversion safeguards.
+
 ## [0.12.1] - 2026-10-19
 
 ### Fixed
@@ -693,7 +703,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.12.2...HEAD
+[0.12.2]: https://github.com/mako10k/perttool/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/mako10k/perttool/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/mako10k/perttool/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/mako10k/perttool/compare/v0.11.0...v0.11.1
