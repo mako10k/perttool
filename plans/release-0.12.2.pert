@@ -37,12 +37,13 @@ task RELEASE_0122_CANDIDATE RELEASE_0122_PREPARED -> RELEASE_0122_CANDIDATE_ACCE
 task RELEASE_0122_PUBLISH RELEASE_0122_CANDIDATE_ACCEPTED -> RELEASE_0122_PUBLISHED:
   title "Publish the same tarball to GitHub prerelease and npm beta"
   duration 2p
-  status active
+  status done
   source "docs/process/0.12.2-release.md"
 
 task RELEASE_0122_ACCEPTANCE RELEASE_0122_PUBLISHED -> RELEASE_0122_ACCEPTED:
   title "Verify independent Git, CI, artifact and registry readbacks"
   duration 3p
+  status done
   source "docs/process/0.12.2-release.md"
 
 work_event WE-9ae9de4ae7758e43b5c2eb5c9cdd71148ece7ed789badba3636e46bb43414b3a:
@@ -90,3 +91,22 @@ work_event WE-6428c562de7c4b20e58943a8a0add5f0c90789292264ad1c2434d4860a4b1b14:
   task RELEASE_0122_PUBLISH
   kind resume
   occurred_at 2026-10-22T13:38:52+09:00
+
+work_event WE-0621e23283832a85a6714a1af09470ffd13f01a31c2797af289c14eb9581b140:
+  model 1
+  task RELEASE_0122_PUBLISH
+  kind finish
+  occurred_at 2026-10-22T13:47:03+09:00
+
+work_event WE-595043ddafa02025fb434e872b27c47194ea44322083654ceac4605f231f708a:
+  model 1
+  task RELEASE_0122_ACCEPTANCE
+  kind start
+  occurred_at 2026-10-22T13:47:10+09:00
+  planned_value 3p
+
+work_event WE-4c87d827624624b7ccbd5d10d7ca42b14f2191db5107bba66fe8994de19d8afd:
+  model 1
+  task RELEASE_0122_ACCEPTANCE
+  kind finish
+  occurred_at 2026-10-22T13:48:03+09:00
