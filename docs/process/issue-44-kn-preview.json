@@ -1,0 +1,37 @@
+{
+  "command": [
+    "node",
+    "dist/cli.js",
+    "task",
+    "set",
+    "/home/katsumata-m/.codex/worktrees/929a/kn/frontend.pert",
+    "PATTERN_TYPE_CONSTRAINTS",
+    "--optimistic",
+    "1p",
+    "--most-likely",
+    "2p",
+    "--pessimistic",
+    "4p",
+    "--diff",
+    "--format",
+    "json"
+  ],
+  "exit_code": 0,
+  "ok": true,
+  "consumer_path": "/home/katsumata-m/.codex/worktrees/929a/kn/frontend.pert",
+  "consumer_head": "79ef7ef6f42e1c0fb6029a38c83fdfdda6eb55e9",
+  "source_sha256": "00c91861f51ffe6ebaf5b4c9e230f8fede796e2a5503f9673b05f6340c6eb3d5",
+  "matches_consumer_19d5949": true,
+  "source_unchanged": true,
+  "all_work_event_blocks_byte_identical": true,
+  "work_event_count": 303,
+  "candidate_sha256": "f9653382559c7ecc19db10c3739dcaa8a4b3198b66ffe55c7df77ec63ba5e3d4",
+  "diff": "--- /home/katsumata-m/.codex/worktrees/929a/kn/frontend.pert\n+++ candidate\n@@ -1748,9 +1748,9 @@\n   title \"Implement @ patterns and ~ type constraints; design display aliases\"\n   description \"Owner accepted @ same-subject conjunction and ~ infer-time strict equality yielding Type. Bootstrap requirements/design/implementation and26valid/15invalid evaluator/native cases pass (O0/O2/sanitizer, normal/stress, boxed). Display local aliases design only. Remaining provenance, broad-check disposition and handoff manually estimated1/2/4p at21:31 JST; standard estimate preview PTACT-103 rejected planned_value mismatch, so preserve initial5/8/13p and original work_event rather than rewrite history. Selfhost syntax added; composite evaluator/native180s and prepared-token native240s remained unverified. No commit/push/install.\"\n   estimate:\n-    optimistic 5p\n-    most_likely 8p\n-    pessimistic 13p\n+    optimistic 1p\n+    most_likely 2p\n+    pessimistic 4p\n   status suspended\n   requires:\n     IMPLEMENTER 1\n",
+  "diagnostics_truncated": true,
+  "diagnostic_summary": {
+    "returned_count": 100,
+    "codes": {
+      "PTDAG-208": 100
+    }
+  }
+}

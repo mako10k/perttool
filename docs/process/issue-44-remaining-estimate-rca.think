@@ -1,0 +1,71 @@
+framework DecisionAudit
+
+domain RemainingEstimate:
+  description "Issue 44 first-start baseline and remaining-estimate separation"
+
+problem P1:
+  "Why does a supported remaining-estimate preview fail after task start?"
+
+step S1:
+  evidence E1:
+    "Requirements section 7.4 defines in-progress estimates as current remaining duration; project-actuals section 4.1 defines planned_value at first start. Issue 44 explicitly requests preserving both meanings."
+    resource:
+      file "docs/requirements.md"
+      label "Remaining duration requirement"
+    resource:
+      file "docs/specs/project-actuals.md"
+      label "First-start baseline contract"
+
+step S2:
+  evidence E2:
+    "Before changes, the local CLI preview on kn frontend.pert rejects 1/2/4p with PTACT-103 planned_value_mismatch while its start event retains 25/3p. validator.ts compares every stored start baseline to current taskExpectedValue."
+    resource:
+      file "src/semantic/validator.ts"
+      label "Unconditional snapshot equality"
+
+step S3:
+  evidence E3:
+    "target-actuals-mutation.ts computes plannedValueForStart from the current task before comparing a same-ID retry. The start request carries no independent planned_value. Source-core acceptance and tests assert perpetual equality; history separately compares same-ID event payloads with strict adjacent unit conversion proof."
+    resource:
+      file "src/application/target-actuals-mutation.ts"
+      label "Retry recomputation"
+    resource:
+      file "test/project-actuals-source-core.test.mjs"
+      label "Snapshot equality regression expectation"
+
+step S4:
+  decision D1 based_on P1, E1, E2, E3:
+    "The producing condition is conflating the first-start baseline with the current residual in snapshot validation and retry matching. Re-estimation triggers rejection. The lower-level equality tests preserved that conflation rather than testing start then re-estimate; this is a detection gap, not the producing cause."
+
+step S5:
+  decision D2 based_on E1, E2, E3, D1:
+    "Remove only perpetual current-estimate equality. Generate the baseline exactly for new starts; retries compare request-owned fields and retain the stored baseline. Preserve event shape, base unit, lifecycle state, same-ID history conflicts and strict unit-conversion proof. Clarify the lower-level spec and historical acceptance record."
+
+step S6:
+  pending U1:
+    "A standalone snapshot cannot prove a stored first-start baseline was historically generated correctly or detect a prior same-ID payload edit. Current estimate equality cannot prove that either. Creation is controlled by lifecycle generation; cross-snapshot immutability is checked by history. First-seen provenance remains limited. No new historical attestation is introduced."
+
+step S7:
+  decision D3 based_on E1, E3, D2, U1:
+    "Regression checks cover exact creation, remaining mutation and persistence, retry, suspend/resume/finish, baseline observation, payload conflicts and unit-conversion refusal. Re-run the original kn preview without writing consumer bytes or changing project root."
+
+step S8:
+  evidence E4:
+    "The broad Node 22 run completed 1432 tests with 1431 passes and one json-schema test failure: a CLI import reported TARGET_TEMPORAL_INTERFACE_IDENTITY missing. During that run check:link also invoked npm prepare and build in the same worktree. The unchanged source and completed dist both export that name."
+    resource:
+      file "test/json-schema.test.mjs"
+      label "Failed schema CLI integration test"
+    resource:
+      file "src/application/target-temporal-analysis.ts"
+      label "Unchanged exported identity"
+
+step S9:
+  decision D4 based_on E4:
+    "Concurrent dist generation is a plausible test-environment interference, not yet proven as the failure cause. Keep the failure visible and rerun only the failed schema test after build and link have finished. Do not rerun the complete suite or change production logic without new evidence."
+
+step S10:
+  evidence E5:
+    "After build and link finished, the single failed schema integration test passed under Node 22 in 32.6 seconds. The initial broad failure remains recorded; the exact transient import failure cause is not proven."
+    resource:
+      file "docs/process/issue-44-remaining-estimate.md"
+      label "Initial broad result and bounded rerun"

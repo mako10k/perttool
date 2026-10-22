@@ -1,3 +1,4 @@
+// R: Verify public actuals CLI behavior, residual updates, and history contracts.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
@@ -5,6 +6,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -254,3 +256,71 @@ test("Contract 9 package root retains actuals services without target names", ()
     true,
   );
 });
+
+for (const initial of [
+  { name: "three-point", fields: "  estimate:\n    optimistic 5p\n    most_likely 8p\n    pessimistic 13p", baseline: "25/3p", numerator: "25", denominator: "3" },
+  { name: "rational", fields: "  duration 7/3p", baseline: "7/3p", numerator: "7", denominator: "3" },
+]) {
+  test(`remaining estimate preserves ${initial.name} first-start evidence through CLI lifecycle and history`, (t) => {
+    const directory = mkdtempSync(path.join(tmpdir(), "perttool-residual-"));
+    t.after(() => rmSync(directory, { recursive: true, force: true }));
+    const pathname = path.join(directory, "actuals.pert");
+    writeFileSync(pathname, readFileSync(fixture, "utf8").replace("  duration 3p", initial.fields));
+    git(directory, ["init", "--quiet"]);
+    git(directory, ["config", "user.name", "perttool-test"]);
+    git(directory, ["config", "user.email", "perttool-test@example.com"]);
+    const commit = (message) => {
+      git(directory, ["add", "actuals.pert"]);
+      git(directory, ["commit", "--quiet", "-m", message]);
+    };
+    commit("planned");
+    const at = "2026-07-29T09:00:00+09:00";
+    lifecycle(pathname, "start", at);
+    const started = readFileSync(pathname, "utf8");
+    const startBlock = started.slice(started.indexOf("work_event "));
+    assert.ok(startBlock.includes(`planned_value ${initial.baseline}`));
+    commit("start");
+    const args = ["task", "set", pathname, "WORK", "--optimistic", "1p", "--most-likely", "2p", "--pessimistic", "4p"];
+    const preview = cliJson([...args, "--diff"]);
+    assert.equal(preview.ok, true);
+    assert.equal(readFileSync(pathname, "utf8"), started);
+    const written = cliJson([...args, "--actor", "user", "--expect-digest", preview.source_digest, "--write"]);
+    assert.equal(written.ok, true);
+    const remaining = readFileSync(pathname, "utf8");
+    assert.equal(remaining.slice(remaining.indexOf("work_event ")), startBlock);
+    assert.equal(cliJson(["document", "check", pathname]).ok, true);
+    const analysis = cliJson(["dag", "analyze", pathname, "--schedule", "both"]);
+    assert.equal(analysis.precedence.makespan.numerator, "13");
+    assert.equal(analysis.precedence.makespan.denominator, "6");
+    assert.deepEqual(analysis.resource.makespan, analysis.precedence.makespan);
+    const retry = lifecycle(pathname, "start", at);
+    assert.equal(retry.changed, false);
+    assert.equal(readFileSync(pathname, "utf8"), remaining);
+    const conflict = cliJson(["task", "start", pathname, "WORK", "--at", "2026-07-29T10:00:00+09:00", "--event-id", retry.lifecycle.event.id], 1);
+    assert.ok(conflict.diagnostics.some(({ code }) => code === "PTACT-106"));
+    commit("remaining estimate");
+    lifecycle(pathname, "suspend", "2026-07-29T11:00:00+09:00");
+    // The original consumer is suspended; preview another residual there too.
+    assert.equal(cliJson([...args, "--diff"]).ok, true);
+    const durationArgs = ["task", "set", pathname, "WORK", "--duration", "1/3p"];
+    const durationPreview = cliJson(durationArgs);
+    assert.equal(durationPreview.ok, true);
+    assert.equal(cliJson([...durationArgs, "--actor", "user", "--expect-digest", durationPreview.source_digest, "--write"]).ok, true);
+    assert.ok(readFileSync(pathname, "utf8").includes(startBlock.trimEnd()));
+    lifecycle(pathname, "resume", "2026-07-29T12:00:00+09:00");
+    lifecycle(pathname, "finish", "2026-07-29T15:00:00+09:00", ["--active-time", "5", "--effort", "6"]);
+    commit("finish");
+    const history = cliJson(["project", "history", pathname, "--task", "WORK"]);
+    assert.equal(history.history.status, "complete");
+    assert.equal(history.tasks[0].planned_value.numerator, initial.numerator);
+    assert.equal(history.tasks[0].planned_value.denominator, initial.denominator);
+    const observation = cliJson(["project", "observe-velocity", pathname, "--task", "WORK"]);
+    const elapsed = observation.observation.candidates.find(({ measure }) => measure === "elapsed_hour_throughput");
+    assert.equal(elapsed.rate.numerator, initial.numerator);
+    assert.equal(elapsed.rate.denominator, "18");
+    writeFileSync(pathname, readFileSync(pathname, "utf8").replace(`planned_value ${initial.baseline}`, "planned_value 99p"));
+    commit("tampered same-ID baseline");
+    const altered = cliJson(["project", "history", pathname, "--task", "WORK"], 1);
+    assert.ok(altered.diagnostics.some(({ code }) => code === "PTHIS-103"));
+  });
+}

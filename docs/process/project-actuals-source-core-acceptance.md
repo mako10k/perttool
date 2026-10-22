@@ -12,6 +12,15 @@ This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, the Grammar 5 target in the DSL Grammar specification, and
 the accepted PACT examples. It does not revise their meanings.
 
+## Issue 44 correction
+
+The equality row below records the historical acceptance, not a current
+permanent snapshot invariant. Issue 44 corrects that lower-level rule against
+Requirements 7.4 and the first-start meaning in Project Actuals Section 4.1:
+new starts generate the exact baseline, while later residual estimates may
+differ. Snapshot checks cannot establish historical baseline truth. See
+[the correction record](issue-44-remaining-estimate.md).
+
 ## Accepted implementation
 
 | Concern | Accepted behavior |

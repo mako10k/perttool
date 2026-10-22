@@ -1,3 +1,4 @@
+// R: Plan atomic lifecycle mutations and match retries against stored event evidence.
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   actualsDiagnostic,
@@ -161,7 +162,6 @@ function failure(
 function eventPayloadMatches(
   event: ActualWorkEvent,
   request: NormalizedLifecycleMutationRequest,
-  plannedValue: string | null,
 ): boolean {
   const activeTime =
     event.activeTime === null
@@ -176,19 +176,13 @@ function eventPayloadMatches(
     request.kind === "task.finish.actual"
       ? "finish"
       : request.kind.slice("task.".length);
-  const expectedPlannedValue =
-    event.plannedValue === null
-      ? null
-      : canonicalizeExactDurationSourceToken(
-          event.plannedValue.sourceText,
-        )?.token ?? null;
+  // planned_value is generated only for a new start; it is not a request field.
   return (
     event.model === 1 &&
     event.taskId === request.taskId &&
     event.kind === eventKind &&
     canonicalizeEventDateTimeSourceToken(event.occurredAt.sourceText) ===
       request.event.occurredAt &&
-    expectedPlannedValue === plannedValue &&
     activeTime === (
       request.kind === "task.finish.actual"
         ? request.event.activeTime
@@ -408,7 +402,6 @@ function validateLifecycleSource(
     };
   }
   const fromState = taskStatus(declaration);
-  const plannedValue = plannedValueForStart(validated, declaration, request);
   const sameId = validated.document.declarations.find(
     ({ id }) => id === request.event.id,
   );
@@ -417,7 +410,7 @@ function validateLifecycleSource(
     const existing = model.events.find(({ id }) => id === request.event.id);
     if (
       existing === undefined ||
-      !eventPayloadMatches(existing, request, plannedValue)
+      !eventPayloadMatches(existing, request)
     ) {
       return {
         task: null,
@@ -456,7 +449,7 @@ function validateLifecycleSource(
       task: declaration,
       fromState,
       retryEvent: model.events.find(({ id }) => id === request.event.id)!,
-      plannedValue,
+      plannedValue: null,
       diagnostics: Object.freeze([]),
     };
   }
@@ -561,7 +554,7 @@ function validateLifecycleSource(
     task: declaration,
     fromState,
     retryEvent: null,
-    plannedValue,
+    plannedValue: plannedValueForStart(validated, declaration, request),
     diagnostics: Object.freeze([]),
   };
 }

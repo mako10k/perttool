@@ -1254,8 +1254,10 @@ the declared numeric offset, and emits UTC as `+00:00`.
 Work-event IDs share the global document ID namespace. The `task` field must
 resolve to a task; another entity kind or a missing ID is `PTACT-102`.
 `planned_value` must equal the exact expected value of the referenced task in
-the project base unit at the candidate's first start. Kind/field mismatch or
-an unequal planned value is `PTACT-103`. Sequence, stored-state, identity,
+the project base unit at the candidate's first start. Kind/field mismatch is
+`PTACT-103`. Later remaining-estimate edits retain that start baseline; snapshot
+validation MUST NOT require equality with the current estimate or claim to
+prove historical baseline truth. Sequence, stored-state, identity,
 measurement, and resource rules are defined by the
 [Project Actuals and Git History Contract](project-actuals.md).
 

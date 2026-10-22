@@ -1,3 +1,4 @@
+// R: Validate document semantics, including work-event shape and ownership.
 import type {
   Diagnostic,
   RelatedLocation,
@@ -25,15 +26,6 @@ import {
   fieldsNamed,
   isZeroDuration,
 } from "../model/syntax.js";
-import {
-  add,
-  compare,
-  divide,
-  multiply,
-  rational,
-  rationalFromDuration,
-  type Rational,
-} from "../model/rational.js";
 
 type AnyDeclarationNode = DeclarationNode<TargetDeclarationKind>;
 type AnyDocumentNode = DocumentNode<TargetDeclarationKind>;
@@ -736,8 +728,7 @@ function eventDiagnostic(
     | "missing_task"
     | "wrong_entity_kind"
     | "missing_field"
-    | "forbidden_field"
-    | "planned_value_mismatch",
+    | "forbidden_field",
   related?: readonly RelatedLocation[],
 ): Diagnostic {
   return makeDiagnostic(
@@ -749,32 +740,6 @@ function eventDiagnostic(
     declaration.id,
     related,
     { cause },
-  );
-}
-
-function taskExpectedValue(task: AnyDeclarationNode): Rational {
-  const duration = durationValue(fieldNamed(task, "duration"));
-  if (duration !== undefined) return rationalFromDuration(duration);
-  const estimate = fieldNamed(task, "estimate");
-  if (estimate === undefined) {
-    throw new Error(`validated task ${task.id} has no duration or estimate`);
-  }
-  const children = estimate.children ?? [];
-  const value = (name: string): Rational => {
-    const durationValueForChild = durationValue(
-      children.find((field) => field.name === name),
-    );
-    if (durationValueForChild === undefined) {
-      throw new Error(`validated task ${task.id} estimate is missing ${name}`);
-    }
-    return rationalFromDuration(durationValueForChild);
-  };
-  return divide(
-    add(
-      add(value("optimistic"), multiply(rational(4n), value("most_likely"))),
-      value("pessimistic"),
-    ),
-    rational(6n),
   );
 }
 
@@ -929,26 +894,6 @@ function validateWorkEvents(
           ),
         );
       }
-    }
-
-    const plannedValueField = fieldNamed(event, "planned_value");
-    const plannedValue = durationValue(plannedValueField);
-    if (
-      kind === "start" &&
-      task?.kind === "task" &&
-      plannedValue !== undefined &&
-      compare(rationalFromDuration(plannedValue), taskExpectedValue(task)) !== 0
-    ) {
-      diagnostics.push(
-        eventDiagnostic(
-          "PTACT-103",
-          `work_event ${event.id} planned_value does not match task ${task.id}`,
-          event,
-          plannedValueField!.valueSpan,
-          "planned_value_mismatch",
-          [{ message: "Owned task", span: task.idSpan }],
-        ),
-      );
     }
   }
 }

@@ -1,3 +1,4 @@
+// R: Verify exact work-event source parsing, validation, and formatting.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
@@ -298,18 +299,6 @@ test("Grammar 5 validates model, task ownership, kind fields, and planned value"
       code: "PTACT-103",
       cause: "forbidden_field",
     },
-    {
-      name: "planned value mismatch",
-      fields: [
-        "model 1",
-        "task WORK",
-        "kind start",
-        "occurred_at 2026-07-28T09:00:00+09:00",
-        "planned_value 5p",
-      ],
-      code: "PTACT-103",
-      cause: "planned_value_mismatch",
-    },
   ];
   for (const contractCase of cases) {
     const diagnostics = diagnosticsFor(source({
@@ -457,4 +446,13 @@ test("work-event IDs share the global document namespace", () => {
     ]),
   }));
   assert.ok(diagnostics.some(({ code }) => code === "PTSEM-201"));
+});
+
+// A snapshot cannot prove a baseline was true at first start.
+test("stored first-start baseline can differ from current remaining duration", () => {
+  const text = source({ events: event("WE-baseline", [
+    "model 1", "task WORK", "kind start",
+    "occurred_at 2026-07-28T09:00:00+09:00", "planned_value 5p",
+  ]) });
+  assert.deepEqual(diagnosticsFor(text), []);
 });

@@ -1,3 +1,4 @@
+// R: Verify historical work-event identity, lifecycle reconstruction, and unit conversion.
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
@@ -763,6 +764,25 @@ test("a later exact migration cannot clear an earlier payload conflict", async (
 
 test("hour and day migrations require the fixed 24 hour ratio", async (t) => {
   const result = await historyForMigration(t, [migrationSource("hour", "0.5h"), migrationSource("day", "0.5d")]);
+  assert.equal(result.ok, false);
+  assert.ok(result.diagnostics.some(({ code }) => code === "PTHIS-103"));
+});
+
+test("exact unit conversion preserves a baseline distinct from the residual estimate", async (t) => {
+  const initial = migrationSource("hour", "0.5h");
+  const residual = initial.replace("duration 0.5h", "duration 0.25h");
+  const converted = migrationSource().replace("duration 4p", "duration 2p");
+  const result = await historyForMigration(t, [initial, residual, converted]);
+  assert.equal(result.ok, true);
+  assert.equal(result.history.status, "complete");
+  assert.equal(result.tasks[0].plannedValue.numerator, "4");
+  assert.equal(result.tasks[0].plannedValue.unit, "point");
+});
+
+test("a residual estimate does not permit inconsistent baseline conversion ratios", async (t) => {
+  const residual = migrationSource("hour", "0.5h").replace("duration 0.5h", "duration 0.25h");
+  const inconsistent = migrationSource().replace("duration 4p", "duration 3p");
+  const result = await historyForMigration(t, [residual, inconsistent]);
   assert.equal(result.ok, false);
   assert.ok(result.diagnostics.some(({ code }) => code === "PTHIS-103"));
 });

@@ -82,6 +82,22 @@ rather than accepted as an independent CLI estimate. `active_time` and
 `effort` occur only on `finish` in model 1. A reason is permitted on
 `suspend`; other event kinds do not acquire hidden reason semantics.
 
+The current task `duration` or `estimate` is remaining work at the current
+snapshot (Requirements 7.4). Updating it MUST retain the first-start event,
+including its `planned_value`, ID, time, and measurements. New starts MUST
+generate the exact expected value from the validated task at creation. A
+same-ID start retry compares request-owned fields and retains the stored
+baseline; it MUST NOT recompute that baseline from a later remaining estimate.
+The existing target-state requirement for retries still applies.
+
+A standalone snapshot validates event shape, ownership, base unit, and
+lifecycle consistency. It cannot establish whether a historical baseline was
+correctly generated at first start or whether an earlier payload was changed.
+Equality with today's estimate proves neither fact and MUST NOT be required.
+Cross-snapshot same-ID payload conflicts remain subject to the history checks
+and the exact unit-conversion exception in Section 9.3. First-seen evidence
+is not independent proof of the original baseline's truth.
+
 The source representation is the Grammar 5 top-level `work_event` declaration
 in the same `.pert` document. Its exact EBNF, contextual keywords, field
 matrix, canonical order, version upgrade, and comment ownership are fixed by
@@ -814,7 +830,7 @@ activation.
 | --- | --- | --- |
 | `PTACT-101` | invalid work-event model | `unsupported_event_model` |
 | `PTACT-102` | invalid work-event task reference | `missing_task`, `wrong_entity_kind` |
-| `PTACT-103` | invalid fields for work-event kind | `missing_field`, `forbidden_field`, `planned_value_mismatch` |
+| `PTACT-103` | invalid fields for work-event kind | `missing_field`, `forbidden_field` |
 | `PTACT-104` | invalid work-event lifecycle sequence | `invalid_transition`, `duplicate_kind_at_instant`, `event_after_finish`, `state_event_mismatch` |
 | `PTACT-105` | invalid lifecycle mutation request | `invalid_request`, `invalid_source_state`, `status_only_finish_not_allowed`, `eventful_task_requires_lifecycle` |
 | `PTACT-106` | work-event identity conflicts with an existing payload | `event_identity_conflict` |
