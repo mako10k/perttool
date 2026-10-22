@@ -31,12 +31,13 @@ task RELEASE_0122_PREPARATION RELEASE_0122_STARTED -> RELEASE_0122_PREPARED:
 task RELEASE_0122_CANDIDATE RELEASE_0122_PREPARED -> RELEASE_0122_CANDIDATE_ACCEPTED:
   title "Accept clean source, Node 22/24 CI and one retained tarball"
   duration 5p
-  status active
+  status done
   source "docs/process/0.12.2-release.md"
 
 task RELEASE_0122_PUBLISH RELEASE_0122_CANDIDATE_ACCEPTED -> RELEASE_0122_PUBLISHED:
   title "Publish the same tarball to GitHub prerelease and npm beta"
   duration 2p
+  status suspended
   source "docs/process/0.12.2-release.md"
 
 task RELEASE_0122_ACCEPTANCE RELEASE_0122_PUBLISHED -> RELEASE_0122_ACCEPTED:
@@ -63,3 +64,23 @@ work_event WE-84406fb659f4f6c1b0fb504823a77abe6c67575efcc8b848a7a369dd29b2eb93:
   kind start
   occurred_at 2026-10-22T13:14:36+09:00
   planned_value 5p
+
+work_event WE-0debdb6605702094adb483cd4e9c5b41f37b610c9dd9f48d02cc20cea4b3a36b:
+  model 1
+  task RELEASE_0122_CANDIDATE
+  kind finish
+  occurred_at 2026-10-22T13:27:39+09:00
+
+work_event WE-b93054c2f83473258162c56605b939ef3a838b33f1bdda858a1883914d14126c:
+  model 1
+  task RELEASE_0122_PUBLISH
+  kind start
+  occurred_at 2026-10-22T13:27:40+09:00
+  planned_value 2p
+
+work_event WE-ba5fc2348a073a3b4cdaf23ede16c78ae29d5f0c8624d289c03de701f399bbb7:
+  model 1
+  task RELEASE_0122_PUBLISH
+  kind suspend
+  occurred_at 2026-10-22T13:28:17+09:00
+  reason "Protected npm authentication returns E401; owner credential restoration required"
