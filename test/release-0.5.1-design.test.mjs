@@ -118,7 +118,7 @@ test("0.5.1 release gate fixes the compatible Contract 6 patch boundary", async 
     "./node",
     "./schemas/*",
   ]);
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
   assert.match(changelog, /^## \[0\.5\.1\] - 2026-07-30$/m);
   assert.equal(COMMAND_REGISTRY.length, 75);
   assert.equal(getJsonSchemaCatalog().length, 31);

@@ -30,8 +30,8 @@ test("0.10.2 retains the compatible Issue 20 patch record and public identities"
   assert.equal(lock.packages[""].version, "0.12.3");
   assert.equal(lsp.peerDependencies.perttool, "0.12.3");
   assert.equal(mcp.peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
-  assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
+  assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.3"/u);
   assert.match(changelog, /^## \[0\.10\.2\] - 2026-08-21$/mu);
   assert.match(procedure, /compatible patch after published `0\.10\.1`/u);
   assert.match(selfReview, /Suffix-free `0\.10\.2` accurately represents/u);

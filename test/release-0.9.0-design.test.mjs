@@ -169,8 +169,8 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(lspManifest.peerDependencies.perttool, "0.12.3");
   assert.equal(mcpManifest.peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.3"/u);
   assert.match(changelog, /^## \[0\.9\.0\] - 2026-08-13$/m);
   assert.match(planIndex, /All forty-seven plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.0\.pert/u);

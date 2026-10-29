@@ -110,7 +110,7 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
   assert.equal(lockfile.version, "0.12.3");
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
   assert.match(mutationSource, /@deprecated Use AdvanceResultV1/);
   assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
   assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v4");

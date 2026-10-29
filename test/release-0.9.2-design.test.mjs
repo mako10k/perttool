@@ -114,8 +114,8 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(lspManifest.peerDependencies.perttool, "0.12.3");
   assert.equal(mcpManifest.peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.3"/u);
   assert.match(changelog, /^## \[0\.9\.2\] - 2026-08-14$/m);
   assert.match(planIndex, /All forty-seven plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.2\.pert/u);

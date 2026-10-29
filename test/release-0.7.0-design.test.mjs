@@ -138,6 +138,6 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.equal(lockfile.version, "0.12.3");
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(lockfile.packages["node_modules/fast-uri"].version, "3.1.5");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
   assert.equal(manifest.publishConfig.tag, "beta");
 });

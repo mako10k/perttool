@@ -122,7 +122,7 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   assert.equal(lockfile.version, "0.12.3");
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
   assert.match(changelog, /^## \[0\.5\.3\] - 2026-07-30$/m);
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);

@@ -178,7 +178,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(lspManifest.peerDependencies.perttool, "0.12.3");
   assert.equal(mcpManifest.peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
   assert.match(changelog, /^## \[0\.8\.0\] - 2026-08-07$/m);
   assert.deepEqual(Object.keys(manifest.exports), [
     ".",

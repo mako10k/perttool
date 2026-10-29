@@ -28,8 +28,8 @@ test("0.10.5 selects the compatible Issue 23 patch and retains public identities
   assert.equal(lock.packages[""].version, "0.12.3");
   assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.12.3");
   assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
-  assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
+  assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.3"/u);
   assert.match(changelog, /^## \[0\.10\.5\] - 2026-08-21$/mu);
   assert.match(procedure, /compatible patch after published `0\.10\.4`/u);
   assert.match(plan, /npm latest, Issue mutation, public VSIX publication, plan advance/u);

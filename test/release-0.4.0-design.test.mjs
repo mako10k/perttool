@@ -131,7 +131,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.equal(manifest.version, "0.12.3");
   assert.equal(lockfile.version, "0.12.3");
   assert.equal(lockfile.packages[""].version, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
   assert.match(changelog, /^## \[0\.4\.0\] - 2026-07-28$/m);
   assert.match(
     changelog,

@@ -49,7 +49,7 @@ test("0.11.1 is a compatible candidate-bound VSIX host reliability patch", async
   assert.equal(lock.packages[""].version, "0.12.3");
   assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.12.3");
   assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.12.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
+  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/u);
   assert.doesNotMatch(hostScript, /--list-extensions/u);
   assert.match(hostScript, /extensions\.json/u);
 });
