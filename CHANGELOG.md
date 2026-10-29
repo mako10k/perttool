@@ -4,6 +4,16 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.12.3] - 2026-10-29
+
+### Fixed
+
+- Bind Grammar 7 migration proof to committed HEAD source bytes and report
+  final safe-write races as PTMAC-110 with exit 5.
+- Accept VS Code uninstall by independent file-backed inventory readback,
+  without parsing localized success output. Retain process errors as warnings
+  only when inventory confirms removal; missing or invalid readback fails.
+
 ## [0.12.2] - 2026-10-22
 
 ### Fixed

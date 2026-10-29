@@ -108,9 +108,9 @@ test("0.5.1 release gate fixes the compatible Contract 6 patch boundary", async 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.12.2");
-  assert.equal(lockfile.version, "0.12.2");
-  assert.equal(lockfile.packages[""].version, "0.12.2");
+  assert.equal(manifest.version, "0.12.3");
+  assert.equal(lockfile.version, "0.12.3");
+  assert.equal(lockfile.packages[""].version, "0.12.3");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.deepEqual(Object.keys(manifest.exports), [
     ".",

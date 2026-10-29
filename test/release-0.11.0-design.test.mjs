@@ -74,11 +74,11 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.equal(next.temporal.authority.complete, true);
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  assert.equal(manifest.version, "0.12.2");
-  assert.equal(lock.version, "0.12.2");
-  assert.equal(lock.packages[""].version, "0.12.2");
-  assert.equal(JSON.parse(lspManifestText).peerDependencies.perttool, "0.12.2");
-  assert.equal(JSON.parse(mcpManifestText).peerDependencies.perttool, "0.12.2");
+  assert.equal(manifest.version, "0.12.3");
+  assert.equal(lock.version, "0.12.3");
+  assert.equal(lock.packages[""].version, "0.12.3");
+  assert.equal(JSON.parse(lspManifestText).peerDependencies.perttool, "0.12.3");
+  assert.equal(JSON.parse(mcpManifestText).peerDependencies.perttool, "0.12.3");
   assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
   assert.match(plan, /^task POOL_GRAMMAR9_ACCEPTANCE_MUTATION POOL_INTEGRATED -> POOL_GRAMMAR9_ACCEPTANCE_MUTATION_READY:$/mu);
@@ -349,5 +349,5 @@ test("0.11.0 publication and durable acceptance retain their exact boundaries", 
   assert.match(readme, /npm `latest` and `beta` both identify\n`0\.12\.1`/u);
   assert.match(readme, /Exact `0\.12\.1` is the rollback pin/u);
   assert.match(selfUse, /plans\/planning-pool-release-readiness\.pert/u);
-  assert.match(selfUse, /read-only self-use checks passed \(49 plans/u);
+  assert.match(selfUse, /read-only self-use checks passed \(50 plans/u);
 });

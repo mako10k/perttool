@@ -25,11 +25,11 @@ test("0.10.2 retains the compatible Issue 20 patch record and public identities"
   const lock = JSON.parse(lockText);
   const lsp = JSON.parse(lspText);
   const mcp = JSON.parse(mcpText);
-  assert.equal(manifest.version, "0.12.2");
-  assert.equal(lock.version, "0.12.2");
-  assert.equal(lock.packages[""].version, "0.12.2");
-  assert.equal(lsp.peerDependencies.perttool, "0.12.2");
-  assert.equal(mcp.peerDependencies.perttool, "0.12.2");
+  assert.equal(manifest.version, "0.12.3");
+  assert.equal(lock.version, "0.12.3");
+  assert.equal(lock.packages[""].version, "0.12.3");
+  assert.equal(lsp.peerDependencies.perttool, "0.12.3");
+  assert.equal(mcp.peerDependencies.perttool, "0.12.3");
   assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
   assert.match(changelog, /^## \[0\.10\.2\] - 2026-08-21$/mu);

@@ -23,11 +23,11 @@ test("0.10.4 selects the compatible Issue 6 patch and retains public identities"
   ]);
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  assert.equal(manifest.version, "0.12.2");
-  assert.equal(lock.version, "0.12.2");
-  assert.equal(lock.packages[""].version, "0.12.2");
-  assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.12.2");
-  assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.12.2");
+  assert.equal(manifest.version, "0.12.3");
+  assert.equal(lock.version, "0.12.3");
+  assert.equal(lock.packages[""].version, "0.12.3");
+  assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.12.3");
+  assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.12.3");
   assert.match(versionSource, /TOOL_VERSION = "0\.12\.2"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.12\.2"/u);
   assert.match(changelog, /^## \[0\.10\.4\] - 2026-08-21$/mu);

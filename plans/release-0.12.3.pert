@@ -1,0 +1,43 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0123:
+  version 1
+  title "Version 0.12.3 committed-source proof patch release"
+  duration_unit point
+  finish RELEASE_0123_ACCEPTED
+
+milestone RELEASE_0123_STARTED:
+  title "Release instruction received"
+  state reached
+
+milestone RELEASE_0123_PREPARED:
+  title "prepared"
+
+milestone RELEASE_0123_CANDIDATE_ACCEPTED:
+  title "candidate accepted"
+
+milestone RELEASE_0123_PUBLISHED:
+  title "published"
+
+milestone RELEASE_0123_ACCEPTED:
+  title "accepted"
+
+task RELEASE_0123_PREPARATION RELEASE_0123_STARTED -> RELEASE_0123_PREPARED:
+  title "Prepare compatible patch version and source verification"
+  duration 3p
+  status active
+  source "docs/process/0.12.3-release.md"
+
+task RELEASE_0123_CANDIDATE RELEASE_0123_PREPARED -> RELEASE_0123_CANDIDATE_ACCEPTED:
+  title "Accept exact source CI and retained package"
+  duration 5p
+  source "docs/process/0.12.3-release.md"
+
+task RELEASE_0123_PUBLISH RELEASE_0123_CANDIDATE_ACCEPTED -> RELEASE_0123_PUBLISHED:
+  title "Publish one artifact to GitHub prerelease and npm beta"
+  duration 2p
+  source "docs/process/0.12.3-release.md"
+
+task RELEASE_0123_ACCEPTANCE RELEASE_0123_PUBLISHED -> RELEASE_0123_ACCEPTED:
+  title "Verify source, artifact and installed registry behavior"
+  duration 3p
+  source "docs/process/0.12.3-release.md"

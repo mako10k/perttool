@@ -1,2 +1,2 @@
 // R: Publish the current perttool source version identity.
-export const TOOL_VERSION = "0.12.2";
+export const TOOL_VERSION = "0.12.3";
