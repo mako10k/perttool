@@ -1,3 +1,4 @@
+// R: Plan Grammar 7 baselines from committed-source proof and compare its immutable bindings.
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import { fieldNamed } from "../model/syntax.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
@@ -16,6 +17,7 @@ export interface CommittedMigrationProofV1 {
   readonly headCommit: string;
   readonly headBlob: string;
   readonly stage0Blob: string;
+  /** Exact raw HEAD-blob content digest supplied by the repository proof producer. */
   readonly sourceDigest: `sha256:${string}`;
 }
 

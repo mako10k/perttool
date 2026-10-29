@@ -4667,10 +4667,10 @@ async function runDocumentMigration(args: readonly string[]): Promise<number> {
   const toProof = (value: typeof baseline): CommittedMigrationProofV1 | null =>
     value.status === "complete" && value.repositorySnapshotId !== null && value.repositoryRelativePath !== null &&
       value.objectFormat !== null && value.headCommitId !== null && value.headBlobId !== null &&
-      value.indexBlobId !== null && value.currentSourceDigest !== null
+      value.indexBlobId !== null && value.currentSourceDigest !== null && value.headSourceDigest !== null
       ? { repositoryId: value.repositorySnapshotId, repositoryRelativePath: value.repositoryRelativePath,
           objectFormat: value.objectFormat, headCommit: value.headCommitId, headBlob: value.headBlobId,
-          stage0Blob: value.indexBlobId, sourceDigest: value.currentSourceDigest as `sha256:${string}` }
+          stage0Blob: value.indexBlobId, sourceDigest: value.headSourceDigest as `sha256:${string}` }
       : null;
   const proof = toProof(baseline);
   let result = proof === null
@@ -4685,9 +4685,15 @@ async function runDocumentMigration(args: readonly string[]): Promise<number> {
       result = Object.freeze({ ...result, ok: false, diagnostics: Object.freeze(["PTMAC-110"]) });
       race = true;
     } else {
-      await replaceValidatedDocumentFile(sourceOperand, result.candidateText,
-        { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) },
-        (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
+      try {
+        await replaceValidatedDocumentFile(sourceOperand, result.candidateText,
+          { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) },
+          (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
+      } catch (error) {
+        if (!(error instanceof SafeWriteConflictError)) throw error;
+        result = Object.freeze({ ...result, ok: false, diagnostics: Object.freeze(["PTMAC-110"]) });
+        race = true;
+      }
     }
   }
   if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 9,

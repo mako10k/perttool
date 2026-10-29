@@ -1,0 +1,81 @@
+framework DecisionAudit
+
+domain CommittedMigrationSource:
+  description "Issue 45 producer-consumer meaning preservation"
+
+problem P1:
+  "Why can a stable uncommitted source become a persisted Grammar 7 migration baseline?"
+
+step S1:
+  premise PR1:
+    "Accepted milestone-acceptance specification section 7 requires current bytes equal HEAD target content, index equal HEAD, and identity/content rechecks before in-place persistence. Normal advance separately permits retained dirty ranges."
+
+step S2:
+  evidence EV1:
+    "The valid v2 dirty fixture has different current and HEAD SHA-256 values, index equals HEAD, and write exit 0 with after bytes equal the returned Grammar 7 candidate. The clean fixture succeeds. The first invalid fixture is excluded."
+    resource:
+      file "/home/katsumata-m/kn/docs/handoffs/2026-10-29-resume/migration-boundary-probe/v2/result.json"
+      label "Independent raw byte readback repeated in this session"
+
+step S3:
+  evidence EV2:
+    "Before correction, the inspected installed and matching base-worktree runDocumentMigration functions were both 3138 bytes with SHA256 9cdff17594a06fe80392c0090f56d59b8fcaa641acf364924587e6cf5a97a9d6. Whole CLI artifacts are different, so no whole-artifact version equality is inferred."
+
+step S4:
+  evidence EV3:
+    "Generic capture reads real HEAD and index blobs separately and computes headSourceDigest and indexSourceDigest alongside the independently captured currentSourceDigest. Its complete state means stable capture, not whole-source cleanliness. The G7 projection uses currentSourceDigest as proof.sourceDigest and discards the captured HEAD digest."
+    resource:
+      file "src/history/git-probe.ts"
+      label "Raw capture and complete-state producer"
+    resource:
+      file "src/cli.ts"
+      label "Current G7 proof projection and persistence recheck"
+
+step S5:
+  evidence EV4:
+    "The pure migration planner already rejects text whose SHA-256 differs from proof.sourceDigest and rejects unequal HEAD/index blob IDs. Its public proof shape and clean-source candidate commitment use this single sourceDigest. Recheck compares stable proof identities, and safe persistence separately checks current file bytes."
+    resource:
+      file "src/milestone-acceptance/migration.ts"
+      label "Existing consumer and unchanged public proof shape"
+
+step S6:
+  decision D1 based_on P1, PR1, EV1, EV2, EV3, EV4:
+    "The producing condition is loss of the committed-content origin at the G7 projection: a current-content digest is supplied where the consumer needs the captured HEAD-content digest. Stable repetition cannot recover that omitted relationship. Missing real producer-to-consumer dirty tests are an escape gap rather than the producing condition."
+
+step S7:
+  decision D2 based_on PR1, EV3, EV4, D1:
+    "Restore the existing proof.sourceDigest meaning by projecting the captured HEAD digest and requiring that origin to be available. Then the existing Core comparison independently checks the actual source text against committed content. Keep public proof fields, candidate commitments for clean input, schemas and generic advance capture unchanged. An added required public proof field is unnecessary; a global clean requirement would violate normal advance."
+
+step S8:
+  premise U1:
+    "A pure planner consumes caller-supplied proof assertions and does not authenticate arbitrary dishonest callers or persist files. Real CLI persistence must acquire the proof from the trusted bounded Git capture. Race coverage and later-grammar preservation still need execution; no defect in the separate G8-G10 migration path is inferred."
+
+step S9:
+  decision D3 based_on PR1, EV1, EV3, EV4, D2, U1:
+    "Verify real clean/dirty/staged cases, invalid and missing capture, identity changes, HEAD/index/source races and safe-write digest races. Validate ordinary advance retained-dirty behavior separately. Preserve baseline parser and historical consumers rather than adding a reconciliation contract."
+
+step S10:
+  pending PD1:
+    "No code change, release, global installation, kn plan write or source-thread message is authorized merely by this audit. The delegated bounded correction request supplies implementation authority; the audit only checks the reasoning."
+
+step S11:
+  evidence EV5:
+    "Focused real-CLI testing observed an expected-digest mismatch rejected without writing but returned exit 70. The G7 runner directly awaits replaceValidatedDocumentFile without catching SafeWriteConflictError, while its outer fallback assigns exit 70. The accepted PTMAC-110 source-binding stale/race contract assigns exit 5."
+    resource:
+      file "src/io/safe-write.ts"
+      label "Typed safe-write conflict producer"
+    resource:
+      file "src/cli.ts"
+      label "G7 persistence and outer error projection"
+
+step S12:
+  decision D4 based_on P1, PR1, EV5, D3:
+    "The source-binding conflict loses its phase classification at the G7 persistence await. Preserve the typed conflict as PTMAC-110 and exit 5 in this runner, with no retry and no change to non-conflict verification or IO failures. This is within the requested existing phase/race contract, not a new success or persistence permission."
+
+step S13:
+  evidence EV6:
+    "Release-base source c3b5878 passed 55 focused tests, six normal advance tests and complete static checks. The isolated tarball CLI replayed the supplied Git bundle: old dirty write exit 0, fixed dirty write exit 1 preserving bytes, clean candidate identical, index mismatch refused, and old final digest conflict exit 70 became PTMAC-110 exit 5. A stable kn source copy previewed when committed and refused raw dirty bytes; the original kn source was not written."
+
+step S14:
+  decision D5 based_on P1, PR1, EV1, EV3, EV4, EV5, EV6, D2, D4:
+    "The local source correction and isolated candidate resolve the observed committed-origin defect and G7 conflict phase within the tested scope. Generic advance capture is unchanged and retained-dirty writes still pass. This does not assert a release, global replacement, full CI matrix or resolution of historical identity reconciliation."
