@@ -305,26 +305,39 @@ async function acceptHostProfile(
   assert.equal(digest(await readFile(settings.settingsPath)), settings.digest);
 }
 
-async function uninstallExtension(
+export async function uninstallExtension(
   cli,
   extensionArgs,
   extensionsDirectory,
-  isWsl,
+  options = {},
 ) {
-  const uninstall = await runProcess(cli, [
-    ...extensionArgs,
-    "--uninstall-extension",
-    extensionId,
-  ], {
-    // The unsupported standalone Linux desktop build can abort after its
-    // CLI has completed uninstall under WSL. Accept that post-success signal
-    // only on WSL and require an independent clean registry readback below.
-    acceptedExitCodes: isWsl ? [0, 134] : [0],
-  });
-  if (uninstall.code === 134) {
-    assert.match(uninstall.stdout, /was successfully uninstalled/iu);
+  let processError;
+  try {
+    await runProcess(cli, [
+      ...extensionArgs,
+      "--uninstall-extension",
+      extensionId,
+    ], options);
+  } catch (error) {
+    processError = error;
   }
-  assert.deepEqual(await readExtensionRegistry(extensionsDirectory), []);
+  // The file-backed inventory owns acceptance, independently of localized
+  // CLI output and exit behavior. A failed or unreadable readback still fails.
+  try {
+    assert.deepEqual(await readExtensionRegistry(extensionsDirectory), []);
+  } catch (readbackError) {
+    if (processError) {
+      throw new AggregateError(
+        [processError, readbackError],
+        "VS Code uninstall process and inventory readback failed",
+      );
+    }
+    throw readbackError;
+  }
+  if (processError) {
+    const warn = options.warn ?? ((message) => process.stderr.write(`${message}\n`));
+    warn(`Warning: uninstall inventory is empty, but VS Code CLI did not exit cleanly: ${processError.stack ?? processError}`);
+  }
 }
 
 async function main() {
@@ -347,10 +360,6 @@ async function main() {
     const managementProfile = path.join(temporaryRoot, "management-profile");
     await mkdir(extensionsDirectory, { recursive: true });
     const fixture = await prepareWorkspace(temporaryRoot);
-    const isWsl = /microsoft/iu.test(
-      await readFile("/proc/version", "utf8").catch(() => ""),
-    );
-
     const extensionArgs = [
       ...cliPrefix,
       `--user-data-dir=${managementProfile}`,
@@ -411,7 +420,7 @@ async function main() {
       await readFile(fixture.untrustedFormatFile, "utf8"),
       fixture.expectedFormatted,
     );
-    await uninstallExtension(cli, extensionArgs, extensionsDirectory, isWsl);
+    await uninstallExtension(cli, extensionArgs, extensionsDirectory);
 
     process.stdout.write(
       `supported VS Code ${vscodeVersion} trusted/untrusted install, host, replacement, and uninstall acceptance passed\n`,

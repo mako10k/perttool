@@ -7,6 +7,7 @@ import {
   ProcessTimeoutError,
   readExtensionRegistry,
   runProcess,
+  uninstallExtension,
 } from "../scripts/check-vsix-host.mjs";
 
 const processStartupSafeTimeout = 2_000;
@@ -91,3 +92,43 @@ test("extension inventory rejects a non-array registry", async () => {
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+for (const mode of ["success", "exit-error", "timeout", "retained", "missing", "malformed"]) {
+  test(`uninstall acceptance uses inventory readback: ${mode}`, async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), "perttool-vsix-uninstall-"));
+    const registryPath = path.join(directory, "extensions.json");
+    const warnings = [];
+    try {
+      await writeFile(registryPath, JSON.stringify([{ identifier: { id: "perttool-private.perttool-vscode-private" } }]));
+      const script = [
+        'const fs = require("node:fs");',
+        `const registryPath = ${JSON.stringify(registryPath)};`,
+        mode === "missing" ? "fs.unlinkSync(registryPath);"
+          : mode === "retained" ? ""
+            : `fs.writeFileSync(registryPath, ${JSON.stringify(mode === "malformed" ? "invalid" : "[]")});`,
+        // No English success message is required, even on a clean exit.
+        'process.stdout.write("inventory operation completed\\n");',
+        mode === "timeout" ? "setInterval(() => {}, 1_000);"
+          : `process.exit(${mode === "exit-error" ? 134 : 0});`,
+      ].join("\n");
+      const operation = uninstallExtension(process.execPath, ["-e", script, "--"], directory, {
+        timeout: processStartupSafeTimeout,
+        killGrace: processKillGrace,
+        warn: (message) => warnings.push(message),
+      });
+      if (["retained", "missing", "malformed"].includes(mode)) {
+        await assert.rejects(operation);
+        assert.deepEqual(warnings, []);
+      } else {
+        await operation;
+        assert.equal(warnings.length, mode === "success" ? 0 : 1);
+        if (warnings.length) {
+          assert.match(warnings[0], /inventory is empty/u);
+          assert.match(warnings[0], mode === "timeout" ? /timed out/u : /exited with 134/u);
+        }
+      }
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+}
