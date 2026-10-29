@@ -36,10 +36,11 @@ task RELEASE_0123_CANDIDATE RELEASE_0123_PREPARED -> RELEASE_0123_CANDIDATE_ACCE
 task RELEASE_0123_PUBLISH RELEASE_0123_CANDIDATE_ACCEPTED -> RELEASE_0123_PUBLISHED:
   title "Publish one artifact to GitHub prerelease and npm beta"
   duration 2p
-  status active
+  status done
   source "docs/process/0.12.3-release.md"
 
 task RELEASE_0123_ACCEPTANCE RELEASE_0123_PUBLISHED -> RELEASE_0123_ACCEPTED:
   title "Verify source, artifact and installed registry behavior"
   duration 3p
+  status done
   source "docs/process/0.12.3-release.md"
