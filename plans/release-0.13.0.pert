@@ -35,12 +35,13 @@ task RELEASE_0130_CANDIDATE PREPARED -> CANDIDATE:
 task RELEASE_0130_PUBLISH CANDIDATE -> PUBLISHED:
   title "Publish identical GitHub and npm beta artifact"
   duration 2p
-  status active
+  status done
   source "docs/process/0.13.0-release.md"
 
 task RELEASE_0130_ACCEPTANCE PUBLISHED -> ACCEPTED:
   title "Verify independent source artifact and installed readback"
   duration 2p
+  status done
   source "docs/process/0.13.0-release.md"
 
 work_event RELEASE_0130_PREPARATION_START:
@@ -75,3 +76,22 @@ work_event RELEASE_0130_PUBLISH_START:
   kind start
   occurred_at 2026-11-13T17:23:33+09:00
   planned_value 2p
+
+work_event RELEASE_0130_PUBLISH_FINISH:
+  model 1
+  task RELEASE_0130_PUBLISH
+  kind finish
+  occurred_at 2026-11-13T18:00:52+09:00
+
+work_event RELEASE_0130_ACCEPTANCE_START:
+  model 1
+  task RELEASE_0130_ACCEPTANCE
+  kind start
+  occurred_at 2026-11-13T18:00:59+09:00
+  planned_value 2p
+
+work_event RELEASE_0130_ACCEPTANCE_FINISH:
+  model 1
+  task RELEASE_0130_ACCEPTANCE
+  kind finish
+  occurred_at 2026-11-13T18:02:05+09:00
