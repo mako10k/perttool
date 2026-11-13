@@ -679,3 +679,11 @@ MIG-04 was completed on 2026-07-23.
 - Automated checks cover complete empty JSON, text, Core/CLI parity, byte determinism, fail-closed behavior, help, and the package.
 
 Section 18 is the acceptance record from the time this specification slice was drafted. “Did not change the current interface or implementation” is historical at that point; this section is authoritative for the implementation state after MIG-04.
+
+## 20. Contract 12 successor
+
+The [Maximum-count Task Selection Public Contract](maximum-count-selection.md)
+defines Recommendation Interface 2 and NextResult v10. It fixes a shared
+maximum-count selected set, complete source/options input, scoped optimality,
+boundary-group units and the versioned explanation. The linked closed schemas
+and executable examples are the adoption inputs for Issue #48.

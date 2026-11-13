@@ -82,7 +82,7 @@
       "const": "Perttool.ProjectResult.v5"
     },
     "cli_contract_version": {
-      "const": 11
+      "const": 12
     },
     "tool_version": {
       "type": "string"

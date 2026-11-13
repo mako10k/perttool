@@ -45,7 +45,7 @@ export type JsonSchemaDiagnostic =
 
 export interface JsonSchemaResult {
   readonly schemaVersion: typeof JSON_SCHEMA_RESULT_SCHEMA_VERSION;
-  readonly cliContractVersion: 11;
+  readonly cliContractVersion: 12;
   readonly toolVersion: string;
   readonly operation: "schema";
   readonly ok: boolean;
@@ -75,7 +75,7 @@ const commandResultSchemaIds = Object.freeze([
   "Perttool.MilestoneAcceptanceMigrationResult.v1",
   "Perttool.MilestoneAcceptanceResult.v1",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v9",
+  "Perttool.NextResult.v10",
   "Perttool.PlanReviewMutationResult.v1",
   "Perttool.PlanReviewResult.v1",
   "Perttool.PlanningMutationResult.v1",
@@ -90,6 +90,8 @@ const commandResultSchemaIds = Object.freeze([
 ]);
 
 const publicLibraryResultSchemaIds = Object.freeze([
+  "Perttool.NextResult.v9",
+  "Perttool.OverrideDecision.v2",
   "Perttool.OverrideDecision.v1",
 ]);
 const requestSchemaIds = Object.freeze([
@@ -413,7 +415,7 @@ export function getJsonSchemaResult(
   }
   return Object.freeze({
     schemaVersion: JSON_SCHEMA_RESULT_SCHEMA_VERSION,
-    cliContractVersion: 11,
+    cliContractVersion: 12,
     toolVersion: TOOL_VERSION,
     operation: "schema",
     ok: diagnostics.length === 0,

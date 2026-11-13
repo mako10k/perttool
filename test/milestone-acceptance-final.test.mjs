@@ -72,9 +72,9 @@ test("Contract 9 package and private adapters retain one read-only semantic boun
     repositoryText("package.json"),
   ]);
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.12.3");
+  assert.equal(manifest.version, "0.13.0");
   assert.equal(packageRoot.COMMAND_REGISTRY.length, 75);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 31);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 33);
   assert.equal(Object.keys(packageRoot).length, 155);
   assert.equal(Object.keys(nodeFacade).length, 155);
   assert.equal(Object.keys(core).length, 51);
@@ -88,7 +88,7 @@ test("Contract 9 package and private adapters retain one read-only semantic boun
   assert.match(plan, /milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/u);
   assert.match(lsp, /milestoneAcceptanceView/u);
   assert.match(vscode, /parseMilestoneAcceptanceViewResult/u);
-  assert.match(mcp, /Perttool\.NextResult\.v9/u);
+  assert.match(mcp, /Perttool\.NextResult\.v10/u);
   assert.equal(manifest.files.includes("adapters"), false);
 });
 

@@ -23,7 +23,8 @@ import {
   planUnitMigration,
   withUnitMigrationWrite,
 } from "./contract10-runtime.js";
-import { analyzeDocument, checkDocument, selectNextTasks } from "./contract11-runtime.js";
+import { analyzeDocument, checkDocument } from "./contract11-runtime.js";
+import { selectNextTasks } from "./contract12-next.js";
 import {
   planAdvance,
 } from "./contract7-mutation.js";

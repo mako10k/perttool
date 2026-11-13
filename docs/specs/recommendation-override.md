@@ -528,3 +528,12 @@ In this case, change the active state or capacity in the source of truth and re-
 - Defined Git commit trailers as the repository-native audit default.
 - Defined full re-analysis after apply and no feedback into normal ranking.
 - Did not change the current CLI, write path, or Git operation.
+
+## Contract 12 override successor
+
+The [Maximum-count Task Selection Public Contract](maximum-count-selection.md)
+defines OverrideDecision v2 for NextResult v10. Its source identity includes
+the normalized selection-input commitment, selected set and exact model
+identities. The existing read-only validation function dispatches by source
+version and evaluates the requested replacement against its actual source
+eligibility and resource allocation.

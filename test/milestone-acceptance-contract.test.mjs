@@ -155,7 +155,7 @@ test("active runtime and current plan expose Contract 8 while older inputs remai
   assert.equal(checked.ok, true);
   assert.equal(checked.grammarVersion, 7);
   assert.equal(COMMAND_REGISTRY.length, 75);
-  assert.equal(getJsonSchemaCatalog().length, 31);
+  assert.equal(getJsonSchemaCatalog().length, 33);
   assert.doesNotMatch(plan, /^task /mu);
   assert.match(plan, /^milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/mu);
 

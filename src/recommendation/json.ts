@@ -1,3 +1,6 @@
+// R: Project supported recommendation models without changing version-specific legacy JSON.
+import type { RecommendationAnalysisV2 } from "./maximum-count-contract.js";
+import { dispatchModelToJson } from "./maximum-count-json.js";
 import type {
   RecommendationAnalysis,
   RecommendationComparison,
@@ -271,8 +274,12 @@ function descriptionJson(
 }
 
 export function recommendationAnalysisToJson(
-  analysis: RecommendationAnalysis,
+  analysis: RecommendationAnalysis | RecommendationAnalysisV2,
 ): Readonly<Record<string, unknown>> {
+  if (analysis.explanationModelVersion === 2) {
+    const { sourceDigest: _sourceDigest, ...wire } = analysis;
+    return dispatchModelToJson(wire) as Readonly<Record<string, unknown>>;
+  }
   return {
     action: analysis.action,
     algorithm: {

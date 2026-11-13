@@ -1,0 +1,5734 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "mcp_protocol_model_version",
+        "operation",
+        "source",
+        "result_schema_version",
+        "result"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.McpNextResult.v2"
+        },
+        "mcp_protocol_model_version": {
+          "const": 1
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "dag_next"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "kind",
+            "document_id",
+            "source_digest"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "inline",
+                "registered"
+              ]
+            },
+            "document_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "result_schema_version": {
+          "type": "string",
+          "enum": [
+            "Perttool.NextResult.v10"
+          ]
+        },
+        "result": {
+          "type": "object",
+          "required": [
+            "plan_review",
+            "ok",
+            "document_id",
+            "diagnostics",
+            "diagnostics_truncated",
+            "grammar_version",
+            "temporal",
+            "assurance",
+            "acceptance",
+            "schedule_alerts",
+            "recommendation"
+          ],
+          "properties": {
+            "ok": {
+              "type": "boolean"
+            },
+            "document_id": {
+              "$ref": "#/$defs/common_nullableString"
+            },
+            "diagnostics": {
+              "$ref": "#/$defs/common_diagnostics"
+            },
+            "diagnostics_truncated": {
+              "type": "boolean"
+            },
+            "grammar_version": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "maximum": 10
+            },
+            "precision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "duration_unit": {
+              "enum": [
+                "day",
+                "hour",
+                "point"
+              ]
+            },
+            "velocity": {
+              "$ref": "#/$defs/common_nullableVelocity"
+            },
+            "velocity_forecast": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "qualifier",
+                    "source_unit",
+                    "target_unit"
+                  ],
+                  "properties": {
+                    "qualifier": {
+                      "const": "velocity_forecast"
+                    },
+                    "source_unit": {
+                      "enum": [
+                        "day",
+                        "hour",
+                        "point"
+                      ]
+                    },
+                    "target_unit": {
+                      "enum": [
+                        "day",
+                        "hour",
+                        "point"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "capacity_overrides": {
+              "$ref": "#/$defs/result_0_dispatchCapacityOverrides"
+            },
+            "recommendation": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/result_0_recommendation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "groups": {
+              "type": "object",
+              "required": [
+                "active",
+                "ready",
+                "runnable_now",
+                "blocked_now",
+                "upcoming",
+                "suspended"
+              ],
+              "properties": {
+                "active": {
+                  "$ref": "#/$defs/common_stringArray"
+                },
+                "ready": {
+                  "$ref": "#/$defs/common_stringArray"
+                },
+                "runnable_now": {
+                  "$ref": "#/$defs/common_stringArray"
+                },
+                "blocked_now": {
+                  "$ref": "#/$defs/common_stringArray"
+                },
+                "upcoming": {
+                  "$ref": "#/$defs/common_stringArray"
+                },
+                "suspended": {
+                  "$ref": "#/$defs/common_stringArray"
+                }
+              },
+              "additionalProperties": false
+            },
+            "tasks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/result_0_task"
+              }
+            },
+            "temporal": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/result_0_nextTemporal"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "assurance": {
+              "$ref": "#/$defs/common_nullablePlanAssuranceProjection"
+            },
+            "schedule_alerts": {
+              "$ref": "#/$defs/analysis_schedule_alerts"
+            },
+            "acceptance": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/acceptance_acceptanceModel"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "plan_review": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/review_projection"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "ok": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "plan_review": {
+                    "$ref": "#/$defs/review_projection"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "ok": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "precision",
+                  "duration_unit",
+                  "velocity",
+                  "velocity_forecast",
+                  "capacity_overrides",
+                  "groups",
+                  "tasks"
+                ],
+                "properties": {
+                  "recommendation": {
+                    "$ref": "#/$defs/result_0_recommendation"
+                  },
+                  "temporal": {
+                    "$ref": "#/$defs/result_0_nextTemporalSuccess"
+                  },
+                  "precision": {},
+                  "duration_unit": {},
+                  "velocity": {},
+                  "velocity_forecast": {},
+                  "capacity_overrides": {},
+                  "groups": {},
+                  "tasks": {}
+                }
+              }
+            }
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "mcp_protocol_model_version",
+        "operation",
+        "source",
+        "diagnostic"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.McpSourceError.v1"
+        },
+        "mcp_protocol_model_version": {
+          "const": 1
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "dag_next"
+          ]
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "document_id",
+                "source_digest"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "inline",
+                    "registered"
+                  ]
+                },
+                "document_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_digest": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnostic": {
+          "type": "object",
+          "required": [
+            "code",
+            "severity",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "PTMCP-101",
+                "PTMCP-102",
+                "PTMCP-103",
+                "PTMCP-104",
+                "PTMCP-105",
+                "PTMCP-106",
+                "PTMCP-107",
+                "PTMCP-108"
+              ]
+            },
+            "severity": {
+              "const": "error"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "common_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "common_nullableDigest": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "common_jsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_jsonValue"
+          }
+        },
+        {
+          "$ref": "#/$defs/common_jsonObject"
+        }
+      ]
+    },
+    "common_jsonObject": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/common_jsonValue"
+      }
+    },
+    "common_stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "common_position": {
+      "type": "object",
+      "required": [
+        "offset",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_span": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/common_position"
+        },
+        "end": {
+          "$ref": "#/$defs/common_position"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "entity_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "span": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_relatedLocation"
+          }
+        },
+        "help_topic": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "guide_topic": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "expected_syntax": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "fixes": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "data": {
+          "$ref": "#/$defs/common_jsonObject"
+        },
+        "provider_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "surface_id": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_relatedLocation": {
+      "type": "object",
+      "required": [
+        "message",
+        "span"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/common_diagnostic"
+      }
+    },
+    "common_edit": {
+      "type": "object",
+      "required": [
+        "start_offset",
+        "end_offset",
+        "replacement"
+      ],
+      "properties": {
+        "start_offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replacement": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_write": {
+      "type": "object",
+      "required": [
+        "mode",
+        "target",
+        "written"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "preview",
+            "in_place",
+            "out"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "written": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_rational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_quantity": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point",
+            "person_hour"
+          ]
+        },
+        "display": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_displayedRational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit",
+        "display"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point",
+            "day^2",
+            "hour^2",
+            "point^2",
+            "ratio"
+          ]
+        },
+        "display": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableDisplayedRational": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_displayedRational"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_velocity": {
+      "type": "object",
+      "required": [
+        "points",
+        "period"
+      ],
+      "properties": {
+        "points": {
+          "$ref": "#/$defs/common_displayedRational"
+        },
+        "period": {
+          "$ref": "#/$defs/common_displayedRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableVelocity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_velocity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_velocityForecast": {
+      "type": "object",
+      "required": [
+        "qualifier",
+        "source_unit",
+        "target_unit",
+        "precedence_makespan",
+        "resource_makespan"
+      ],
+      "properties": {
+        "qualifier": {
+          "const": "velocity_forecast"
+        },
+        "source_unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        },
+        "target_unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        },
+        "precedence_makespan": {
+          "$ref": "#/$defs/common_nullableDisplayedRational"
+        },
+        "resource_makespan": {
+          "$ref": "#/$defs/common_nullableDisplayedRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableVelocityForecast": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_velocityForecast"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_calendarValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "source_text",
+            "year",
+            "month",
+            "day"
+          ],
+          "properties": {
+            "kind": {
+              "const": "date"
+            },
+            "source_text": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "day": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "source_text",
+            "year",
+            "month",
+            "day",
+            "hour",
+            "minute",
+            "second",
+            "offset_minutes"
+          ],
+          "properties": {
+            "kind": {
+              "const": "date_time"
+            },
+            "source_text": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "day": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            },
+            "hour": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 23
+            },
+            "minute": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 59
+            },
+            "second": {
+              "$ref": "#/$defs/common_rational"
+            },
+            "offset_minutes": {
+              "type": "integer",
+              "minimum": -1439,
+              "maximum": 1439
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_workEvent": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "id",
+        "task_id",
+        "kind",
+        "occurred_at",
+        "planned_value",
+        "active_time",
+        "effort",
+        "reason"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "start",
+            "suspend",
+            "resume",
+            "finish"
+          ]
+        },
+        "occurred_at": {
+          "$ref": "#/$defs/common_calendarValue"
+        },
+        "planned_value": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "active_time": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effort": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableCalendarValue": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_calendarValue"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_nullableQuantity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_quantity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_temporalExact": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableTemporalExact": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_temporalExact"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_calendarDifference": {
+      "type": "object",
+      "required": [
+        "kind",
+        "exact"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "calendar_days",
+            "si_seconds"
+          ]
+        },
+        "exact": {
+          "$ref": "#/$defs/common_rational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableCalendarDifference": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_calendarDifference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_temporalCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "underlying_cause",
+        "subject_kind",
+        "subject_id",
+        "task_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "missing_temporal_anchor",
+            "missing_velocity",
+            "incomparable_temporal_kinds",
+            "date_anchor_has_no_clock",
+            "fractional_date_projection",
+            "calendar_range_overflow",
+            "exact_datetime_text_unavailable",
+            "complete_actual_time_unavailable",
+            "release_bound_unavailable",
+            "precedence_projection_unavailable",
+            "resource_projection_unavailable",
+            "margin_unit_unavailable"
+          ]
+        },
+        "underlying_cause": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "subject_kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "project",
+            "milestone",
+            "task",
+            null
+          ]
+        },
+        "subject_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_temporalCauses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/common_temporalCause"
+      }
+    },
+    "common_temporalPoint": {
+      "type": "object",
+      "required": [
+        "state",
+        "relative",
+        "calendar",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_applicable",
+            "unavailable",
+            "available"
+          ]
+        },
+        "relative": {
+          "$ref": "#/$defs/common_nullableTemporalExact"
+        },
+        "calendar": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/common_temporalCauses"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullableTemporalPoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_temporalPoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_temporalSchedule": {
+      "type": "object",
+      "required": [
+        "state",
+        "view",
+        "algorithm",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "unavailable_causes",
+        "tasks",
+        "milestones",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "absent",
+            "unavailable",
+            "available"
+          ]
+        },
+        "view": {
+          "enum": [
+            "precedence",
+            "resource"
+          ]
+        },
+        "algorithm": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "id",
+                "version",
+                "optimal",
+                "scheduler_id",
+                "scheduler_version"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "optimal": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "scheduler_id": {
+                  "$ref": "#/$defs/common_nullableString"
+                },
+                "scheduler_version": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/common_temporalCauses"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "declared_not_before",
+              "release_state",
+              "release_bound",
+              "start",
+              "finish",
+              "unavailable_causes"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "declared_not_before": {
+                "$ref": "#/$defs/common_nullableCalendarValue"
+              },
+              "release_state": {
+                "enum": [
+                  "not_applicable",
+                  "unavailable",
+                  "available"
+                ]
+              },
+              "release_bound": {
+                "$ref": "#/$defs/common_nullableTemporalExact"
+              },
+              "start": {
+                "$ref": "#/$defs/common_temporalPoint"
+              },
+              "finish": {
+                "$ref": "#/$defs/common_temporalPoint"
+              },
+              "unavailable_causes": {
+                "$ref": "#/$defs/common_temporalCauses"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "milestone_id",
+              "reach",
+              "unavailable_causes"
+            ],
+            "properties": {
+              "milestone_id": {
+                "type": "string"
+              },
+              "reach": {
+                "$ref": "#/$defs/common_temporalPoint"
+              },
+              "unavailable_causes": {
+                "$ref": "#/$defs/common_temporalCauses"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_deadlineView": {
+      "type": "object",
+      "required": [
+        "state",
+        "projected_completion",
+        "forecast_relation",
+        "signed_margin",
+        "base_unit_margin",
+        "remaining_margin",
+        "lateness",
+        "assessment",
+        "optimal",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_applicable",
+            "unavailable",
+            "available"
+          ]
+        },
+        "projected_completion": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "forecast_relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "before_deadline",
+            "on_deadline",
+            "after_deadline",
+            null
+          ]
+        },
+        "signed_margin": {
+          "$ref": "#/$defs/common_nullableCalendarDifference"
+        },
+        "base_unit_margin": {
+          "$ref": "#/$defs/common_nullableTemporalExact"
+        },
+        "remaining_margin": {
+          "$ref": "#/$defs/common_nullableTemporalExact"
+        },
+        "lateness": {
+          "$ref": "#/$defs/common_nullableTemporalExact"
+        },
+        "assessment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "lower_bound_on_time",
+            "lower_bound_late",
+            "heuristic_on_time",
+            "heuristic_late",
+            null
+          ]
+        },
+        "optimal": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/common_temporalCauses"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_deadlineEvaluation": {
+      "type": "object",
+      "required": [
+        "subject",
+        "deadline",
+        "completion_state",
+        "current",
+        "precedence",
+        "resource",
+        "combined_assessment",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "destination_relationship",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids"
+      ],
+      "properties": {
+        "subject": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "roles"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "task",
+                "milestone"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "task",
+                  "milestone",
+                  "project_finish"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "deadline": {
+          "$ref": "#/$defs/common_calendarValue"
+        },
+        "completion_state": {
+          "enum": [
+            "incomplete",
+            "complete_actual_time_unavailable"
+          ]
+        },
+        "current": {
+          "type": "object",
+          "required": [
+            "state",
+            "signed_window",
+            "base_unit_window",
+            "unavailable_causes"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "not_due",
+                "due_now",
+                "overdue",
+                "not_applicable",
+                "unavailable"
+              ]
+            },
+            "signed_window": {
+              "$ref": "#/$defs/common_nullableCalendarDifference"
+            },
+            "base_unit_window": {
+              "$ref": "#/$defs/common_nullableTemporalExact"
+            },
+            "unavailable_causes": {
+              "$ref": "#/$defs/common_temporalCauses"
+            }
+          },
+          "additionalProperties": false
+        },
+        "precedence": {
+          "$ref": "#/$defs/common_deadlineView"
+        },
+        "resource": {
+          "$ref": "#/$defs/common_deadlineView"
+        },
+        "combined_assessment": {
+          "enum": [
+            "overdue",
+            "forecast_infeasible",
+            "at_risk",
+            "forecast_on_time",
+            "not_proven_late",
+            "not_applicable",
+            "unavailable"
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "destination_relationship": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "milestone_id",
+                "relation"
+              ],
+              "properties": {
+                "milestone_id": {
+                  "type": "string"
+                },
+                "relation": {
+                  "enum": [
+                    "task_deadline_before_milestone",
+                    "same_deadline",
+                    "task_deadline_after_milestone",
+                    "unavailable",
+                    "deadline_absent"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_temporalAnalysis": {
+      "type": "object",
+      "required": [
+        "interface",
+        "calendar",
+        "deadline",
+        "anchor",
+        "precedence",
+        "resource",
+        "deadline_evaluations"
+      ],
+      "properties": {
+        "interface": {
+          "type": "object",
+          "required": [
+            "id",
+            "version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.temporal-unit-interface"
+            },
+            "version": {
+              "const": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        "calendar": {
+          "type": "object",
+          "required": [
+            "id",
+            "version",
+            "profile_id",
+            "profile_version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.calendar-projection"
+            },
+            "version": {
+              "const": 1
+            },
+            "profile_id": {
+              "const": "perttool.calendar.continuous-fixed-offset"
+            },
+            "profile_version": {
+              "const": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "deadline": {
+          "type": "object",
+          "required": [
+            "id",
+            "version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.deadline-evaluation"
+            },
+            "version": {
+              "const": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "anchor": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "precedence": {
+          "$ref": "#/$defs/common_temporalSchedule"
+        },
+        "resource": {
+          "$ref": "#/$defs/common_temporalSchedule"
+        },
+        "deadline_evaluations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_deadlineEvaluation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_historyCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "commit_id",
+        "task_id",
+        "event_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "no_repository",
+            "no_head",
+            "unknown_revision",
+            "untracked_target",
+            "ambiguous_path",
+            "shallow_boundary",
+            "unsupported_rename",
+            "unsupported_source_version",
+            "task_identity_replaced",
+            "event_payload_changed",
+            "duplicate_event_identity",
+            "head_changed",
+            "target_changed"
+          ]
+        },
+        "commit_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "event_id": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_actualsCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "commit_id",
+        "task_id",
+        "event_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "missing_start",
+            "missing_finish",
+            "open_suspension",
+            "missing_baseline",
+            "active_time_absent",
+            "effort_absent",
+            "history_incomplete",
+            "history_unavailable"
+          ]
+        },
+        "commit_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "event_id": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_historyProvenancePredecessor": {
+      "type": "object",
+      "required": [
+        "path",
+        "commit_id",
+        "source_digest",
+        "project_id"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_digest": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_historyProvenance": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "requested_mode",
+        "effective_mode",
+        "override_applied",
+        "root_commit_id",
+        "root_source_digest",
+        "excluded_predecessors"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "requested_mode": {
+          "enum": [
+            "automatic",
+            "new_root"
+          ]
+        },
+        "effective_mode": {
+          "enum": [
+            "automatic",
+            "new_root"
+          ]
+        },
+        "override_applied": {
+          "type": "boolean"
+        },
+        "root_commit_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "root_source_digest": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "excluded_predecessors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_historyProvenancePredecessor"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_historyMetadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "status",
+        "traversal",
+        "repository_snapshot_id",
+        "repository_relative_path",
+        "requested_revision",
+        "resolved_revision",
+        "source_digest",
+        "inspected_commit_ids",
+        "unavailable_causes",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "const": "perttool.project-history"
+        },
+        "version": {
+          "const": 1
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "unavailable"
+          ]
+        },
+        "traversal": {
+          "const": "first_parent"
+        },
+        "repository_snapshot_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "repository_relative_path": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "requested_revision": {
+          "type": "string"
+        },
+        "resolved_revision": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "inspected_commit_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "unavailable_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_historyCause"
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/common_historyProvenance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_recommendationEntity": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "project",
+            "task",
+            "milestone",
+            "gate",
+            "resource",
+            "policy_rule",
+            "ranking_factor",
+            "negative_fact_kind",
+            "derived_set"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_recommendationScalarValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "boolean"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "integer"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?[0-9]+$"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "numerator",
+            "denominator"
+          ],
+          "properties": {
+            "type": {
+              "const": "rational"
+            },
+            "numerator": {
+              "type": "string",
+              "pattern": "^-?[0-9]+$"
+            },
+            "denominator": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "enum_type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "enum"
+            },
+            "enum_type": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "entity"
+            },
+            "value": {
+              "$ref": "#/$defs/common_recommendationEntity"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_recommendationValue": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_recommendationScalarValue"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "item_type",
+            "items"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "list",
+                "set"
+              ]
+            },
+            "item_type": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/common_recommendationScalarValue"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "key_type",
+            "value_type",
+            "entries"
+          ],
+          "properties": {
+            "type": {
+              "const": "map"
+            },
+            "key_type": {
+              "type": "string"
+            },
+            "value_type": {
+              "type": "string"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "$ref": "#/$defs/common_recommendationScalarValue"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/common_recommendationScalarValue"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_recommendationUnit": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "duration"
+            },
+            "value": {
+              "enum": [
+                "day",
+                "hour",
+                "point"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "resource"
+          ],
+          "properties": {
+            "kind": {
+              "const": "resource"
+            },
+            "resource": {
+              "$ref": "#/$defs/common_recommendationEntity"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ratio"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_nullableRecommendationUnit": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_recommendationUnit"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_recommendationExpressionTerm": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "fact_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "fact"
+            },
+            "fact_id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "literal"
+            },
+            "value": {
+              "$ref": "#/$defs/common_recommendationValue"
+            },
+            "unit": {
+              "$ref": "#/$defs/common_nullableRecommendationUnit"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_recommendationExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "left",
+            "relation",
+            "right"
+          ],
+          "properties": {
+            "kind": {
+              "const": "compare"
+            },
+            "left": {
+              "$ref": "#/$defs/common_recommendationExpressionTerm"
+            },
+            "relation": {
+              "enum": [
+                "equal",
+                "not_equal",
+                "less_than",
+                "less_or_equal",
+                "greater_than",
+                "greater_or_equal",
+                "contains"
+              ]
+            },
+            "right": {
+              "$ref": "#/$defs/common_recommendationExpressionTerm"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "children"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/common_recommendationExpression"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "common_planAssuranceCause": {
+      "type": "object",
+      "required": [
+        "kind",
+        "direct",
+        "root_task_id",
+        "affected_task_id",
+        "path_task_ids"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "unknown_model",
+            "task_contract_changed",
+            "planning_relation_changed",
+            "predecessor_commitment_changed",
+            "predecessor_unavailable",
+            "frontier_commitment_changed",
+            "accepted_seal_inconsistent",
+            "outcome_missing",
+            "outcome_basis_mismatch",
+            "outcome_invalid",
+            "changed_outcome"
+          ]
+        },
+        "direct": {
+          "type": "boolean"
+        },
+        "root_task_id": {
+          "type": "string"
+        },
+        "affected_task_id": {
+          "type": "string"
+        },
+        "path_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_acceptedPlanningInput": {
+      "type": "object",
+      "required": [
+        "predecessor_task_id",
+        "relation_mode",
+        "assurance_hash"
+      ],
+      "properties": {
+        "predecessor_task_id": {
+          "type": "string"
+        },
+        "relation_mode": {
+          "enum": [
+            "both",
+            "planning_only"
+          ]
+        },
+        "assurance_hash": {
+          "$ref": "#/$defs/common_digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_planAssuranceTaskResult": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "status",
+        "outcome_status",
+        "contract_hash",
+        "computed_basis_hash",
+        "accepted_basis_hash",
+        "computed_inputs",
+        "exported_assurance_hash",
+        "direct_causes",
+        "inherited_causes"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "not_applicable",
+            "unsealed",
+            "conditional",
+            "verified",
+            "review_required",
+            "unavailable"
+          ]
+        },
+        "outcome_status": {
+          "enum": [
+            "unfinished",
+            "conformant",
+            "changed",
+            "unavailable"
+          ]
+        },
+        "contract_hash": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "computed_basis_hash": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "accepted_basis_hash": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "computed_inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_acceptedPlanningInput"
+          }
+        },
+        "exported_assurance_hash": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "direct_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_planAssuranceCause"
+          }
+        },
+        "inherited_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_planAssuranceCause"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_planAssuranceRequiredAction": {
+      "type": "object",
+      "required": [
+        "kind",
+        "root_task_ids",
+        "affected_task_ids"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "initial_seal",
+            "replan_and_reseal",
+            "restore_assurance_evidence"
+          ]
+        },
+        "root_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "affected_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_planAssuranceProjection": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "hash_model_version",
+        "coverage",
+        "task_results",
+        "direct_mismatch_task_ids",
+        "inherited_mismatch_task_ids",
+        "replan_required_task_ids",
+        "active_attention_required_task_ids",
+        "required_actions"
+      ],
+      "properties": {
+        "model_version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hash_model_version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "not_enabled",
+            "unsealed",
+            "partial",
+            "complete"
+          ]
+        },
+        "task_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_planAssuranceTaskResult"
+          }
+        },
+        "direct_mismatch_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "inherited_mismatch_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "replan_required_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "active_attention_required_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "required_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_planAssuranceRequiredAction"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_nullablePlanAssuranceProjection": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/common_planAssuranceProjection"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "common_planAssuranceStateCounts": {
+      "type": "object",
+      "required": [
+        "task",
+        "outcome"
+      ],
+      "properties": {
+        "task": {
+          "type": "object",
+          "required": [
+            "not_applicable",
+            "unsealed",
+            "conditional",
+            "verified",
+            "review_required",
+            "unavailable"
+          ],
+          "properties": {
+            "not_applicable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unsealed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "conditional": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "verified": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "review_required": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "outcome": {
+          "type": "object",
+          "required": [
+            "unfinished",
+            "conformant",
+            "changed",
+            "unavailable"
+          ],
+          "properties": {
+            "unfinished": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "conformant": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "changed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_planAssuranceEvaluation": {
+      "type": "object",
+      "required": [
+        "ok",
+        "model_version",
+        "hash_model_version",
+        "coverage",
+        "effective_dependencies",
+        "task_results",
+        "direct_mismatch_task_ids",
+        "inherited_mismatch_task_ids",
+        "replan_required_task_ids",
+        "unavailable_task_ids",
+        "diagnostics"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "model_version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hash_model_version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "coverage": {
+          "enum": [
+            "not_enabled",
+            "unsealed",
+            "partial",
+            "complete",
+            null
+          ]
+        },
+        "effective_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "relation_id",
+              "predecessor_task_id",
+              "successor_task_id",
+              "mode",
+              "explicit"
+            ],
+            "properties": {
+              "relation_id": {
+                "$ref": "#/$defs/common_nullableString"
+              },
+              "predecessor_task_id": {
+                "type": "string"
+              },
+              "successor_task_id": {
+                "type": "string"
+              },
+              "mode": {
+                "enum": [
+                  "both",
+                  "execution_only",
+                  "planning_only"
+                ]
+              },
+              "explicit": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "task_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_planAssuranceTaskResult"
+          }
+        },
+        "direct_mismatch_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "inherited_mismatch_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "replan_required_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "unavailable_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "entity_id",
+              "data"
+            ],
+            "properties": {
+              "code": {
+                "enum": [
+                  "PTASSURE-101",
+                  "PTASSURE-102"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "entity_id": {
+                "$ref": "#/$defs/common_nullableString"
+              },
+              "data": {
+                "$ref": "#/$defs/common_jsonObject"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_planAssuranceImpact": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "affected_task_ids",
+        "before",
+        "after",
+        "projection"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "affected_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "before": {
+          "$ref": "#/$defs/common_planAssuranceEvaluation"
+        },
+        "after": {
+          "$ref": "#/$defs/common_planAssuranceEvaluation"
+        },
+        "projection": {
+          "type": "object",
+          "required": [
+            "model_version",
+            "affected_task_ids",
+            "before",
+            "after",
+            "diagnostics"
+          ],
+          "properties": {
+            "model_version": {
+              "const": 1
+            },
+            "affected_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "before": {
+              "$ref": "#/$defs/common_nullablePlanAssuranceProjection"
+            },
+            "after": {
+              "$ref": "#/$defs/common_nullablePlanAssuranceProjection"
+            },
+            "diagnostics": {
+              "$ref": "#/$defs/common_diagnostics"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_governanceDecision": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "governance_interface_version",
+        "governance_source_contract_version",
+        "governance_semantics_version",
+        "source_digest",
+        "intent",
+        "applicable",
+        "actor",
+        "accepted_by_owner",
+        "affected_scopes",
+        "required_owner_confirmations",
+        "owner_confirmation_required",
+        "write_authorized",
+        "scopes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.GovernanceDecision.v2"
+        },
+        "governance_interface_version": {
+          "const": 2
+        },
+        "governance_source_contract_version": {
+          "const": 1
+        },
+        "governance_semantics_version": {
+          "const": 2
+        },
+        "source_digest": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "intent": {
+          "enum": [
+            "preview",
+            "persist"
+          ]
+        },
+        "applicable": {
+          "type": "boolean"
+        },
+        "actor": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "accepted_by_owner": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "affected_scopes": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "required_owner_confirmations": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "owner_confirmation_required": {
+          "type": "boolean"
+        },
+        "write_authorized": {
+          "type": "boolean"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_governanceScopeDecision"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_governanceScopeDecision": {
+      "type": "object",
+      "required": [
+        "scope",
+        "required_owner",
+        "effective_delegates",
+        "actor_direct",
+        "owner_confirmation_required",
+        "owner_confirmation_present",
+        "scope_authorized",
+        "denial_cause"
+      ],
+      "properties": {
+        "scope": {
+          "enum": [
+            "goal",
+            "dag",
+            "plan_assurance"
+          ]
+        },
+        "required_owner": {
+          "type": "string"
+        },
+        "effective_delegates": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "actor_direct": {
+          "type": "boolean"
+        },
+        "owner_confirmation_required": {
+          "type": "boolean"
+        },
+        "owner_confirmation_present": {
+          "type": "boolean"
+        },
+        "scope_authorized": {
+          "type": "boolean"
+        },
+        "denial_cause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "actor_required",
+            "owner_confirmation_required",
+            "owner_confirmation_mismatch",
+            null
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_capacityOverrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "resource_id",
+          "capacity"
+        ],
+        "properties": {
+          "resource_id": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "common_lossReport": {
+      "type": "object",
+      "required": [
+        "lossless",
+        "records"
+      ],
+      "properties": {
+        "lossless": {
+          "type": "boolean"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_conversionLoss"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "common_conversionLoss": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "element_id",
+        "span",
+        "lossy"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "const": "warning"
+        },
+        "message": {
+          "type": "string"
+        },
+        "element_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "span": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lossy": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptance_nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "acceptance_criterion": {
+      "type": "object",
+      "required": [
+        "criterion_id",
+        "required",
+        "evidence_kind",
+        "commitment",
+        "state",
+        "effective_receipt_id",
+        "evidence_reference",
+        "evidence_revision",
+        "verifier",
+        "asserted_at",
+        "waiver_reason",
+        "revoked_receipt_ids"
+      ],
+      "properties": {
+        "criterion_id": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "evidence_kind": {
+          "enum": [
+            "test",
+            "command",
+            "artifact",
+            "observation",
+            "owner"
+          ]
+        },
+        "commitment": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "state": {
+          "enum": [
+            "pending",
+            "satisfied",
+            "failed",
+            "unavailable",
+            "waived"
+          ]
+        },
+        "effective_receipt_id": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "evidence_reference": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "evidence_revision": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "verifier": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "asserted_at": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "waiver_reason": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "revoked_receipt_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptance_milestone": {
+      "type": "object",
+      "required": [
+        "milestone_id",
+        "closure",
+        "acceptance",
+        "grandfathered",
+        "criterion_set_id",
+        "criterion_revision_id",
+        "criterion_set_commitment",
+        "criteria",
+        "blocking_required_criterion_ids"
+      ],
+      "properties": {
+        "milestone_id": {
+          "type": "string"
+        },
+        "closure": {
+          "enum": [
+            "unreached",
+            "reached"
+          ]
+        },
+        "acceptance": {
+          "enum": [
+            "not_declared",
+            "pending",
+            "accepted",
+            "failed",
+            "unavailable"
+          ]
+        },
+        "grandfathered": {
+          "type": "boolean"
+        },
+        "criterion_set_id": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "criterion_revision_id": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "criterion_set_commitment": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/acceptance_criterion"
+          }
+        },
+        "blocking_required_criterion_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptance_evaluationDiagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "milestone_id",
+        "criterion_id",
+        "receipt_ids"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "PTMAC-103",
+            "PTMAC-104",
+            "PTMAC-105"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "milestone_id": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "criterion_id": {
+          "$ref": "#/$defs/acceptance_nullableString"
+        },
+        "receipt_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptance_acceptanceModel": {
+      "type": "object",
+      "required": [
+        "ok",
+        "model_version",
+        "grammar_version",
+        "milestones",
+        "diagnostics"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "model_version": {
+          "const": 1
+        },
+        "grammar_version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/acceptance_milestone"
+          }
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/acceptance_evaluationDiagnostic"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "review_projection": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "state",
+        "open_request_ids",
+        "required_actions"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "state": {
+          "enum": [
+            "clear",
+            "review_required"
+          ]
+        },
+        "open_request_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "required_actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "request_ids"
+            ],
+            "properties": {
+              "kind": {
+                "const": "review_before_new_downstream_work"
+              },
+              "request_ids": {
+                "$ref": "#/$defs/common_stringArray"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewProjection.v1"
+    },
+    "review_request": {
+      "type": "object",
+      "required": [
+        "id",
+        "qualified_id",
+        "task_id",
+        "qualified_task_id",
+        "state",
+        "task_reference_state",
+        "model",
+        "reason",
+        "created_at",
+        "created_by",
+        "locator",
+        "outcome",
+        "resolved_at",
+        "resolved_by",
+        "resolution_reason",
+        "reviewed_source_digest",
+        "change_request_digest",
+        "plan_basis_before",
+        "plan_basis_after",
+        "source_binding"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "qualified_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "qualified_task_id": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "resolved"
+          ]
+        },
+        "task_reference_state": {
+          "enum": [
+            "current",
+            "historical"
+          ]
+        },
+        "model": {
+          "const": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "outcome": {
+          "enum": [
+            "plan_retained",
+            "plan_changed",
+            null
+          ]
+        },
+        "resolved_at": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "resolved_by": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "resolution_reason": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "reviewed_source_digest": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "change_request_digest": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "plan_basis_before": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "plan_basis_after": {
+          "$ref": "#/$defs/common_nullableDigest"
+        },
+        "source_binding": {
+          "type": "object",
+          "required": [
+            "source_digest",
+            "span"
+          ],
+          "properties": {
+            "source_digest": {
+              "$ref": "#/$defs/common_digest"
+            },
+            "span": {
+              "$ref": "#/$defs/common_span"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "title": "Perttool.PlanReviewRequestModel.v1"
+    },
+    "analysis_schedule_alerts": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "evaluator",
+            "state",
+            "summary",
+            "occurrences",
+            "truncation",
+            "unavailable_causes"
+          ],
+          "properties": {
+            "evaluator": {
+              "type": "object",
+              "required": [
+                "id",
+                "version",
+                "optimal"
+              ],
+              "properties": {
+                "id": {
+                  "const": "perttool.schedule-alert"
+                },
+                "version": {
+                  "const": 1
+                },
+                "optimal": {
+                  "type": "null"
+                }
+              },
+              "additionalProperties": false
+            },
+            "state": {
+              "enum": [
+                "available",
+                "unavailable",
+                "not_applicable"
+              ]
+            },
+            "summary": {
+              "type": "object",
+              "required": [
+                "postdue",
+                "postdue_forecast",
+                "total"
+              ],
+              "properties": {
+                "postdue": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "postdue_forecast": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            },
+            "occurrences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "alert_id",
+                  "kind",
+                  "subject",
+                  "event",
+                  "target",
+                  "comparison",
+                  "proof",
+                  "driver",
+                  "source_digest",
+                  "source_range"
+                ],
+                "properties": {
+                  "alert_id": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": [
+                      "POSTDUE",
+                      "POSTDUE_FORECAST"
+                    ]
+                  },
+                  "subject": {
+                    "type": "object",
+                    "required": [
+                      "kind",
+                      "id"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "task",
+                          "milestone"
+                        ]
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "event": {
+                    "enum": [
+                      "start",
+                      "finish",
+                      "reach"
+                    ]
+                  },
+                  "target": {
+                    "type": "object",
+                    "required": [
+                      "subject_kind",
+                      "subject_id",
+                      "event",
+                      "target_kind",
+                      "temporal_kind",
+                      "instant",
+                      "source_text",
+                      "source_range"
+                    ],
+                    "properties": {
+                      "subject_kind": {
+                        "enum": [
+                          "task",
+                          "milestone"
+                        ]
+                      },
+                      "subject_id": {
+                        "type": "string"
+                      },
+                      "event": {
+                        "enum": [
+                          "start",
+                          "finish",
+                          "reach"
+                        ]
+                      },
+                      "target_kind": {
+                        "enum": [
+                          "deadline",
+                          "latest"
+                        ]
+                      },
+                      "temporal_kind": {
+                        "enum": [
+                          "instant",
+                          "date"
+                        ]
+                      },
+                      "instant": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/$defs/common_rational"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "source_text": {
+                        "type": "string"
+                      },
+                      "source_range": {
+                        "$ref": "#/$defs/common_span"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "comparison": {
+                    "type": "object",
+                    "required": [
+                      "snapshot_or_projection",
+                      "signed_difference_seconds",
+                      "relation"
+                    ],
+                    "properties": {
+                      "snapshot_or_projection": {
+                        "$ref": "#/$defs/common_rational"
+                      },
+                      "signed_difference_seconds": {
+                        "$ref": "#/$defs/common_rational"
+                      },
+                      "relation": {
+                        "const": "after"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "proof": {
+                    "type": "object",
+                    "required": [
+                      "kind",
+                      "optimal"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "current_snapshot",
+                          "precedence_infeasible",
+                          "resource_heuristic_late"
+                        ]
+                      },
+                      "optimal": {
+                        "enum": [
+                          false,
+                          null
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "driver": {
+                    "type": "object",
+                    "required": [
+                      "state",
+                      "path_id",
+                      "scope",
+                      "steps",
+                      "truncated",
+                      "total_steps",
+                      "analysis_argv",
+                      "cause"
+                    ],
+                    "properties": {
+                      "state": {
+                        "enum": [
+                          "available",
+                          "not_computed",
+                          "unavailable"
+                        ]
+                      },
+                      "path_id": {
+                        "$ref": "#/$defs/common_nullableString"
+                      },
+                      "scope": {
+                        "enum": [
+                          "project_finish",
+                          "target"
+                        ]
+                      },
+                      "steps": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "source_milestone_id",
+                            "target_milestone_id"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "enum": [
+                                "task",
+                                "gate",
+                                "resource_wait"
+                              ]
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "source_milestone_id": {
+                              "$ref": "#/$defs/common_nullableString"
+                            },
+                            "target_milestone_id": {
+                              "$ref": "#/$defs/common_nullableString"
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "truncated": {
+                        "type": "boolean"
+                      },
+                      "total_steps": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0
+                      },
+                      "analysis_argv": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/$defs/common_stringArray"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "cause": {
+                        "enum": [
+                          "driver_not_computed",
+                          "driver_unavailable",
+                          null
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "source_digest": {
+                    "$ref": "#/$defs/common_digest"
+                  },
+                  "source_range": {
+                    "$ref": "#/$defs/common_span"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "truncation": {
+              "type": "object",
+              "required": [
+                "truncated",
+                "emitted",
+                "total",
+                "total_known"
+              ],
+              "properties": {
+                "truncated": {
+                  "type": "boolean"
+                },
+                "emitted": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "total_known": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "unavailable_causes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "entity_ids"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "entity_ids": {
+                    "$ref": "#/$defs/common_stringArray"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "project_instant": {
+      "type": "object",
+      "required": [
+        "source_text",
+        "instant_seconds",
+        "offset_minutes",
+        "span"
+      ],
+      "properties": {
+        "source_text": {
+          "type": "string"
+        },
+        "instant_seconds": {
+          "$ref": "#/$defs/common_rational"
+        },
+        "offset_minutes": {
+          "type": "integer",
+          "minimum": -840,
+          "maximum": 840
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_window": {
+      "type": "object",
+      "required": [
+        "start_minute",
+        "end_minute",
+        "span"
+      ],
+      "properties": {
+        "start_minute": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1439
+        },
+        "end_minute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_calendar": {
+      "type": "object",
+      "required": [
+        "id",
+        "span",
+        "id_span",
+        "weekdays",
+        "exceptions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        },
+        "id_span": {
+          "$ref": "#/$defs/common_span"
+        },
+        "weekdays": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "weekday",
+              "windows",
+              "span"
+            ],
+            "properties": {
+              "weekday": {
+                "enum": [
+                  "mon",
+                  "tue",
+                  "wed",
+                  "thu",
+                  "fri",
+                  "sat",
+                  "sun"
+                ]
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/project_window"
+                }
+              },
+              "span": {
+                "$ref": "#/$defs/common_span"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "windows",
+              "span"
+            ],
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/project_window"
+                }
+              },
+              "span": {
+                "$ref": "#/$defs/common_span"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_resourceAvailability": {
+      "type": "object",
+      "required": [
+        "resource_id",
+        "calendar_id",
+        "available_from",
+        "available_until",
+        "overrides",
+        "span"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string"
+        },
+        "calendar_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "available_from": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/project_instant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "available_until": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/project_instant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "start",
+              "end",
+              "capacity",
+              "span"
+            ],
+            "properties": {
+              "start": {
+                "$ref": "#/$defs/project_instant"
+              },
+              "end": {
+                "$ref": "#/$defs/project_instant"
+              },
+              "capacity": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "span": {
+                "$ref": "#/$defs/common_span"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_eventBound": {
+      "type": "object",
+      "required": [
+        "entity_kind",
+        "entity_id",
+        "event",
+        "direction",
+        "value",
+        "span"
+      ],
+      "properties": {
+        "entity_kind": {
+          "enum": [
+            "task",
+            "milestone"
+          ]
+        },
+        "entity_id": {
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "start",
+            "finish",
+            "reach"
+          ]
+        },
+        "direction": {
+          "enum": [
+            "earliest",
+            "latest"
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/project_instant"
+        },
+        "span": {
+          "$ref": "#/$defs/common_span"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_temporalSchedule": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "grammar_version",
+        "document_id",
+        "as_of",
+        "profile",
+        "calendars",
+        "resources",
+        "task_bounds",
+        "milestone_bounds"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "grammar_version": {
+          "const": 8
+        },
+        "document_id": {
+          "type": "string"
+        },
+        "as_of": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/project_instant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "profile": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "zone_id",
+                "tzdb_release",
+                "calendar_id",
+                "workday_hours"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "named_zone"
+                },
+                "zone_id": {
+                  "type": "string"
+                },
+                "tzdb_release": {
+                  "const": "2026c"
+                },
+                "calendar_id": {
+                  "type": "string"
+                },
+                "workday_hours": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/common_rational"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "continuous_fixed_offset"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "calendars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/project_calendar"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/project_resourceAvailability"
+          }
+        },
+        "task_bounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/project_eventBound"
+          }
+        },
+        "milestone_bounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/project_eventBound"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_tier": {
+      "enum": [
+        "recommended",
+        "deferred"
+      ]
+    },
+    "result_0_effect": {
+      "enum": [
+        "supporting",
+        "opposing",
+        "blocking",
+        "neutral"
+      ]
+    },
+    "result_0_role": {
+      "enum": [
+        "decisive",
+        "contributing",
+        "context"
+      ]
+    },
+    "result_0_provenance": {
+      "type": "object",
+      "required": [
+        "kind",
+        "source_digest",
+        "entity_references",
+        "producer",
+        "source_span"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "document",
+            "precedence_analysis",
+            "ranking_algorithm",
+            "resource_snapshot",
+            "recommendation_model"
+          ]
+        },
+        "source_digest": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "entity_references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/common_recommendationEntity"
+          }
+        },
+        "producer": {
+          "type": "object",
+          "required": [
+            "id",
+            "version"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "source_span": {
+          "type": "null"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_fact": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "subject",
+        "value",
+        "unit",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "expected_duration",
+            "explicit_priority",
+            "finish_task_distance",
+            "new_reached_milestone_count",
+            "new_ready_task_count",
+            "new_satisfied_gate_count",
+            "next_gate_task_distance",
+            "precedence_critical_class",
+            "precedence_total_float",
+            "task_id",
+            "task_classification",
+            "time_eligibility",
+            "assurance_eligibility",
+            "selection_input_digest",
+            "maximum_task_count",
+            "eligible_task_count",
+            "rank_group_counts",
+            "canonical_selected_ids",
+            "joint_resource_feasibility",
+            "selected_set_member",
+            "resource_requirement",
+            "resource_remaining",
+            "boundary_allocatable_units",
+            "resource_capacity",
+            "active_resource_usage",
+            "selected_resource_usage",
+            "outside_group_usage"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/common_recommendationEntity"
+        },
+        "value": {
+          "$ref": "#/$defs/common_recommendationValue"
+        },
+        "unit": {
+          "$ref": "#/$defs/common_nullableRecommendationUnit"
+        },
+        "provenance": {
+          "$ref": "#/$defs/result_0_provenance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_resultDecision": {
+      "type": "object",
+      "required": [
+        "id",
+        "action",
+        "recommended_task_ids",
+        "joint_feasibility_fact_id",
+        "step_ids",
+        "reason_occurrence_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^rec:decision:result:R:sha256:[0-9a-f]{64}$"
+        },
+        "action": {
+          "const": "start"
+        },
+        "recommended_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "joint_feasibility_fact_id": {
+          "type": "string"
+        },
+        "step_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "reason_occurrence_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_taskDecision": {
+      "type": "object",
+      "required": [
+        "id",
+        "subject_task_id",
+        "action",
+        "classification",
+        "tier",
+        "recommended_set_member",
+        "step_ids",
+        "decisive_step_id",
+        "reason_occurrence_ids",
+        "comparison_ids",
+        "summary_description_id",
+        "description_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "subject_task_id": {
+          "type": "string"
+        },
+        "action": {
+          "const": "start"
+        },
+        "classification": {
+          "const": "ready"
+        },
+        "tier": {
+          "$ref": "#/$defs/result_0_tier"
+        },
+        "recommended_set_member": {
+          "type": "boolean"
+        },
+        "step_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "decisive_step_id": {
+          "type": "string"
+        },
+        "reason_occurrence_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "comparison_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "summary_description_id": {
+          "type": "string"
+        },
+        "description_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_decisionStep": {
+      "type": "object",
+      "required": [
+        "id",
+        "phase",
+        "rule",
+        "input_fact_ids",
+        "expression",
+        "result",
+        "effect",
+        "role",
+        "reason_occurrence_ids",
+        "comparison_ids",
+        "depends_on_step_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "phase": {
+          "enum": [
+            "eligibility",
+            "candidate_ranking",
+            "set_optimization",
+            "resource_selection",
+            "set_membership",
+            "tier_classification",
+            "boundary_budget"
+          ]
+        },
+        "rule": {
+          "$ref": "#/$defs/common_recommendationEntity"
+        },
+        "input_fact_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "expression": {
+          "$ref": "#/$defs/common_recommendationExpression"
+        },
+        "result": {
+          "type": "boolean"
+        },
+        "effect": {
+          "$ref": "#/$defs/result_0_effect"
+        },
+        "role": {
+          "$ref": "#/$defs/result_0_role"
+        },
+        "reason_occurrence_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "comparison_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "depends_on_step_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_comparison": {
+      "type": "object",
+      "required": [
+        "id",
+        "scope",
+        "subject_task_id",
+        "alternative_task_id",
+        "winner_task_id",
+        "loser_task_id",
+        "decisive_rule",
+        "decisive_expression",
+        "prior_tied_rule_ids",
+        "contributing_rule_ids",
+        "fact_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "candidate_ranking",
+            "set_optimization",
+            "resource_selection"
+          ]
+        },
+        "subject_task_id": {
+          "type": "string"
+        },
+        "alternative_task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "winner_task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "loser_task_id": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "decisive_rule": {
+          "$ref": "#/$defs/common_recommendationEntity"
+        },
+        "decisive_expression": {
+          "$ref": "#/$defs/common_recommendationExpression"
+        },
+        "prior_tied_rule_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "contributing_rule_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "fact_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_reasonOccurrence": {
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "subject",
+        "effect",
+        "role",
+        "fact_ids",
+        "emission_expression",
+        "decision_step_id",
+        "comparison_ids",
+        "description_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "task_ready",
+            "recommended_set_selected",
+            "recommended_set_not_selected",
+            "recommended_set_feasible",
+            "ranking_rule_supports_task",
+            "ranking_rule_opposes_task",
+            "ranking_rule_tied",
+            "recommended_set_resource_conflict",
+            "time_eligible",
+            "time_ineligible",
+            "time_eligibility_unavailable",
+            "assurance_eligible",
+            "assurance_withheld",
+            "assurance_unavailable",
+            "maximum_task_count",
+            "rank_group_counts",
+            "task_id_tiebreak",
+            "boundary_group_capacity"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/common_recommendationEntity"
+        },
+        "effect": {
+          "$ref": "#/$defs/result_0_effect"
+        },
+        "role": {
+          "$ref": "#/$defs/result_0_role"
+        },
+        "fact_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "emission_expression": {
+          "$ref": "#/$defs/common_recommendationExpression"
+        },
+        "decision_step_id": {
+          "type": "string"
+        },
+        "comparison_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "description_id": {
+          "$ref": "#/$defs/common_nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_description": {
+      "type": "object",
+      "required": [
+        "id",
+        "key",
+        "registry_version",
+        "parameters",
+        "source_reason_ids",
+        "source_comparison_ids",
+        "locale",
+        "text",
+        "render_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "enum": [
+            "recommendation.reason.assurance_eligible",
+            "recommendation.reason.assurance_unavailable",
+            "recommendation.reason.assurance_withheld",
+            "recommendation.reason.boundary_group_capacity",
+            "recommendation.reason.maximum_task_count",
+            "recommendation.reason.rank_group_counts",
+            "recommendation.reason.ranking_rule_opposes_task",
+            "recommendation.reason.ranking_rule_supports_task",
+            "recommendation.reason.ranking_rule_tied",
+            "recommendation.reason.recommended_set_feasible",
+            "recommendation.reason.recommended_set_not_selected",
+            "recommendation.reason.recommended_set_resource_conflict",
+            "recommendation.reason.recommended_set_selected",
+            "recommendation.reason.task_id_tiebreak",
+            "recommendation.reason.task_ready",
+            "recommendation.reason.time_eligibility_unavailable",
+            "recommendation.reason.time_eligible",
+            "recommendation.reason.time_ineligible",
+            "recommendation.summary.recommended",
+            "recommendation.summary.deferred"
+          ]
+        },
+        "registry_version": {
+          "const": 2
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/$defs/common_recommendationValue"
+              },
+              "unit": {
+                "$ref": "#/$defs/common_nullableRecommendationUnit"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "source_reason_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "source_comparison_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "locale": {
+          "const": "en"
+        },
+        "text": {
+          "type": "string"
+        },
+        "render_status": {
+          "const": "rendered"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_recommendation": {
+      "type": "object",
+      "required": [
+        "action",
+        "algorithm",
+        "reason_taxonomy_version",
+        "explanation_model_version",
+        "expression_version",
+        "description_registry_version",
+        "description_locale",
+        "recommended_task_ids",
+        "result_decision",
+        "task_decisions",
+        "decision_steps",
+        "facts",
+        "comparisons",
+        "reason_occurrences",
+        "descriptions",
+        "explanation_status",
+        "selection"
+      ],
+      "properties": {
+        "action": {
+          "const": "start"
+        },
+        "algorithm": {
+          "type": "object",
+          "required": [
+            "id",
+            "version",
+            "optimal",
+            "optimality_scope"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.dispatch.maximum-count"
+            },
+            "version": {
+              "const": 1
+            },
+            "optimal": {
+              "const": true
+            },
+            "optimality_scope": {
+              "const": "task_count"
+            }
+          },
+          "additionalProperties": false
+        },
+        "reason_taxonomy_version": {
+          "const": "2.0"
+        },
+        "explanation_model_version": {
+          "const": 2
+        },
+        "expression_version": {
+          "const": 1
+        },
+        "description_registry_version": {
+          "const": 2
+        },
+        "description_locale": {
+          "const": "en"
+        },
+        "recommended_task_ids": {
+          "$ref": "#/$defs/common_stringArray"
+        },
+        "result_decision": {
+          "$ref": "#/$defs/result_0_resultDecision"
+        },
+        "task_decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_taskDecision"
+          }
+        },
+        "decision_steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_decisionStep"
+          }
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_fact"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_comparison"
+          }
+        },
+        "reason_occurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_reasonOccurrence"
+          }
+        },
+        "descriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_description"
+          }
+        },
+        "explanation_status": {
+          "type": "object",
+          "required": [
+            "level",
+            "complete",
+            "decisive_chain_complete",
+            "truncated",
+            "omitted_counts"
+          ],
+          "properties": {
+            "level": {
+              "const": "full"
+            },
+            "complete": {
+              "const": true
+            },
+            "decisive_chain_complete": {
+              "const": true
+            },
+            "truncated": {
+              "const": false
+            },
+            "omitted_counts": {
+              "type": "object",
+              "required": [
+                "decision_steps",
+                "facts",
+                "comparisons",
+                "reason_occurrences",
+                "descriptions"
+              ],
+              "properties": {
+                "decision_steps": {
+                  "const": 0
+                },
+                "facts": {
+                  "const": 0
+                },
+                "comparisons": {
+                  "const": 0
+                },
+                "reason_occurrences": {
+                  "const": 0
+                },
+                "descriptions": {
+                  "const": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "selection": {
+          "$ref": "#/$defs/result_0_dispatchSelection"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_explanation": {
+      "type": "object",
+      "required": [
+        "milestone_id",
+        "reached",
+        "unsatisfied_edges",
+        "children",
+        "truncated"
+      ],
+      "properties": {
+        "milestone_id": {
+          "type": "string"
+        },
+        "reached": {
+          "type": "boolean"
+        },
+        "unsatisfied_edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "edge_id",
+              "kind",
+              "status",
+              "source_milestone_id",
+              "source_reached"
+            ],
+            "properties": {
+              "edge_id": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "task",
+                  "gate"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "planned",
+                  "active",
+                  "blocked",
+                  "suspended",
+                  "done",
+                  null
+                ]
+              },
+              "source_milestone_id": {
+                "type": "string"
+              },
+              "source_reached": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_explanation"
+          }
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_task": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "status",
+        "classification",
+        "runnable_now",
+        "priority",
+        "owner",
+        "blocked_reason",
+        "expected",
+        "total_float",
+        "earliest_start",
+        "forecast_expected",
+        "forecast_total_float",
+        "forecast_earliest_start",
+        "precedence_critical",
+        "schedule_critical",
+        "requirements",
+        "resource_rejections",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "active",
+            "blocked",
+            "suspended",
+            "done"
+          ]
+        },
+        "classification": {
+          "enum": [
+            "active",
+            "ready",
+            "blocked_now",
+            "upcoming",
+            "suspended"
+          ]
+        },
+        "runnable_now": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "owner": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "blocked_reason": {
+          "$ref": "#/$defs/common_nullableString"
+        },
+        "expected": {
+          "$ref": "#/$defs/common_displayedRational"
+        },
+        "total_float": {
+          "$ref": "#/$defs/common_displayedRational"
+        },
+        "earliest_start": {
+          "$ref": "#/$defs/common_displayedRational"
+        },
+        "forecast_expected": {
+          "$ref": "#/$defs/common_nullableDisplayedRational"
+        },
+        "forecast_total_float": {
+          "$ref": "#/$defs/common_nullableDisplayedRational"
+        },
+        "forecast_earliest_start": {
+          "$ref": "#/$defs/common_nullableDisplayedRational"
+        },
+        "precedence_critical": {
+          "type": "boolean"
+        },
+        "schedule_critical": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Resource-schedule criticality under the applied capacities, or null when the complete resource forecast is unavailable."
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource_id",
+              "units"
+            ],
+            "properties": {
+              "resource_id": {
+                "type": "string"
+              },
+              "units": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "resource_rejections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource_id",
+              "capacity",
+              "active_usage",
+              "earlier_selected_usage",
+              "used_before_decision",
+              "required",
+              "available",
+              "deficit",
+              "active_task_ids",
+              "earlier_selected_task_ids"
+            ],
+            "properties": {
+              "resource_id": {
+                "type": "string"
+              },
+              "capacity": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "active_usage": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "earlier_selected_usage": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "used_before_decision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "required": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "available": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "deficit": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "active_task_ids": {
+                "$ref": "#/$defs/common_stringArray"
+              },
+              "earlier_selected_task_ids": {
+                "$ref": "#/$defs/common_stringArray"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "explanation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_explanation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_timeEligibility": {
+      "type": "object",
+      "required": [
+        "state",
+        "release_bound",
+        "explanation",
+        "facts",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "eligible",
+            "not_yet_eligible",
+            "not_applicable",
+            "unavailable"
+          ]
+        },
+        "release_bound": {
+          "$ref": "#/$defs/common_nullableTemporalExact"
+        },
+        "explanation": {
+          "type": "object",
+          "required": [
+            "code",
+            "fact_ids"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "no_not_before",
+                "not_before_reached",
+                "not_before_future",
+                "task_already_started",
+                "temporal_eligibility_unavailable"
+              ]
+            },
+            "fact_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            }
+          },
+          "additionalProperties": false
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "kind",
+              "value",
+              "entity_refs"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "kind": {
+                "const": "temporal_release_bound"
+              },
+              "value": {
+                "type": "object",
+                "required": [
+                  "state",
+                  "release_bound"
+                ],
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "eligible",
+                      "not_yet_eligible",
+                      "not_applicable",
+                      "unavailable"
+                    ]
+                  },
+                  "release_bound": {
+                    "$ref": "#/$defs/common_nullableTemporalExact"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "entity_refs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "kind",
+                    "id"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "const": "task"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/common_temporalCauses"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_nextTemporalTask": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "declared_not_before",
+        "time_eligibility",
+        "task_deadline",
+        "destination_milestone_id",
+        "destination_deadline",
+        "precedence_start",
+        "precedence_finish",
+        "resource_start",
+        "resource_finish",
+        "task_deadline_evaluation",
+        "destination_deadline_evaluation"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "declared_not_before": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "time_eligibility": {
+          "$ref": "#/$defs/result_0_timeEligibility"
+        },
+        "task_deadline": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "destination_milestone_id": {
+          "type": "string"
+        },
+        "destination_deadline": {
+          "$ref": "#/$defs/common_nullableCalendarValue"
+        },
+        "precedence_start": {
+          "$ref": "#/$defs/common_nullableTemporalPoint"
+        },
+        "precedence_finish": {
+          "$ref": "#/$defs/common_nullableTemporalPoint"
+        },
+        "resource_start": {
+          "$ref": "#/$defs/common_nullableTemporalPoint"
+        },
+        "resource_finish": {
+          "$ref": "#/$defs/common_nullableTemporalPoint"
+        },
+        "task_deadline_evaluation": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_deadlineEvaluation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "destination_deadline_evaluation": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/common_deadlineEvaluation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_nextTemporal": {
+      "type": "object",
+      "required": [
+        "authority",
+        "tasks"
+      ],
+      "properties": {
+        "authority": {
+          "type": "object",
+          "required": [
+            "policy",
+            "complete",
+            "recommendation_algorithm",
+            "deadline_facts_used_for_ranking",
+            "time_eligible_task_ids",
+            "time_ineligible_task_ids",
+            "time_eligibility_unavailable_task_ids",
+            "startable_recommended_task_ids",
+            "assurance_eligible_task_ids",
+            "safe_stop_reasons",
+            "eligible_task_ids",
+            "time_withheld_task_ids",
+            "assurance_withheld_task_ids",
+            "unavailable_task_ids"
+          ],
+          "properties": {
+            "policy": {
+              "const": "max_count_dispatch_v1_plus_release_gate_plus_plan_assurance_v1"
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "recommendation_algorithm": {
+              "type": "object",
+              "required": [
+                "id",
+                "version"
+              ],
+              "properties": {
+                "id": {
+                  "const": "perttool.dispatch.maximum-count"
+                },
+                "version": {
+                  "const": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            "deadline_facts_used_for_ranking": {
+              "const": false
+            },
+            "time_eligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "time_ineligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "time_eligibility_unavailable_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "startable_recommended_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true,
+              "description": "The shared maximum-count selection, also projected as recommended_task_ids and groups.runnable_now."
+            },
+            "assurance_eligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "safe_stop_reasons": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "unknown_recommendation_interface",
+                  "unknown_ranking_algorithm",
+                  "unknown_recommendation_contract",
+                  "unknown_temporal_authority_policy",
+                  "incomplete_recommendation_trace",
+                  "invalid_recommendation_authority",
+                  "invalid_assurance_evaluation",
+                  "unknown_assurance_model",
+                  "missing_assurance_task_result"
+                ]
+              }
+            },
+            "eligible_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "time_withheld_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "assurance_withheld_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "unavailable_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_nextTemporalTask"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchRequirement": {
+      "type": "object",
+      "required": [
+        "resource_id",
+        "units"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "units": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchActiveTask": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "requirements"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchRequirement"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchRankKey": {
+      "type": "object",
+      "required": [
+        "critical_class",
+        "precedence_total_float",
+        "explicit_priority",
+        "new_ready_task_count",
+        "new_satisfied_gate_count",
+        "new_reached_milestone_count",
+        "next_gate_task_distance",
+        "finish_task_distance",
+        "expected_duration"
+      ],
+      "properties": {
+        "critical_class": {
+          "enum": [
+            "driving",
+            "near_critical",
+            "non_critical"
+          ]
+        },
+        "precedence_total_float": {
+          "$ref": "#/$defs/result_0_dispatchRational"
+        },
+        "explicit_priority": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "new_ready_task_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "new_satisfied_gate_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "new_reached_milestone_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "next_gate_task_distance": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "const": "infinity"
+            }
+          ]
+        },
+        "finish_task_distance": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expected_duration": {
+          "$ref": "#/$defs/result_0_dispatchRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchRankGroup": {
+      "type": "object",
+      "required": [
+        "rank_group",
+        "task_ids",
+        "rank_key"
+      ],
+      "properties": {
+        "rank_group": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "rank_key": {
+          "$ref": "#/$defs/result_0_dispatchRankKey"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchCandidate": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "rank_group",
+        "requirements",
+        "time_eligibility",
+        "assurance_eligibility"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rank_group": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchRequirement"
+          }
+        },
+        "time_eligibility": {
+          "enum": [
+            "eligible",
+            "not_yet_eligible",
+            "unavailable"
+          ]
+        },
+        "assurance_eligibility": {
+          "enum": [
+            "eligible",
+            "withheld",
+            "unavailable"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchInputResource": {
+      "type": "object",
+      "required": [
+        "resource_id",
+        "capacity",
+        "active_usage",
+        "active_task_ids"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capacity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "active_usage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "active_task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchInput": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "source_digest",
+        "grammar_version",
+        "duration_unit",
+        "critical_epsilon",
+        "capacity_overrides",
+        "resources",
+        "active_tasks",
+        "candidates",
+        "rank_groups"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "source_digest": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "grammar_version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "duration_unit": {
+          "enum": [
+            "point",
+            "day",
+            "hour"
+          ]
+        },
+        "critical_epsilon": {
+          "$ref": "#/$defs/result_0_dispatchRational"
+        },
+        "capacity_overrides": {
+          "$ref": "#/$defs/result_0_dispatchCapacityOverrides"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchInputResource"
+          }
+        },
+        "active_tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchActiveTask"
+          }
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchCandidate"
+          }
+        },
+        "rank_groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchRankGroup"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchBudget": {
+      "type": "object",
+      "required": [
+        "resource_id",
+        "capacity",
+        "active_usage",
+        "outside_group_usage",
+        "allocatable_units",
+        "selected_usage",
+        "remaining_units"
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capacity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "active_usage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "outside_group_usage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "allocatable_units": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "selected_usage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "remaining_units": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchBoundaryGroup": {
+      "type": "object",
+      "required": [
+        "rank_group",
+        "candidates",
+        "selected_task_ids",
+        "unselected_task_ids",
+        "outside_selected_task_ids",
+        "resources"
+      ],
+      "properties": {
+        "rank_group": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchActiveTask"
+          }
+        },
+        "selected_task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "unselected_task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "outside_selected_task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchBudget"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchSelection": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "input_digest",
+        "input",
+        "selected_task_ids",
+        "maximum_task_count",
+        "resources",
+        "boundary_groups"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "input_digest": {
+          "$ref": "#/$defs/common_digest"
+        },
+        "input": {
+          "$ref": "#/$defs/result_0_dispatchInput"
+        },
+        "selected_task_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "maximum_task_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchBudget"
+          }
+        },
+        "boundary_groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_dispatchBoundaryGroup"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchRational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^(?:0|-?[1-9][0-9]*)$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_nextTemporalSuccess": {
+      "type": "object",
+      "required": [
+        "authority",
+        "tasks"
+      ],
+      "properties": {
+        "authority": {
+          "type": "object",
+          "required": [
+            "policy",
+            "complete",
+            "recommendation_algorithm",
+            "deadline_facts_used_for_ranking",
+            "time_eligible_task_ids",
+            "time_ineligible_task_ids",
+            "time_eligibility_unavailable_task_ids",
+            "startable_recommended_task_ids",
+            "assurance_eligible_task_ids",
+            "safe_stop_reasons",
+            "eligible_task_ids",
+            "time_withheld_task_ids",
+            "assurance_withheld_task_ids",
+            "unavailable_task_ids"
+          ],
+          "properties": {
+            "policy": {
+              "const": "max_count_dispatch_v1_plus_release_gate_plus_plan_assurance_v1"
+            },
+            "complete": {
+              "const": true
+            },
+            "recommendation_algorithm": {
+              "type": "object",
+              "required": [
+                "id",
+                "version"
+              ],
+              "properties": {
+                "id": {
+                  "const": "perttool.dispatch.maximum-count"
+                },
+                "version": {
+                  "const": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            "deadline_facts_used_for_ranking": {
+              "const": false
+            },
+            "time_eligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "time_ineligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "time_eligibility_unavailable_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "startable_recommended_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true,
+              "description": "The shared maximum-count selection, also projected as recommended_task_ids and groups.runnable_now."
+            },
+            "assurance_eligible_task_ids": {
+              "$ref": "#/$defs/common_stringArray"
+            },
+            "safe_stop_reasons": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "unknown_recommendation_interface",
+                  "unknown_ranking_algorithm",
+                  "unknown_recommendation_contract",
+                  "unknown_temporal_authority_policy",
+                  "incomplete_recommendation_trace",
+                  "invalid_recommendation_authority",
+                  "invalid_assurance_evaluation",
+                  "unknown_assurance_model",
+                  "missing_assurance_task_result"
+                ]
+              }
+            },
+            "eligible_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "time_withheld_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "assurance_withheld_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "unavailable_task_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/result_0_nextTemporalTask"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_0_dispatchCapacityOverrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "resource_id",
+          "capacity"
+        ],
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.McpNextResult.v2.schema.json",
+  "title": "Perttool.McpNextResult.v2"
+}

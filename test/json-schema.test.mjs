@@ -20,7 +20,7 @@ import {
   jsonSchemaResultToJson,
   JSON_SCHEMA_DIALECT,
 } from "../dist/index.js";
-import { CONTRACT11_COMMAND_REGISTRY } from "../dist/command/contract11-discovery.js";
+import { CONTRACT12_COMMAND_REGISTRY } from "../dist/command/contract12-discovery.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -134,19 +134,19 @@ function schemaReferences(value) {
 test("Contract 11 result identities resolve to one closed bundled catalog", () => {
   const catalog = getJsonSchemaCatalog();
   const advertised = [...new Set(
-    CONTRACT11_COMMAND_REGISTRY.flatMap(({ resultSchemas }) => resultSchemas),
+    CONTRACT12_COMMAND_REGISTRY.flatMap(({ resultSchemas }) => resultSchemas),
   )].sort();
   const commandSchemas = catalog
     .filter(({ commandResult }) => commandResult)
     .map(({ schemaId }) => schemaId);
   assert.deepEqual(commandSchemas, advertised);
-  assert.equal(CONTRACT11_COMMAND_REGISTRY.length, 75);
+  assert.equal(CONTRACT12_COMMAND_REGISTRY.length, 75);
   assert.equal(advertised.length, 27);
   assert.deepEqual(
     catalog
       .filter(({ publicLibraryResult }) => publicLibraryResult)
       .map(({ schemaId }) => schemaId),
-    ["Perttool.OverrideDecision.v1"],
+    ["Perttool.NextResult.v9", "Perttool.OverrideDecision.v1", "Perttool.OverrideDecision.v2"],
   );
 
   const expectedFiles = [
@@ -154,10 +154,10 @@ test("Contract 11 result identities resolve to one closed bundled catalog", () =
     ...catalog.map(({ schemaId }) => `${schemaId}.schema.json`),
   ].sort();
   assert.deepEqual(schemaFiles(), expectedFiles);
-  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 31);
+  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 33);
   assert.equal(
     new Set(catalog.map(({ artifactPath }) => artifactPath)).size,
-    31,
+    33,
   );
 
   for (const entry of catalog) {
@@ -231,7 +231,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   assert.equal(catalog.operation, "schema");
   assert.equal(catalog.ok, true);
   assert.equal(catalog.query.schema_id, null);
-  assert.equal(catalog.schemas.length, 31);
+  assert.equal(catalog.schemas.length, 33);
   assert.equal(catalog.schema, null);
 
   const selected = cliJson([

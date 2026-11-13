@@ -1,3 +1,4 @@
+import { selectNextTasks as selectLegacyNext } from "../dist/application/contract11-runtime.js";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -294,7 +295,7 @@ test("Grammar 1 base recommendation remains byte-structurally unchanged", async 
     path.join(root, "docs/examples/parallel.pert"),
     "utf8",
   );
-  const active = publicApi.selectNextTasks(text);
+  const active = selectLegacyNext(text);
   const target = next(text);
   assert.deepEqual(target.recommendation, active.recommendation);
   assert.deepEqual(target.tasks, active.tasks);

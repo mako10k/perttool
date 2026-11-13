@@ -63,10 +63,15 @@ UTC `Z` commit metadata, rejects retired alpha publication, and projects
 human-readable scope-bound owner-confirmation guidance. Version `0.5.5` emits
 PTGOV-104 without changing its candidate, decision, default success, or
 persistent authority. Issue #5 closure remains a separate decision. A
-complete and known `Perttool.NextResult.v7` with complete temporal and
-plan-assurance start authority plus milestone-acceptance projection is the
-normal AI task-selection
-authority. The macro plan is complete and has no ready task. The independent
+complete and known `Perttool.NextResult.v10` with recommendation interface 2,
+algorithm `perttool.dispatch.maximum-count` version 1 and authority policy
+`max_count_dispatch_v1_plus_release_gate_plus_plan_assurance_v1` is the current
+local AI task-selection authority. Use its successful root result, complete
+trace and authority, and the shared ordered recommended/runnable/startable set.
+The current local source activates CLI Contract 12 for Issue #48. Its
+[public contract](docs/specs/maximum-count-selection.md) defines input commitments,
+count-first optimization, boundary resource budgets and v8/v9 compatibility.
+The release records above retain their historical package identities. The macro plan is complete and has no ready task. The independent
 English-baseline detail plan has completed and advanced all nine tasks through
 `ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed
 final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md`

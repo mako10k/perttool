@@ -1,3 +1,4 @@
+// R: Verify editor repair through Core, protocol and disposable stdio processes.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -494,13 +495,14 @@ function jsonRpcHarness(input, output) {
   };
 }
 
-test("bundled stdio activates repair without a CLI subprocess", async () => {
+test("bundled stdio activates repair without a CLI subprocess", async (t) => {
   const source = eligibleSource({ version: 7, unit: "hour" });
   const child = spawn(
     process.execPath,
     [path.join(root, "adapters/lsp/dist/main.js")],
     { cwd: root, stdio: ["pipe", "pipe", "pipe"] },
   );
+  t.after(() => { child.kill(); });
   let stderr = "";
   child.stderr.setEncoding("utf8");
   child.stderr.on("data", (chunk) => { stderr += chunk; });
@@ -565,9 +567,9 @@ test("E0 formatting and current public identities remain unchanged", async () =>
       import("../dist/index.js"),
       import("../dist/core/index.js"),
     ]);
-  assert.equal(JSON.parse(packageJson).version, "0.12.3");
+  assert.equal(JSON.parse(packageJson).version, "0.13.0");
   assert.equal(rootIndex.COMMAND_REGISTRY.length, 75);
-  assert.equal(rootIndex.getJsonSchemaCatalog().length, 31);
+  assert.equal(rootIndex.getJsonSchemaCatalog().length, 33);
   assert.equal(Object.keys(rootIndex).length, 155);
   assert.equal(Object.keys(coreIndex).length, 51);
   assert.match(schemaRegistry, /Perttool\.NextResult\.v9/u);

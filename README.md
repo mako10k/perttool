@@ -5,15 +5,29 @@ reviewable text files. It validates plans, calculates precedence and
 resource-constrained schedules, recommends the next task, and previews every
 change before writing it.
 
-Registry snapshot on 2026-10-29: npm `latest` identifies `0.12.1` and
-`beta` identifies `0.12.2`; no `alpha` channel is present. Node.js 22 or later is required.
+Registry snapshot on 2026-11-13: npm `latest` and `beta` identify `0.12.3`;
+no `alpha` channel is present. Node.js 22 or later is required.
 
-The `0.12.3` package provides the compatible committed-source proof patch.
-Grammar 10 and CLI Contract 11 remain unchanged. Existing Grammar 1 through 9
-documents remain readable; Plan Review operations require explicit migration
-to Grammar 10. Exact `0.12.2` is the rollback pin for this patch.
-See the [migration guide](docs/process/0.11.1-to-0.12.0-migration.md)
-and [patch preparation](docs/process/0.12.3-release.md).
+## Version 0.13.0 release preparation
+
+Version 0.13.0 introduces count-first task selection with CLI Contract 12,
+NextResult v10 and recommendation model 2. It selects the maximum number of
+eligible ready tasks within available resource units. Equal-ranked boundary
+groups include their allocatable and remaining units. Grammar 10 remains
+current and Grammar 1 through 9 documents remain readable. Exact `0.12.3`
+is the rollback pin. The closed public contract and version-specific
+compatibility are recorded in
+[maximum-count selection](docs/specs/maximum-count-selection.md).
+
+Build and replay the included two-unit fixture from the repository root.
+
+```sh
+npm run build
+node dist/cli.js dag next test/fixtures/recommendation/rec-010-count-first.pert --capacity WORKER=2 --format json
+```
+
+The [release record](docs/process/0.13.0-release.md) tracks artifact selection,
+local installation and distribution evidence.
 
 ## Install
 

@@ -68,7 +68,7 @@ test("Issue #31 publishes exactly three standalone request schema roots", () => 
       `${schemaBase}${entry.schemaId}.schema.json`,
     );
     const selected = runSchema(entry.schemaId);
-    assert.equal(selected.schemas.length, 31);
+    assert.equal(selected.schemas.length, 33);
     assert.equal(selected.schema.$id, `${schemaBase}${entry.schemaId}.schema.json`);
   }
 });

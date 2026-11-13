@@ -9,11 +9,11 @@ export { analyzePrecedence } from "../analysis/precedence.js";
 export { analyzeResources } from "../analysis/resource.js";
 export { getHelp } from "../help/registry.js";
 export {
-  contract11GuideResultToJson as guideResultToJson,
-  getContract11Guide as getGuide,
-  renderContract11GuideResult as renderGuideResult,
-  serializeContract11GuideResult as serializeGuideResult,
-} from "../help/contract11-guide.js";
+  contract12GuideResultToJson as guideResultToJson,
+  getContract12Guide as getGuide,
+  renderContract12GuideResult as renderGuideResult,
+  serializeContract12GuideResult as serializeGuideResult,
+} from "../help/contract12-guide.js";
 export {
   auditPlanningWindowMutationCore,
   inspectPlanningPool,
@@ -96,8 +96,8 @@ export type {
   HelpSection,
 } from "../help/registry.js";
 export type {
-  Contract11GuideResult as GuideResult,
-} from "../help/contract11-guide.js";
+  Contract12GuideResult as GuideResult,
+} from "../help/contract12-guide.js";
 export type {
   PlanningPoolReadOperation,
   PlanningPoolReadQuery,

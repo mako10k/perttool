@@ -1,7 +1,8 @@
+// R: Preserve the version-specific v9 operational baseline alongside successor dispatch coverage.
+import { legacyNextWire } from "./helpers/legacy-next-wire.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { checkDocument } from "../dist/index.js";
@@ -14,7 +15,6 @@ const goldenPath = path.join(
   testDirectory,
   "golden/recommendation/v2-projection.expected.json",
 );
-const cli = path.join(root, "dist/cli.js");
 
 function exact(value) {
   if (value === null) return null;
@@ -45,14 +45,7 @@ function projectTaskFact(task) {
 }
 
 function runCurrent(relativeFixture) {
-  const result = spawnSync(
-    process.execPath,
-    [cli, "dag", "next", `test/fixtures/recommendation/${relativeFixture}`, "--format=json"],
-    { cwd: root, encoding: "utf8" },
-  );
-  assert.equal(result.status, 0, result.stderr);
-  assert.equal(result.stderr, "");
-  const json = JSON.parse(result.stdout);
+  const json = legacyNextWire(path.join(fixtureDirectory, relativeFixture));
   return {
     schema_version: json.schema_version,
     groups: json.groups,

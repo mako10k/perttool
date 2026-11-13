@@ -342,7 +342,7 @@ test("active Contract 11 retains the complete project actuals command set", () =
     ]),
   );
 
-  assert.equal(help.cli_contract_version, 11);
+  assert.equal(help.cli_contract_version, 12);
   assert.deepEqual(
     actions.task,
     ["add", "finish", "remove", "resume", "set", "start", "suspend"],

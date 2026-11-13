@@ -70,7 +70,7 @@ complete result contains:
 - `frontierMilestoneIds`: topological-order reached milestones with an
   outgoing unfinished edge whose target is not reached, or the reached finish
   milestone when no such frontier remains;
-- active and ready task IDs from `Perttool.NextResult.v6`;
+- active and ready task IDs from `Perttool.NextResult.v10`;
 - recommended task IDs from its recommendation result;
 - startable task IDs only from
   `temporal.authority.startableRecommendedTaskIds`; and
@@ -144,8 +144,17 @@ or mutate an Issue.
 | `DGP-005` | Focus identity | separately negotiated model 1 and closed result identity |
 | `DGP-006` | Binding | exact URI, generation, version, and digest; stale fails closed |
 | `DGP-007` | Current frontier | reached unfinished boundary, or reached finish after completion |
-| `DGP-008` | Next authority | exact NextResult v6 startable IDs and safe-stop reasons only |
+| `DGP-008` | Next authority | exact NextResult v10 startable IDs and safe-stop reasons only |
 | `DGP-009` | CP | existing current or historical single-checkpoint analysis only |
 | `DGP-010` | Navigation | zoom, fit, native scroll, pan, and keyboard controls are bounded |
 | `DGP-011` | Accessibility/security | labelled focus, text outline, escaped content, restrictive CSP |
 | `DGP-012` | Distribution/no write | private bundle, zero root production dependencies, no mutation |
+
+## Issue #48 selection adoption
+
+The private focus service now derives current recommended and startable IDs
+from the shared NextResult v10 selection. Its negotiated model 1 and existing
+result fields retain their source/version binding and presentation duties.
+Exact time summaries continue to use the established analysis service. The
+count-first selection and overflowing boundary budgets are defined in
+[the selection contract](maximum-count-selection.md).

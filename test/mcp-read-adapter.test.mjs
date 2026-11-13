@@ -494,7 +494,7 @@ test("modern stdio discovery, listing, resource reads, and tool calls stay proto
     assert.equal(called.result.isError, false);
     assert.equal(
       called.result.structuredContent.schema_version,
-      "Perttool.McpNextResult.v1",
+      "Perttool.McpNextResult.v2",
     );
     assert.deepEqual(
       JSON.parse(called.result.content[0].text),

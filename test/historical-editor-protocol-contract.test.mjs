@@ -67,7 +67,7 @@ test("historical editor identities are additive and keep current GraphView uncha
     core_runtime_names: 45,
   });
   assert.equal(COMMAND_REGISTRY.length, 75);
-  assert.equal(getJsonSchemaCatalog().length, 31);
+  assert.equal(getJsonSchemaCatalog().length, 33);
 });
 
 test("historical negotiation, trust, and request boundaries are closed", async () => {
@@ -283,7 +283,7 @@ test("historical editor contract remains aligned after the private implementatio
   assert.deepEqual(next.groups.ready, []);
   assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(
-    next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
+    next.temporal.authority.unavailableTaskIds,
     [],
   );
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);

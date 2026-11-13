@@ -153,7 +153,7 @@ test("the Contract 11 registry covers the complete active surface exactly once",
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 11, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 12, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(

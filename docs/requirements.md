@@ -160,6 +160,14 @@ Must:
 
 The source of truth for the formal separation of feasibility, resource selection, and recommendation tier is the [Recommendation Semantics specification](specs/recommendation.md); for deterministic recommendation order, the [Recommendation Ranking Policy specification](specs/recommendation-ranking.md); for machine-readable reason vocabulary, the [Recommendation Reason Taxonomy specification](specs/recommendation-reasons.md); for the explanation graph from typed facts to derived descriptions, the [Recommendation Structured Explanation specification](specs/recommendation-explanation.md); for Core/text/JSON, the [Recommendation Interface Contract specification](specs/recommendation-interface.md); and for intentional human deviations, the [Recommendation Human Override Contract specification](specs/recommendation-override.md).
 
+The owner-selected Issue #48 task-management behavior maximizes the number of
+simultaneously startable tasks within applied resource capacities. Existing
+semantic ranking resolves equal-count choices. The complete ready frontier,
+active allocations, temporal eligibility and assurance eligibility determine
+the selection. Overflowing same-ranked groups expose their conditional
+allocatable units per resource. The versioned successor is defined by the
+[Maximum-count Task Selection Public Contract](specs/maximum-count-selection.md).
+
 Must:
 
 - A project plan with tasks, dependencies, milestones, gates, resources, state, and explicit priorities is the source of truth for priority decisions.

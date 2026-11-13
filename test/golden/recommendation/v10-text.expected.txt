@@ -1,0 +1,39 @@
+START AUTHORITY
+POLICY max_count_dispatch_v1_plus_release_gate_plus_plan_assurance_v1
+STARTABLE RECOMMENDED CRITICAL_FIX OPTIONAL_POLISH
+TIME WITHHELD -
+ASSURANCE WITHHELD -
+UNAVAILABLE -
+DEADLINE FACTS INFORMATIONAL FOR RANKING
+
+PERTTOOL NEXT REC_001_CRITICAL_PRIORITY
+VELOCITY 1p/1d
+VELOCITY_FORECAST_UNIT day
+
+RECOMMENDATION
+SELECTION OBJECTIVE maximum_startable_task_count
+MAXIMUM STARTABLE TASKS 2
+SELECTION INPUT sha256:cb37313ad1c1320cdb203dc9a2391e546e3cdcb2a6377b5159c465abb9e13186
+
+ACTIVE
+-
+
+RUNNABLE NOW
+CRITICAL_FIX priority=10 expected=2p forecast=2d TF=0p precedence_critical=true schedule_critical=true owner=- resources=-
+OPTIONAL_POLISH priority=100 expected=0.5p forecast=0.5d TF=1.5p precedence_critical=false schedule_critical=false owner=- resources=-
+
+READY / DEFERRED
+-
+
+BLOCKED NOW
+-
+
+SUSPENDED
+-
+
+UPCOMING
+-
+
+TEMPORAL CONTEXT
+CRITICAL_FIX eligibility=eligible release=- task_deadline=- destination=CRITICAL_DONE destination_deadline=- causes=-
+OPTIONAL_POLISH eligibility=eligible release=- task_deadline=- destination=OPTIONAL_DONE destination_deadline=- causes=-

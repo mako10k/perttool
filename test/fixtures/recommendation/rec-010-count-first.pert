@@ -1,0 +1,46 @@
+project REC_010_COUNT_FIRST:
+  version 1
+  title "Two smaller tasks precede one larger ranked task"
+  duration_unit point
+  finish FINISH
+
+resource WORKER:
+  title "Workers"
+  capacity 2
+
+milestone START:
+  title "Started"
+  state reached
+
+milestone LARGE_DONE:
+  title "Large work complete"
+
+milestone SMALL_DONE:
+  title "Small work complete"
+
+milestone FINISH:
+  title "Finished"
+
+task A START -> LARGE_DONE:
+  title "Highest-ranked large task"
+  duration 4p
+  requires:
+    WORKER 2
+
+task B START -> SMALL_DONE:
+  title "Small B"
+  duration 1p
+  requires:
+    WORKER 1
+
+task C START -> SMALL_DONE:
+  title "Small C"
+  duration 1p
+  requires:
+    WORKER 1
+
+gate LARGE_JOIN LARGE_DONE -> FINISH:
+  reason "Large work complete"
+
+gate SMALL_JOIN SMALL_DONE -> FINISH:
+  reason "Small work complete"

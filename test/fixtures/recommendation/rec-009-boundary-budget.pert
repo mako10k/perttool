@@ -1,0 +1,65 @@
+project REC_009_BOUNDARY_BUDGET:
+  version 1
+  title "Equal-ranked tasks at the remaining worker boundary"
+  duration_unit point
+  finish FINISH
+
+resource WORKER:
+  title "Workers"
+  capacity 4
+
+milestone START:
+  title "Started"
+  state reached
+
+milestone ACTIVE_DONE:
+  title "Active work complete"
+
+milestone PRIORITY_DONE:
+  title "Driving work complete"
+
+milestone GROUP_DONE:
+  title "Tied work complete"
+
+milestone FINISH:
+  title "Finished"
+
+task ACTIVE START -> ACTIVE_DONE:
+  title "Existing allocation"
+  duration 1p
+  status active
+  requires:
+    WORKER 1
+
+task P START -> PRIORITY_DONE:
+  title "Driving work"
+  duration 4p
+  requires:
+    WORKER 1
+
+task X START -> GROUP_DONE:
+  title "Tied X"
+  duration 2p
+  requires:
+    WORKER 1
+
+task Y START -> GROUP_DONE:
+  title "Tied Y"
+  duration 2p
+  requires:
+    WORKER 1
+
+task Z START -> GROUP_DONE:
+  title "Tied Z"
+  duration 2p
+  requires:
+    WORKER 1
+
+gate ACTIVE_JOIN ACTIVE_DONE -> FINISH:
+  reason "Active work complete"
+
+gate PRIORITY_JOIN PRIORITY_DONE -> FINISH:
+  reason "Driving work complete"
+
+gate GROUP_JOIN GROUP_DONE -> FINISH:
+  reason "Tied work complete"

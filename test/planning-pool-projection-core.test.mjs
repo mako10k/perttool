@@ -353,7 +353,7 @@ test("PPRJ-016 keeps projection private and the public runtime unchanged", () =>
     assert.equal("PLANNING_PROJECTION_CORE_CAPABILITY" in api, false);
   }
   assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 31);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 33);
   assert.equal(Object.keys(rootApi).length, 155);
   assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, 51);

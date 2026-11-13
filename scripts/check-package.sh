@@ -92,6 +92,7 @@ for required in \
   package/schemas/Perttool.Common.v1.schema.json \
   package/schemas/Perttool.AdvanceResult.v4.schema.json \
   package/schemas/Perttool.NextResult.v9.schema.json \
+  package/schemas/Perttool.NextResult.v10.schema.json \
   package/schemas/Perttool.PlanReviewMutationResult.v1.schema.json \
   package/schemas/Perttool.PlanReviewResult.v1.schema.json \
   package/schemas/Perttool.PlanningMutationResult.v1.schema.json \
@@ -104,6 +105,7 @@ for required in \
   package/schemas/Perttool.HistoricalGraphResult.v1.schema.json \
   package/schemas/Perttool.PlanAssuranceResult.v2.schema.json \
   package/schemas/Perttool.SchemaResult.v1.schema.json \
+  package/schemas/Perttool.OverrideDecision.v2.schema.json \
   package/schemas/Perttool.OverrideDecision.v1.schema.json
 do
   if ! grep -Fqx "$required" "$archive_list"; then
@@ -149,7 +151,7 @@ fi
       const topicIds = result.topics?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 11 ||
+        result.cli_contract_version !== 12 ||
         result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
@@ -183,7 +185,7 @@ fi
       const result = JSON.parse(input);
       if (
         result.schema_version !== "Perttool.HistoricalGraphResult.v1" ||
-        result.cli_contract_version !== 11 ||
+        result.cli_contract_version !== 12 ||
         result.operation !== "dag.history" ||
         result.ok !== true ||
         result.status !== "complete" ||
@@ -205,7 +207,7 @@ fi
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 11 ||
+        result.cli_contract_version !== 12 ||
         result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
@@ -214,7 +216,9 @@ fi
           "consumer-safety",
           "authority-adoption",
           "selection",
+          "boundary",
           "override-validation",
+          "selection-evidence",
           "explanation",
         ]) ||
         /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
@@ -231,7 +235,7 @@ fi
       const serialized = JSON.stringify(result);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 11 ||
+        result.cli_contract_version !== 12 ||
         result.operation !== "guide" ||
         result.topic_id !== "editing" ||
         !serialized.includes("PTADV-101") ||
@@ -350,7 +354,7 @@ node -e '
       );
       if (
         result.schema_version !== "Perttool.MutationResult.v6" ||
-        result.cli_contract_version !== 11 ||
+        result.cli_contract_version !== 12 ||
         result.operation !== "milestone-acceptance.replace" ||
         result.ok !== true ||
         result.changed !== true ||
@@ -425,7 +429,7 @@ node -e '
   if (
     source !== original ||
     result.schema_version !== "Perttool.MutationResult.v6" ||
-    result.cli_contract_version !== 11 ||
+    result.cli_contract_version !== 12 ||
     result.operation !== "milestone-acceptance.replace" ||
     result.ok !== false ||
     result.changed !== true ||
@@ -472,11 +476,11 @@ node -e '
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.NextResult.v9" ||
-        result.recommendation_interface_version !== 1 ||
+        result.schema_version !== "Perttool.NextResult.v10" ||
+        result.recommendation_interface_version !== 2 ||
         result.recommendation?.explanation_status?.complete !== true ||
         result.temporal?.authority?.policy !==
-          "recommendation_v1_plus_release_gate_plus_plan_assurance_v1" ||
+          "max_count_dispatch_v1_plus_release_gate_plus_plan_assurance_v1" ||
         !Array.isArray(result.temporal?.authority?.assurance_eligible_task_ids)
       ) process.exit(1);
     });
@@ -493,18 +497,16 @@ node -e '
       const authority = result.temporal?.authority;
       const critical = result.tasks?.find(({ id }) => id === "CRITICAL");
       if (
-        result.schema_version !== "Perttool.NextResult.v9" ||
+        result.schema_version !== "Perttool.NextResult.v10" ||
         JSON.stringify(result.recommendation?.recommended_task_ids) !==
           JSON.stringify(["CRITICAL"]) ||
         JSON.stringify(result.groups?.runnable_now) !==
-          JSON.stringify(["HIGH_PRIORITY"]) ||
-        critical?.runnable_now !== false ||
-        JSON.stringify(authority?.raw_recommended_task_ids) !==
           JSON.stringify(["CRITICAL"]) ||
-        JSON.stringify(authority?.temporal_startable_recommended_task_ids) !==
-          JSON.stringify([]) ||
+        critical?.runnable_now !== true ||
+        JSON.stringify(result.recommendation?.selection?.selected_task_ids) !==
+          JSON.stringify(["CRITICAL"]) ||
         JSON.stringify(authority?.startable_recommended_task_ids) !==
-          JSON.stringify([])
+          JSON.stringify(["CRITICAL"])
       ) process.exit(1);
     });
   '
@@ -613,7 +615,7 @@ const expectedTemporalSyntax = [
 ];
 if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
-  index.cli_contract_version !== 11 ||
+  index.cli_contract_version !== 12 ||
   index.operation !== "guide" ||
   index.topics?.length !== 15 ||
   !JSON.stringify(index).includes("Grammar versions 1 through 9") ||
@@ -625,7 +627,7 @@ if (
   ) ||
   !actuals.sections.some(({ body }) => body.includes("Grammar 5 through 9")) ||
   !editing.sections.some(({ body }) =>
-    body.includes("current Contract 11 candidate")
+    body.includes("current Contract 12 candidate")
   ) ||
   !planningPool.sections.some(({ body }) =>
     body.includes("Remaining Work is advisory planning retention and does not block project.finish")
@@ -690,7 +692,7 @@ installed_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - \
   "$installed_module" \
   "$repo_root/docs/examples/minimal.pert" \
-  "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" \
+  "$repo_root/test/fixtures/recommendation/rec-009-boundary-budget.pert" \
   "$installed_cli" \
   "$repo_root/test/fixtures/temporal-units/calendar-offset-v2.pert" \
   "$repo_root/test/fixtures/rational-duration/contract3-rejection-v3.pert" <<'NODE'
@@ -703,7 +705,7 @@ import { pathToFileURL } from "node:url";
 const api = await import(pathToFileURL(process.argv[2]).href);
 const require = createRequire(process.argv[2]);
 const exportedSchemaPath = require.resolve(
-  "perttool/schemas/Perttool.NextResult.v9.schema.json",
+  "perttool/schemas/Perttool.NextResult.v10.schema.json",
 );
 const exportedSchema = JSON.parse(readFileSync(exportedSchemaPath, "utf8"));
 const exportedAdvanceSchemaPath = require.resolve(
@@ -788,7 +790,7 @@ if (
   contract5Help.status !== 0 ||
   contract5Help.stderr !== "" ||
   contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
-  contract5HelpJson.cli_contract_version !== 11 ||
+  contract5HelpJson.cli_contract_version !== 12 ||
   contract5HelpJson.commands?.length !== 75 ||
   !serializedHelp.includes("Perttool.SchemaResult.v1") ||
   !serializedHelp.includes("project migrate-unit") ||
@@ -800,7 +802,7 @@ if (
   !serializedHelp.includes("Perttool.AdvanceResult.v4") ||
   !serializedHelp.includes('"force-history-loss"') ||
   !serializedHelp.includes("Perttool.AnalysisResult.v7") ||
-  !serializedHelp.includes("Perttool.NextResult.v9") ||
+  !serializedHelp.includes("Perttool.NextResult.v10") ||
   !serializedHelp.includes("Perttool.PlanAssuranceResult.v2") ||
   !serializedHelp.includes("Perttool.UnitMigrationResult.v5") ||
   !serializedHelp.includes('"actor"') ||
@@ -816,7 +818,7 @@ const schemaCatalog = spawnSync(
 const schemaCatalogJson = JSON.parse(schemaCatalog.stdout);
 const selectedSchema = spawnSync(
   process.argv[5],
-  ["schema", "Perttool.NextResult.v9", "--format=json"],
+  ["schema", "Perttool.NextResult.v10", "--format=json"],
   { encoding: "utf8" },
 );
 const selectedSchemaJson = JSON.parse(selectedSchema.stdout);
@@ -852,7 +854,7 @@ const outlineSchema = spawnSync(
   process.argv[5],
   [
     "schema",
-    "Perttool.NextResult.v9",
+    "Perttool.NextResult.v10",
     "--view=outline",
     "--format=json",
   ],
@@ -863,7 +865,7 @@ const detailSchema = spawnSync(
   process.argv[5],
   [
     "schema",
-    "Perttool.NextResult.v9",
+    "Perttool.NextResult.v10",
     "--view=outline",
     "--ref=#/$defs/recommendation",
     "--format=json",
@@ -873,7 +875,7 @@ const detailSchema = spawnSync(
 const detailSchemaJson = JSON.parse(detailSchema.stdout);
 const apiOutline = api.jsonSchemaResultToJson(
   api.getJsonSchemaResult(
-    "Perttool.NextResult.v9",
+    "Perttool.NextResult.v10",
     { view: "outline" },
   ),
 );
@@ -881,14 +883,14 @@ if (
   schemaCatalog.status !== 0 ||
   schemaCatalog.stderr !== "" ||
   schemaCatalogJson.schema_version !== "Perttool.SchemaResult.v1" ||
-  schemaCatalogJson.schemas?.length !== 31 ||
+  schemaCatalogJson.schemas?.length !== 33 ||
   schemaCatalogJson.schema !== null ||
   selectedSchema.status !== 0 ||
   selectedSchema.stderr !== "" ||
   selectedSchemaJson.schema?.$schema !==
     "https://json-schema.org/draft/2020-12/schema" ||
   selectedSchemaJson.schema?.$id !==
-    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json" ||
+    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v10.schema.json" ||
   selectedAdvanceSchema.status !== 0 ||
   selectedAdvanceSchema.stderr !== "" ||
   selectedAdvanceSchemaJson.schema?.$id !==
@@ -911,13 +913,13 @@ if (
   outlineSchemaJson.query?.view !== "outline" ||
   Object.hasOwn(outlineSchemaJson.schema ?? {}, "$defs") ||
   outlineSchemaJson.schema?.properties?.groups?.$ref !==
-    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json#/properties/groups" ||
+    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v10.schema.json#/properties/groups" ||
   detailSchema.status !== 0 ||
   detailSchema.stderr !== "" ||
   detailSchemaJson.schema?.properties?.result_decision === undefined ||
   JSON.stringify(apiOutline) !== JSON.stringify(outlineSchemaJson) ||
-  api.getJsonSchemaCatalog().length !== 31 ||
-  api.getJsonSchema("Perttool.NextResult.v9")?.$id !==
+  api.getJsonSchemaCatalog().length !== 33 ||
+  api.getJsonSchema("Perttool.NextResult.v10")?.$id !==
     selectedSchemaJson.schema.$id ||
   api.getJsonSchema("Perttool.AdvanceResult.v4")?.$id !==
     selectedAdvanceSchemaJson.schema.$id ||
@@ -935,7 +937,7 @@ for (const [fixture, grammarVersion] of [
     [["document", "format"], "Perttool.FormatResult.v1"],
     [["project", "show"], "Perttool.ProjectResult.v5"],
     [["dag", "analyze"], "Perttool.AnalysisResult.v7"],
-    [["dag", "next"], "Perttool.NextResult.v9"],
+    [["dag", "next"], "Perttool.NextResult.v10"],
   ]) {
     const result = spawnSync(
       process.argv[5],
@@ -947,7 +949,7 @@ for (const [fixture, grammarVersion] of [
       result.status !== 0 ||
       result.stderr !== "" ||
       json.schema_version !== schemaVersion ||
-      json.cli_contract_version !== 11 ||
+      json.cli_contract_version !== 12 ||
       json.ok !== true ||
       (route[1] === "format"
         ? "grammar_version" in json
@@ -975,7 +977,7 @@ const guidanceCoreJson = JSON.parse(
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceContract !== 11 ||
+  guidanceContract !== 12 ||
   JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) throw new Error("installed agent guidance mismatch");
 
@@ -995,10 +997,10 @@ const overrideSource = await readFile(process.argv[4], "utf8");
 const overrideNext = api.selectNextTasks(overrideSource);
 if (!overrideNext.ok || overrideNext.recommendation === null) throw new Error("installed override basis unavailable");
 const override = api.validateOverride(overrideNext, {
-  sourceSchemaVersion: "Perttool.NextResult.v9",
+  sourceSchemaVersion: "Perttool.NextResult.v10",
   sourceDigest: overrideNext.recommendation.sourceDigest,
   sourceResultDecisionId: overrideNext.recommendation.resultDecision.id,
-  selectedTaskIds: ["OPTIONAL_POLISH"],
+  selectedTaskIds: ["P", "X", "Z"],
   actor: {
     kind: "human",
     id: "package-check",
@@ -1013,7 +1015,7 @@ const override = api.validateOverride(overrideNext, {
 const overrideJson = api.overrideValidationResultToJson(override);
 if (
   !override.ok ||
-  overrideJson.schema_version !== "Perttool.OverrideDecision.v1" ||
+  overrideJson.schema_version !== "Perttool.OverrideDecision.v2" ||
   !/^override:sha256:[0-9a-f]{64}$/.test(override.override.overrideId)
 ) throw new Error("installed override contract mismatch");
 NODE

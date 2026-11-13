@@ -98,7 +98,7 @@ test("accepted source exposes the additive history surface and read-only CLI", (
   assert.equal(Object.keys(perttool).length, 155);
   assert.equal(Object.keys(core).length, 51);
   assert.equal(perttool.COMMAND_REGISTRY.length, 75);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 31);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 33);
   assert.deepEqual(
     perttool.COMMAND_REGISTRY.filter(
       ({ path: commandPath }) => commandPath.join(" ") === "dag history",

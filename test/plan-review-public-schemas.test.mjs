@@ -33,7 +33,7 @@ const clear = {
 };
 
 test("Contract 11 has 31 active roots and compiles Plan Review identities", () => {
-  assert.equal(names.length, 32); // 31 roots plus Common.
+  assert.equal(names.length, 34); // 33 catalog entries plus Common.
   assert.equal(schemas.has("Perttool.NextResult.v8.schema.json"), false);
   for (const identity of [
     "Perttool.NextResult.v9",
@@ -45,7 +45,7 @@ test("Contract 11 has 31 active roots and compiles Plan Review identities", () =
   for (const [name, schema] of schemas) {
     if (name === "Perttool.Common.v1.schema.json") continue;
     if (schema.properties?.cli_contract_version !== undefined) {
-      assert.deepEqual(schema.properties.cli_contract_version, { const: 11 }, name);
+      assert.deepEqual(schema.properties.cli_contract_version, { const: name === "Perttool.NextResult.v9.schema.json" ? 11 : 12 }, name);
     }
   }
 });
@@ -54,8 +54,8 @@ test("Plan Review projection and read result reject unknown fields", () => {
   const identity = "Perttool.PlanReviewResult.v1";
   const row = {
     schema_version: identity,
-    cli_contract_version: 11,
-    tool_version: "0.12.3",
+    cli_contract_version: 12,
+    tool_version: "0.13.0",
     operation: "plan.review-list",
     ok: true,
     document_id: "PROJECT_A",

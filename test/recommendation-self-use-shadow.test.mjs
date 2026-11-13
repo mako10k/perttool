@@ -1,13 +1,13 @@
+// R: Preserve the retained v9 forty-three-plan shadow evidence through explicit compatibility projection.
+import { legacyNextWire } from "./helpers/legacy-next-wire.mjs";
 import assert from "node:assert/strict";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
-const cli = path.join(root, "dist/cli.js");
 const planNames = [
   "advance-clean-candidate",
   "advance-history-safety",
@@ -67,11 +67,8 @@ const knownContract = {
 };
 
 function runNext(planName) {
-  return spawnSync(
-    process.execPath,
-    [cli, "dag", "next", `plans/${planName}.pert`, "--format=json"],
-    { cwd: root, encoding: "utf8" },
-  );
+  const wire = legacyNextWire(path.join(root, `plans/${planName}.pert`));
+  return { status: wire.ok ? 0 : 1, stderr: "", stdout: JSON.stringify(wire) };
 }
 
 function projectReadyTask(task) {

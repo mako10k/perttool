@@ -55,11 +55,11 @@ test("Contract 6 public results retain typed temporal and release-gated views", 
   assert.equal(analysis.precedence.makespan.numerator, 2n);
 
   const next = perttool.selectNextTasks(text);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v9");
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["LEAP_WINDOW"]);
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v10");
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(
-    next.temporal.authority.delayedRecommendedTaskIds,
+    next.temporal.authority.timeWithheldTaskIds,
     ["LEAP_WINDOW"],
   );
 });

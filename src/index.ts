@@ -2,8 +2,8 @@
 export {
   analyzeDocument,
   checkDocument,
-  selectNextTasks,
 } from "./application/contract11-runtime.js";
+export { selectNextTasks } from "./application/contract12-next.js";
 export {
   getProjectMetadata,
   inspectPlanAssurance,
@@ -27,7 +27,9 @@ export { PLAN_REVIEW_CREATE_REQUEST_ID, PLAN_REVIEW_RESOLVE_REQUEST_ID, PLAN_REV
 export type { PlanReviewCreateRequestV1, PlanReviewResolveRequestV1, PlanReviewMutationCoreResult } from "./plan-review/mutation-types.js";
 export type { PlanReviewBasisV1 } from "./plan-review/basis.js";
 export type { PlanReviewRequestSource, PlanReviewProjectionV1 } from "./plan-review/source-types.js";
-export type { Contract11NextResult as NextResult, Contract11NextResult as NextResultV9 } from "./application/contract11-runtime.js";
+export type { Contract11NextResult as NextResultV9 } from "./application/contract11-runtime.js";
+export type { NextResultV10, NextResultV10 as NextResult, NextTaskV10, NextTaskV10 as NextTask, NextGroupsV10, NextGroupsV10 as NextGroups } from "./application/contract12-next.js";
+export type { RecommendationAnalysisV2, RecommendationAnalysisV2 as RecommendationAnalysis, MaximumCountStartAuthority, DispatchSelectionEvidence } from "./recommendation/maximum-count-contract.js";
 export {
   planMilestoneAcceptanceMigration,
   recheckCommittedMigrationProof,
@@ -55,7 +57,7 @@ export {
   humanOverrideDecisionToJson,
   overrideValidationResultToJson,
   validateOverride,
-} from "./recommendation/override.js";
+} from "./recommendation/override-dispatch.js";
 export {
   planAdvance,
 } from "./application/contract7-mutation.js";
@@ -79,26 +81,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  CONTRACT11_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  contract11CommandDescriptorToJson as commandDescriptorToJson,
-  contract11CommandHelpResultToJson as commandHelpResultToJson,
-  contract11CommandRegistryToJson as commandRegistryToJson,
-  getContract11CommandDiscovery as getCommandDiscovery,
-  renderContract11CommandHelpResult as renderCommandHelpResult,
-  serializeContract11CommandHelpResult as serializeCommandHelpResult,
-} from "./command/contract11-discovery.js";
+  CONTRACT12_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  contract12CommandDescriptorToJson as commandDescriptorToJson,
+  contract12CommandHelpResultToJson as commandHelpResultToJson,
+  contract12CommandRegistryToJson as commandRegistryToJson,
+  getContract12CommandDiscovery as getCommandDiscovery,
+  renderContract12CommandHelpResult as renderCommandHelpResult,
+  serializeContract12CommandHelpResult as serializeCommandHelpResult,
+} from "./command/contract12-discovery.js";
 export {
-  contract11CommandUsageErrorToJson as commandUsageErrorToJson,
-  renderContract11CommandUsageError as renderCommandUsageError,
-  serializeContract11CommandUsageError as serializeCommandUsageError,
-  validateContract11CommandInvocation as validateCommandInvocation,
-} from "./command/contract11-usage.js";
+  contract12CommandUsageErrorToJson as commandUsageErrorToJson,
+  renderContract12CommandUsageError as renderCommandUsageError,
+  serializeContract12CommandUsageError as serializeCommandUsageError,
+  validateContract12CommandInvocation as validateCommandInvocation,
+} from "./command/contract12-usage.js";
 export {
-  contract11GuideResultToJson as guideResultToJson,
-  getContract11Guide as getGuide,
-  renderContract11GuideResult as renderGuideResult,
-  serializeContract11GuideResult as serializeGuideResult,
-} from "./help/contract11-guide.js";
+  contract12GuideResultToJson as guideResultToJson,
+  getContract12Guide as getGuide,
+  renderContract12GuideResult as renderGuideResult,
+  serializeContract12GuideResult as serializeGuideResult,
+} from "./help/contract12-guide.js";
 export {
   getJsonSchema,
   getJsonSchemaCatalog,
@@ -149,21 +151,21 @@ export type {
   CommandUsageSuggestionKind,
 } from "./command/usage.js";
 export type {
-  Contract10CommandDescriptor as CommandDescriptor,
-  Contract10CommandDescriptor as ProjectedCommandDescriptor,
-  Contract10CommandHelpResult as CommandHelpResult,
-} from "./command/contract10-discovery.js";
+  Contract12CommandDescriptor as CommandDescriptor,
+  Contract12CommandDescriptor as ProjectedCommandDescriptor,
+  Contract12CommandHelpResult as CommandHelpResult,
+} from "./command/contract12-discovery.js";
 export type {
   TargetGovernanceOptionDescriptor as OptionDescriptor,
 } from "./command/target-governance-discovery.js";
 export type {
-  Contract10CommandInvocationValidation as CommandInvocationValidation,
-  Contract10InvalidCommandInvocation as InvalidCommandInvocation,
-  Contract10ValidCommandInvocation as ValidCommandInvocation,
-} from "./command/contract10-usage.js";
+  Contract12CommandInvocationValidation as CommandInvocationValidation,
+  Contract12InvalidCommandInvocation as InvalidCommandInvocation,
+  Contract12ValidCommandInvocation as ValidCommandInvocation,
+} from "./command/contract12-usage.js";
 export type {
-  Contract10GuideResult as GuideResult,
-} from "./help/contract10-guide.js";
+  Contract12GuideResult as GuideResult,
+} from "./help/contract12-guide.js";
 export {
   beginPlanningPoolReshapeCommit,
   inspectPlanningPool,
@@ -365,10 +367,10 @@ export type {
 } from "./application/analyze.js";
 export type {
   ExplanationNode,
-  NextGroups,
+  NextGroups as NextGroupsV3,
   NextOptions,
   NextResultV3,
-  NextTask,
+  NextTask as NextTaskV3,
   ResourceRejection,
   TaskClassification,
   UnsatisfiedEdgeExplanation,
@@ -379,26 +381,26 @@ export type {
   NextResultV6,
 } from "./application/contract7-assurance.js";
 export type {
-  RecommendationAnalysis,
-  RecommendationComparison,
-  RecommendationComparisonScope,
-  RecommendationDecisionPhase,
+  RecommendationAnalysis as RecommendationAnalysisV1,
+  RecommendationComparison as RecommendationComparisonV1,
+  RecommendationComparisonScope as RecommendationComparisonScopeV1,
+  RecommendationDecisionPhase as RecommendationDecisionPhaseV1,
   RecommendationDecisionRole,
-  RecommendationDecisionStep,
-  RecommendationDescription,
+  RecommendationDecisionStep as RecommendationDecisionStepV1,
+  RecommendationDescription as RecommendationDescriptionV1,
   RecommendationDescriptionParameter,
   RecommendationEntityKind,
   RecommendationEntityReference,
   RecommendationExplanationStatus,
-  RecommendationExplanationTaskDecision,
+  RecommendationExplanationTaskDecision as RecommendationExplanationTaskDecisionV1,
   RecommendationExpression,
   RecommendationExpressionTerm,
   RecommendationFact,
   RecommendationProvenance,
   RecommendationProvenanceKind,
-  RecommendationReasonCode,
+  RecommendationReasonCode as RecommendationReasonCodeV1,
   RecommendationReasonEffect,
-  RecommendationReasonOccurrence,
+  RecommendationReasonOccurrence as RecommendationReasonOccurrenceV1,
   RecommendationRelation,
   RecommendationResultDecision,
   RecommendationScalarValue,
@@ -409,23 +411,23 @@ export type {
   RecommendationCriticalClass,
   RecommendationDistance,
   RecommendationRankingRuleId,
-  RecommendationTier,
+  RecommendationTier as RecommendationTierV1,
 } from "./recommendation/types.js";
 export type {
-  HumanOverrideDecision,
+  HumanOverrideDecision as HumanOverrideDecisionV1,
   HumanOverrideReasonCode,
   OverrideActor,
-  OverrideDecisionSource,
+  OverrideDecisionSource as OverrideDecisionSourceV1,
   OverrideEvidenceKind,
   OverrideEvidenceReference,
   OverrideFeasibility,
   OverrideReason,
-  OverrideRequest,
+  OverrideRequest as OverrideRequestV1,
   OverrideResourceWitness,
   OverrideSelection,
   OverrideTaskDecision,
   OverrideTriggerCode,
-  OverrideValidationResult,
+  OverrideValidationResult as OverrideValidationResultV1,
 } from "./recommendation/override-types.js";
 export type {
   AnalysisEdge,
@@ -621,3 +623,26 @@ export type {
   VelocityObservationCoreResult as VelocityObservationResultV1,
   VelocityObservationRequest,
 } from "./history/velocity-observation.js";
+
+export type {
+  OverrideRequestAny as OverrideRequest, OverrideRequestV2,
+  OverrideDecisionV2, OverrideValidationResultAny as OverrideValidationResult,
+  OverrideValidationResultV2,
+} from "./recommendation/maximum-count-override-types.js";
+export type HumanOverrideDecision = import("./recommendation/override-types.js").HumanOverrideDecision
+  | import("./recommendation/maximum-count-override-types.js").OverrideDecisionV2;
+
+export type {
+  DispatchComparison as RecommendationComparison,
+  DispatchDecisionStep as RecommendationDecisionStep,
+  DispatchDescription as RecommendationDescription,
+  DispatchTaskDecision as RecommendationExplanationTaskDecision,
+  DispatchReasonCode as RecommendationReasonCode,
+  DispatchReasonOccurrence as RecommendationReasonOccurrence,
+} from "./recommendation/maximum-count-contract.js";
+export type RecommendationComparisonScope = import("./recommendation/maximum-count-contract.js").DispatchComparison["scope"];
+export type RecommendationDecisionPhase = import("./recommendation/maximum-count-contract.js").DispatchDecisionStep["phase"];
+export type RecommendationTier = import("./recommendation/maximum-count-contract.js").DispatchTaskDecision["tier"];
+
+export type OverrideDecisionSource = import("./recommendation/override-types.js").OverrideDecisionSource
+  | import("./recommendation/maximum-count-override-types.js").OverrideDecisionV2["source"];

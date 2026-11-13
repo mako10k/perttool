@@ -4,6 +4,17 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-13
+
+- Select the maximum number of eligible ready tasks within remaining resource
+  capacity, including zero-capacity and individually oversized-task cases.
+- Explain equal-ranked boundary groups with selected/deferred membership and
+  per-resource allocatable and remaining units.
+- Activate CLI Contract 12, NextResult v10, recommendation model 2,
+  OverrideDecision v2 and MCP Next wire v2 through shared consumer selection.
+- Retain version-specific v8/v9 override compatibility and explicit unavailable
+  complete-forecast values under dispatch capacity overrides.
+
 ## [0.12.3] - 2026-10-29
 
 ### Fixed

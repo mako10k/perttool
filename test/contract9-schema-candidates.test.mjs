@@ -12,7 +12,7 @@ const identities = Object.freeze([
   "Perttool.AnalysisResult.v7",
   "Perttool.CheckResult.v6",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v9",
+  "Perttool.NextResult.v10",
   "Perttool.PlanAssuranceResult.v2",
   "Perttool.ProjectResult.v5",
   "Perttool.UnitMigrationResult.v5",
@@ -57,7 +57,7 @@ test("Contract 11 retains seven strict-result schema artifacts at canonical path
     assert.equal(value.$id, `https://github.com/mako10k/perttool/schemas/${identity}.schema.json`);
     assert.equal(value.title, identity);
     assert.equal(value.properties.schema_version.const, identity);
-    assert.equal(value.properties.cli_contract_version.const, 11);
+    assert.equal(value.properties.cli_contract_version.const, 12);
   }
 });
 

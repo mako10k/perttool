@@ -1,11 +1,13 @@
+// R: Preserve Issue 37 under v9 identity while successor entrypoints have separate count-first coverage.
+import { legacyNextWire } from "./helpers/legacy-next-wire.mjs";
+import { selectNextTasks } from "../dist/application/contract11-runtime.js";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
-import { getJsonSchema, selectNextTasks } from "../dist/index.js";
+import { getJsonSchema } from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -13,17 +15,6 @@ const fixture = path.join(
   root,
   "test/fixtures/recommendation/rec-008-runnable-authority.pert",
 );
-const cli = path.join(root, "dist/cli.js");
-
-function run(args) {
-  const result = spawnSync(process.execPath, [cli, ...args], {
-    cwd: root,
-    encoding: "utf8",
-  });
-  assert.equal(result.status, 0, result.stderr);
-  assert.equal(result.stderr, "");
-  return result.stdout;
-}
 
 function validator() {
   const ajv = new Ajv2020({ allErrors: true, strict: true });
@@ -65,9 +56,9 @@ test("Issue #37 composes raw recommendation with runnable selection before start
   );
 });
 
-test("Issue #37 JSON and text expose the same non-runnable raw recommendation", () => {
+test("Issue #37 v9 wire projection retains its non-runnable raw recommendation", () => {
   const before = readFileSync(fixture);
-  const json = JSON.parse(run(["dag", "next", fixture, "--format=json"]));
+  const json = legacyNextWire(fixture);
   assert.equal(json.schema_version, "Perttool.NextResult.v9");
   assert.deepEqual(json.plan_review, {
     model_version: 1, state: "clear", open_request_ids: [], required_actions: [],
@@ -83,15 +74,11 @@ test("Issue #37 JSON and text expose the same non-runnable raw recommendation", 
   );
   assert.deepEqual(json.temporal.authority.startable_recommended_task_ids, []);
 
-  const text = run(["dag", "next", fixture, "--color=never"]);
-  assert.match(text, /^STARTABLE RECOMMENDED -$/mu);
-  assert.match(text, /^NON-RUNNABLE RAW RECOMMENDED CRITICAL$/mu);
-  assert.match(text, /^RUNNABLE NOW\nHIGH_PRIORITY /mu);
   assert.deepEqual(readFileSync(fixture), before);
 });
 
 test("Issue #37 complete JSON satisfies the active closed schema and documents authority", () => {
-  const json = JSON.parse(run(["dag", "next", fixture, "--format=json"]));
+  const json = legacyNextWire(fixture);
   const validate = validator().getSchema(
     "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json",
   );

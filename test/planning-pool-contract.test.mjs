@@ -158,9 +158,9 @@ test("public contract activates the reserved planning runtime atomically", async
   );
   const catalog = rootApi.getJsonSchemaCatalog();
 
-  assert.equal(packageJson.version, "0.12.3");
+  assert.equal(packageJson.version, "0.13.0");
   assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
-  assert.equal(catalog.length, 31);
+  assert.equal(catalog.length, 33);
   assert.equal(Object.keys(rootApi).length, 155);
   assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, 51);
@@ -235,7 +235,7 @@ test("accepted pre-Advance lifecycle and canonical residual remain aligned", asy
   assert.doesNotMatch(residualSource, /^gate /mu);
   assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.assuranceUnavailableRecommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.unavailableTaskIds, []);
   assert.deepEqual(next.assurance.requiredActions, []);
   assert.equal(next.acceptance.milestones.length, 1);
   assert.equal(next.acceptance.milestones[0].milestoneId, "PLANNING_POOL_ACCEPTED");

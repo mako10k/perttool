@@ -480,3 +480,11 @@ An AI MUST NOT compensate for the absence of these facts through inference or na
 - The contract passing winner, alternative, and decisive rule to the structured decision trace is defined.
 - Release semantics, rework risk, and information insufficiency are not inferred.
 - The current interface and implementation are not changed.
+
+## Contract 12 dispatch successor
+
+The [Maximum-count Task Selection Public Contract](maximum-count-selection.md)
+uses the complete ready frontier and maximum simultaneous task count as its
+primary objective. Existing semantic comparison keys provide its secondary
+ordering. Algorithm 1 remains the version-specific ranking and horizon model
+described in this document.

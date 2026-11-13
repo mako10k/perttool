@@ -56,7 +56,7 @@ test("Plan Review public CLI binds migration, advisory Next, resolution, and clo
     assert.equal(readFileSync(opened, "utf8"), creation.candidate.text);
     assert.equal(creation.plan_basis.status, "unchanged");
     const after = run(["dag", "next", opened]);
-    assert.equal(after.schema_version, "Perttool.NextResult.v9");
+    assert.equal(after.schema_version, "Perttool.NextResult.v10");
     assert.deepEqual(after.recommendation.recommended_task_ids, before.recommendation.recommended_task_ids);
     assert.deepEqual(after.temporal.authority.startable_recommended_task_ids,
       before.temporal.authority.startable_recommended_task_ids);

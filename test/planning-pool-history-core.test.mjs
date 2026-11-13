@@ -448,7 +448,7 @@ test("PPHC-015 and PPHC-016 are deterministic, no-write, and publicly inactive",
   assert.equal(Object.isFrozen(first), true);
   assert.equal("reconstructPlanningPoolHistory" in rootApi, false);
   assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
-  assert.equal(rootApi.getJsonSchemaCatalog().length, 31);
+  assert.equal(rootApi.getJsonSchemaCatalog().length, 33);
   assert.equal(Object.keys(rootApi).length, 155);
   assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, 51);

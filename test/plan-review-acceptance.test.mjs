@@ -61,14 +61,14 @@ function conforms(value) {
   assert.equal(typeof validate, "function");
   assert.equal(validate(value), true, JSON.stringify(validate.errors));
 }
-// Compare decision meaning while permitting the required exact source rebinding.
+// Compare selection meaning while permitting source-bound input and decision commitments to change.
 function decisionMeaning(value) {
   if (Array.isArray(value)) return value.map(decisionMeaning);
   if (value !== null && typeof value === "object") {
     return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "sourceDigest")
       .map(([key, item]) => [key, decisionMeaning(item)]));
   }
-  return value;
+  return typeof value === "string" ? value.replace(/sha256:[0-9a-f]{64}/gu, "<source-bound-digest>") : value;
 }
 function register(id, body) {
   const row = fixture.cases.find((row) => row.id === id);
@@ -278,18 +278,19 @@ register("PRAC-017", (t) => {
     assert.ok(rendered.indexOf(firstLine) < rendered.indexOf("RECOMMENDATION\n"));
   }
   const withExtra = { ...next, unrecognized: true };
-  const checker = validators.getSchema("https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v9.schema.json");
+  const checker = validators.getSchema("https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v10.schema.json");
   assert.equal(checker(withExtra), false);
   assert.equal(Object.keys(api).length, 155);
   assert.equal(Object.keys(awaitableNode).length, 155);
   assert.equal(Object.keys(awaitableCore).length, 51);
 });
+const retainedContract11 = await import(pathToFileURL(path.join(target, "dist/application/contract11-runtime.js")));
 const awaitableNode = await import(pathToFileURL(path.join(target, "dist/node/index.js")));
 const awaitableCore = await import(pathToFileURL(path.join(target, "dist/core/index.js")));
 register("PRAC-018", (t) => {
   const directory = workspace(t);
   for (let version = 1; version <= 9; version += 1) {
-    const text = source(version); const before = legacy.selectNextTasks(text); const after = api.selectNextTasks(text);
+    const text = source(version); const before = legacy.selectNextTasks(text); const after = retainedContract11.selectNextTasks(text);
     const { schemaVersion: oldIdentity, ...oldMeaning } = before;
     const { schemaVersion: newIdentity, planReview, ...newMeaning } = after;
     assert.equal(before.ok, true, `Grammar ${version}`);

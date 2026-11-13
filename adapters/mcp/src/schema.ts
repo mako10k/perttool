@@ -103,6 +103,7 @@ function publicSemanticSchema(
       !facadeFields.has(key)
     ),
     properties,
+    ...(cloned["allOf"] === undefined ? {} : { allOf: cloned["allOf"] }),
     additionalProperties: false,
   };
   const definitions: Record<string, MutableJson> = {};

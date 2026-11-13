@@ -8,9 +8,9 @@ import { fileURLToPath } from "node:url";
 import {
   canonicalOverrideArtifact,
   overrideValidationResultToJson,
-  selectNextTasks,
   validateOverride,
 } from "../dist/index.js";
+import { selectNextTasks } from "../dist/application/contract11-runtime.js";
 import { selectNextTasks as selectContract10NextTasks } from "../dist/application/contract10-runtime.js";
 import {
   evaluateRecommendationExpression,

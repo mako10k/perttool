@@ -7,6 +7,7 @@ import { fieldNamed } from "../model/syntax.js";
 import type {
   DocumentNode,
   RequirementValue,
+  TargetDeclarationKind,
 } from "../model/syntax.js";
 import type {
   RecommendationAnalysis,
@@ -46,7 +47,7 @@ export interface OverrideValidationSource {
   readonly schemaVersion: string;
   readonly ok: boolean;
   readonly diagnosticsTruncated: boolean;
-  readonly document: DocumentNode;
+  readonly document: DocumentNode<TargetDeclarationKind>;
   readonly capacityOverrides: ReadonlyMap<string, number>;
   readonly groups: {
     readonly ready: readonly string[];
@@ -63,7 +64,7 @@ export interface OverrideValidationSource {
     readonly tasks: readonly {
       readonly taskId: string;
       readonly timeEligibility: {
-        readonly state: "eligible" | "not_yet_eligible" | "unavailable";
+        readonly state: "eligible" | "not_applicable" | "not_yet_eligible" | "unavailable";
       };
     }[];
   } | null;
@@ -309,7 +310,7 @@ function sourceContractError(
 }
 
 function canonicalEvidence(
-  request: OverrideRequest,
+  request: Pick<OverrideRequest, "evidenceReferences">,
 ): readonly OverrideEvidenceReference[] | null {
   if (
     !Array.isArray(request.evidenceReferences) ||
@@ -339,8 +340,8 @@ function canonicalEvidence(
   );
 }
 
-function validHumanFields(
-  request: OverrideRequest,
+export function validHumanFields(
+  request: Omit<OverrideRequest, "sourceSchemaVersion">,
 ): {
   readonly evidence: readonly OverrideEvidenceReference[];
 } | null {
@@ -373,8 +374,14 @@ function triggerCodesForTier(
   return triggers;
 }
 
+interface OverrideResourceSource {
+  readonly document: Pick<DocumentNode<TargetDeclarationKind>, "declarations">;
+  readonly capacityOverrides: ReadonlyMap<string, number>;
+  readonly tasks: OverrideValidationSource["tasks"];
+}
+
 function declaredCapacities(
-  source: OverrideSource,
+  source: OverrideResourceSource,
 ): ReadonlyMap<string, number> {
   const capacities = new Map<string, number>();
   for (const declaration of source.document.declarations) {
@@ -449,8 +456,8 @@ function feasibilityExpression(
   };
 }
 
-function evaluateSelectedSet(
-  source: OverrideSource,
+export function evaluateSelectedSet(
+  source: OverrideResourceSource,
   selectedTaskIds: readonly string[],
 ): {
   readonly feasible: boolean;

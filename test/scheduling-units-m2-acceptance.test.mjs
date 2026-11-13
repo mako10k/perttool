@@ -138,7 +138,7 @@ test("active Contract 11 routes retain Grammar 2", () => {
     [["document", "format"], "Perttool.FormatResult.v1"],
     [["project", "show"], "Perttool.ProjectResult.v5"],
     [["dag", "analyze"], "Perttool.AnalysisResult.v7"],
-    [["dag", "next"], "Perttool.NextResult.v9"],
+    [["dag", "next"], "Perttool.NextResult.v10"],
   ];
 
   for (const [route, schemaVersion] of cases) {
@@ -147,7 +147,7 @@ test("active Contract 11 routes retain Grammar 2", () => {
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 11);
+    assert.equal(json.cli_contract_version, 12);
     assert.equal(json.ok, true);
     if (schemaVersion !== "Perttool.FormatResult.v1") {
       assert.equal(json.grammar_version, 2);

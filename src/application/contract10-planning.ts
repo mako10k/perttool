@@ -1,3 +1,4 @@
+// R: Compose Planning Pool operations with source-bound current execution evidence.
 import { evaluateContract9PlanAssurance } from "./contract9-assurance-evaluate.js";
 import { composeContract9AssuranceImpact } from "./contract9-mixed-mutation.js";
 import {
@@ -70,7 +71,7 @@ import {
   scanTemporalDeclarationBlocks,
   temporalScheduleBaseText,
 } from "../temporal-schedule/source-lexical.js";
-import { selectNextTasks } from "./contract9-temporal.js";
+import { selectNextTasks } from "./contract12-next.js";
 
 export interface PlanningMutationOptions {
   readonly governance?: GovernanceRequestInput;
@@ -92,10 +93,7 @@ export function strictPlanningExecutionContext(text: string): PlanningObservatio
   const digest = sha256DigestUtf8(text);
   const parsed = parsePlanningPoolSource(text, PLANNING_POOL_SOURCE_CAPABILITY);
   const documentId = parsed.documentId ?? "";
-  const base = parsed.grammarVersion === 9
-    ? planningPoolBaseText(text, scanPlanningDeclarationBlocks(text))
-    : text;
-  const next = selectNextTasks(base, { sourceDigest: digest });
+  const next = selectNextTasks(text, { sourceDigest: digest });
   const recommended = next.recommendation?.recommendedTaskIds ?? [];
   const startable = next.temporal?.authority.startableRecommendedTaskIds ?? [];
   return Object.freeze({

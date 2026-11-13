@@ -1,3 +1,4 @@
+// R: Verify the closed dependency direction, compatibility facades and source inventory.
 import assert from "node:assert/strict";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -104,8 +105,8 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  // The retained node-host baseline stays fixed; current Contract 11 source has 100 additive files.
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 100);
+  // The retained host baseline stays fixed; Issue #48 adds nineteen selection and adoption modules.
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 100 + 19);
 });
 
 test("relocated services retain exact compatibility facades", async () => {
@@ -151,7 +152,7 @@ test("public package closure and dependency cases remain stable", async () => {
     fixture.target.package_root_export_count,
   );
   assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 31);
-  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 11);
+  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 13);
 
   const accepted = new Set();
   for (const contractCase of fixture.cases) {

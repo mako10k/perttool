@@ -11,7 +11,7 @@ test("README is a current user guide with separate historical and developer rout
   const readme = await readFile(path.join(root, "README.md"), "utf8");
 
   assert.match(readme, /Registry snapshot on \d{4}-\d{2}-\d{2}/u);
-  assert.match(readme, /The `0\.12\.3` package provides the compatible committed-source proof patch/u);
+  assert.match(readme, /The `0\.13\.0` package provides the compatible committed-source proof patch/u);
   assert.match(readme, /Grammar 10 and CLI Contract 11 remain unchanged/u);
   assert.match(readme, /npm `latest` identifies `0\.12\.1` and\n`beta` identifies `0\.12\.2`/u);
   assert.match(readme, /Exact `0\.12\.2` is the rollback pin/u);

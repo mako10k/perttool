@@ -1,3 +1,4 @@
+// R: Compose validated precedence and complete resource forecasts with shared applied-capacity checks.
 import type { Diagnostic, RelatedLocation } from "../model/diagnostics.js";
 import {
   hasErrors,
@@ -63,7 +64,7 @@ function diagnostic(
   };
 }
 
-function validateCapacityOverrides(
+export function validateDispatchCapacityOverrides(
   graph: ResidualGraph,
   overrides: ReadonlyMap<string, number>,
 ): readonly Diagnostic[] {
@@ -79,21 +80,6 @@ function validateCapacityOverrides(
   const effective = new Map(
     [...graph.resources].map(([id, resource]) => [id, overrides.get(id) ?? resource.capacity]),
   );
-  for (const declaration of graph.document.declarations.filter((candidate) => candidate.kind === "task")) {
-    const requirements = (fieldNamed(declaration, "requires")?.value ?? []) as readonly RequirementValue[];
-    for (const requirement of requirements) {
-      if (requirement.units > effective.get(requirement.resourceId)!) {
-        diagnostics.push({
-          code: "PTSEM-208",
-          severity: "error",
-          message: `requirement ${requirement.units} exceeds what-if capacity ${effective.get(requirement.resourceId)!}`,
-          entityId: declaration.id,
-          span: requirement.unitsSpan,
-          helpTopic: "analysis.resources",
-        });
-      }
-    }
-  }
   for (const [id, resource] of graph.resources) {
     const activeTasks = graph.document.declarations.filter(
       (declaration) =>
@@ -118,6 +104,33 @@ function validateCapacityOverrides(
           })
           .map((task) => ({ message: `active task ${task.id}`, span: task.idSpan })),
       });
+    }
+  }
+  return diagnostics;
+}
+
+function validateCapacityOverrides(
+  graph: ResidualGraph,
+  overrides: ReadonlyMap<string, number>,
+): readonly Diagnostic[] {
+  const diagnostics = [...validateDispatchCapacityOverrides(graph, overrides)];
+  if (diagnostics.some((item) => item.code === "PTSEM-206")) return diagnostics;
+  const effective = new Map(
+    [...graph.resources].map(([id, resource]) => [id, overrides.get(id) ?? resource.capacity]),
+  );
+  for (const declaration of graph.document.declarations.filter((candidate) => candidate.kind === "task")) {
+    const requirements = (fieldNamed(declaration, "requires")?.value ?? []) as readonly RequirementValue[];
+    for (const requirement of requirements) {
+      if (requirement.units > effective.get(requirement.resourceId)!) {
+        diagnostics.push({
+          code: "PTSEM-208",
+          severity: "error",
+          message: `requirement ${requirement.units} exceeds what-if capacity ${effective.get(requirement.resourceId)!}`,
+          entityId: declaration.id,
+          span: requirement.unitsSpan,
+          helpTopic: "analysis.resources",
+        });
+      }
     }
   }
   return diagnostics;

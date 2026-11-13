@@ -37,29 +37,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getContract11Guide as getAssuranceGuide,
-  renderContract11GuideResult as renderAssuranceGuideResult,
-  serializeContract11GuideResult as serializeAssuranceGuideResult,
-} from "./help/contract11-guide.js";
+  getContract12Guide as getAssuranceGuide,
+  renderContract12GuideResult as renderAssuranceGuideResult,
+  serializeContract12GuideResult as serializeAssuranceGuideResult,
+} from "./help/contract12-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  CONTRACT11_COMMAND_REGISTRY as ASSURANCE_COMMAND_REGISTRY,
-  getContract11CommandDiscovery as getAssuranceCommandDiscovery,
-  renderContract11CommandHelpResult as renderAssuranceCommandHelpResult,
-  serializeContract11CommandHelpResult as serializeAssuranceCommandHelpResult,
-  type Contract11CommandDescriptor as AssuranceCommandDescriptor,
-} from "./command/contract11-discovery.js";
+  CONTRACT12_COMMAND_REGISTRY as ASSURANCE_COMMAND_REGISTRY,
+  getContract12CommandDiscovery as getAssuranceCommandDiscovery,
+  renderContract12CommandHelpResult as renderAssuranceCommandHelpResult,
+  serializeContract12CommandHelpResult as serializeAssuranceCommandHelpResult,
+  type Contract12CommandDescriptor as AssuranceCommandDescriptor,
+} from "./command/contract12-discovery.js";
 import {
   handlerCommandUsageError,
 } from "./command/usage.js";
 import {
-  renderContract11CommandUsageError as renderAssuranceCommandUsageError,
-  serializeContract11CommandUsageError as serializeAssuranceCommandUsageError,
-  validateContract11CommandInvocation as validateAssuranceCommandInvocation,
-} from "./command/contract11-usage.js";
+  renderContract12CommandUsageError as renderAssuranceCommandUsageError,
+  serializeContract12CommandUsageError as serializeAssuranceCommandUsageError,
+  validateContract12CommandInvocation as validateAssuranceCommandInvocation,
+} from "./command/contract12-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -126,7 +126,6 @@ import {
 import {
   analyzeDocument as analyzeContract11Document,
   checkDocument as checkContract11Document,
-  selectNextTasks as selectContract11NextTasks,
   planReviewProjection,
 } from "./application/contract11-runtime.js";
 import { planPlanReviewCreate, planPlanReviewResolve } from "./application/plan-review-mutation.js";
@@ -148,6 +147,7 @@ import {
   contract9WireJson,
 } from "./application/contract9-projection.js";
 import { planContract9GrammarMigration } from "./application/contract9-format-migration.js";
+import { selectNextTasks as selectContract12NextTasks } from "./application/contract12-next.js";
 import { planContract11GrammarMigration } from "./application/contract11-migration.js";
 import { liftContract11Candidate } from "./application/contract11-candidate.js";
 import { planContract9TemporalMutation } from "./application/contract9-temporal-mutation.js";
@@ -271,7 +271,7 @@ const {
 );
 const analyzeDocument = analyzeContract11Document;
 const checkDocument = checkContract11Document;
-const selectNextTasks = selectContract11NextTasks;
+const selectNextTasks = selectContract12NextTasks;
 type UnitMigrationResult = ReturnType<typeof planUnitMigration>;
 
 function contract9MutationResultToJson(
@@ -522,7 +522,7 @@ function writeJson(value: unknown): void {
   const contract8Value =
     typeof value === "object" && value !== null && !Array.isArray(value) &&
       "cli_contract_version" in value
-      ? { ...value, cli_contract_version: 11 }
+      ? { ...value, cli_contract_version: 12 }
       : value;
   process.stdout.write(`${JSON.stringify(contract8Value)}\n`);
 }
@@ -791,7 +791,7 @@ function analysisMode(raw: string | undefined): AnalysisMode {
   throw new UsageError("--schedule must be precedence, resource, or both");
 }
 
-function capacityOverrides(values: readonly string[]): ReadonlyMap<string, number> {
+function capacityOverrides(values: readonly string[], minimum = 1): ReadonlyMap<string, number> {
   const overrides = new Map<string, number>();
   for (const value of values) {
     const match = /^([A-Za-z][A-Za-z0-9_-]*)=([0-9]+)$/.exec(value);
@@ -800,8 +800,8 @@ function capacityOverrides(values: readonly string[]): ReadonlyMap<string, numbe
     }
     const id = match[1]!;
     const capacity = Number(match[2]!);
-    if (!Number.isSafeInteger(capacity) || capacity < 1 || capacity > 2_147_483_647) {
-      throw new UsageError("--capacity integer must be from 1 to 2147483647");
+    if (!Number.isSafeInteger(capacity) || capacity < minimum || capacity > 2_147_483_647) {
+      throw new UsageError(`--capacity integer must be from ${minimum} to 2147483647`);
     }
     if (overrides.has(id)) throw new UsageError(`duplicate --capacity for ${id}`);
     overrides.set(id, capacity);
@@ -4088,7 +4088,7 @@ function nextJson(
     capacity_overrides: [...result.capacityOverrides]
       .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
       .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
-    recommendation: recommendationAnalysisToJson(result.recommendation!),
+    recommendation: result.recommendation === null ? null : recommendationAnalysisToJson(result.recommendation),
     groups: {
       active: result.groups.active,
       ready: result.groups.ready,
@@ -4156,79 +4156,6 @@ function nextJson(
   };
 }
 
-function recommendationParameterTaskIds(
-  description: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>["descriptions"][number],
-  name: string,
-): readonly string[] {
-  const parameter = description.parameters.find((item) => item.name === name);
-  if (parameter === undefined) return [];
-  if (parameter.value.type === "entity" && parameter.value.value.kind === "task") {
-    return [parameter.value.value.id];
-  }
-  if (parameter.value.type !== "list" && parameter.value.type !== "set") return [];
-  return parameter.value.items.flatMap((item) =>
-    item.type === "entity" && item.value.kind === "task" ? [item.value.id] : [],
-  );
-}
-
-function recommendationParameterEntityId(
-  description: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>["descriptions"][number],
-  name: string,
-): string | null {
-  const parameter = description.parameters.find((item) => item.name === name);
-  return parameter?.value.type === "entity" ? parameter.value.value.id : null;
-}
-
-function renderRecommendationSummary(
-  recommendation: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>,
-): readonly string[] {
-  const steps = new Map(recommendation.decisionSteps.map((step) => [step.id, step]));
-  const reasons = new Map(
-    recommendation.reasonOccurrences.map((reason) => [reason.id, reason]),
-  );
-  const descriptions = new Map(
-    recommendation.descriptions.map((description) => [description.id, description]),
-  );
-  const lines = [
-    "RECOMMENDATION",
-    `ALGORITHM ${recommendation.algorithm.id}@${recommendation.algorithm.version} optimal=${recommendation.algorithm.optimal}`,
-    'EXPLANATION detail=summary complete=false machine_trace="--format json"',
-    `RECOMMENDED SET ${recommendation.recommendedTaskIds.join(",") || "-"}`,
-  ];
-  const sections = [
-    ["RECOMMENDED START", "recommended"],
-    ["ALLOWED ADDITIONAL START", "allowed"],
-    ["DEFERRED START", "deferred"],
-    ["DISCOURAGED START", "discouraged"],
-  ] as const;
-  for (const [title, tier] of sections) {
-    lines.push("", title);
-    const decisions = recommendation.taskDecisions.filter(
-      (decision) => decision.tier === tier,
-    );
-    if (decisions.length === 0) {
-      lines.push("-");
-      continue;
-    }
-    for (const decision of decisions) {
-      const description = descriptions.get(decision.summaryDescriptionId)!;
-      const primaryReason = reasons.get(description.sourceReasonIds[0]!)!;
-      const rule = recommendationParameterEntityId(description, "decisive_rule_id") ??
-        steps.get(primaryReason.decisionStepId)!.rule.id;
-      const blockerIds = [
-        ...recommendationParameterTaskIds(description, "higher_priority_task_ids"),
-        ...recommendationParameterTaskIds(description, "active_blocker_task_ids"),
-      ];
-      lines.push(
-        `${decision.subjectTaskId} tier=${decision.tier} rule=${rule} higher_priority=${decision.primaryHigherPriorityTaskId ?? "-"} blockers=${blockerIds.join(",") || "-"}`,
-        `  reason=${primaryReason.code}`,
-        `  why: ${description.text}`,
-      );
-    }
-  }
-  return lines;
-}
-
 function renderNextTask(
   task: ReturnType<typeof selectNextTasks>["tasks"][number],
   unit: DurationUnit,
@@ -4247,7 +4174,7 @@ function renderNextTask(
       : [`forecast=${durationText(task.forecastExpected, forecastUnit, precision)}`]),
     `TF=${durationText(task.totalFloat, unit, precision)}`,
     `precedence_critical=${task.precedenceCritical}`,
-    `schedule_critical=${task.scheduleCritical}`,
+    `schedule_critical=${task.scheduleCritical === null ? "unavailable" : task.scheduleCritical}`,
     `owner=${task.owner ?? "-"}`,
     `resources=${resources || "-"}`,
   ].join(" ");
@@ -4265,28 +4192,44 @@ function renderExplanation(
   return lines;
 }
 
+function renderMaximumCountSummary(recommendation: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>): readonly string[] {
+  const selection = recommendation.selection;
+  const lines = ["RECOMMENDATION", "SELECTION OBJECTIVE maximum_startable_task_count", `MAXIMUM STARTABLE TASKS ${selection.maximumTaskCount}`,
+    `SELECTION INPUT ${selection.inputDigest}`];
+  for (const group of selection.boundaryGroups) {
+    lines.push(`BOUNDARY RANK GROUP ${group.rankGroup}`,
+      `TIED ELIGIBLE ${group.candidates.map((task) => task.taskId).join(" ")}`,
+      `OUTSIDE SELECTED ${group.outsideSelectedTaskIds.join(" ") || "-"}`,
+      `SELECTED ${group.selectedTaskIds.join(" ") || "-"}`, `UNSELECTED ${group.unselectedTaskIds.join(" ") || "-"}`);
+    for (const resource of group.resources) {
+      lines.push(`RESOURCE ${resource.resourceId} capacity=${resource.capacity} active=${resource.activeUsage} outside=${resource.outsideGroupUsage} allocatable=${resource.allocatableUnits} selected=${resource.selectedUsage} remaining=${resource.remainingUnits}`);
+    }
+  }
+  for (const task of recommendation.taskDecisions) {
+    if (task.tier === "deferred") lines.push(`DEFERRED ${task.subjectTaskId} ${recommendation.descriptions.find((item) => item.id === task.summaryDescriptionId)!.text}`);
+  }
+  return lines;
+}
+
 function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   const unit = result.durationUnit!;
   const taskById = new Map(result.tasks.map((task) => [task.id, task]));
   const authority = result.temporal!.authority;
-  const runnableNow = new Set(result.groups.runnableNow);
-  const nonRunnableRecommended = authority.rawRecommendedTaskIds.filter(
-    (taskId) => !runnableNow.has(taskId),
-  );
+
   const lines = [
     "START AUTHORITY",
     `POLICY ${authority.policy}`,
-    `STARTABLE RECOMMENDED ${authority.startableRecommendedTaskIds.join(",") || "-"}`,
-    `NON-RUNNABLE RAW RECOMMENDED ${nonRunnableRecommended.join(",") || "-"}`,
-    `DELAYED RECOMMENDED ${authority.delayedRecommendedTaskIds.join(",") || "-"}`,
-    `UNAVAILABLE RECOMMENDED ${authority.unavailableRecommendedTaskIds.join(",") || "-"}`,
-    "DEADLINE FACTS INFORMATIONAL FOR RANKING v1",
+    `STARTABLE RECOMMENDED ${authority.startableRecommendedTaskIds.join(" ") || "-"}`,
+    `TIME WITHHELD ${authority.timeWithheldTaskIds.join(",") || "-"}`,
+    `ASSURANCE WITHHELD ${authority.assuranceWithheldTaskIds.join(",") || "-"}`,
+    `UNAVAILABLE ${authority.unavailableTaskIds.join(",") || "-"}`,
+    "DEADLINE FACTS INFORMATIONAL FOR RANKING",
     "",
     `PERTTOOL NEXT ${result.documentId ?? "-"}`,
     `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
     `VELOCITY_FORECAST_UNIT ${result.velocityForecast?.targetUnit ?? "-"}`,
   ];
-  lines.push("", ...renderRecommendationSummary(result.recommendation!));
+  lines.push("", ...renderMaximumCountSummary(result.recommendation!));
   const section = (title: string, ids: readonly string[], details: "none" | "rejection" | "blocked" | "explanation" = "none"): void => {
     lines.push("", title);
     if (ids.length === 0) {
@@ -4325,7 +4268,7 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   section("ACTIVE", result.groups.active);
   section("RUNNABLE NOW", result.groups.runnableNow);
   section(
-    "READY / WAITING RESOURCE",
+    "READY / DEFERRED",
     result.groups.ready.filter((id) => !result.groups.runnableNow.includes(id)),
     "rejection",
   );
@@ -4367,7 +4310,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     1,
     1000,
   );
-  const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
+  const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? [], 0);
   const sourceOperand = parsed.positionals[0]!;
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
   let input: Awaited<ReturnType<typeof readDocument>>;
@@ -4415,7 +4358,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     writeJson({ plan_review: planReviewProjection(input.text), ...liftContract9NextResultJson({
       schema_version: "Perttool.NextResult.v7",
       cli_contract_version: 8,
-      recommendation_interface_version: 1,
+      recommendation_interface_version: 2,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
       ok,
@@ -4425,11 +4368,12 @@ async function runNext(args: readonly string[]): Promise<number> {
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
       grammar_version: result.grammarVersion,
+      recommendation: null,
       ...(result.durationUnit === null ? {} : nextJson(result)),
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
       acceptance: snakeJson(result.acceptance),
-    }, result), schema_version: "Perttool.NextResult.v9" });
+    }, result), schema_version: "Perttool.NextResult.v10" });
   } else {
     if (ok) {
       const review = planReviewProjection(input.text);

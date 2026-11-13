@@ -347,3 +347,11 @@ Implementation begins only in `MCP_READ_ADAPTER` after both
 `MCP_CONTRACT_READY` and `NODE_PORTS_READY` are reached. MCP mutation,
 arbitrary path or Git-ref sources, Streamable HTTP, public distribution, and
 release work remain separate decisions.
+
+## Contract 12 Next projection
+
+The [Maximum-count Task Selection Public Contract](maximum-count-selection.md)
+defines the perttool_next transition to semantic NextResult v10 and adapter-owned
+McpNextResult v2 under MCP transport protocol model 1. Discovery, the derived
+closed wire schema, selection input, complete boundary groups and source binding
+are adopted together in MAX_COUNT_ADOPTION.

@@ -25,7 +25,7 @@ function run(args, options = {}) {
   });
 }
 
-test("NextResult.v9 publishes the same complete recommendation from Core and CLI", async () => {
+test("NextResult.v10 publishes the same complete recommendation from Core and CLI", async () => {
   const source = await readFile(path.join(root, fixture));
   const sourceDigest = digestDocumentBytes(source);
   const core = selectNextTasks(source.toString("utf8"), { sourceDigest });
@@ -35,9 +35,9 @@ test("NextResult.v9 publishes the same complete recommendation from Core and CLI
   const command = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v9");
-  assert.equal(json.cli_contract_version, 11);
-  assert.equal(json.recommendation_interface_version, 1);
+  assert.equal(json.schema_version, "Perttool.NextResult.v10");
+  assert.equal(json.cli_contract_version, 12);
+  assert.equal(json.recommendation_interface_version, 2);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
     json.recommendation,
@@ -53,7 +53,7 @@ test("NextResult.v9 publishes the same complete recommendation from Core and CLI
   );
 });
 
-test("NextResult.v9 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
+test("NextResult.v10 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
   const command = run([
     "dag",
     "next",
@@ -61,65 +61,18 @@ test("NextResult.v9 complete empty recommendation preserves operational fields a
     "--format=json",
   ]);
   assert.equal(command.status, 0, command.stderr);
-  const expected = JSON.parse(
-    await readFile(
-      path.join(testDirectory, "golden/recommendation/v3-empty.expected.json"),
-      "utf8",
-    ),
-  );
+  const contract = JSON.parse(await readFile(path.join(testDirectory, "fixtures/maximum-count-public-contract-v1.json"), "utf8"));
   const actual = JSON.parse(command.stdout);
-  const {
-    grammar_version: grammarVersion,
-    temporal,
-    assurance,
-    groups,
-    ...retained
-  } = actual;
-  const { suspended, ...retainedGroups } = groups;
-  assert.deepEqual(suspended, []);
-  assert.deepEqual(
-    { ...retained, groups: retainedGroups },
-    {
-      ...expected,
-      schema_version: "Perttool.NextResult.v9",
-      cli_contract_version: 11,
-      acceptance: null,
-      schedule_alerts: null,
-      plan_review: { model_version: 1, state: "clear", open_request_ids: [], required_actions: [] },
-    },
-  );
-  assert.equal(grammarVersion, 1);
-  assert.deepEqual(temporal.authority, {
-    policy: "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
-    recommendation_algorithm: {
-      id: "perttool.recommendation-ranking.lexicographic-frontier",
-      version: 1,
-    },
-    deadline_facts_used_for_ranking: false,
-    time_eligible_task_ids: ["TASK_BLOCKED"],
-    time_ineligible_task_ids: [],
-    time_eligibility_unavailable_task_ids: [],
-    startable_recommended_task_ids: [],
-    delayed_recommended_task_ids: [],
-    unavailable_recommended_task_ids: [],
-    complete: true,
-    raw_recommended_task_ids: [],
-    temporal_startable_recommended_task_ids: [],
-    assurance_eligible_task_ids: ["TASK_BLOCKED"],
-    assurance_withheld_recommended_task_ids: [],
-    assurance_unavailable_recommended_task_ids: [],
-    safe_stop_reasons: [],
-  });
-  assert.equal(assurance.coverage, "not_enabled");
-  assert.equal(expected.recommendation.task_decisions.length, 0);
-  assert.equal(expected.recommendation.result_decision.recommended_task_ids.length, 0);
+  assert.deepEqual(actual, { ...contract.empty_example, tool_version: actual.tool_version });
+  assert.deepEqual(actual.recommendation.selection.selected_task_ids, []);
+  assert.equal(actual.recommendation.selection.maximum_task_count, 0);
 });
 
-test("dag next text publishes four tier sections and preserves operational sections", async () => {
+test("dag next text publishes count-first selection and operational sections", async () => {
   const command = run(["dag", "next", fixture, "--color=never"]);
   assert.equal(command.status, 0, command.stderr);
   const expected = await readFile(
-    path.join(testDirectory, "golden/recommendation/v5-text.expected.txt"),
+    path.join(testDirectory, "golden/recommendation/v10-text.expected.txt"),
     "utf8",
   );
   const newline = command.stdout.indexOf("\n");
@@ -155,15 +108,15 @@ test("CLI recommendation provenance preserves the raw BOM-bound source digest", 
   );
 });
 
-test("dag next command help identifies the Contract 11 strict-DAG consumer boundary", () => {
+test("dag next command help identifies the Contract 12 strict-DAG consumer boundary", () => {
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(command.stdout, /Perttool\.NextResult\.v9/);
-  assert.match(command.stdout, /CLI contract: 11/);
+  assert.match(command.stdout, /Perttool\.NextResult\.v10/);
+  assert.match(command.stdout, /CLI contract: 12/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 
-test("text derives a later parallel recommendation rule from the Core summary", () => {
+test("text renders the exact parallel selection from the shared Core result", () => {
   const command = run([
     "dag",
     "next",
@@ -171,14 +124,8 @@ test("text derives a later parallel recommendation rule from the Core summary", 
     "--color=never",
   ]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(
-    command.stdout,
-    /^PARALLEL_B tier=recommended rule=joint_resource_feasibility /m,
-  );
-  assert.match(
-    command.stdout,
-    /PARALLEL_B is recommended by rule joint_resource_feasibility\./,
-  );
+  assert.match(command.stdout, /^MAXIMUM STARTABLE TASKS 2$/m);
+  assert.match(command.stdout, /^STARTABLE RECOMMENDED PARALLEL_A PARALLEL_B$/m);
 });
 
 test("recommendation invariant failure exposes no partial v4 Core result", async () => {

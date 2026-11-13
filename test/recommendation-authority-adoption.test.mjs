@@ -1,13 +1,13 @@
+// R: Retain model-1 consumer adoption checks against the explicit v9 compatibility projection.
+import { legacyNextWire } from "./helpers/legacy-next-wire.mjs";
 import assert from "node:assert/strict";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
-const cli = path.join(root, "dist/cli.js");
 const knownTiers = new Set([
   "recommended",
   "allowed",
@@ -52,14 +52,7 @@ const knownRelations = new Set([
 ]);
 
 function runNext(fixture) {
-  const command = spawnSync(
-    process.execPath,
-    [cli, "dag", "next", fixture, "--format=json"],
-    { cwd: root, encoding: "utf8" },
-  );
-  assert.equal(command.status, 0, command.stderr);
-  assert.equal(command.stderr, "");
-  return JSON.parse(command.stdout);
+  return legacyNextWire(path.join(root, fixture));
 }
 
 function sameMembers(left, right) {

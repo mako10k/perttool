@@ -230,7 +230,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 11);
+  assert.equal(json.cli_contract_version, 12);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -399,8 +399,8 @@ test("Issue #15 keeps velocity-free point analysis and Next results point-valued
   assert.equal(nextFromFile.velocity, null);
   assert.equal(nextFromFile.velocityForecast, null);
   assert.deepEqual(nextFromFile.recommendedTaskIds, ["GATE_NEAR"]);
-  assert.deepEqual(nextFromFile.runnableTaskIds, ["GATE_FAR"]);
-  assert.deepEqual(nextFromFile.startableTaskIds, []);
+  assert.deepEqual(nextFromFile.runnableTaskIds, ["GATE_NEAR"]);
+  assert.deepEqual(nextFromFile.startableTaskIds, ["GATE_NEAR"]);
   assert.equal(nextFromFile.tasks.every(({ expected }) => expected.unit === "point"), true);
   assert.equal(nextFromFile.tasks.every(({ forecastExpected }) => forecastExpected === null), true);
 });
@@ -464,10 +464,10 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v9");
-  assert.equal(json.recommendation_interface_version, 1);
+  assert.equal(json.schema_version, "Perttool.NextResult.v10");
+  assert.equal(json.recommendation_interface_version, 2);
   assert.equal(json.recommendation.explanation_status.complete, true);
-  assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE"]);
+  assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE", "CLI"]);
   assert.deepEqual(json.groups, {
     active: [],
     suspended: [],
@@ -523,7 +523,7 @@ test("dag next text uses stable operational sections and explanations", () => {
   const sections = [
     "ACTIVE",
     "RUNNABLE NOW",
-    "READY / WAITING RESOURCE",
+    "READY / DEFERRED",
     "BLOCKED NOW",
     "UPCOMING",
   ];

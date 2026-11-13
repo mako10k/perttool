@@ -1,0 +1,79 @@
+{
+  "kind": "batch",
+  "mutations": [
+    {
+      "kind": "milestone.add",
+      "id": "CORE_READY",
+      "milestone": {
+        "title": "Exact selection core accepted"
+      }
+    },
+    {
+      "kind": "milestone.add",
+      "id": "CONTRACT_READY",
+      "milestone": {
+        "title": "Versioned public contract ready"
+      }
+    },
+    {
+      "kind": "milestone.add",
+      "id": "ADOPTION_READY",
+      "milestone": {
+        "title": "Consumer entrypoints adopted"
+      }
+    },
+    {
+      "kind": "milestone.add",
+      "id": "DONE",
+      "milestone": {
+        "title": "Maximum-count task management verified"
+      }
+    },
+    {
+      "kind": "project.set",
+      "set": {
+        "finish": "DONE"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "MAX_COUNT_CORE_ACCEPTANCE",
+      "from": "START",
+      "to": "CORE_READY",
+      "task": {
+        "title": "Verify exact selection, rank ties and residual resource budgets",
+        "duration": "1p"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "MAX_COUNT_PUBLIC_CONTRACT",
+      "from": "CORE_READY",
+      "to": "CONTRACT_READY",
+      "task": {
+        "title": "Fix versioned selection, explanation, schema and consumer contracts",
+        "duration": "5p"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "MAX_COUNT_ADOPTION",
+      "from": "CONTRACT_READY",
+      "to": "ADOPTION_READY",
+      "task": {
+        "title": "Adopt shared selection through Core CLI assurance override and MCP",
+        "duration": "8p"
+      }
+    },
+    {
+      "kind": "task.add",
+      "id": "MAX_COUNT_ACCEPTANCE",
+      "from": "ADOPTION_READY",
+      "to": "DONE",
+      "task": {
+        "title": "Verify real entrypoints, installed package and historical versions",
+        "duration": "5p"
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+// R: Project current shared selection and exact DAG time summaries for the private editor focus view.
 import { buildResidualGraph } from "../analysis/graph.js";
 import { formatDecimal, type Rational } from "../model/rational.js";
 import { fieldNamed, type DocumentNode } from "../model/syntax.js";
@@ -6,10 +7,8 @@ import {
   type CalendarUnit,
   type DurationUnit,
 } from "../model/units.js";
-import {
-  analyzeDocument,
-  selectNextTasks,
-} from "./contract7-assurance.js";
+import { analyzeDocument } from "./contract11-runtime.js";
+import { selectNextTasks } from "./contract12-next.js";
 
 export interface EditorDagExactValueV1 {
   readonly numerator: string;
@@ -114,7 +113,7 @@ function compactEntities(
 }
 
 /**
- * Projects the current planning frontier and exact NextResult.v6 start authority
+ * Projects the current planning frontier and exact NextResult.v10 start authority
  * for read-only editor presentation. Layout remains an adapter concern.
  */
 export function inspectEditorDagFocus(
@@ -137,7 +136,7 @@ export function inspectEditorDagFocus(
     analysis.diagnosticsTruncated
   ) {
     return unavailable(
-      "Complete NextResult.v6 start authority and exact DAG time summaries are unavailable.",
+      "Complete NextResult.v10 start authority and exact DAG time summaries are unavailable.",
     );
   }
   const residual = buildResidualGraph(next.document as unknown as DocumentNode);

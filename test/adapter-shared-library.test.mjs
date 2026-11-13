@@ -134,7 +134,7 @@ test("Node subpath retains its exact root compatibility facade", async () => {
     assert.equal(nodeApi[name], packageRoot[name], name);
   }
   assert.equal(packageRoot.COMMAND_REGISTRY.length, cases.package.command_count + 31);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.package.root_schema_count + 11);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.package.root_schema_count + 13);
 });
 
 test("shared-library normative cases remain dependency ordered", async () => {

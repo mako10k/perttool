@@ -2,7 +2,7 @@
 export const MCP_PROTOCOL_MODEL_VERSION = 1 as const;
 export const MCP_PROTOCOL_REVISION = "2026-07-28" as const;
 export const MCP_SERVER_NAME = "perttool" as const;
-export const MCP_SERVER_VERSION = "0.12.3" as const;
+export const MCP_SERVER_VERSION = "0.13.0" as const;
 
 export const MCP_LIMITS = Object.freeze({
   requestBytes: 262_144,
@@ -25,12 +25,12 @@ export const MCP_RESOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     uri: "perttool://help/commands",
     name: "perttool command help",
-    description: "Complete Contract 9 command discovery.",
+    description: "Complete Contract 12 command discovery.",
   }),
   Object.freeze({
     uri: "perttool://guide/index",
     name: "perttool guide index",
-    description: "Contract 9 Guide topic index.",
+    description: "Contract 12 Guide topic index.",
   }),
   Object.freeze({
     uri: "perttool://schemas",
@@ -61,8 +61,8 @@ export const MCP_TOOL_DEFINITIONS = Object.freeze([
     title: "Select next PERT tasks",
     description: "Return recommendation and complete start-authority evidence without changing the document.",
     operation: "dag_next",
-    resultSchemaVersion: "Perttool.NextResult.v9",
-    wireSchemaVersion: "Perttool.McpNextResult.v1",
+    resultSchemaVersion: "Perttool.NextResult.v10",
+    wireSchemaVersion: "Perttool.McpNextResult.v2",
   }),
   Object.freeze({
     name: "perttool_help",
@@ -247,6 +247,12 @@ const capacitySchema = Object.freeze({
   additionalProperties: false,
 });
 
+const nextCapacitySchema = Object.freeze({ ...capacitySchema,
+  properties: Object.freeze({ ...capacitySchema.properties,
+    capacity: Object.freeze({ ...capacitySchema.properties.capacity, minimum: 0 }),
+  }),
+});
+
 const diagnosticsSchema = Object.freeze({
   type: "integer",
   minimum: 1,
@@ -293,7 +299,7 @@ export const MCP_TOOL_INPUT_SCHEMAS: Readonly<Record<McpToolName, McpJsonSchema>
     }),
     perttool_next: closedInput(["source"], {
       source: sourceSchema,
-      capacities: capacityListSchema,
+      capacities: Object.freeze({ ...capacityListSchema, items: nextCapacitySchema }),
       explain_depth: Object.freeze({ type: "integer", minimum: 0, maximum: 32 }),
       precision: Object.freeze({ type: "integer", minimum: 0, maximum: 9 }),
       max_diagnostics: diagnosticsSchema,

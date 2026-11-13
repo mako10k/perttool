@@ -95,12 +95,12 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.12.3");
-  assert.equal(lockfile.version, "0.12.3");
-  assert.equal(lockfile.packages[""].version, "0.12.3");
+  assert.equal(manifest.version, "0.13.0");
+  assert.equal(lockfile.version, "0.13.0");
+  assert.equal(lockfile.packages[""].version, "0.13.0");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.12\.3"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.13\.0"/);
   assert.match(changelog, /^## \[0\.5\.5\] - 2026-07-30$/m);
   assert.equal(COMMAND_REGISTRY.length, 75);
-  assert.equal(getJsonSchemaCatalog().length, 31);
+  assert.equal(getJsonSchemaCatalog().length, 33);
 });

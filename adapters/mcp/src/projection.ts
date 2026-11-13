@@ -417,6 +417,7 @@ export function projectNextResult(result: NextResult): JsonObject {
     diagnostics_truncated: result.diagnosticsTruncated,
     grammar_version: result.grammarVersion,
     plan_review: snakeJson(result.planReview),
+    recommendation: result.recommendation === null ? null : recommendationAnalysisToJson(result.recommendation),
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
     acceptance: snakeJson(result.acceptance),

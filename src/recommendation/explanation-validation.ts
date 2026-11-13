@@ -1,3 +1,4 @@
+// R: Verify model-1 recommendation semantics and share canonical typed-value checks.
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import type {
@@ -195,7 +196,7 @@ function greatestCommonDivisor(left: bigint, right: bigint): bigint {
   return current;
 }
 
-function validateScalar(value: RecommendationScalarValue): string | null {
+export function validateScalar(value: RecommendationScalarValue): string | null {
   try {
     switch (value.type) {
       case "boolean":
@@ -228,7 +229,7 @@ function validateScalar(value: RecommendationScalarValue): string | null {
   }
 }
 
-function validateValue(value: RecommendationValue): string | null {
+export function validateValue(value: RecommendationValue): string | null {
   if (value.type !== "list" && value.type !== "set" && value.type !== "map") {
     return validateScalar(value);
   }

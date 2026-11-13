@@ -1,0 +1,94 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ISSUE_48:
+  version 5
+  title "Maximum-count task selection implementation"
+  duration_unit point
+  finish DONE
+
+milestone START:
+  title "Implementation authorized; exact core candidate present"
+  state reached
+
+milestone CORE_READY:
+  title "Exact selection core accepted"
+
+milestone CONTRACT_READY:
+  title "Versioned public contract ready"
+
+milestone ADOPTION_READY:
+  title "Consumer entrypoints adopted"
+
+milestone DONE:
+  title "Maximum-count task management verified"
+
+task MAX_COUNT_CORE_ACCEPTANCE START -> CORE_READY:
+  title "Verify exact selection, rank ties and residual resource budgets"
+  duration 1p
+  status done
+
+task MAX_COUNT_PUBLIC_CONTRACT CORE_READY -> CONTRACT_READY:
+  title "Fix versioned selection, explanation, schema and consumer contracts"
+  duration 5p
+  status done
+
+task MAX_COUNT_ADOPTION CONTRACT_READY -> ADOPTION_READY:
+  title "Adopt shared selection through Core CLI assurance override and MCP"
+  duration 8p
+  status done
+
+task MAX_COUNT_ACCEPTANCE ADOPTION_READY -> DONE:
+  title "Verify real entrypoints, installed package and historical versions"
+  duration 5p
+  status done
+
+work_event MAX_COUNT_CORE_VERIFY_START:
+  model 1
+  task MAX_COUNT_CORE_ACCEPTANCE
+  kind start
+  occurred_at 2026-11-11T19:59:41+09:00
+  planned_value 1p
+
+work_event MAX_COUNT_CORE_VERIFY_FINISH:
+  model 1
+  task MAX_COUNT_CORE_ACCEPTANCE
+  kind finish
+  occurred_at 2026-11-11T20:14:32+09:00
+
+work_event MAX_COUNT_PUBLIC_CONTRACT_START:
+  model 1
+  task MAX_COUNT_PUBLIC_CONTRACT
+  kind start
+  occurred_at 2026-11-13T13:46:11+09:00
+  planned_value 5p
+
+work_event MAX_COUNT_PUBLIC_CONTRACT_FINISH:
+  model 1
+  task MAX_COUNT_PUBLIC_CONTRACT
+  kind finish
+  occurred_at 2026-11-13T14:26:37+09:00
+
+work_event MAX_COUNT_ADOPTION_START:
+  model 1
+  task MAX_COUNT_ADOPTION
+  kind start
+  occurred_at 2026-11-13T14:27:00+09:00
+  planned_value 8p
+
+work_event MAX_COUNT_ADOPTION_FINISH:
+  model 1
+  task MAX_COUNT_ADOPTION
+  kind finish
+  occurred_at 2026-11-13T15:52:15+09:00
+
+work_event MAX_COUNT_ACCEPTANCE_START:
+  model 1
+  task MAX_COUNT_ACCEPTANCE
+  kind start
+  occurred_at 2026-11-13T15:52:16+09:00
+  planned_value 5p
+
+work_event MAX_COUNT_ACCEPTANCE_FINISH:
+  model 1
+  task MAX_COUNT_ACCEPTANCE
+  kind finish
+  occurred_at 2026-11-13T16:41:52+09:00

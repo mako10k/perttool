@@ -133,7 +133,7 @@ const knownSchemas = new Set([
   "Perttool.MilestoneAcceptanceMigrationResult.v1",
   "Perttool.MilestoneAcceptanceResult.v1",
   "Perttool.MutationResult.v6",
-  "Perttool.NextResult.v9",
+  "Perttool.NextResult.v10",
   "Perttool.PlanAssuranceResult.v2",
   "Perttool.PlanReviewMutationResult.v1",
   "Perttool.PlanReviewResult.v1",
@@ -167,7 +167,7 @@ test("Contract 11 command discovery projects every implemented capability in can
   );
   assert.ok(
     COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 11,
+      ({ contractVersion }) => contractVersion === 12,
     ),
   );
   for (const descriptor of COMMAND_REGISTRY) {
@@ -194,7 +194,7 @@ test("Contract 11 command discovery projects every implemented capability in can
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 11);
+  assert.equal(top.cliContractVersion, 12);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
@@ -269,7 +269,7 @@ test("Contract 11 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 11);
+    assert.equal(json.cli_contract_version, 12);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }

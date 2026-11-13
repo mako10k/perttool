@@ -1,0 +1,49 @@
+project RELEASE_0130:
+  version 5
+  title "Version 0.13.0 maximum-count selection release"
+  duration_unit point
+  finish ACCEPTED
+
+milestone START:
+  title "Release authorized"
+  state reached
+
+milestone PREPARED:
+  title "prepared"
+
+milestone CANDIDATE:
+  title "candidate"
+
+milestone PUBLISHED:
+  title "published"
+
+milestone ACCEPTED:
+  title "accepted"
+
+task RELEASE_0130_PREPARATION START -> PREPARED:
+  title "Prepare version and verify release source"
+  duration 3p
+  status active
+  source "docs/process/0.13.0-release.md"
+
+task RELEASE_0130_CANDIDATE PREPARED -> CANDIDATE:
+  title "Accept immutable artifact and local installation"
+  duration 3p
+  source "docs/process/0.13.0-release.md"
+
+task RELEASE_0130_PUBLISH CANDIDATE -> PUBLISHED:
+  title "Publish identical GitHub and npm beta artifact"
+  duration 2p
+  source "docs/process/0.13.0-release.md"
+
+task RELEASE_0130_ACCEPTANCE PUBLISHED -> ACCEPTED:
+  title "Verify independent source artifact and installed readback"
+  duration 2p
+  source "docs/process/0.13.0-release.md"
+
+work_event RELEASE_0130_PREPARATION_START:
+  model 1
+  task RELEASE_0130_PREPARATION
+  kind start
+  occurred_at 2026-11-13T17:11:14+09:00
+  planned_value 3p

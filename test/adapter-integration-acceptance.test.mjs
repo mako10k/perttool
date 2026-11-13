@@ -143,26 +143,26 @@ test("package and dependency boundaries remain isolated and compatible", async (
   const lsp = JSON.parse(lspManifestText);
   const vscode = JSON.parse(vscodeManifestText);
   const mcp = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.12.3");
+  assert.equal(manifest.version, "0.13.0");
   assert.deepEqual(manifest.files, ["dist", "schemas", "CHANGELOG.md"]);
   assert.deepEqual(manifest.dependencies ?? {}, {});
   assert.deepEqual(manifest.workspaces, ["adapters/*"]);
   assert.equal(lsp.private, true);
   assert.deepEqual(lsp.dependencies, { "vscode-languageserver": "9.0.1" });
-  assert.equal(lsp.peerDependencies.perttool, "0.12.3");
+  assert.equal(lsp.peerDependencies.perttool, "0.13.0");
   assert.equal(vscode.private, true);
   assert.deepEqual(vscode.dependencies ?? {}, {});
   assert.equal(vscode.devDependencies["vscode-languageclient"], "9.0.1");
   assert.equal(vscode.devDependencies["@vscode/test-electron"], "3.1.0");
   assert.equal(mcp.private, true);
   assert.deepEqual(mcp.dependencies, { "@modelcontextprotocol/server": "2.0.0" });
-  assert.equal(mcp.peerDependencies.perttool, "0.12.3");
+  assert.equal(mcp.peerDependencies.perttool, "0.13.0");
 
   assert.equal(Object.keys(packageRoot).length, 155);
   assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(core).length, 51);
   assert.equal(packageRoot.COMMAND_REGISTRY.length, 75);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 31);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 33);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeApi[name], name);
@@ -191,7 +191,7 @@ test("Contract 9 CLI and read-only adapters preserve the shared Application boun
   const cases = [
     { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v6" },
     { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v7" },
-    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v9" },
+    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v10" },
   ];
   const mcpResults = new Map();
   for (const acceptanceCase of cases) {

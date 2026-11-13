@@ -190,7 +190,7 @@ test("the later CLI task activates the reserved additive surface", () => {
     true,
   );
   const catalog = getJsonSchemaCatalog();
-  assert.equal(catalog.length, 31);
+  assert.equal(catalog.length, 33);
   assert.equal(
     catalog.some(({ schemaId }) => schemaId === "Perttool.HistoricalGraphResult.v1"),
     true,
@@ -282,7 +282,7 @@ test("accepted historical VSIX makes only final acceptance startable", async () 
   assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.deepEqual(
-    next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
+    next.temporal.authority.unavailableTaskIds,
     [],
   );
   assert.match(acceptance, /Document status: Accepted 1\.0/u);

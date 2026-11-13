@@ -62,7 +62,7 @@ test("final Planning Pool acceptance preserves its historical boundary and curre
   // request schemas and Issue #34 inspection commands extend the live catalog
   // without rewriting that historical evidence.
   assert.equal(rootApi.COMMAND_REGISTRY.length, 75);
-  assert.equal(catalog.length, 31);
+  assert.equal(catalog.length, 33);
   assert.equal(Object.keys(rootApi).length, 155);
   assert.equal(Object.keys(nodeApi).length, 155);
   assert.equal(Object.keys(coreApi).length, trace.target.core_exports);
