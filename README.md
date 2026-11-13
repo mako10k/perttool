@@ -8,7 +8,7 @@ change before writing it.
 Registry snapshot on 2026-11-13: npm `latest` and `beta` identify `0.12.3`;
 no `alpha` channel is present. Node.js 22 or later is required.
 
-## Version 0.13.0 release preparation
+## Version 0.13.0
 
 Version 0.13.0 introduces count-first task selection with CLI Contract 12,
 NextResult v10 and recommendation model 2. It selects the maximum number of

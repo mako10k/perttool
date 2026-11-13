@@ -11,10 +11,10 @@ test("README is a current user guide with separate historical and developer rout
   const readme = await readFile(path.join(root, "README.md"), "utf8");
 
   assert.match(readme, /Registry snapshot on \d{4}-\d{2}-\d{2}/u);
-  assert.match(readme, /The `0\.13\.0` package provides the compatible committed-source proof patch/u);
-  assert.match(readme, /Grammar 10 and CLI Contract 11 remain unchanged/u);
-  assert.match(readme, /npm `latest` identifies `0\.12\.1` and\n`beta` identifies `0\.12\.2`/u);
-  assert.match(readme, /Exact `0\.12\.2` is the rollback pin/u);
+  assert.match(readme, /Version 0\.13\.0 introduces count-first task selection with CLI Contract 12/u);
+  assert.match(readme, /NextResult v10 and recommendation model 2/u);
+  assert.match(readme, /npm `latest` and `beta` identify `0\.12\.3`/u);
+  assert.match(readme, /Exact `0\.12\.3`\nis the rollback pin/u);
   assert.match(readme, /no `alpha` channel is present/u);
   assert.match(readme, /npm install --global perttool@latest/u);
   assert.match(readme, /^## Create your first plan$/mu);
