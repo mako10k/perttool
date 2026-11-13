@@ -23,17 +23,19 @@ milestone ACCEPTED:
 task RELEASE_0130_PREPARATION START -> PREPARED:
   title "Prepare version and verify release source"
   duration 3p
-  status active
+  status done
   source "docs/process/0.13.0-release.md"
 
 task RELEASE_0130_CANDIDATE PREPARED -> CANDIDATE:
   title "Accept immutable artifact and local installation"
   duration 3p
+  status done
   source "docs/process/0.13.0-release.md"
 
 task RELEASE_0130_PUBLISH CANDIDATE -> PUBLISHED:
   title "Publish identical GitHub and npm beta artifact"
   duration 2p
+  status active
   source "docs/process/0.13.0-release.md"
 
 task RELEASE_0130_ACCEPTANCE PUBLISHED -> ACCEPTED:
@@ -47,3 +49,29 @@ work_event RELEASE_0130_PREPARATION_START:
   kind start
   occurred_at 2026-11-13T17:11:14+09:00
   planned_value 3p
+
+work_event RELEASE_0130_PREPARATION_FINISH:
+  model 1
+  task RELEASE_0130_PREPARATION
+  kind finish
+  occurred_at 2026-11-13T17:22:46+09:00
+
+work_event RELEASE_0130_CANDIDATE_START:
+  model 1
+  task RELEASE_0130_CANDIDATE
+  kind start
+  occurred_at 2026-11-13T17:22:47+09:00
+  planned_value 3p
+
+work_event RELEASE_0130_CANDIDATE_FINISH:
+  model 1
+  task RELEASE_0130_CANDIDATE
+  kind finish
+  occurred_at 2026-11-13T17:23:32+09:00
+
+work_event RELEASE_0130_PUBLISH_START:
+  model 1
+  task RELEASE_0130_PUBLISH
+  kind start
+  occurred_at 2026-11-13T17:23:33+09:00
+  planned_value 2p
